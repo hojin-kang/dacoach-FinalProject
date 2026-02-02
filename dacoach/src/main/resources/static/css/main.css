@@ -27,6 +27,11 @@ button, input {
   font-family: inherit;
 }
 
+hr {
+	border: none;
+	border-top: 1px solid #D5D5D5;
+}
+
 /* ======================
    Container (900px)
 ====================== */
@@ -34,6 +39,10 @@ button, input {
   width: 900px;
   margin: 0 auto;
   padding: 0 16px;
+}
+
+.container h2 {
+	text-align: center;
 }
 
 /* ======================
@@ -61,6 +70,16 @@ button, input {
 	width: 100px;
 }
 
+.header-left {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+
+  flex-shrink: 0;          /* ⭐ 절대 줄어들지 않게 */
+}
+
 /* ======================
    GNB
 ====================== */
@@ -68,6 +87,7 @@ button, input {
   display: flex;
   gap: 18px;
   margin-left: 8px;
+  flex-shrink: 0;
 }
 
 .gnb a {
@@ -98,6 +118,8 @@ button, input {
 ====================== */
 .search {
   width: 280px;
+  min-width: 280px;
+  flex-shrink: 0;
   height: 38px;
   border-radius: 999px;
   background: #F8F9FA;
@@ -141,8 +163,8 @@ button, input {
 	width: 100%;
 }
 
-.iconBtn:hover {
-  background: #f6f7f8;
+.iconBtn img:last-child {
+	border-radius: 50%;
 }
 
 /* ======================
@@ -228,11 +250,11 @@ button, input {
 }
 
 .mainSectionUnit .card {
-	min-width: 200px;          /* ⭐ 이게 핵심 */
+	min-width: 200px;
 	height: 150px;
 	background: #fff;
 	border-radius: 8px;
-	flex-shrink: 0;            /* ⭐ 줄어들지 않게 */
+	flex-shrink: 0;
 }
 
 

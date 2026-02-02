@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dacoach.mapper.qna.QnaMapper">
+
+    <!-- 내 문의 목록 -->
+    <select id="myQnaList" parameterType="int"
+            resultType="com.dacoach.model.qna.QnaDTO">
+        SELECT
+            QNA_IDX     AS qnaIdx,
+            USER_IDX    AS userIdx,
+            QNA_TYPE    AS qnaType,
+            TITLE       AS title,
+            CREATED_AT  AS createdAt
+        FROM QNA
+        WHERE USER_IDX = #{userIdx}
+        ORDER BY CREATED_AT DESC
+    </select>
+
+    <!-- 문의 상세 -->
+    <select id="myQnaDetail" parameterType="map"
+            resultType="com.dacoach.model.qna.QnaDTO">
+        SELECT
+            QNA_IDX     AS qnaIdx,
+            USER_IDX    AS userIdx,
+            QNA_TYPE    AS qnaType,
+            TITLE       AS title,
+            QUESTION    AS question,
+            CREATED_AT  AS createdAt
+        FROM QNA
+        WHERE QNA_IDX = #{qnaIdx}
+          AND USER_IDX = #{userIdx}
+    </select>
+
+</mapper>
