@@ -5,7 +5,7 @@
 	flex-direction: row;
 	align-items: center;
 	padding: 0 30px;
-	padding-bottom: 30px;
+	
 }
 
 .coachInfo {
@@ -83,4 +83,100 @@
 	font-size: 18px;
 	font-weight: 500;
 	margin-left: 30px;
+}
+
+/* breadcrumb */
+.breadcrumb {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb .sep { color: #bbb; }
+
+.pageTitle {
+  margin: 6px 0 14px;
+  text-align: left !important;
+}
+
+/* qna list */
+.qnaWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qnaItem {
+  background: #fff;
+  border: 1px solid #efefef;
+  border-radius: 12px;
+  padding: 16px 18px;
+  cursor: pointer;
+}
+
+.qnaItem:hover {
+  background: #fafafa;
+}
+
+.qnaTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.qnaTitleRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.qMark {
+  font-weight: 800;
+  color: #111;
+}
+
+.qTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+}
+
+/* badge */
+.badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.waiting {
+  background: #ffe9cf;   /* 캡처처럼 연한 주황 */
+  color: #b55a00;
+  border: 1px solid rgba(181, 90, 0, 0.15);
+}
+
+/* preview */
+.qnaPreview {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+
+  /* 두 줄까지만 보이게 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* empty */
+.empty {
+  padding: 40px 0;
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
 }

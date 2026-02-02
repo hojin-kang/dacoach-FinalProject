@@ -13,6 +13,7 @@
             USER_IDX    AS userIdx,
             QNA_TYPE    AS qnaType,
             TITLE       AS title,
+            QUESTION    AS question,
             CREATED_AT  AS createdAt
         FROM QNA
         WHERE USER_IDX = #{userIdx}
