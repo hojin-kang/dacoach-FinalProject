@@ -13,4 +13,8 @@ public class LoginController {
 	public String memberType() {
 		return "login/memberType";
 	}
+	@GetMapping("/coachJoin")
+	public String coachJoin() {
+		return "coach/coachJoin";
+	}
 }

@@ -82,18 +82,21 @@
         /* 코치 섹션 (청록색) */
         .title-coach { color: #3d8b89; font-weight: bold; font-size: 24px; margin-bottom: 25px; }
         .btn-coach { 
-            background-color: #3d8b89; 
-            color: white; 
-            border: none; 
+            background-color: transparent; 
+            color: #3d8b89; 
+            border: 2px solid #3d8b89; 
             border-radius: 10px; 
-            padding: 14px 0; 
+            padding: 12px 0; 
             font-weight: bold; 
             width: 85%;
             margin-top: auto;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
-        .btn-coach:hover { background-color: #2d6b69; }
+        .btn-coach:hover {
+            background-color: #a8d5ba; /* 연한 초록색 */
+            color: white;
+        }
 
         /* 컴퍼니 섹션 (주황색) */
         .title-company { color: #d67d1d; font-weight: bold; font-size: 24px; margin-bottom: 25px; }
@@ -117,6 +120,9 @@
             height: 110px; 
             margin-bottom: 30px; 
             object-fit: contain; 
+            background-color: #ffffff; /* 흰색 배경 추가 */
+            border-radius: 50%; /* 원형 배경을 위해 추가 */
+            padding: 10px; /* 이미지와 배경 사이 여백 */
         }
 
         .type-desc { 
@@ -138,18 +144,20 @@
             <div class="card-wrapper">
                 <div class="type-card">
                     <div class="title-coach">코치</div>
-                    <img th:src="@{/img/coach_icon.png}" class="type-icon" alt="코치 아이콘">
+                    <img src="/img/icon/coach.png" alt="코치 아이콘" class="type-icon">
                     <p class="type-desc">
                         코치 회원이 되어<br>
                         재능을 무료로 교환하거나<br>
                         클래스를 수강해 보세요!
                     </p>
-                    <button class="btn-coach" onclick="location.href='/signup/coach'">가입하기</button>
+                    <button id="coachJoin" class="btn-coach">가입하기</button>
+
+                    
                 </div>
 
                 <div class="type-card">
                     <div class="title-company">컴퍼니</div>
-                    <img th:src="@{/img/company_icon.png}" class="type-icon" alt="컴퍼니 아이콘">
+                    <img src="/img/icon/company.png" alt="컴퍼니 아이콘" class="type-icon">
                     <p class="type-desc">
                         컴퍼니 회원이 되어<br>
                         클래스별 수강생을 모집하고<br>
@@ -164,4 +172,9 @@
     <div th:replace="~{layout/footer :: siteFooter}"></div>
 
 </body>
+<script>
+document.getElementById('coachJoin').addEventListener('click', function() {
+	location.href = 'coachJoin';
+});
+</script>
 </html>
