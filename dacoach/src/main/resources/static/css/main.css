@@ -57,11 +57,8 @@ button, input {
   justify-content: space-between;
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  color: #176a73;
+.logo img {
+	width: 100px;
 }
 
 /* ======================
