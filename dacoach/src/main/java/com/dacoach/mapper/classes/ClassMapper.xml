@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dacoach.mapper.classes.ClassMapper">
+
+	<!-- 클래스 등록 -->
+	<insert id="insertClass" parameterType="com.dacoach.model.classes.ClassDTO">
+		INSERT INTO CLASS (
+			CLASS_IDX, 
+			PROVIDER_IDX, 
+			TITLE, 
+			INTRO, 
+			MINOR_FIELD_IDX,
+			MINOR_REGION_IDX, 
+			PRICE, 
+			START_DATE, 
+			END_DATE, 
+			CREATED_AT,
+			MAX_USER_CNT
+		)
+		VALUES (
+			SEQ_CLASS.NEXTVAL, 
+			#{providerIdx}, 
+			#{title}, 
+			#{intro},
+			#{minorFieldIdx},
+			#{minorRegionIdx}, 
+			#{price}, 
+			#{startDate}, 
+			#{endDate}, 
+			SYSDATE, 
+			#{maxUserCnt}
+		)
+	</insert>
+
+	<!-- 대분류 조회 -->
+	<select id="selectMajorFields" resultType="map">
+		SELECT 
+			MAJOR_FIELD_IDX,
+			MAJOR_FIELD_CD 
+		FROM MAJOR_FIELD 
+		ORDER BY MAJOR_FIELD_IDX
+	</select>
+
+	<!-- 소분류 조회 (대분류별) -->
+	<select id="selectMinorFields" parameterType="int" resultType="map">
+		SELECT 
+			MINOR_FIELD_IDX, 
+			MINOR_FIELD_NM
+		FROM MINOR_FIELD 
+		WHERE MAJOR_FIELD_IDX = #{majorFieldIdx}
+		ORDER BY MINOR_FIELD_NM
+	</select>
+
+	<!-- 대지역 조회 -->
+	<select id="selectMajorRegions" resultType="map">
+		SELECT 
+			MAJOR_REGION_IDX, 
+			REGION_NM 
+		FROM MAJOR_REGION 
+		ORDER BY MAJOR_REGION_IDX
+	</select>
+
+	<!-- 소지역 조회 (대지역별) -->
+	<select id="selectMinorRegions" parameterType="int" resultType="map">
+		SELECT 
+			MINOR_REGION_IDX, 
+			DISTRICT_NM
+		FROM MINOR_REGION 
+		WHERE MAJOR_REGION_IDX = #{majorRegionIdx}
+		ORDER BY DISTRICT_NM
+	</select>
+
+</mapper>
