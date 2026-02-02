@@ -14,6 +14,9 @@ public class CoachDTO {
 	private String intro;
 	private String photo;
 	private String video;
+	private int pointScore;
+	private int tokenBalance;
+	private String kakaoKey;
 	
 	private UsersDTO usersDto;
 	
