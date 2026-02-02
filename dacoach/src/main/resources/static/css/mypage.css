@@ -1,0 +1,86 @@
+@charset "UTF-8";
+
+.profileArea {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 0 30px;
+	padding-bottom: 30px;
+}
+
+.coachInfo {
+	gap: 18px;
+	margin-left: 30px;
+}
+.profileArea div span:first-child {
+	font-size: 20px;
+	font-weight: 500;
+}
+.profileArea div span:last-child {
+	font-size: 27px;
+	font-weight: 800;
+}
+
+.profileArea div {
+	display: flex;
+	flex-direction: column;
+}
+
+.profileArea img {
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+}
+
+.profileBtnArea {
+	margin-right: 0px;
+	margin-left: auto;
+	gap: 15px;	
+}
+
+.profileBtnArea a:first-child button {
+	background-color: #328889;
+	width: 180px;
+	height: 35px;
+	border-radius: 20px;
+	font-size: 18px;
+	color: white;
+	border: none;
+	cursor: pointer;
+}
+
+.profileBtnArea button:last-child {
+	background-color: white;
+	width: 180px;
+	height: 35px;
+	border-radius: 20px;
+	font-size: 18px;
+	color: black;
+	border: 2px solid #328889;
+	cursor: pointer;
+}
+
+/******** myPage Menus *********/
+.mypageMenu {
+	display: flex;
+	flex-direction: column;
+	gap: 60px;
+	padding: 40px 60px;
+}
+
+.menuUnit {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.titleSpan {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.menuUnit a {
+	font-size: 18px;
+	font-weight: 500;
+	margin-left: 30px;
+}

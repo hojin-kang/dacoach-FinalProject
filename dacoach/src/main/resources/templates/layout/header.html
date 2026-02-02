@@ -3,32 +3,35 @@
   <body>
     <header class="header" th:fragment="siteHeader">
       <div class="container header__inner">
-        <a class="logo" th:href="@{/}"><img src="/img/logo.png"></a>
-
-        <nav class="gnb">
-          <a th:href="@{/}">홈</a>
-          <a th:href="@{/coach/search}">코치찾기</a>
-          <a th:href="@{/class/list}">클래스</a>
-        </nav>
-
-
-        <div class="search">
-          <input type="text" placeholder="검색" />
+      	<div class="header-left">
+	        <a class="logo" th:href="@{/}"><img src="/img/logo.png"></a>
+	
+	        <nav class="gnb">
+	          <a th:href="@{/}">홈</a>
+	          <a th:href="@{/coach/search}">코치찾기</a>
+	          <a th:href="@{/class/list}">클래스</a>
+	        </nav>
+	
+	
+	        <div class="search">
+	          <input type="text" placeholder="검색" />
+	        </div>
         </div>
-        
+        <!-- 
         <div class="header__spacer"></div>
         
         <div class="gnb">
         	<a th:href="@{/login}">로그인 / 회원가입</a>
         </div>
-<!--
+         -->
+
         <div class="headerIcons">
           <a class="iconBtn" th:href="@{/token}" title="닭꼬치"><img src="/img/icon/dakcoach.png"></a>
-          <a class="iconBtn" th:href="@{/notice}" title="알림"><img src="/img/icon/bell.png"></a>
+          <a class="iconBtn" th:href="@{/notice}" title="알림"><img src="/img/icon/notification.png"></a>
           <a class="iconBtn" th:href="@{/chat}" title="채팅"><img src="/img/icon/chat.png"></a>
-          <a class="iconBtn" th:href="@{/mypage}" title="마이페이지">👤</a>
+          <a class="iconBtn" th:href="@{/mypage}" title="마이페이지"><img src="/img/profile/defaultProfile.jpg"></a>
         </div>
-  -->
+
       </div>
     </header>
   </body>
