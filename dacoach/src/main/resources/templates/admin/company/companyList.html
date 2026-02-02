@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>기업고객관리</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 40px;
+      background-color: #f8f8f8;
+    }
+
+    .container {
+      width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .search-bar button {
+      margin-left: 5px;
+      padding: 6px 12px;
+      background-color: #aaa;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    thead {
+      background-color: #e0f0f0;
+      border-bottom: 2px solid #ccc;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    td.red {
+      color: red;
+      font-weight: bold;
+    }
+
+    .detail-btn {
+      padding: 4px 10px;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .detail-btn:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>기업고객관리</h2>
+    <div class="search-bar">
+      <form th:action="@{/기업고객검색}" method="get">
+        <input type="text" name="keyword" placeholder="Search..." />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>번호</th>
+          <th>기업명</th>
+          <th>사업자번호</th>
+          <th>승인여부</th>
+          <th>상세</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 타임리프 반복문 -->
+        <tr th:each="company, stat : ${companyList}">
+          <td th:text="${company.id}">1234</td>
+          <td th:text="${company.name}">다크치㈜</td>
+          <td th:text="${company.businessNumber}">123-45-67894</td>
+          <td th:text="${company.approvalStatus}" th:classappend="${company.approvalStatus == '대기'} ? ' red' : ''">대기</td>
+          <td>
+            <a th:href="@{/company/detail/{id}(id=${company.id})}">
+              <button class="detail-btn">상세보기</button>
+            </a>
+          </td>
+        </tr>
+        <!-- 데이터 없을 때 -->
+        <tr th:if="${#lists.isEmpty(companyList)}">
+          <td colspan="5">기업 데이터가 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

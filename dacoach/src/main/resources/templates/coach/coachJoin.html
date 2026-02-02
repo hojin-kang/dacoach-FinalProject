@@ -1,10 +1,250 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>코치 회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <style>
+        /* [1] 기본 레이아웃 및 초기화 */
+        body { 
+            background-color: #ffffff; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            font-family: 'Pretendard', -apple-system, sans-serif;
+        }
+
+        nav a, .header-container a, [th\:replace] a { 
+            text-decoration: none !important; 
+            color: inherit !important; 
+        }
+
+        main {
+            flex: 1; 
+            display: flex;
+            justify-content: center;
+            padding: 80px 0;
+        }
+
+        .signup-container { 
+            width: 450px; 
+            text-align: center; 
+        }
+
+        .signup-title { 
+            font-weight: bold; 
+            margin-bottom: 60px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 25px; 
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* [2] 폼 레이아웃 */
+        .form-section { text-align: left; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        /* 입력창 스타일: 테두리 없이 부드러운 배경 */
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .form-control { 
+            flex: 1;
+            background-color: #f8f9fa !important; 
+            border: none !important; 
+            border-radius: 12px !important; 
+            padding: 16px; 
+            font-size: 16px;
+            outline: none;
+            transition: background 0.2s;
+        }
+        
+        .form-control:focus {
+            background-color: #f1f3f5 !important;
+        }
+
+        /* 보조 버튼 (인증번호 받기, 인증) */
+        .btn-sub {
+            background-color: #3d8b89;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 18px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+
+        /* [3] 메인 저장 버튼 */
+        .btn-submit { 
+            background-color: #3d8b89; 
+            color: white; 
+            border: none; 
+            border-radius: 15px; 
+            padding: 20px 0; 
+            font-weight: bold; 
+            font-size: 18px;
+            width: 100%;
+            margin-top: 50px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background-color: #2d6b69; }
+
+        /* 안내 문구 (인증번호 전송 등 필요한 경우만 사용) */
+        .info-msg {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+            margin-left: 5px;
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
+    <div th:replace="~{layout/header :: siteHeader}"></div>
+
+    <main>
+        <div class="signup-container">
+            <h4 class="signup-title">코치 회원가입</h4>
+
+            <form class="form-section">
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="username" class="form-control" placeholder="아이디" style="width: 100%;">
+                       <button type="button" id="checkDuplicate" class="btn-sub" disabled 
+        style="opacity: 0.5; cursor: not-allowed;">중복확인</button>
+                    </div>
+                    <span id="usernameError" style="color: red; font-size: 12px; display: none;">아이디는 영문과 숫자를 모두 사용해 8~20자로 입력해주세요.</span>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="password" class="form-control" placeholder="비밀번호" style="width: 100%;">
+                    <span id="passwordError" style="color: red; font-size: 12px; display: none;">비밀번호는 영문 대문자, 소문자, 숫자, 특수문자를 모두 사용해 8~20자로 입력해주세요.</span>
+                </div>
+
+                <div class="form-group" style="margin-top: 40px;">
+                    <input type="text" class="form-control" placeholder="이름" style="width: 100%;">
+                </div>
+
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" class="form-control" placeholder="전화번호" style="width: 100%;">
+                        <button type="button" class="btn-sub">인증번호 받기</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" class="form-control" placeholder="인증번호" style="width: 100%;">
+                        <button type="button" class="btn-sub" style="background-color: #52a3a1;">인증</button>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-submit" disabled 
+        style="opacity: 0.5; cursor: not-allowed;">저장 후 계속하기</button>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="~{layout/footer :: siteFooter}"></div>
+
+    <script>
+   
+
+    document.getElementById('username').addEventListener('input', function() {
+        const username = this.value;
+        const errorSpan = document.getElementById('usernameError');
+        const checkDuplicateButton = document.getElementById('checkDuplicate');
+
+        // 영문 포함, 숫자 포함, 영문/숫자만 8~20자
+        const isValid = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{8,20}$/.test(username);
+
+        if (!isValid) {
+            // 조건이 맞지 않을 때 (빈 칸 포함)
+            errorSpan.style.display = (username === "") ? 'none' : 'block';
+            checkDuplicateButton.disabled = true;
+            checkDuplicateButton.style.opacity = "0.5";
+            checkDuplicateButton.style.cursor = "not-allowed";
+        } else {
+            // 모든 조건을 만족할 때만 활성화
+            errorSpan.style.display = 'none';
+            checkDuplicateButton.disabled = false;
+            checkDuplicateButton.style.opacity = "1";
+            checkDuplicateButton.style.cursor = "pointer";
+        }
+    });
+
+    // 중복확인 버튼 클릭 이벤트 (활성화 상태에서만 작동)
+    document.getElementById('checkDuplicate').addEventListener('click', function() {
+        const username = document.getElementById('username').value;
+        alert(`중복 확인 요청: ${username}`); 
+        // 실제 서버 통신 로직이 들어갈 자리입니다.
+    });
+
+    // 비밀번호 유효성 검사 (기존 유지)
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const errorSpan = document.getElementById('passwordError');
+        const isValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/.test(password);
+
+        if (password === "") {
+            errorSpan.style.display = 'none';
+        } else if (!isValid) {
+            errorSpan.style.display = 'block';
+        } else {
+            errorSpan.style.display = 'none';
+        }
+    });
+    
+ // 입력 필드 변수 선언
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const nameInput = document.querySelector('input[placeholder="이름"]');
+    const phoneInput = document.querySelector('input[placeholder="전화번호"]');
+    const authInput = document.querySelector('input[placeholder="인증번호"]');
+
+    const usernameError = document.getElementById('usernameError');
+    const passwordError = document.getElementById('passwordError');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // [전체 유효성 검사 함수]
+    function checkAllValid() {
+        // 1. 에러 메시지가 숨겨져 있는가? (유효성 통과 여부)
+        const isUserOk = usernameError.style.display === 'none' && usernameInput.value !== "";
+        const isPassOk = passwordError.style.display === 'none' && passwordInput.value !== "";
+        
+        // 2. 나머지 필수 필드들이 비어있지 않은가?
+        const isNameOk = nameInput.value.trim() !== "";
+        const isPhoneOk = phoneInput.value.trim() !== "";
+        const isAuthOk = authInput.value.trim() !== "";
+
+        // 모든 조건이 OK일 때만 버튼 활성화
+        if (isUserOk && isPassOk && isNameOk && isPhoneOk && isAuthOk) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+            submitBtn.style.cursor = "pointer";
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = "0.5";
+            submitBtn.style.cursor = "not-allowed";
+        }
+    }
+
+    // 모든 입력창에 'input' 이벤트 발생 시 checkAllValid 실행
+    [usernameInput, passwordInput, nameInput, phoneInput, authInput].forEach(el => {
+        el.addEventListener('input', checkAllValid);
+    });
+
+    </script>
 </body>
 </html>

@@ -5,22 +5,22 @@
     <title>로그인</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <style>
-        /* 1. 전체 레이아웃 설정 */
+        /* [1] 전체 레이아웃: 헤더와 푸터 사이 중앙 배치 */
         body { 
             background-color: #ffffff; 
             margin: 0; 
             display: flex; 
             flex-direction: column; 
             min-height: 100vh; 
+            font-family: 'Pretendard', -apple-system, sans-serif;
+        }
+        
+        /* 헤더/푸터 링크 밑줄 제거 */
+        nav a, .header-container a, [th\:replace] a { 
+            text-decoration: none !important; 
+            color: inherit !important; 
         }
 
-        /* 2. 헤더 메뉴 밑줄 삭제 (핵심!) */
-        nav a, .header-container a, th\:replace a {
-            text-decoration: none !important;
-            color: inherit; /* 기존 글자 색상 유지 */
-        }
-
-        /* 3. 본문 중앙 정렬 */
         main {
             flex: 1; 
             display: flex;
@@ -29,84 +29,104 @@
             padding: 40px 0;
         }
 
-        .login-container { width: 400px; text-align: center; }
-        .login-title { font-weight: bold; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        
-        .user-type { margin-bottom: 20px; color: #666; }
-        .user-type input { margin-right: 5px; }
-        .user-type label { margin-right: 15px; cursor: pointer; }
-
-        /* 4. 입력창 + 버튼 그리드 배치 */
-        .login-input-grid {
-            display: grid;
-            grid-template-columns: 1fr 100px;
-            gap: 10px;
-            width: 100%;
+        .login-container { 
+            width: 400px; 
+            text-align: center; 
         }
 
-        .input-stack {
+        .login-title { 
+            font-weight: bold; 
+            margin-bottom: 40px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 20px; 
+            font-size: 24px;
+            color: #333;
+        }
+        
+        /* [2] 사용자 타입 선택 (라디오) */
+        .user-type { margin-bottom: 25px; color: #666; font-size: 15px; }
+        .user-type input { margin-right: 5px; cursor: pointer; }
+        .user-type label { margin-right: 15px; cursor: pointer; }
+
+        /* [3] 로그인 입력창 및 버튼 그리드 */
+        .login-row {
+            display: flex;
+            gap: 10px;
+            align-items: stretch; /* 입력창 높이에 맞춰 버튼 높이 자동 조절 */
+        }
+
+        .input-group-stack {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 8px;
         }
 
         .form-control { 
+            width: 100%;
             background-color: #f8f9fa !important; 
             border: none !important; 
-            border-radius: 10px !important; 
-            padding: 12px; 
-            margin: 0 !important;
-            width: 100%;
+            border-radius: 12px !important; 
+            padding: 14px; 
+            font-size: 15px;
+            outline: none;
         }
-
+        
         .btn-login { 
             background-color: #3d8b89; 
             color: white; 
             border: none; 
-            border-radius: 10px; 
-            font-weight: bold;
-            height: 100%;
-            transition: background-color 0.2s;
+            border-radius: 12px; 
+            width: 100px; 
+            font-weight: bold; 
+            cursor: pointer;
+            transition: background 0.2s;
         }
-        .btn-login:hover { background-color: #2d6b69; color: white; }
+        .btn-login:hover { background-color: #2d6b69; }
 
-        /* 하단 스타일 */
-        .find-links { font-size: 13px; color: #999; margin-top: 10px; margin-bottom: 25px; }
-        .find-links a { text-decoration: none !important; color: #999; margin: 0 5px; }
+        /* [4] 기타 링크 및 부가 버튼 */
+        .find-links { font-size: 13px; color: #999; margin: 15px 0 30px; }
+        .find-links a { color: #999; text-decoration: none; margin: 0 8px; }
 
         .btn-kakao { 
             background-color: #fee500; 
             border: none; 
-            border-radius: 10px; 
+            border-radius: 12px; 
             width: 100%; 
-            padding: 12px; 
+            padding: 14px; 
             font-weight: bold; 
             display: flex; 
             align-items: center; 
-            justify-content: center; 
-            text-decoration: none !important;
-            color: #000;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: #3c1e1e;
+            font-size: 15px;
         }
 
-        .divider { margin: 15px 0; font-size: 12px; color: #ccc; }
-
+        .divider { margin: 20px 0; font-size: 13px; color: #ccc; position: relative; }
+        
         .btn-signup { 
             background-color: transparent; 
             border: 1px solid #3d8b89; 
-            border-radius: 20px; 
+            border-radius: 25px; 
             width: 100%; 
-            padding: 10px; 
+            padding: 12px; 
             color: #3d8b89; 
             font-weight: bold; 
+            cursor: pointer;
+            transition: all 0.2s;
         }
+        .btn-signup:hover { background-color: #f0f7f7; }
     </style>
 </head>
 <body>
+
     <div th:replace="~{layout/header :: siteHeader}"></div>
 
     <main>
         <div class="login-container">
-            <h4 class="login-title" style="border-bottom: none;">로그인</h4>
+            <h4 class="login-title">로그인</h4>
 
             <form action="/login" method="post">
                 <div class="user-type">
@@ -114,8 +134,8 @@
                     <input type="radio" name="type" id="company"><label for="company">컴퍼니</label>
                 </div>
 
-                <div class="login-input-grid">
-                    <div class="input-stack">
+                <div class="login-row">
+                    <div class="input-group-stack">
                         <input type="text" name="username" class="form-control" placeholder="아이디">
                         <input type="password" name="password" class="form-control" placeholder="비밀번호">
                     </div>
@@ -126,19 +146,18 @@
                     <a href="#">아이디 찾기</a> | <a href="#">비밀번호 찾기</a>
                 </div>
 
-                <button type="button" class="btn-kakao">💬 카카오로 시작하기</button>
+                <button type="button" class="btn-kakao">
+                    <span style="margin-right: 8px;">💬</span> 카카오로 시작하기
+                </button>
+
                 <div class="divider">or</div>
-                <button type="button" class="btn-signup" id="memberJoin">회원가입</button>
+
+                <button type="button" class="btn-signup" onclick="location.href='/memberType'">회원가입</button>
             </form>
         </div>
     </main>
 
     <div th:replace="~{layout/footer :: siteFooter}"></div>
 
-    <script>
-        document.querySelector('.btn-signup').addEventListener('click', function() {
-            window.location.href = '/memberType';
-        });
-    </script>
 </body>
 </html>
