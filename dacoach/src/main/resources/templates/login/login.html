@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-container { width: 400px; text-align: center; }
+        .login-title { font-weight: bold; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        
+        /* 라디오 버튼 스타일 */
+        .user-type { margin-bottom: 20px; color: #666; }
+        .user-type input { margin-right: 5px; }
+        .user-type label { margin-right: 15px; }
+
+        /* 입력창 스타일 */
+        .form-control { background-color: #f8f9fa; border: none; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+        
+        /* 로그인 버튼 */
+        .btn-login { background-color: #3d8b89; color: white; border: none; border-radius: 10px; width: 100px; height: 100px; font-weight: bold; }
+        .btn-login:hover { background-color: #2d6b69; color: white; }
+
+        /* 찾기 링크 */
+        .find-links { font-size: 13px; color: #999; margin-top: 5px; text-decoration: none; }
+        .find-links a { color: #999; text-decoration: none; margin: 0 5px; }
+
+        /* 카카오 버튼 */
+        .btn-kakao { background-color: #fee500; border: none; border-radius: 10px; width: 100%; padding: 12px; font-weight: bold; margin-top: 25px; display: flex; align-items: center; justify-content: center; }
+        .btn-kakao img { width: 20px; margin-right: 8px; }
+
+        /* 구분선 */
+        .divider { margin: 15px 0; font-size: 12px; color: #ccc; }
+
+        /* 회원가입 버튼 */
+        .btn-signup { background-color: transparent; border: 1px solid #3d8b89; border-radius: 20px; width: 100%; padding: 10px; color: #3d8b89; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div th:replace="layout/header :: siteHeader"></div>
+<div class="login-container">
+    <h4 class="login-title">로그인</h4>
+
+    <form action="/login" method="post">
+        <div class="user-type">
+            <input type="radio" name="type" id="coach" checked><label for="coach">코치</label>
+            <input type="radio" name="type" id="company"><label for="company">컴퍼니</label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <div class="flex-grow-1">
+                <input type="text" name="username" class="form-control" placeholder="아이디">
+                <input type="password" name="password" class="form-control" placeholder="비밀번호">
+            </div>
+            <button type="submit" class="btn-login">로그인</button>
+        </div>
+
+        <div class="find-links">
+            <a href="#">아이디 찾기</a> | <a href="#">비밀번호 찾기</a>
+        </div>
+
+        <button type="button" class="btn-kakao">
+            💬 카카오로 시작하기
+        </button>
+
+        <div class="divider">or</div>
+
+        <button type="button" class="btn-signup" onclick="location.href='/signup'">회원가입</button>
+    </form>
+</div>
+<div th:replace="layout/footer :: siteFooter"></div>
+</body>
+</html>
