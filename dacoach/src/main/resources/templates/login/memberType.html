@@ -5,18 +5,7 @@
     <title>회원가입 선택</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <style>
-        /* [1] Bootstrap 핵심 유틸리티 (내부 코드로 대체) */
-        .d-flex { display: flex !important; }
-        .flex-column { flex-direction: column !important; }
-        .justify-content-center { justify-content: center !important; }
-        .align-items-center { align-items: center !important; }
-        .flex-grow-1 { flex-grow: 1 !important; }
-        .gap-2 { gap: 0.5rem !important; }
-        .gap-4 { gap: 1.5rem !important; }
-        .w-100 { width: 100% !important; }
-        .my-4 { margin-top: 1.5rem !important; margin-bottom: 1.5rem !important; }
-
-        /* [2] 전체 레이아웃 고정 */
+        /* [1] 레이아웃 초기화 및 중앙 정렬 */
         body { 
             background-color: #ffffff; 
             margin: 0; 
@@ -25,14 +14,14 @@
             min-height: 100vh; 
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
-
-        /* [3] 헤더 메뉴 밑줄 및 스타일 제거 */
+        
+        /* 헤더/푸터 링크 스타일 초기화 */
         nav a, .header-container a, [th\:replace] a { 
             text-decoration: none !important; 
             color: inherit !important; 
         }
 
-        /* [4] 본문 중앙 정렬 영역 */
+        /* 본문 중앙 배치 */
         main {
             flex: 1; 
             display: flex;
@@ -41,12 +30,13 @@
             padding: 60px 0;
         }
 
-        .selection-container { 
-            width: 850px; 
+        .signup-selection { 
+            width: 100%;
+            max-width: 850px; 
             text-align: center; 
         }
 
-        .selection-title { 
+        .section-title { 
             font-weight: bold; 
             margin-bottom: 50px; 
             border-bottom: 1px solid #eee; 
@@ -55,14 +45,14 @@
             color: #333;
         }
 
-        /* [5] 카드 배치 및 스타일 */
-        .card-wrapper { 
+        /* [2] 카드 디자인 */
+        .signup-card-container { 
             display: flex; 
             gap: 40px; 
             justify-content: center; 
         }
 
-        .type-card { 
+        .signup-card { 
             flex: 1; 
             padding: 50px 30px; 
             border: 1px solid #eee; 
@@ -74,96 +64,85 @@
             align-items: center;
         }
 
-        .type-card:hover { 
+        .signup-card:hover { 
             transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(0,0,0,0.08); 
         }
 
-        /* 코치 섹션 (청록색) */
-        .title-coach { color: #3d8b89; font-weight: bold; font-size: 24px; margin-bottom: 25px; }
-        .btn-coach { 
-            background-color: transparent; 
-            color: #3d8b89; 
-            border: 2px solid #3d8b89; 
-            border-radius: 10px; 
-            padding: 12px 0; 
-            font-weight: bold; 
-            width: 85%;
-            margin-top: auto;
-            cursor: pointer;
-            transition: all 0.2s;
+        /* 아이콘 이미지 스타일 */
+        .card-icon {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 25px;
+            object-fit: contain;
         }
-        .btn-coach:hover {
-            background-color: #a8d5ba; /* 연한 초록색 */
-            color: white;
+        
+        /* [3] 텍스트 테마 */
+        .type-title-coach { color: #3d8b89; font-weight: bold; font-size: 24px; margin-bottom: 10px; }
+        .type-title-company { color: #d67d1d; font-weight: bold; font-size: 24px; margin-bottom: 10px; }
+        
+        .type-desc { 
+            font-size: 15px; 
+            color: #666; 
+            margin: 20px 0 40px; 
+            line-height: 1.7; 
         }
 
-        /* 컴퍼니 섹션 (주황색) */
-        .title-company { color: #d67d1d; font-weight: bold; font-size: 24px; margin-bottom: 25px; }
+        /* [4] 버튼 스타일 */
+        .btn-base {
+            border: none;
+            border-radius: 10px;
+            padding: 14px 0;
+            font-weight: bold;
+            width: 85%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .btn-coach { 
+            background-color: #3d8b89; 
+            color: white;
+        }
+        .btn-coach:hover { background-color: #2d6b69; }
+
         .btn-company { 
             background-color: transparent; 
             color: #d67d1d; 
             border: 2px solid #d67d1d; 
-            border-radius: 10px; 
-            padding: 12px 0; 
-            font-weight: bold; 
-            width: 85%;
-            margin-top: auto;
-            cursor: pointer;
-            transition: all 0.2s;
         }
         .btn-company:hover { background-color: #fff5eb; }
-
-        /* 아이콘 및 텍스트 */
-        .type-icon { 
-            width: 110px; 
-            height: 110px; 
-            margin-bottom: 30px; 
-            object-fit: contain; 
-            background-color: #ffffff; /* 흰색 배경 추가 */
-            border-radius: 50%; /* 원형 배경을 위해 추가 */
-            padding: 10px; /* 이미지와 배경 사이 여백 */
-        }
-
-        .type-desc { 
-            font-size: 16px; 
-            color: #555; 
-            line-height: 1.7; 
-            margin-bottom: 40px;
-        }
     </style>
 </head>
 <body>
-
     <div th:replace="~{layout/header :: siteHeader}"></div>
 
     <main>
-        <div class="selection-container">
-            <h4 class="selection-title">회원가입</h4>
-
-            <div class="card-wrapper">
-                <div class="type-card">
-                    <div class="title-coach">코치</div>
-                    <img src="/img/icon/coach.png" alt="코치 아이콘" class="type-icon">
+        <div class="signup-selection">
+            <h4 class="section-title">회원가입</h4>
+            
+            <div class="signup-card-container">
+                <div class="signup-card">
+                    <div class="type-title-coach">코치</div>
+                    <img th:src="@{/img/icon/coach.png}" alt="코치 아이콘" class="card-icon">
                     <p class="type-desc">
                         코치 회원이 되어<br>
                         재능을 무료로 교환하거나<br>
                         클래스를 수강해 보세요!
                     </p>
-                    <button id="coachJoin" class="btn-coach">가입하기</button>
-
-                    
+                    <button id="coachJoin" class="btn-base btn-coach">가입하기</button>
                 </div>
 
-                <div class="type-card">
-                    <div class="title-company">컴퍼니</div>
-                    <img src="/img/icon/company.png" alt="컴퍼니 아이콘" class="type-icon">
+                <div class="signup-card">
+                    <div class="type-title-company">컴퍼니</div>
+                    <img th:src="@{/img/icon/company.png}" alt="컴퍼니 아이콘" class="card-icon">
                     <p class="type-desc">
                         컴퍼니 회원이 되어<br>
                         클래스별 수강생을 모집하고<br>
                         통계 데이터를 관리해보세요!
                     </p>
-                    <button class="btn-company" onclick="location.href='/signup/company'">가입하기</button>
+                    <button class="btn-base btn-company" onclick="location.href='/signup/company'">가입하기</button>
                 </div>
             </div>
         </div>
@@ -171,10 +150,10 @@
 
     <div th:replace="~{layout/footer :: siteFooter}"></div>
 
+    <script>
+        document.getElementById('coachJoin').addEventListener('click', function() {
+            window.location.href = '/coachJoin';
+        });
+    </script>
 </body>
-<script>
-document.getElementById('coachJoin').addEventListener('click', function() {
-	location.href = 'coachJoin';
-});
-</script>
 </html>
