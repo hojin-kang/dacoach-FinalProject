@@ -18,10 +18,10 @@
   </main>
   
   <div th:replace="layout/footer :: siteFooter"></div>
-
 <<<<<<< HEAD
->>>>>>> b2d7fe9fd319d87098a6a9c61c95fa415b12f447
+
+
 =======
->>>>>>> 6bc7db40d2b8e2b7cc68a023140d9dfba7aacd62
+>>>>>>> 1df832f2760ccc12443c36d5311dfb593985be4c
 </body>
 </html>
