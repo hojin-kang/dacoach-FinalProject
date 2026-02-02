@@ -53,4 +53,9 @@ public class MypageController {
 		
 		return mav;
 	}
+	
+	@GetMapping("qna/myQnaDetail")
+	public String myQnaDetail() {
+		return "/mypage/myQnaDetail";
+	}
 }

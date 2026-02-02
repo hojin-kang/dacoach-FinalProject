@@ -111,8 +111,7 @@
 
 .qnaItem {
   background: #fff;
-  border: 1px solid #efefef;
-  border-radius: 12px;
+  border-bottom: 1px solid #efefef;
   padding: 16px 18px;
   cursor: pointer;
 }
@@ -140,7 +139,7 @@
 }
 
 .qTitle {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: #111;
 }
@@ -162,7 +161,7 @@
 
 /* preview */
 .qnaPreview {
-  font-size: 13px;
+  font-size: 15px;
   color: #555;
   line-height: 1.5;
 
@@ -178,5 +177,5 @@
   padding: 40px 0;
   text-align: center;
   color: #aaa;
-  font-size: 14px;
+  font-size: 16px;
 }
