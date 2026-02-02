@@ -4,6 +4,15 @@ import java.sql.Date;
 
 import com.dacoach.model.users.UsersDTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class CoachDTO {
 	private int coach_idx;
 	private int users_idx;

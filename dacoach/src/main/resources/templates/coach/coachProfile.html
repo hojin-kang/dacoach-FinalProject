@@ -1,105 +1,246 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-
    <meta charset="UTF-8" />
    <title>코치프로필</title>
-
    <link rel="stylesheet" th:href="@{/css/main.css}" />
+   <style>
+      .join-form-wrapper { max-width: 500px; margin: 40px auto; padding: 0 20px; font-family: 'Pretendard', sans-serif; }
+      .form-title { text-align: center; font-size: 1.5rem; margin-bottom: 30px; font-weight: bold; }
+      .profile-img-section { text-align: center; margin-bottom: 30px; }
+      .img-placeholder { width: 120px; height: 120px; background-color: #e9ecef; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #dee2e6; }
+      .img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+      .btn-upload { background-color: #adb5bd; color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
+      .input-group { margin-bottom: 20px; }
+      .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+      .input-group input, .input-group textarea { width: 100%; border: none; background-color: #f8f9fa; border-radius: 12px; padding: 15px; box-sizing: border-box; }
+      .required-label::after { content: ' *'; color: #ff6b6b; }
+      .error-msg { color: #ff6b6b; font-size: 0.8rem; margin-top: 5px; display: none; }
+      .section-group { margin-top: 30px; }
+      .section-header { background-color: #adb5bd; color: white; text-align: center; padding: 8px; font-size: 0.95rem; border-radius: 4px; margin-bottom: 15px; }
+      .flex-row { display: flex; gap: 10px; margin-bottom: 10px; }
+      .flex-row select { flex: 1; padding: 12px; border: 1px solid #eee; border-radius: 12px; background-color: #f8f9fa; }
+      .hashtag-input { position: relative; margin-bottom: 10px; }
+      .btn-reg { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #3d8e8e; color: white; border: none; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }
+      .btn-reg.active { opacity: 1; }
+      .tag-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; min-height: 30px; }
+      .tag { background-color: #dee2e6; padding: 5px 15px; border-radius: 15px; font-size: 0.85rem; color: #495057; cursor: pointer; }
+      .tag::after { content: ' ✕'; font-size: 0.7rem; margin-left: 5px; }
+      
+      .btn-submit { width: 100%; background-color: #ccc; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1rem; font-weight: bold; margin-top: 40px; cursor: not-allowed; transition: 0.3s; }
+      .btn-submit.active { background-color: #3d8e8e; cursor: pointer; }
+   </style>
 </head>
 <body>
    <div th:replace="layout/header :: siteHeader"></div>
-
    <main class="main">
-   <div class="container">
       <div class="join-form-wrapper">
-        <h2 class="form-title">코치 회원가입</h2>
-
-        <form action="#" th:action="@{/coach/join}" method="post" enctype="multipart/form-data">
-            
+         <h2 class="form-title">코치 회원가입</h2>
+         <form id="coachForm" action="coachJoin" method="post"><!--enctype="multipart/form-data"  -->
             <div class="profile-img-section">
-                <div class="img-placeholder">
-                    <img src="/images/default-profile.png" alt="프로필 기본 이미지">
-                </div>
-                <label for="profileFile" class="btn-upload">프로필사진 등록</label>
-                <input type="file" id="profileFile" name="profileFile" style="display:none;">
+               <div class="img-placeholder"><img id="previewImg" src="/img/profile/defaultProfile.jpg"></div>
+               <label for="profileFile" class="btn-upload">프로필사진 등록</label>
+               <!-- <input type="file" id="profileFile" name="photo" style="display:none;" accept="image/*"> -->
             </div>
 
             <div class="input-group">
-                <label class="required-label">닉네임</label>
-                <input type="text" name="nickname" placeholder="닉네임을 입력하세요">
-                <p class="error-msg">이미 사용중인 닉네임 입니다.</p>
+               <label class="required-label">닉네임</label>
+               <input type="text" name="nickname" id="nickname" placeholder="닉네임을 입력하세요">
+               <p id="nickname-msg" class="error-msg"></p>
             </div>
 
             <div class="input-group">
-                <label class="required-label">자기소개 작성</label>
-                <textarea name="bio" rows="5"></textarea>
+               <label>자기소개</label>
+               <textarea name="intro" rows="5" placeholder="코치님을 소개해 주세요."></textarea>
+            </div>
+            <div class="input-group">
+			   <label>소개 영상 업로드</label>
+			   <div style="display: flex; align-items: center; gap: 10px;">
+			      <label for="introVideo" class="btn-upload" style="display: inline-block; width: fit-content; margin: 0;">영상 파일 선택</label>
+			      <span id="video-filename" style="font-size: 0.85rem; color: #666;">선택된 파일 없음</span>
+			   </div>
+			   <!-- <input type="file" id="introVideo" name="video" accept="video/*" style="display:none;"> -->
+			   <p style="font-size: 0.75rem; color: #888; margin-top: 8px; padding-left: 5px;">
+			      * 10MB 이하의 영상 파일만 업로드 가능합니다.
+			   </p>
+			</div>
+            <div class="input-group">
+               <label>생년월일</label>
+               <input type="date" name="birthDate">
+            </div>
+            <div class="input-group">
+               <label class="required-label">전화번호</label>
+               <input type="tel" id="phone" name="phone" placeholder="010-0000-0000" maxlength="13">
             </div>
 
             <div class="section-group">
-                <h3 class="section-header">제공 분야</h3>
-                <div class="flex-row">
-                    <select name="serviceCategoryMain">
-                        <option value="">분야 대분류</option>
-                    </select>
-                    <select name="serviceCategorySub">
-                        <option value="">분야 소분류</option>
-                    </select>
-                </div>
-                <div class="hashtag-input">
-                    <input type="text" placeholder="해시태그">
-                    <button type="button" class="btn-reg">등록</button>
-                </div>
-                <div class="tag-list">
-                    <span class="tag">#축구</span>
-                    <span class="tag">#농구</span>
-                    <span class="tag">#야구</span>
-                </div>
+               <h3 class="section-header">제공 분야</h3>
+               <div class="flex-row">
+                  <select name="serviceCategoryMain" class="major-select field required-field">
+                     <option value="">분야 대분류</option>
+                     <option th:each="m : ${majorList}" th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"></option>
+                  </select>
+                  <select name="serviceCategorySub" class="minor-select required-field" disabled><option value="">분야 소분류</option></select>
+               </div>
+               <div class="hashtag-input">
+                  <input type="text" placeholder="해시태그 입력"><button type="button" class="btn-reg">등록</button>
+               </div>
+               <div class="tag-list"></div>
             </div>
 
             <div class="section-group">
-                <h3 class="section-header">관심 분야</h3>
-                <div class="flex-row">
-                    <select name="interestCategoryMain">
-                        <option value="">분야 대분류</option>
-                    </select>
-                    <select name="interestCategorySub">
-                        <option value="">분야 소분류</option>
-                    </select>
-                </div>
-                <div class="hashtag-input">
-                    <input type="text" placeholder="해시태그">
-                    <button type="button" class="btn-reg">등록</button>
-                </div>
-                <div class="tag-list">
-                    <span class="tag">#축구</span>
-                    <span class="tag">#농구</span>
-                    <span class="tag">#야구</span>
-                </div>
+               <h3 class="section-header">관심 분야</h3>
+               <div class="flex-row">
+                  <select name="interestCategoryMain" class="major-select field required-field">
+                     <option value="">분야 대분류</option>
+                     <option th:each="m : ${majorList}" th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"></option>
+                  </select>
+                  <select name="interestCategorySub" class="minor-select required-field" disabled><option value="">분야 소분류</option></select>
+               </div>
+               <div class="hashtag-input">
+                  <input type="text" placeholder="해시태그 입력"><button type="button" class="btn-reg">등록</button>
+               </div>
+               <div class="tag-list"></div>
             </div>
 
             <div class="section-group">
-                <h3 class="section-header">활동 지역</h3>
-                <div class="flex-row">
-                    <select name="regionMain">
-                        <option value="">지역 대분류</option>
-                    </select>
-                    <select name="regionSub">
-                        <option value="">지역 소분류</option>
-                    </select>
-                </div>
-                <div class="tag-list">
-                    <span class="tag">#마포구</span>
-                    <span class="tag">#종로구</span>
-                </div>
+               <h3 class="section-header">활동 지역</h3>
+               <div class="flex-row">
+                  <select name="regionMain" class="major-select region required-field">
+                     <option value="">지역 대분류</option>
+                     <option th:each="r : ${majorRegions}" th:value="${r.MAJOR_REGION_IDX}" th:text="${r.REGION_NM}"></option>
+                  </select>
+                  <select name="regionSub" class="minor-select required-field" disabled><option value="">지역 소분류</option></select>
+               </div>
+               <div class="tag-list"></div>
             </div>
-
-            <button type="submit" class="btn-submit">가입하기</button>
-        </form>
-    </div>
-   </div>
+            <input type="hidden" name="login_id" th:value="${login_id}">
+			<input type="hidden" name="mail" th:value="${mail}">
+            <button type="submit" id="submitBtn" class="btn-submit" disabled>가입하기</button>
+         </form>
+      </div>
    </main>
-  
    <div th:replace="layout/footer :: siteFooter"></div>
 
+   <script>
+      document.addEventListener('DOMContentLoaded', function() {
+         const submitBtn = document.getElementById('submitBtn');
+         const nicknameInput = document.getElementById('nickname');
+         const phoneInput = document.getElementById('phone');
+         let isNickValid = false;
+
+         // --- 가입 버튼 활성화 체크 함수 ---
+         const checkFormValidity = () => {
+            // 1. 필수 셀렉트 박스 확인
+            const requiredSelects = document.querySelectorAll('.required-field');
+            let allSelectsFilled = true;
+            requiredSelects.forEach(s => { if(!s.value) allSelectsFilled = false; });
+
+            // 2. 필수 전화번호 입력 확인 (하이픈 포함 13자리 기준)
+            const isPhoneFilled = phoneInput.value.length === 13;
+
+            if (isNickValid && allSelectsFilled && isPhoneFilled) {
+               submitBtn.disabled = false;
+               submitBtn.classList.add('active');
+            } else {
+               submitBtn.disabled = true;
+               submitBtn.classList.remove('active');
+            }
+         };
+
+         // --- 닉네임 중복 체크 ---
+         nicknameInput.addEventListener('blur', function() {
+            const val = this.value.trim();
+            const msg = document.getElementById('nickname-msg');
+            if (!val) { msg.style.display = 'none'; isNickValid = false; checkFormValidity(); return; }
+
+            fetch(`/api/member/idCheck?username=${encodeURIComponent(val)}`) // API 엔드포인트 확인 필요 (앞선 코드에선 idCheck 사용됨)
+               .then(res => res.json())
+               .then(isValid => {
+                  msg.style.display = 'block';
+                  isNickValid = isValid; // 중복이 없으면 true
+                  msg.textContent = isValid ? "사용 가능한 닉네임입니다." : "이미 사용중인 닉네임입니다.";
+                  msg.style.color = isValid ? "#28a745" : "#ff6b6b";
+                  checkFormValidity();
+               });
+         });
+
+         // --- 전화번호 하이픈 및 유효성 체크 ---
+         phoneInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+            checkFormValidity();
+         });
+
+         // --- 통합 셀렉트 및 태그 초기화 로직 ---
+         const setupCascading = (majorSelector, apiUrl, idKey, nameKey) => {
+            document.querySelectorAll(majorSelector).forEach(select => {
+               select.addEventListener('change', function() {
+                  const section = this.closest('.section-group');
+                  const minorSelect = section.querySelector('.minor-select');
+                  const tagList = section.querySelector('.tag-list');
+                  
+                  if (tagList) tagList.innerHTML = ''; 
+
+                  if (!this.value) {
+                     minorSelect.innerHTML = `<option value="">${minorSelect.options[0].text}</option>`;
+                     minorSelect.disabled = true;
+                     checkFormValidity();
+                     return;
+                  }
+
+                  fetch(`${apiUrl}?majorIdx=${this.value}`)
+                     .then(res => res.json())
+                     .then(data => {
+                        minorSelect.innerHTML = `<option value="">${minorSelect.options[0].text}</option>`;
+                        data.forEach(item => minorSelect.add(new Option(item[nameKey], item[idKey])));
+                        minorSelect.disabled = false;
+                        checkFormValidity();
+                     });
+               });
+            });
+         };
+
+         setupCascading('.major-select.field', '/api/coach/minorFields', 'MINOR_FIELD_IDX', 'MINOR_FIELD_NM');
+         setupCascading('.major-select.region', '/api/coach/minorRegions', 'MINOR_REGION_IDX', 'DISTRICT_NM');
+
+         document.querySelectorAll('.minor-select').forEach(s => s.addEventListener('change', function() {
+            const section = this.closest('.section-group');
+            const tagList = section.querySelector('.tag-list');
+            if (tagList) tagList.innerHTML = ''; 
+            
+            const btnReg = section.querySelector('.btn-reg');
+            if (btnReg) btnReg.classList.toggle('active', !!this.value);
+            checkFormValidity();
+         }));
+
+         // --- 해시태그 등록 ---
+         document.querySelectorAll('.btn-reg').forEach(btn => btn.addEventListener('click', function() {
+            const section = this.closest('.section-group');
+            const input = section.querySelector('.hashtag-input input');
+            let val = input.value.trim();
+            if (!val || !section.querySelector('.minor-select').value) return;
+
+            const tag = document.createElement('span');
+            tag.className = 'tag'; tag.textContent = val.startsWith('#') ? val : '#'+val;
+            tag.onclick = function() { this.remove(); };
+            section.querySelector('.tag-list').appendChild(tag);
+            input.value = '';
+         }));
+
+         // --- 이미지 미리보기 ---
+         document.getElementById('profileFile')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+               const reader = new FileReader();
+               reader.onload = (ev) => document.getElementById('previewImg').src = ev.target.result;
+               reader.readAsDataURL(file);
+            }
+         });
+         document.getElementById('introVideo')?.addEventListener('change', function(e) {
+        	    const fileName = e.target.files[0] ? e.target.files[0].name : "선택된 파일 없음";
+        	    document.getElementById('video-filename').textContent = fileName;
+        	});
+      });
+   </script>
 </body>
+</html>

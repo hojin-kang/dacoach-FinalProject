@@ -18,5 +18,53 @@
         #{status}, 
         sysdate
     )
-</insert>
+	</insert>
+	<select id="checkNick" parameterType="String" resultType="Integer">
+		select count(*) from coach where nickname = #{nickname}
+	</select>
+	<select id="getMajorFields" resultType="map">
+	    select major_field_idx, major_field_cd 
+	    from major_field 
+	    order by major_field_idx asc
+	</select>
+
+	<select id="getMinorFields" parameterType="int" resultType="map">
+	    select minor_field_idx, minor_field_nm 
+	    from minor_field 
+	    where major_field_idx = #{majoridx}
+	    order by minor_field_nm asc
+	</select>
+	<select id="getMajorRegions" resultType="map">
+	    select major_region_idx, region_nm 
+		from major_region 
+		order by region_nm asc
+	</select>
+
+	<select id="getMinorRegions" parameterType="int" resultType="map">
+	    select minor_region_idx, district_nm
+		from minor_region
+		where major_region_idx = #{majorRegionIdx}
+		order by district_nm asc
+	</select>
+	<select id="getUsersIdx" parameterType="String" resultType="Integer">
+		select users_idx from users where login_id=#{login_id}
+	</select>
+	<insert id="coachJoin" parameterType="com.dacoach.model.coach.CoachDTO">
+		insert into coach (
+		    coach_idx, users_idx, birth_date, nickname, phone, mail, intro, photo, video, point_score,
+		    token_balance, kakao_key) values (
+		    	seq_coach.nextval,
+		    	#{users_idx},
+		    	#{birth_date, jdbcType=DATE},
+		    	#{nickname},
+		    	#{phone},
+		    	#{mail},
+		    	#{intro},
+		    	' ',
+		    	' ',
+		    	0,
+		    	0,
+		    	' '
+		    )
+	</insert>
 </mapper>
