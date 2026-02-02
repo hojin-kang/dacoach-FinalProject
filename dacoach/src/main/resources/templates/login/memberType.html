@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 및 회원가입</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 기본 레이아웃 */
+        body { 
+            background-color: #ffffff; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        
+        /* 메뉴바 밑줄 제거 */
+        nav a, .header-container a { text-decoration: none !important; color: inherit; }
+
+        main {
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 0;
+        }
+
+        /* --- 로그인 섹션 --- */
+        .login-container { width: 400px; text-align: center; margin-bottom: 80px; }
+        .section-title { font-weight: bold; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        
+        .user-type-radio { margin-bottom: 20px; color: #666; }
+        .user-type-radio input { margin-right: 5px; }
+        .user-type-radio label { margin-right: 15px; cursor: pointer; }
+
+        /* 아이디/비밀번호 + 버튼 그리드 (사진 속 배치 핵심) */
+        .login-grid {
+            display: grid;
+            grid-template-columns: 1fr 100px;
+            gap: 10px;
+            width: 100%;
+        }
+        .input-stack { display: flex; flex-direction: column; gap: 4px; }
+        
+        .form-control { 
+            background-color: #f8f9fa !important; 
+            border: none !important; 
+            border-radius: 12px !important; 
+            padding: 12px; 
+        }
+
+        .btn-login { 
+            background-color: #3d8b89; 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-weight: bold;
+            height: 100%;
+        }
+
+        .find-links { font-size: 13px; color: #999; margin: 15px 0 25px; }
+        .find-links a { text-decoration: none !important; color: #999; margin: 0 5px; }
+
+        .btn-kakao { 
+            background-color: #fee500; 
+            border: none; 
+            border-radius: 12px; 
+            width: 100%; 
+            padding: 12px; 
+            font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none !important; color: #000;
+        }
+
+        /* --- 회원가입 선택 섹션 (사진 하단 디자인) --- */
+        .signup-selection { width: 800px; text-align: center; }
+        .signup-card-container { display: flex; gap: 30px; margin-top: 40px; }
+        .signup-card { 
+            flex: 1; 
+            padding: 40px 20px; 
+            border: 1px solid #eee; 
+            border-radius: 20px; 
+            transition: all 0.3s;
+        }
+        .signup-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .card-icon { width: 80px; height: 80px; margin-bottom: 20px; }
+        
+        .type-title-coach { color: #3d8b89; font-weight: bold; font-size: 20px; }
+        .type-title-company { color: #d67d1d; font-weight: bold; font-size: 20px; }
+        
+        .type-desc { font-size: 14px; color: #666; margin: 15px 0 30px; line-height: 1.5; }
+
+        .btn-signup-coach { background-color: #3d8b89; color: white; border: none; border-radius: 10px; padding: 10px 40px; font-weight: bold; width: 80%; }
+        .btn-signup-company { background-color: transparent; color: #d67d1d; border: 2px solid #d67d1d; border-radius: 10px; padding: 10px 40px; font-weight: bold; width: 80%; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{layout/header :: siteHeader}"></div>
+
+    <main>
+        <div class="login-container">
+            <h4 class="section-title">로그인</h4>
+            <form action="/login" method="post">
+                <div class="user-type-radio">
+                    <input type="radio" name="type" id="coach-login" checked><label for="coach-login">코치</label>
+                    <input type="radio" name="type" id="company-login"><label for="company-login">컴퍼니</label>
+                </div>
+
+                <div class="login-grid">
+                    <div class="input-stack">
+                        <input type="text" name="username" class="form-control" placeholder="아이디">
+                        <input type="password" name="password" class="form-control" placeholder="비밀번호">
+                    </div>
+                    <button type="submit" class="btn-login">로그인</button>
+                </div>
+
+                <div class="find-links">
+                    <a href="#">아이디 찾기</a> | <a href="#">비밀번호 찾기</a>
+                </div>
+
+                <button type="button" class="btn-kakao">💬 카카오로 시작하기</button>
+            </form>
+        </div>
+
+        <hr style="width: 100%; color: #eee; margin: 50px 0;">
+
+        <div class="signup-selection">
+            <h4 class="section-title">회원가입</h4>
+            <div class="signup-card-container">
+                <div class="signup-card">
+                    <div class="type-title-coach">코치</div>
+                    <div class="my-4">
+                        <div style="font-size: 50px; color: #3d8b89;">👤</div>
+                    </div>
+                    <p class="type-desc">코치 회원이 되어<br>재능을 무료로 교환하거나<br>클래스를 수강해 보세요!</p>
+                    <button class="btn-signup-coach" onclick="location.href='/signup/coach'">가입하기</button>
+                </div>
+
+                <div class="signup-card">
+                    <div class="type-title-company">컴퍼니</div>
+                    <div class="my-4">
+                        <div style="font-size: 50px; color: #d67d1d;">🏢</div>
+                    </div>
+                    <p class="type-desc">컴퍼니 회원이 되어<br>클래스별 수강생을 모집하고<br>통계 데이터를 관리해보세요!</p>
+                    <button class="btn-signup-company" onclick="location.href='/signup/company'">가입하기</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{layout/footer :: siteFooter}"></div>
+
+</body>
+</html>

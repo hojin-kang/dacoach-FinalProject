@@ -9,4 +9,8 @@ public class LoginController {
 	public String login() {
 		return "login/login";
 	}
+	@GetMapping("/memberType")
+	public String memberType() {
+		return "login/memberType";
+	}
 }
