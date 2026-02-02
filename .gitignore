@@ -34,4 +34,4 @@ build/
 .vscode/
 
 ### Database & Sensitive Info ###
-src/main/resources/application.properties
+dacoach/src/main/resources/application.properties
