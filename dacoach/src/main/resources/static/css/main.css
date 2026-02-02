@@ -106,6 +106,7 @@ hr {
 }
 
 .footerLeft{
+	flex: 1;
   min-width: 260px;
 }
 
@@ -130,9 +131,9 @@ hr {
 /* right columns */
 .footerRight{
   flex: 1;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 26px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .footerColTitle{
