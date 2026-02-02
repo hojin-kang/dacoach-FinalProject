@@ -13,11 +13,11 @@ import lombok.ToString;
 @Getter
 @Setter
 public class UsersDTO {
-	private int usersIdx;
-	private String userType;
-	private String userName;
-	private String loginId;
+	private int users_idx;
+	private String user_type;
+	private String user_name;
+	private String login_id;
 	private String password;
 	private String status;
-	private Date createdAt;
+	private Date created_at;
 }

@@ -6,4 +6,17 @@
 	<select id="idCheck" parameterType="String" resultType="Integer">
 		select count(*) from users where login_id = #{loginId}
 	</select>
+	<insert id="coachProfile" parameterType="com.dacoach.model.users.UsersDTO">
+    INSERT INTO users (
+        users_idx, user_type, user_name, login_id, password, status, created_at) 
+    VALUES (
+        seq_users.nextval, 
+        #{user_type}, 
+        #{user_name}, 
+        #{login_id}, 
+        #{password}, 
+        #{status}, 
+        sysdate
+    )
+</insert>
 </mapper>

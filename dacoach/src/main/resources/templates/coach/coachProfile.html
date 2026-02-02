@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+   <meta charset="UTF-8" />
+   <title>코치프로필</title>
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+   <div class="container">
+      <div class="join-form-wrapper">
+        <h2 class="form-title">코치 회원가입</h2>
+
+        <form action="#" th:action="@{/coach/join}" method="post" enctype="multipart/form-data">
+            
+            <div class="profile-img-section">
+                <div class="img-placeholder">
+                    <img src="/images/default-profile.png" alt="프로필 기본 이미지">
+                </div>
+                <label for="profileFile" class="btn-upload">프로필사진 등록</label>
+                <input type="file" id="profileFile" name="profileFile" style="display:none;">
+            </div>
+
+            <div class="input-group">
+                <label class="required-label">닉네임</label>
+                <input type="text" name="nickname" placeholder="닉네임을 입력하세요">
+                <p class="error-msg">이미 사용중인 닉네임 입니다.</p>
+            </div>
+
+            <div class="input-group">
+                <label class="required-label">자기소개 작성</label>
+                <textarea name="bio" rows="5"></textarea>
+            </div>
+
+            <div class="section-group">
+                <h3 class="section-header">제공 분야</h3>
+                <div class="flex-row">
+                    <select name="serviceCategoryMain">
+                        <option value="">분야 대분류</option>
+                    </select>
+                    <select name="serviceCategorySub">
+                        <option value="">분야 소분류</option>
+                    </select>
+                </div>
+                <div class="hashtag-input">
+                    <input type="text" placeholder="해시태그">
+                    <button type="button" class="btn-reg">등록</button>
+                </div>
+                <div class="tag-list">
+                    <span class="tag">#축구</span>
+                    <span class="tag">#농구</span>
+                    <span class="tag">#야구</span>
+                </div>
+            </div>
+
+            <div class="section-group">
+                <h3 class="section-header">관심 분야</h3>
+                <div class="flex-row">
+                    <select name="interestCategoryMain">
+                        <option value="">분야 대분류</option>
+                    </select>
+                    <select name="interestCategorySub">
+                        <option value="">분야 소분류</option>
+                    </select>
+                </div>
+                <div class="hashtag-input">
+                    <input type="text" placeholder="해시태그">
+                    <button type="button" class="btn-reg">등록</button>
+                </div>
+                <div class="tag-list">
+                    <span class="tag">#축구</span>
+                    <span class="tag">#농구</span>
+                    <span class="tag">#야구</span>
+                </div>
+            </div>
+
+            <div class="section-group">
+                <h3 class="section-header">활동 지역</h3>
+                <div class="flex-row">
+                    <select name="regionMain">
+                        <option value="">지역 대분류</option>
+                    </select>
+                    <select name="regionSub">
+                        <option value="">지역 소분류</option>
+                    </select>
+                </div>
+                <div class="tag-list">
+                    <span class="tag">#마포구</span>
+                    <span class="tag">#종로구</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">가입하기</button>
+        </form>
+    </div>
+   </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+
+</body>

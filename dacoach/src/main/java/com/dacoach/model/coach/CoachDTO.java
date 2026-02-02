@@ -5,18 +5,18 @@ import java.sql.Date;
 import com.dacoach.model.users.UsersDTO;
 
 public class CoachDTO {
-	private int coachIdx;
-	private int usersIdx;
-	private Date birthDate;
-	private String nickName;
+	private int coach_idx;
+	private int users_idx;
+	private Date birth_date;
+	private String nickname;
 	private String phone;
 	private String mail;
 	private String intro;
 	private String photo;
 	private String video;
-	private int pointScore;
-	private int tokenBalance;
-	private String kakaoKey;
+	private int point_score;
+	private int token_balance;
+	private String kakao_key;
 	
 	private UsersDTO usersDto;
 	
