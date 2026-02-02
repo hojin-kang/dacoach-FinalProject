@@ -1,0 +1,60 @@
+<aside class="w-64 min-h-screen bg-white border-r border-gray-200 py-10 flex-shrink-0" th:fragment="siteAside">
+    <nav>
+        <ul class="flex flex-col">
+            <li th:each="menu : ${menus}">
+                <a href="#" class="block px-8 py-3 text-gray-700 font-medium transition-all duration-200 
+                                  hover:bg-emerald-50 hover:text-emerald-700 border-l-4 border-transparent hover:border-emerald-500"
+                   th:text="${menu.name}">메뉴이름</a>
+            </li>
+
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    개인고객관리
+                </a>
+            </li>
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    기업고객관리
+                </a>
+            </li>
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    모니터링
+                </a>
+            </li>
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    고객센터
+                </a>
+            </li>
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    광고관리
+                </a>
+            </li>
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    키워드관리
+                </a>
+            </li>
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    수익관리
+                </a>
+            </li>
+            <li>
+                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
+                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                    신고관리
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
