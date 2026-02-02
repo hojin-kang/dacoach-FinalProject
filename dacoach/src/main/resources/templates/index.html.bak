@@ -1,42 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-<<<<<<< HEAD
-<meta charset="UTF-8">
-<title>메인화면</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-    h1 {
-        color: #333;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    }
-    .container {
-        text-align: center;
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-</style>
-</head>
-<body>
-<div class="container">
-    <h1>메인화면 index.html</h1>
-</div>
-=======
+
   <meta charset="UTF-8" />
   <title>dacoach</title>
 
-  <!-- static/css/main.css -->
   <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
@@ -51,6 +19,9 @@
   
   <div th:replace="layout/footer :: siteFooter"></div>
 
+<<<<<<< HEAD
 >>>>>>> b2d7fe9fd319d87098a6a9c61c95fa415b12f447
+=======
+>>>>>>> 6bc7db40d2b8e2b7cc68a023140d9dfba7aacd62
 </body>
 </html>
