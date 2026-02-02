@@ -71,10 +71,15 @@ button, input {
 }
 
 .gnb a {
-  font-size: 15px;
+  font-size: 16px;
   padding: 8px 6px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: black;
+}
+
+.gnb:last-child a {
+	color: #333;
+	font-weight: 600;
 }
 
 .gnb a:hover {
@@ -152,10 +157,23 @@ button, input {
 	flex-direction: column;
 	text-align: center;
 	margin: 0 auto;
+	padding: 10px 20px 0;
+	position: relative;
+	border-top: 1px solid #EFEFEF;
 }
 
-.categoryArea span {
-	font-weight: 600;
+.categoryArea > span {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  background: #fff;
+  padding: 0 14px;
+  
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
 }
 
 .category {
@@ -178,6 +196,57 @@ button, input {
 }
 
 .categoryUnit span {
-	font-size: 13px;
+	font-size: 14px;
 	font-weight: 500;
+}
+
+/************** main section ******************/
+.mainSection {
+	margin-top: 50px;
+}
+.mainSection>span {
+	font-weight: 700;
+	font-size: 17px;
+	
+}
+
+.mainSectionUnit {
+	margin-top: 10px;
+	min-height: 180px;
+	background-color: #F8F9FA;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: row;
+	gap: 12px;
+	padding: 0px 15px;
+	justify-content: flex-start;
+	align-items: center;
+	overflow-x: auto;
+	overflow-y: hidden;
+
+	scrollbar-width: none;
+}
+
+.mainSectionUnit .card {
+	min-width: 200px;          /* ⭐ 이게 핵심 */
+	height: 150px;
+	background: #fff;
+	border-radius: 8px;
+	flex-shrink: 0;            /* ⭐ 줄어들지 않게 */
+}
+
+
+/********** adBanner ************/
+.adBanner {
+	margin-top: 50px;
+	min-width: 868px;
+	/*min-height: 156px;*/
+	min-height: 120px;
+	background-color: #F8F9FA;
+}
+
+.adBanner img {
+	width: 868px;
+	height: 120px;
+	object-fit: cover;
 }
