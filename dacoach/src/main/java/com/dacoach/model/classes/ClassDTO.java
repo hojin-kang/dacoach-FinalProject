@@ -9,15 +9,15 @@ import lombok.*;
 @Setter
 @ToString
 public class ClassDTO {
-	private Integer classIdx;
-	private Integer providerIdx;
+	private Integer class_idx;
+	private Integer provider_idx;
 	private String title;
 	private String intro;
-	private Integer minorFieldIdx;
-	private Integer minorRegionIdx;
+	private Integer minor_field_idx;
+	private Integer minor_region_idx;
 	private Integer price;
-	private Date startDate;
-	private Date endDate;
-	private Date createdAt;
-	private Integer maxUserCnt;
+	private Date start_date;
+	private Date end_date;
+	private Date created_at;
+	private Integer max_user_cnt;
 }

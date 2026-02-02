@@ -7,12 +7,12 @@ import com.dacoach.model.classes.ClassDTO;
 
 @Service
 public class ClassServiceImple implements ClassService {
-    
-    @Autowired
-    private ClassMapper classMapper;
-    
-    @Override
-    public int classRegister(ClassDTO classDTO) {
-        return classMapper.insertClass(classDTO);
-    }
+
+	@Autowired
+	private ClassMapper classMapper;
+
+	@Override
+	public int classRegister(ClassDTO classDTO) {
+		return classMapper.insertClass(classDTO);
+	}
 }

@@ -123,7 +123,7 @@
 					<div>
 						<select id="mainCategory" required>
 							<option value="">대분류 선택</option>
-						</select> <select id="subCategory" name="minorFieldIdx" required>
+						</select> <select id="subCategory" name="minor_field_idx" required>
 							<option value="">소분류 선택</option>
 						</select>
 					</div>
@@ -135,7 +135,7 @@
 					<div>
 						<select id="majorRegion" required>
 							<option value="">시/도 선택</option>
-						</select> <select id="minorRegion" name="minorRegionIdx" required>
+						</select> <select id="minorRegion" name="minor_region_idx" required>
 							<option value="">구/군 선택</option>
 						</select>
 					</div>
@@ -170,12 +170,12 @@
 					<div>
 						<div class="date-time-input">
 							<label for="startDate">시작일:</label> <input type="datetime-local"
-								id="startDate" name="startDate" required>
+								id="startDate" name="start_date" required>
 						</div>
 
 						<div class="date-time-input">
 							<label for="endDate">종료일:</label> <input type="datetime-local"
-								id="endDate" name="endDate" required>
+								id="endDate" name="end_date" required>
 						</div>
 					</div>
 					<div id="dateError" class="error-message"></div>
@@ -184,7 +184,7 @@
 				<div class="form-group">
 					<h3 class="required">수강인원 제한</h3>
 					<div>
-						<input type="range" id="participantLimit" name="maxUserCnt"
+						<input type="range" id="participantLimit" name="max_user_cnt"
 							min="1" max="100" value="10">
 						<output id="participantOutput">10명</output>
 					</div>
@@ -398,12 +398,12 @@
 			// 일반 필드 추가
 			formData.append('title', document.getElementById('classTitle').value);
 			formData.append('intro', document.getElementById('classContent').value);
-			formData.append('minorFieldIdx', document.getElementById('subCategory').value);
-			formData.append('minorRegionIdx', document.getElementById('minorRegion').value);
+			formData.append('minor_field_idx', document.getElementById('subCategory').value);
+			formData.append('minor_region_idx', document.getElementById('minorRegion').value);
 			formData.append('price', document.getElementById('classCost').value);
-			formData.append('startDate', document.getElementById('startDate').value);
-			formData.append('endDate', document.getElementById('endDate').value);
-			formData.append('maxUserCnt', document.getElementById('participantLimit').value);
+			formData.append('start_date', document.getElementById('startDate').value);
+			formData.append('end_date', document.getElementById('endDate').value);
+			formData.append('max_user_cnt', document.getElementById('participantLimit').value);
 			
 			// 이미지 파일 추가
 			selectedImages.forEach((file, index) => {
