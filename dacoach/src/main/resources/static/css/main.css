@@ -53,9 +53,13 @@ hr {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  
+  background-color: white;
+  border-bottom: none;
+}
+
+/* 스크롤 시 적용될 클래스 */
+.header.scrolled {
+  border-bottom: 1px solid #edf0f2;
 }
 
 .header__inner {
@@ -79,6 +83,125 @@ hr {
   gap: 18px;
 
   flex-shrink: 0;          /* ⭐ 절대 줄어들지 않게 */
+}
+
+/* ======================
+   Footer
+====================== */
+.footer {
+  bottom: 0;
+  margin-top: 70px;
+  border-top: 1px solid #edf0f2;
+  background: #fff;
+}
+
+.footer__inner{
+  padding: 34px 0 48px;
+}
+
+.footerTop{
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.footerLeft{
+  min-width: 260px;
+}
+
+.csTel{
+  font-size: 22px;
+  font-weight: 800;
+  color: #328889;
+  margin-bottom: 6px;
+}
+
+.csTime{
+  font-size: 13px;
+  color: #666;
+  line-height: 1.45;
+}
+
+.csTime span{
+  color: #999;
+}
+
+
+/* right columns */
+.footerRight{
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 26px;
+}
+
+.footerColTitle{
+  font-size: 13px;
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.footerCol a{
+  display: block;
+  font-size: 12px;
+  color: #666;
+  padding: 4px 0;
+}
+
+.footerCol a:hover{
+  color: #111;
+}
+
+/* policy row */
+.footerPolicy{
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid #f1f1f1;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footerPolicy a{
+  font-size: 12px;
+  color: #666;
+}
+
+.footerPolicy a.strong{
+  color: #111;
+  font-weight: 700;
+}
+
+/* info */
+.footerInfo{
+  margin-top: 14px;
+  position: relative;
+  font-size: 11px;
+  color: #888;
+  line-height: 1.6;
+}
+
+.footerInfo .copy{
+  margin-top: 10px;
+  color: #9a9a9a;
+}
+
+
+
+/* responsive */
+@media (max-width: 940px){
+  .footerTop{
+    flex-direction: column;
+  }
+  .footerRight{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sns{
+    position: static;
+    margin-top: 16px;
+    justify-content: flex-start;
+  }
 }
 
 /* ======================
