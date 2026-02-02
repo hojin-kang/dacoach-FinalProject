@@ -1,12 +1,18 @@
 package com.dacoach.service.coach;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dacoach.mapper.coach.CoachMapper;
+import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.users.UsersDTO;
 
 @Service
+@Transactional
 public class CoachServiceImple implements CoachService {
 	@Autowired
 	private CoachMapper coachMapper;
@@ -23,4 +29,44 @@ public class CoachServiceImple implements CoachService {
 		Integer result=coachMapper.coachProfile(udto);
 		return result;
 	}
+
+	@Override
+	public boolean checkNick(String nickname) throws Exception {
+		boolean result=coachMapper.idCheck(nickname)>0?true:false;
+		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> getMajorFields() throws Exception {
+		return coachMapper.getMajorFields();
+	}
+
+	@Override
+	public List<Map<String, Object>> getMinorFields(int majorIdx) throws Exception {
+		return coachMapper.getMinorFields(majorIdx);
+	}
+
+	@Override
+	public List<Map<String, Object>> getMajorRegions() throws Exception {
+		return coachMapper.getMajorRegions();
+	}
+
+	@Override
+	public List<Map<String, Object>> getMinorRegions(int majorRegionIdx) throws Exception {
+		return coachMapper.getMinorRegions(majorRegionIdx);
+	}
+
+	@Override
+	public Integer getUsersIdx(String login_id) throws Exception {
+		return coachMapper.getUsersIdx(login_id);
+	}
+
+	@Override
+	public Integer coachJoin(CoachDTO cdto) throws Exception {
+		return coachMapper.coachJoin(cdto);
+	}
+
+	
+
+	
 }

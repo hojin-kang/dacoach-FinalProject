@@ -169,7 +169,7 @@
 
                 <div class="form-group">
                     <div class="input-row">
-                        <input type="text" id="phone" class="form-control" placeholder="전화번호">
+                        <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
                         <button type="button" class="btn-sub">인증번호 받기</button>
                     </div>
                 </div>
@@ -194,7 +194,7 @@
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const nameInput = document.getElementById('name');
-    const phoneInput = document.getElementById('phone');
+    const emailInput = document.getElementById('email');
     const authInput = document.getElementById('authCode');
     
     const checkDuplicateButton = document.getElementById('checkDuplicate');
@@ -212,11 +212,11 @@
         const isUserOk = isIdVerified && usernameInput.value !== "";
         const isPassOk = passwordError.style.display === 'none' && passwordInput.value !== "";
         const isNameOk = nameInput.value.trim() !== "";
-        const isPhoneOk = phoneInput.value.trim() !== "";
+        const isemailOk = emailInput.value.trim() !== "";
         const isAuthOk = authInput.value.trim() !== "";
 
         // 모든 조건 만족 시 가입 버튼 활성화
-        submitBtn.disabled = !(isUserOk && isPassOk && isNameOk && isPhoneOk && isAuthOk);
+        submitBtn.disabled = !(isUserOk && isPassOk && isNameOk && isemailOk && isAuthOk);
     }
 
     // [3] 아이디 실시간 유효성 및 상태 제어
@@ -281,7 +281,7 @@
     });
 
     // [6] 기타 입력 필드 이벤트 바인딩
-    [nameInput, phoneInput, authInput].forEach(el => {
+    [nameInput, emailInput, authInput].forEach(el => {
         el.addEventListener('input', checkAllValid);
     });
 </script>
