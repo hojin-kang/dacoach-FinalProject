@@ -78,14 +78,14 @@ public class ClassController {
 	public String classRegisterSubmit(@ModelAttribute ClassDTO classDTO, HttpSession session, RedirectAttributes rttr) {
 		try {
 			// 세션에서 사용자 정보 가져오기
-			Integer usersIdx = (Integer) session.getAttribute("usersIdx");
+			Integer usersIdx = (Integer) session.getAttribute("users_idx");
 
 			if (usersIdx == null) {
 				rttr.addFlashAttribute("error", "로그인이 필요합니다.");
 				return "redirect:/login";
 			}
 
-			classDTO.setProviderIdx(usersIdx);
+			classDTO.setProvider_idx(usersIdx);
 
 			// 백엔드 유효성 검사
 			String validationError = validateClass(classDTO);
@@ -122,32 +122,32 @@ public class ClassController {
 		if (classDTO.getIntro() == null || classDTO.getIntro().trim().isEmpty()) {
 			return "내용을 입력해주세요.";
 		}
-		if (classDTO.getMinorFieldIdx() == null) {
+		if (classDTO.getMinor_field_idx() == null) {
 			return "클래스 분야를 선택해주세요.";
 		}
-		if (classDTO.getMinorRegionIdx() == null) {
+		if (classDTO.getMinor_region_idx() == null) {
 			return "클래스 장소를 선택해주세요.";
 		}
 		if (classDTO.getPrice() == null || classDTO.getPrice() < 0) {
 			return "올바른 가격을 입력해주세요.";
 		}
-		if (classDTO.getStartDate() == null) {
+		if (classDTO.getStart_date() == null) {
 			return "시작일을 입력해주세요.";
 		}
-		if (classDTO.getEndDate() == null) {
+		if (classDTO.getEnd_date() == null) {
 			return "종료일을 입력해주세요.";
 		}
-		if (classDTO.getMaxUserCnt() == null || classDTO.getMaxUserCnt() <= 0) {
+		if (classDTO.getMax_user_cnt() == null || classDTO.getMax_user_cnt() <= 0) {
 			return "수강 인원을 올바르게 입력해주세요.";
 		}
 
 		// 날짜 검증
 		Date now = new Date();
-		if (classDTO.getStartDate().before(now)) {
+		if (classDTO.getStart_date().before(now)) {
 			return "시작일은 현재 시간 이후여야 합니다.";
 		}
-		if (classDTO.getEndDate().before(classDTO.getStartDate())
-				|| classDTO.getEndDate().equals(classDTO.getStartDate())) {
+		if (classDTO.getEnd_date().before(classDTO.getStart_date())
+				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
 			return "종료일은 시작일보다 이후여야 합니다.";
 		}
 
