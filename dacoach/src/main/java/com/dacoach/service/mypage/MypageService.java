@@ -4,5 +4,5 @@ import java.util.*;
 
 public interface MypageService {
 
-	public Map getUserInfo(int users_idx);
+	public Map getUserInfo(int user_idx);
 }

@@ -26,17 +26,21 @@ public class MypageController {
 	public ModelAndView mypageMain(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		int user_idx = (Integer)session.getAttribute("user_idx");
+		System.out.println(user_idx);  //1
 		String user_nickname = "";
 		String user_rank = "";
 		
 		try {
 			Map users_info = mypageService.getUserInfo(user_idx);
-			user_nickname = (String)users_info.get("NICKNAME");
-			user_rank = (String)users_info.get("RANKNAME");
+			if (users_info != null) {
+			    user_nickname = (String) users_info.get("NICKNAME");
+			    user_rank = (String) users_info.get("RANKNAME");
+			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-		
+		System.out.println(user_nickname);
+		System.out.println(user_rank);
 		mav.addObject("user_nickname", user_nickname);
 		mav.addObject("user_rank", user_rank);
 		mav.setViewName("/coach/mypage/mypage");

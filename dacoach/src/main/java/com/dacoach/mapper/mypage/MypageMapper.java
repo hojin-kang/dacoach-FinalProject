@@ -2,9 +2,11 @@ package com.dacoach.mapper.mypage;
 
 import java.util.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface MypageMapper {
 
-	public Map<String, Object> getUserInfo(int users_idx);
+	    Map<String, Object> getUserInfo(@Param("user_idx") int userIdx);
+
 }
