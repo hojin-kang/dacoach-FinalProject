@@ -18,13 +18,13 @@
 	        </div>
         </div>
         
-        <div class="header__spacer" th:if="${session.users_idx == null}"></div>
+        <div class="header__spacer" th:if="${session.user_idx == null}"></div>
         
-        <div class="gnb" th:if="${session.users_idx == null}">
+        <div class="gnb" th:if="${session.user_idx == null}">
         	<a th:href="@{/login}">로그인 / 회원가입</a>
         </div>
 
-        <div class="headerIcons" th:unless="${session.users_idx == null}">
+        <div class="headerIcons" th:unless="${session.user_idx == null}">
           <a class="iconBtn" th:href="@{/tokenHistory}" title="닭꼬치"><img src="/img/icon/dakcoachIcon.png"></a>
           <a class="iconBtn notiIcon" th:href="@{/notification}" title="알림">
 			<img src="/img/icon/notification.png">

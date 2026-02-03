@@ -50,7 +50,7 @@ public class UserController {
 	            mav.setViewName("users/login");
 	            return mav;
 	        }
-	        session.setAttribute("users_idx", loginUser.getUsers_idx());
+	        session.setAttribute("user_idx", loginUser.getUsers_idx());
 	        
 	        CoachDTO coachInfo = coachService.getCoachInfo(loginUser.getUsers_idx());
 	        if (coachInfo != null && coachInfo.getPhoto() != null) {

@@ -6,23 +6,27 @@
 <mapper namespace="com.dacoach.mapper.qna.QnaMapper">
 
     <!-- 내 문의 목록 -->
-    <select id="myQnaList" parameterType="int"
-            resultType="com.dacoach.model.qna.QnaDTO">
+    <select id="myQnaList" parameterType="int" resultType="com.dacoach.model.qna.QnaDTO">
         SELECT
-            QNA_IDX     AS qnaIdx,
-            USER_IDX    AS userIdx,
-            QNA_TYPE    AS qnaType,
-            TITLE       AS title,
-            QUESTION    AS question,
-            CREATED_AT  AS createdAt
-        FROM QNA
-        WHERE USER_IDX = #{userIdx}
-        ORDER BY CREATED_AT DESC
+	        Q.QNA_IDX     AS qnaIdx,
+	        Q.USER_IDX    AS userIdx,
+	        Q.QNA_TYPE    AS qnaType,
+	        Q.TITLE       AS title,
+	        Q.QUESTION    AS question,
+	        Q.CREATED_AT  AS createdAt,
+	        CASE
+	            WHEN A.QNA_A_IDX IS NULL THEN '답변대기'
+	            ELSE '답변완료'
+	        END AS answerStatus
+	    FROM QNA Q
+	    LEFT JOIN QNA_A A
+	      ON Q.QNA_IDX = A.QNA_IDX
+	    WHERE Q.USER_IDX = #{user_idx}
+	    ORDER BY Q.CREATED_AT DESC
     </select>
 
     <!-- 문의 상세 -->
-    <select id="myQnaDetail" parameterType="map"
-            resultType="com.dacoach.model.qna.QnaDTO">
+    <select id="myQnaDetail" parameterType="map" resultType="com.dacoach.model.qna.QnaDTO">
         SELECT
             QNA_IDX     AS qnaIdx,
             USER_IDX    AS userIdx,
@@ -31,8 +35,32 @@
             QUESTION    AS question,
             CREATED_AT  AS createdAt
         FROM QNA
-        WHERE QNA_IDX = #{qnaIdx}
-          AND USER_IDX = #{userIdx}
+        WHERE QNA_IDX = #{qna_idx}
+          AND USER_IDX = #{user_idx}
     </select>
+    
+    <select id="selectAnswer" parameterType="int" resultType="com.dacoach.model.qna.Qna_aDTO">
+	    SELECT
+	        QNA_A_IDX  AS qna_a_idx,
+	        QNA_IDX    AS qna_idx,
+	        TITLE      AS title,
+	        ANSWER     AS answer,
+	        CREATED_AT AS createdAt
+	    FROM QNA_A
+	    WHERE QNA_IDX = #{qna_idx}
+	</select>
+	
+	<insert id="myQnaNew" parameterType="com.dacoach.model.qna.QnaDTO">
+		insert into
+			qna
+		values(
+			seq_qna.nextval,
+			#{user_idx},
+			#{qna_type},
+			#{title},
+			#{question},
+			sysdate
+		)
+	</insert>
 
 </mapper>

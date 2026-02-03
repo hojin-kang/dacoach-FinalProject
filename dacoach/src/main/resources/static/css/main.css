@@ -272,12 +272,12 @@ hr {
 ====================== */
 .headerIcons {
   display: flex;
-  gap: 10px;
+  gap: 13px;
 }
 
 .iconBtn {
-  width: 30px;
-  height: 30px;
+  width: 27px;
+  height: 27px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -402,7 +402,7 @@ hr {
    Notification
 ====================== */
 .iconBtn {
-  position: relative;   /* 뱃지 올릴 기준 */
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -410,11 +410,11 @@ hr {
 
 .notiIcon .notiDot {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 1px;
+  right: 1px;
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background: #E53935;
-  box-shadow: 0 0 0 2px #fff; /* 흰 테두리(배경이랑 분리) */
+  box-shadow: 0 0 0 2px #fff;
 }
