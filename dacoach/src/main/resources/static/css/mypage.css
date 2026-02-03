@@ -102,21 +102,28 @@
   text-align: left !important;
 }
 
-/* qna list */
+/********************* qna **********************/
 .qnaWrap {
   display: flex;
   flex-direction: column;
-  gap: 14px;
 }
 
-.qnaItem {
+.qnaForm { margin: 0; }
+
+.qnaItemBtn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
   background: #fff;
   border-bottom: 1px solid #efefef;
   padding: 16px 18px;
   cursor: pointer;
 }
 
-.qnaItem:hover {
+.qnaItemBtn:hover {
   background: #fafafa;
 }
 
@@ -133,15 +140,11 @@
   align-items: center;
 }
 
-.qMark {
-  font-weight: 800;
-  color: #111;
-}
 
-.qTitle {
-  font-size: 16px;
+.qTitle, .aTitle {
+  font-size: 18px;
   font-weight: 700;
-  color: #111;
+  color: black;
 }
 
 /* badge */
@@ -153,11 +156,94 @@
   white-space: nowrap;
 }
 
-.badge.waiting {
-  background: #ffe9cf;   /* 캡처처럼 연한 주황 */
-  color: #b55a00;
-  border: 1px solid rgba(181, 90, 0, 0.15);
+.status{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+.status.wait{background:#F2F2F2;color:#777;}
+.status.done{background:#DFF6E5;color:#1B7F3A;}
+
+/* 상세 카드 */
+.qnaDetailCard{
+  background:#fff;
+  padding:18px 18px;
+  margin-bottom:14px;
 }
+
+.qnaDetailTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.qnaDetailTitleRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.qMark, .aMark{
+  font-weight:800;
+  font-size:16px;
+}
+
+.aMark{ color:#328889; }
+
+.qnaMeta{
+  display:flex;
+  gap:14px;
+  margin:10px 0 14px;
+  color:#666;
+  font-size:13px;
+}
+
+.metaItem b{
+  font-weight:700;
+  margin-right:6px;
+  color:#444;
+}
+
+.qnaContent{
+  white-space:pre-line;
+  line-height:1.6;
+  font-size:16px;
+  color:#222;
+}
+
+.qnaActions{
+  margin-top:14px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+.btnLine{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  color:#333;
+  text-decoration:none;
+  font-size:13px;
+}
+
+.answerCard {
+	border-top: 1px solid #efefef;
+}
+.answerCard .answerDate{
+  font-size:12px;
+  color:#777;
+  
+}
+
+.waitingCard{
+  background:#F7F8F7;
+  box-shadow:none;
+  border:1px dashed #ddd;
+}
+
+.waitingText{
+  color:#777;
+  font-size:14px;
+}
+
 
 /* preview */
 .qnaPreview {
@@ -179,3 +265,86 @@
   color: #aaa;
   font-size: 16px;
 }
+
+.qnaWrap > a {
+  margin-left: auto;        /* flex 아이템(a)을 오른쪽으로 */
+  display: inline-block;    /* 크기 유지 */
+  margin-top: 12px;         /* 위 간격(원하면) */
+}
+
+.myQnaNewBtn{
+	background: #328889;
+	margin-right: 0px;
+	margin-left: auto;
+	color: white;
+	border: none;
+	padding: 7px 12px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+/* QNA 작성 폼 */
+.qnaFormWrap{
+  background:#fff;
+  padding:20px 22px;
+  max-width:720px;
+  margin: 0 auto;
+}
+
+.formRow{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.formRow label{
+  font-size:14px;
+  font-weight:700;
+  color:#333;
+}
+
+.formRow input,
+.formRow select,
+.formRow textarea{
+  border:1px solid #ddd;
+  border-radius:19px;
+  padding:10px 12px;
+  font-size:14px;
+  outline:none;
+  background: #F8F9FA;
+}
+
+.formRow textarea {
+	resize: none;
+}
+
+.formRow textarea{
+  resize:vertical;
+}
+
+.formRow input:focus,
+.formRow select:focus,
+.formRow textarea:focus{
+  border-color:#328889;
+}
+
+.formActions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:20px;
+}
+
+.btnPrimary{
+  background:#328889;
+  color:#fff;
+  border:none;
+  border-radius:999px;
+  padding:8px 18px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+}
+

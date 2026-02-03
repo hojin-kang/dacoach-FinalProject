@@ -23,30 +23,38 @@
 			<!-- 리스트 -->
 			<div class="qnaWrap">
 
-				<!-- 없을 때 -->
-				<div class="empty" th:if="${#lists.isEmpty(qnaList)}">등록된 문의가
-					없습니다.</div>
-
-				<!-- 항목 -->
-				<div class="qnaItem" th:each="q : ${qnaList}"
-					th:onclick="|location.href='@{/qna/myQnaDetail(qnaIdx=${q.qnaIdx})}'|">
-
-					<div class="qnaTop">
-						<div class="qnaTitleRow">
-							<span class="qMark">Q.</span> <span class="qTitle"
-								th:text="${q.title}">환불 문의</span>
-						</div>
-
-						<!-- 상태 배지: 일단 임시로 고정 -->
-						<span class="badge waiting">답변 대기</span>
-					</div>
-
-					<div class="qnaPreview" th:text="${q.question}">안녕하세요, 과외정보관리
-						관련해서 궁금한 점이 있습니다. 혹시...</div>
-
-				</div>
-
+			  <div class="empty" th:if="${#lists.isEmpty(qnaList)}">
+			    등록된 문의가 없습니다.
+			  </div>
+			
+			  <form th:each="q : ${qnaList}"
+			        th:action="@{/myQnaDetail}"
+			        method="post"
+			        class="qnaForm">
+			
+			    <input type="hidden" name="qnaIdx" th:value="${q.qna_idx}"/>
+			
+			    <button type="submit" class="qnaItemBtn">
+			      <div class="qnaTop">
+			        <div class="qnaTitleRow">
+			          <span class="qMark">Q.</span>
+			          <span class="qTitle" th:text="${q.title}"></span>
+			        </div>
+			
+			        <span th:text="${q.answerStatus}"
+			              th:classappend="${q.answerStatus == '답변완료'} ? 'status done' : 'status wait'">
+			        </span>
+			      </div>
+			
+			      <div class="qnaPreview" th:text="${q.question}">
+			        미리보기...
+			      </div>
+			    </button>
+			  </form>
+				<a th:href="@{/myQnaForm}"><button class="myQnaNewBtn">문의 등록</button></a>
 			</div>
+			
+
 		</div>
 	</main>
 
