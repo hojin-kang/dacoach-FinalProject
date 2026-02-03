@@ -4,121 +4,8 @@
     <meta charset="UTF-8">
     <title>로그인</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
-    <style>
-        /* [1] 전체 레이아웃: 헤더와 푸터 사이 중앙 배치 */
-        body { 
-            background-color: #ffffff; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
-            font-family: 'Pretendard', -apple-system, sans-serif;
-        }
-        
-        /* 헤더/푸터 링크 밑줄 제거 */
-        nav a, .header-container a, [th\:replace] a { 
-            text-decoration: none !important; 
-            color: inherit !important; 
-        }
-
-        main {
-            flex: 1; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 0;
-        }
-
-        .login-container { 
-            width: 400px; 
-            text-align: center; 
-        }
-
-        .login-title { 
-            font-weight: bold; 
-            margin-bottom: 40px; 
-            border-bottom: 1px solid #eee; 
-            padding-bottom: 20px; 
-            font-size: 24px;
-            color: #333;
-        }
-        
-        /* [2] 사용자 타입 선택 (라디오) */
-        .user-type { margin-bottom: 25px; color: #666; font-size: 15px; }
-        .user-type input { margin-right: 5px; cursor: pointer; }
-        .user-type label { margin-right: 15px; cursor: pointer; }
-
-        /* [3] 로그인 입력창 및 버튼 그리드 */
-        .login-row {
-            display: flex;
-            gap: 10px;
-            align-items: stretch; /* 입력창 높이에 맞춰 버튼 높이 자동 조절 */
-        }
-
-        .input-group-stack {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-control { 
-            width: 100%;
-            background-color: #f8f9fa !important; 
-            border: none !important; 
-            border-radius: 12px !important; 
-            padding: 14px; 
-            font-size: 15px;
-            outline: none;
-        }
-        
-        .btn-login { 
-            background-color: #3d8b89; 
-            color: white; 
-            border: none; 
-            border-radius: 12px; 
-            width: 100px; 
-            font-weight: bold; 
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-login:hover { background-color: #2d6b69; }
-
-        /* [4] 기타 링크 및 부가 버튼 */
-        .find-links { font-size: 13px; color: #999; margin: 15px 0 30px; }
-        .find-links a { color: #999; text-decoration: none; margin: 0 8px; }
-
-        .btn-kakao { 
-            background-color: #fee500; 
-            border: none; 
-            border-radius: 12px; 
-            width: 100%; 
-            padding: 14px; 
-            font-weight: bold; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            cursor: pointer;
-            text-decoration: none;
-            color: #3c1e1e;
-            font-size: 15px;
-        }
-
-        .divider { margin: 20px 0; font-size: 13px; color: #ccc; position: relative; }
-        
-        .btn-signup { 
-            background-color: transparent; 
-            border: 1px solid #3d8b89; 
-            border-radius: 25px; 
-            width: 100%; 
-            padding: 12px; 
-            color: #3d8b89; 
-            font-weight: bold; 
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-signup:hover { background-color: #f0f7f7; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+    
 </head>
 <body>
 
@@ -129,10 +16,6 @@
             <h4 class="login-title">로그인</h4>
 
             <form action="/loginOk" method="post">
-                <div class="user-type">
-                    <input type="radio" name="type" id="coach" checked><label for="coach">코치</label>
-                    <input type="radio" name="type" id="company"><label for="company">컴퍼니</label>
-                </div>
 
                 <div class="login-row">
                     <div class="input-group-stack">
