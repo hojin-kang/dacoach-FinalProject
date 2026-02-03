@@ -23,5 +23,10 @@ public class AdminServiceImple implements AdminService {
 	public int getCertCount() throws Exception {
 		return adminMapper.getCertCount();
 	}
+	
+	@Override
+	public List<Map<String, Object>> getCoachDetail(int coachidx) throws Exception {
+		return adminMapper.getCoachDetail(coachidx);
+	}
 
 }

@@ -21,7 +21,27 @@
 	order by
 	u.created_at desc
 	</select>
+	
 	<select id="getCertCount" resultType="int">
-	select count(*) from cert where cert_type = '자격증' and cert_status = '대기'
+		select count(*) from cert where cert_type = '자격증' and cert_status = '대기'
+	</select>
+	
+	<select id="getCoachDetail" parameterType="int" resultType="map">
+	SELECT u.user_name,
+	c.nickname,
+	u.login_id,
+	u.password,
+	c.kakao_key,
+	c.mail,
+	c.birth_date,
+	c.phone,
+	c.token_balance,
+	r.rank_name
+	FROM coach c
+	JOIN users u ON c.users_idx = u.users_idx
+	JOIN rank r
+	ON r.min_score <![CDATA[<]]>  c.point_score
+	AND c.point_score <![CDATA[<]]>= r.max_score
+	WHERE c.coach_idx = #{coachIdx}
 	</select>
 </mapper>
