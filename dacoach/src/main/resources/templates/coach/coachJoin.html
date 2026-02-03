@@ -5,10 +5,8 @@
     <title>코치 회원가입</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/coach/coachJoin.css}" />
-    
 </head>
 <body>
-
     <div th:replace="~{layout/header :: siteHeader}"></div>
 
     <main>
@@ -21,13 +19,13 @@
                         <input type="text" id="username" name="login_id" class="form-control" placeholder="아이디">
                         <button type="button" id="checkDuplicate" class="btn-sub" disabled>중복확인</button>
                     </div>
-                    <span id="usernameError" class="error-msg">아이디는 영문과 숫자를 모두 사용해 8~20자로 입력해주세요.</span>
-                    <span id="usernameSuccess" class="success-msg">사용 가능한 아이디입니다.</span>
+                    <span id="usernameError" class="error-msg" style="display:none;">아이디는 영문/숫자 조합 8~20자로 입력해주세요.</span>
+                    <span id="usernameSuccess" class="success-msg" style="display:none;">사용 가능한 아이디입니다.</span>
                 </div>
 
                 <div class="form-group">
                     <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" disabled>
-                    <span id="passwordError" class="error-msg">비밀번호는 영문 대문자, 소문자, 숫자, 특수문자를 모두 사용해 8~20자로 입력해주세요.</span>
+                    <span id="passwordError" class="error-msg" style="display:none;">대/소문자, 숫자, 특수문자 조합 8~20자로 입력해주세요.</span>
                 </div>
 
                 <div class="form-group mt-40">
@@ -37,16 +35,19 @@
                 <div class="form-group">
                     <div class="input-row">
                         <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
-                        <button type="button" class="btn-sub">인증번호 받기</button>
+                        <button type="button" id="sendEmailBtn" class="btn-sub">인증번호 받기</button>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="input-row">
-                        <input type="text" id="authCode" class="form-control" placeholder="인증번호">
-                        <button type="button" class="btn-sub btn-auth-confirm">인증</button>
-                    </div>
-                </div>
+				    <div class="input-row">
+				        <input type="text" id="authCode" class="form-control" placeholder="인증번호" disabled>
+				        <button type="button" id="verifyCodeBtn" class="btn-sub btn-auth-confirm" disabled>인증</button>
+				    </div>
+				    <span id="authSuccess" class="success-msg" style="display:none;">인증되었습니다.</span>
+				    <span id="authError" class="error-msg" style="display:none;">인증번호가 일치하지 않습니다.</span>
+				</div>
+
 				<input type="hidden" name="user_type" value="coach">
 				<input type="hidden" name="status" value="inactive">
                 <button type="submit" id="submitBtn" class="btn-submit" disabled>저장 후 계속하기</button>
@@ -57,100 +58,95 @@
     <div th:replace="~{layout/footer :: siteFooter}"></div>
 
     <script th:inline="javascript">
-    // [1] 요소 및 상태 변수 선언
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const authInput = document.getElementById('authCode');
-    
-    const checkDuplicateButton = document.getElementById('checkDuplicate');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    const usernameError = document.getElementById('usernameError');
-    const usernameSuccess = document.getElementById('usernameSuccess');
-    const passwordError = document.getElementById('passwordError');
+        // 요소 선택 헬퍼 함수
+        const el = (id) => document.getElementById(id);
+        
+        const nodes = {
+            user: el('username'), pass: el('password'), name: el('name'),
+            email: el('email'), auth: el('authCode'),
+            dupBtn: el('checkDuplicate'), sendBtn: el('sendEmailBtn'), verifyBtn: el('verifyCodeBtn'),
+            submitBtn: el('submitBtn'),
+            uSuccess: el('usernameSuccess'), uError: el('usernameError'), pError: el('passwordError'),
+            aSuccess: el('authSuccess'), aError: el('authError')
+        };
 
-    let isIdVerified = false; // 중복 확인 통과 여부
+        let isIdVerified = false;
+        let isEmailVerified = false;
 
-    // [2] 전체 유효성 검사 함수 (버튼 활성화 여부 결정)
-    function checkAllValid() {
-        // 유효성 체크 조건들
-        const isUserOk = isIdVerified && usernameInput.value !== "";
-        const isPassOk = passwordError.style.display === 'none' && passwordInput.value !== "";
-        const isNameOk = nameInput.value.trim() !== "";
-        const isemailOk = emailInput.value.trim() !== "";
-        const isAuthOk = authInput.value.trim() !== "";
-
-        // 모든 조건 만족 시 가입 버튼 활성화
-        submitBtn.disabled = !(isUserOk && isPassOk && isNameOk && isemailOk && isAuthOk);
-    }
-
-    // [3] 아이디 실시간 유효성 및 상태 제어
-    usernameInput.addEventListener('input', function() {
-        const username = this.value;
-        const isValid = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{8,20}$/.test(username);
-
-        // 아이디 변경 시 무조건 중복확인 다시 해야함
-        isIdVerified = false;
-        usernameSuccess.style.display = 'none';
-        passwordInput.disabled = true;
-        passwordInput.value = "";
-
-        if (!isValid) {
-            usernameError.style.display = (username === "") ? 'none' : 'block';
-            checkDuplicateButton.disabled = true;
-        } else {
-            usernameError.style.display = 'none';
-            checkDuplicateButton.disabled = false;
+        // 전체 유효성 검사 및 가입 버튼 제어
+        function checkAllValid() {
+            const isPassOk = nodes.pError.style.display === 'none' && nodes.pass.value !== "";
+            const isNameOk = nodes.name.value.trim() !== "";
+            
+            nodes.submitBtn.disabled = !(isIdVerified && isEmailVerified && isPassOk && isNameOk);
         }
-        checkAllValid();
-    });
 
-    // [4] 중복확인 AJAX 요청
-    checkDuplicateButton.addEventListener('click', function() {
-        const username = usernameInput.value;
+        // 1. 아이디 입력 시
+        nodes.user.addEventListener('input', () => {
+            isIdVerified = false;
+            nodes.uSuccess.style.display = 'none';
+            nodes.pass.disabled = true;
+            nodes.pass.value = "";
+            
+            const isValid = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{8,20}$/.test(nodes.user.value);
+            nodes.uError.style.display = (nodes.user.value === "" || isValid) ? 'none' : 'block';
+            nodes.dupBtn.disabled = !isValid;
+            checkAllValid();
+        });
 
-        fetch(`/api/member/idCheck?username=${username}`)
-            .then(response => response.json())
-            .then(isAvailable => {
-                if (isAvailable) {
-                    usernameSuccess.style.display = 'block';
-                    usernameError.style.display = 'none';
-                    isIdVerified = true;
-                    passwordInput.disabled = false;
-                    alert("사용 가능한 아이디입니다.");
-                } else {
-                    usernameError.textContent = "이미 사용 중인 아이디입니다.";
-                    usernameError.style.display = 'block';
-                    usernameSuccess.style.display = 'none';
-                    isIdVerified = false;
-                }
-                checkAllValid();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("중복 확인 중 오류가 발생했습니다.");
-            });
-    });
+        // 2. 아이디 중복 확인
+        nodes.dupBtn.addEventListener('click', () => {
+            fetch(`/api/member/idCheck?username=${nodes.user.value}`)
+                .then(res => res.json())
+                .then(isAvailable => {
+                    isIdVerified = isAvailable;
+                    nodes.uSuccess.style.display = isAvailable ? 'block' : 'none';
+                    nodes.uError.style.display = isAvailable ? 'none' : 'block';
+                    if(!isAvailable) nodes.uError.textContent = "이미 사용 중인 아이디입니다.";
+                    nodes.pass.disabled = !isAvailable;
+                    checkAllValid();
+                });
+        });
 
-    // [5] 비밀번호 유효성 검사
-    passwordInput.addEventListener('input', function() {
-        const password = this.value;
-        const isValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/.test(password);
+        // 3. 비밀번호 입력 시
+        nodes.pass.addEventListener('input', () => {
+            const isValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/.test(nodes.pass.value);
+            nodes.pError.style.display = (nodes.pass.value === "" || isValid) ? 'none' : 'block';
+            checkAllValid();
+        });
 
-        if (password === "") {
-            passwordError.style.display = 'none';
-        } else {
-            passwordError.style.display = isValid ? 'none' : 'block';
-        }
-        checkAllValid();
-    });
+        // 4. 이메일 인증번호 발송
+        nodes.sendBtn.addEventListener('click', () => {
+            if(!nodes.email.value) return alert("이메일을 입력하세요.");
+            
+            fetch(`/api/mail/send?email=${nodes.email.value}`, { method: 'POST' })
+                .then(res => res.text())
+                .then(data => {
+                    if(data === "success") {
+                        alert("인증번호가 발송되었습니다.");
+                        nodes.auth.disabled = nodes.verifyBtn.disabled = false;
+                    }
+                }).catch(() => alert("메일 발송 중 오류가 발생했습니다."));
+        });
 
-    // [6] 기타 입력 필드 이벤트 바인딩
-    [nameInput, emailInput, authInput].forEach(el => {
-        el.addEventListener('input', checkAllValid);
-    });
-</script>
+        // 5. 인증번호 확인
+        nodes.verifyBtn.addEventListener('click', () => {
+            fetch(`/api/mail/verify?code=${nodes.auth.value}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(ok => {
+                    isEmailVerified = ok;
+                    nodes.aSuccess.style.display = ok ? 'block' : 'none';
+                    nodes.aError.style.display = ok ? 'none' : 'block';
+                    if(ok) {
+                        nodes.auth.disabled = nodes.verifyBtn.disabled = true;
+                        nodes.email.readOnly = true;
+                    }
+                    checkAllValid();
+                });
+        });
+
+        // 나머지 입력 이벤트
+        [nodes.name, nodes.email, nodes.auth].forEach(v => v.addEventListener('input', checkAllValid));
+    </script>
 </body>
 </html>
