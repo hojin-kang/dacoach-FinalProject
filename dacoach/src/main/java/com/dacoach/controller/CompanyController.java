@@ -22,6 +22,7 @@ public class CompanyController {
 	public ModelAndView companyInfo(){
 		
 		ModelAndView mav=new ModelAndView();
+		
 		mav.setViewName("/company/profile/companyInfo");
 		return mav;
 	}
