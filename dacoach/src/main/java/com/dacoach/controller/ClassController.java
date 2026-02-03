@@ -63,14 +63,14 @@ public class ClassController {
 			RedirectAttributes rttr) {
 		try {
 			// 세션에서 사용자 정보 가져오기
-			Integer usersIdx = (Integer) session.getAttribute("users_idx");
+			Integer userIdx = (Integer) session.getAttribute("user_idx");
 
-			if (usersIdx == null) {
+			if (userIdx == null) {
 				rttr.addFlashAttribute("error", "로그인이 필요합니다.");
 				return "redirect:/login";
 			}
 
-			classDTO.setProvider_idx(usersIdx);
+			classDTO.setProvider_idx(userIdx);
 
 			// 파일 설정
 			if (photoFile != null && !photoFile.isEmpty()) {
