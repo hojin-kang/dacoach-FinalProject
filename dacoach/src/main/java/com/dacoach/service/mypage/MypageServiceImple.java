@@ -14,8 +14,8 @@ public class MypageServiceImple implements MypageService {
     private MypageMapper mypageMapper;
 	
 	@Override
-	public Map getUserInfo(int users_idx) {
-		Map userInfo = mypageMapper.getUserInfo(users_idx);
+	public Map getUserInfo(int user_idx) {
+		Map userInfo = mypageMapper.getUserInfo(user_idx);
 		return userInfo;
 	}
 }

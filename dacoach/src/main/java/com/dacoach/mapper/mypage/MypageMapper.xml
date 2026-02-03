@@ -13,7 +13,7 @@
 			LEFT JOIN RANK R
 			  ON NVL(C.POINT_SCORE, 0) >= R.MIN_SCORE
 			 AND (R.MAX_SCORE IS NULL OR NVL(C.POINT_SCORE, 0) < R.MAX_SCORE)
-			WHERE C.USERS_IDX = #{users_idx}
+			WHERE C.USER_IDX = 1
 		]]>
 	</select>
 </mapper>

@@ -13,7 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 public class UsersDTO {
-	private int users_idx;
+	private int user_idx;
 	private String user_type;
 	private String user_name;
 	private String login_id;
