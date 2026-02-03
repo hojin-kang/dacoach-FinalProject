@@ -23,7 +23,9 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     }
 
 	@Override
-	public CompanyDTO companyDetail(int usersIdx) {
+	public AdminCompanyRowDTO companyDetail(int usersIdx) {
 		return adminCompanyDAO.companyDetail(usersIdx);
 	}
+
+	
 }

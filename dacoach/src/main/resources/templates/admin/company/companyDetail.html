@@ -1,22 +1,154 @@
-<!-- admin/company/companyDetail.html -->
-<div th:fragment="contentPage">
-  <h2 class="text-2xl font-bold mb-6">기업 상세 정보</h2>
+<!-- templates/admin/company/companyDetail.html -->
+<div th:fragment="contentPage" class="w-full">
 
-  <div class="max-w-4xl mx-auto bg-white p-8 rounded shadow">
-    <div class="grid grid-cols-2 gap-4 mb-6">
-      <div><strong>회사 이름:</strong> <span th:text="${companyDetail.userName}">주식회사 예제</span></div>
-      <div><strong>사업자 번호:</strong> <span th:text="${companyDetail.companyNum}">123-45-67890</span></div>
-      <div><strong>전화번호:</strong> <span th:text="${companyDetail.phone}">010-1234-5678</span></div>
-      <div><strong>주소:</strong> <span th:text="${companyDetail.address}">서울시 예제구</span></div>
-      <div><strong>아이디:</strong> <span th:text="${companyDetail.loginId}">example_company</span></div>
-      <div><strong>비밀번호:</strong> <span th:text="${companyDetail.password}">hashed_pw</span></div>
-      <div><strong>이메일:</strong> <span th:text="${companyDetail.email}">email@example.com</span></div>
-    </div>
+  <!-- 전체 카드 -->
+  <div class="space-y-6">
 
-    <div class="flex gap-2">
-      <a th:href="@{/admin/companyList}">
-        <button class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">목록</button>
+    <!-- 1) 컴퍼니 정보 -->
+    <section class="rounded-2xl border border-gray-200 p-6">
+      <div class="flex items-start justify-between gap-6">
+
+        <!-- 좌측: 라벨 + 값 -->
+        <div class="flex-1">
+          <div class="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 text-gray-700 mb-4">
+            컴퍼니 정보
+          </div>
+
+          <div class="grid grid-cols-1 gap-2 max-w-xl">
+            <div class="flex">
+              <div class="w-40 bg-emerald-100 text-gray-700 px-3 py-2 rounded-l-md">컴퍼니 이름</div>
+              <div class="flex-1 bg-emerald-50 px-3 py-2 rounded-r-md" th:text="${row.users.user_name}">-</div>
+            </div>
+
+            <div class="flex">
+              <div class="w-40 bg-emerald-100 text-gray-700 px-3 py-2 rounded-l-md">사업자번호</div>
+              <div class="flex-1 bg-emerald-50 px-3 py-2 rounded-r-md" th:text="${row.company.company_num}">-</div>
+            </div>
+
+            <div class="flex">
+              <div class="w-40 bg-emerald-100 text-gray-700 px-3 py-2 rounded-l-md">전화번호</div>
+              <div class="flex-1 bg-emerald-50 px-3 py-2 rounded-r-md"
+                   th:text="${row.company.phone} ?: '-'">-</div>
+            </div>
+
+            <div class="flex">
+              <div class="w-40 bg-emerald-100 text-gray-700 px-3 py-2 rounded-l-md">주소</div>
+              <div class="flex-1 bg-emerald-50 px-3 py-2 rounded-r-md"
+                   th:text="${row.company.address} ?: '-'">-</div>
+            </div>
+
+            <div class="flex">
+              <div class="w-40 bg-emerald-100 text-gray-700 px-3 py-2 rounded-l-md">아이디</div>
+              <div class="flex-1 bg-emerald-50 px-3 py-2 rounded-r-md"
+                   th:text="${row.users.login_id} ?: '-'">-</div>
+            </div>
+
+            <div class="flex">
+              <div class="w-40 bg-emerald-100 text-gray-700 px-3 py-2 rounded-l-md">이메일</div>
+              <div class="flex-1 bg-emerald-50 px-3 py-2 rounded-r-md"
+                   th:text="${row.company.email} ?: '-'">-</div>
+            </div>
+
+            <div class="flex">
+              <div class="w-40 bg-emerald-100 text-gray-700 px-3 py-2 rounded-l-md">승인여부</div>
+              <div class="flex-1 bg-emerald-50 px-3 py-2 rounded-r-md"
+                   th:text="${row.cert_status}">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: 로고 영역 -->
+        <div class="w-72 h-52 rounded-2xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
+          <!-- 실제 로고 있으면 th:src로 바꾸면 됨 -->
+          <span class="text-2xl text-gray-500">dacoach</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2) 계정관리 -->
+    <section class="rounded-2xl border border-gray-200 p-6">
+      <div class="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 text-gray-700 mb-4">
+        계정관리
+      </div>
+
+      <div class="flex items-center gap-6">
+        <div class="px-3 py-2 rounded-md bg-emerald-100 text-gray-700 w-32 text-center">
+          계정상태
+        </div>
+
+        <!-- 상태 라디오 (DB에 맞게 ACTIVE/SUSPENDED 등으로 연결하면 됨) -->
+        <label class="flex items-center gap-2">
+          <input type="radio" name="status" value="ACTIVE"
+                 th:checked="${row.users.status} == 'ACTIVE'">
+          <span>사용</span>
+        </label>
+
+        <label class="flex items-center gap-2">
+          <input type="radio" name="status" value="SUSPENDED"
+                 th:checked="${row.users.status} == 'SUSPENDED'">
+          <span>정지</span>
+        </label>
+
+        <!-- 기간(옵션) -->
+        <div class="flex items-center gap-2 ml-4">
+          <input type="date" class="border rounded-md px-2 py-1">
+          <span class="text-gray-400">~</span>
+          <input type="date" class="border rounded-md px-2 py-1">
+        </div>
+      </div>
+    </section>
+
+    <!-- 3) 사업자등록증 -->
+    <section class="rounded-2xl border border-gray-200 p-6">
+      <div class="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 text-gray-700 mb-4">
+        사업자등록증
+      </div>
+
+      <div class="overflow-hidden rounded-xl border border-gray-200">
+        <table class="w-full text-center border-collapse">
+          <thead class="bg-emerald-100 text-gray-700">
+            <tr>
+              <th class="py-2">발급일자</th>
+              <th class="py-2">업종/업태</th>
+              <th class="py-2">발급기관</th>
+              <th class="py-2">첨부파일</th>
+            </tr>
+          </thead>
+          <tbody class="bg-emerald-50">
+            <!-- 지금은 CERT 상세 테이블을 아직 안 붙였으니까, 한 줄만 UI로 보여줌 -->
+            <tr>
+              <td class="py-3">-</td>
+              <td class="py-3">-</td>
+              <td class="py-3">-</td>
+              <td class="py-3">
+                <a href="#" class="text-gray-600 underline">파일보기</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 하단 버튼 -->
+    <div class="flex justify-end gap-3 pt-2">
+      <!-- 승인: cert_status를 '확인'으로 바꾸는 로직에 연결하면 됨 -->
+      <button type="button"
+              class="px-6 py-2 rounded-lg bg-rose-200 text-gray-700 hover:bg-rose-300">
+        승인
+      </button>
+
+      <!-- 저장: 상태/기간 등 저장 로직 연결 -->
+      <button type="button"
+              class="px-6 py-2 rounded-lg bg-emerald-200 text-gray-700 hover:bg-emerald-300">
+        저장
+      </button>
+
+      <!-- 목록으로 -->
+      <a th:href="@{/admin/companyList}"
+         class="px-6 py-2 rounded-lg bg-gray-300 text-gray-700 hover:bg-gray-400 inline-flex items-center justify-center">
+        목록
       </a>
     </div>
+
   </div>
 </div>

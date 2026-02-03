@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.dacoach.admin.company.model.AdminCompanyRowDTO;
 import com.dacoach.admincompany.service.AdminCompanyService;
-import com.dacoach.model.company.CompanyDTO;
-import com.dacoach.model.users.UsersDTO;
 
 @Controller
 @RequestMapping("/admin")
@@ -44,15 +42,17 @@ public class AdminCompanyController {
 		return "admin/dashboard";
     }
     
-    @GetMapping("/companyDetail/{id}")
-    public String companyDetail(@PathVariable("id") int userIdx,Model model	) {
-    	CompanyDTO companyDto = adminCompanyService.companyDetail(userIdx);
-    	if(companyDto==null) {
-    		System.out.println("companyDTO null");
-    	}
-    	model.addAttribute("companyDetail", companyDto);
-    	model.addAttribute("contentPage", "admin/company/companyDetail");
-    	model.addAttribute("contentFragment", "contentPage");
-    	return "admin/dashboard";
+    @GetMapping("/companyDetail/{usersIdx}")
+    public String companyDetail(@PathVariable int usersIdx, Model model) {
+
+        AdminCompanyRowDTO row = adminCompanyService.companyDetail(usersIdx); // 한 건 조회
+
+        model.addAttribute("contentPage", "admin/company/companyDetail");
+        model.addAttribute("contentFragment", "contentPage");
+        model.addAttribute("row", row); // 이거 필수
+
+        return "admin/dashboard";
     }
+
+
 }
