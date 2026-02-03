@@ -9,16 +9,12 @@
 </head>
 <body class="flex bg-gray-50 min-h-screen">
 
-  <!-- ✅ 사이드바 -->
   <aside th:replace="adminLayout/asideAdminLayout :: siteAside"></aside>
 
-  <!-- ✅ 본문 영역 -->
   <div class="flex-1 flex flex-col">
 
-    <!-- ✅ 헤더 -->
     <div th:replace="adminLayout/adminHeader :: adminHeader"></div>
 
-    <!-- ✅ 콘텐츠 -->
     <main class="p-6 flex-1">
       <div th:fragment="companyContent">
         <div class="flex justify-between items-center mb-6">
@@ -26,42 +22,30 @@
         </div>
 
         <div class="card !p-0 overflow-hidden">
-          <div class="flex justify-end mb-4">
-            <form th:action="@{/기업고객검색}" method="get" class="flex gap-2">
-              <input type="text" name="keyword" placeholder="Search..."
-                     class="px-4 py-2 border border-gray-300 rounded-md" />
-              <button type="submit" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500">
-                검색
-              </button>
-            </form>
-          </div>
-
           <table class="w-full text-center border-collapse">
-            <thead class="bg-[#e0f0f0]">
+            <thead class="bg-gray-200">
               <tr>
-                <th class="py-3 px-4 border-b">번호</th>
-                <th class="py-3 px-4 border-b">기업명</th>
-                <th class="py-3 px-4 border-b">사업자번호</th>
-                <th class="py-3 px-4 border-b">승인여부</th>
-                <th class="py-3 px-4 border-b">상세</th>
+                <th class="py-2">번호</th>
+                <th class="py-2">기업명</th>
+                <th class="py-2">사업자번호</th>
+                <th class="py-2">승인여부</th>
+                <th class="py-2">상세</th>
               </tr>
             </thead>
-            <tbody class="bg-white">
-              <tr th:each="company : ${companyList}" class="border-b hover:bg-gray-50">
-                <td th:text="${company.id}" class="py-3">1</td>
-                <td th:text="${company.name}" class="py-3">ABC기업</td>
-                <td th:text="${company.businessNumber}" class="py-3">123-45-6789</td>
-                <td th:text="${company.approvalStatus}" 
-                    th:classappend="${company.approvalStatus == '대기'} ? ' text-red-500 font-bold' : ''" class="py-3">대기</td>
-                <td class="py-3">
-                  <a th:href="@{/company/detail/{id}(id=${company.id})}">
-                    <button class="detail-btn">상세보기</button>
+            <tbody>
+              <tr th:each="company : ${companyList}">
+                <td th:text="${company.usersIdx}">1</td>
+                <td th:text="${company.userName}">기업명</td>
+                <td th:text="${company.companyNum}">123-45-6789</td>
+                <td th:text="${company.certStatus}">승인</td>
+                <td>
+                  <a th:href="@{'/company/detail/' + ${company.usersIdx}}">
+                    <button class="bg-blue-500 text-white px-3 py-1 rounded">상세보기</button>
                   </a>
                 </td>
               </tr>
-
               <tr th:if="${#lists.isEmpty(companyList)}">
-                <td colspan="5" class="py-4 text-gray-500">기업 데이터가 없습니다.</td>
+                <td colspan="5" class="text-gray-500 py-4">데이터가 없습니다.</td>
               </tr>
             </tbody>
           </table>

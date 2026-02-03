@@ -1,5 +1,10 @@
 package com.dacoach.admincompany.service;
 
-public class AdminCompanyService {
+import java.util.List;
 
+import com.dacoach.model.company.CompanyDTO;
+import com.dacoach.model.users.UsersDTO;
+
+public interface AdminCompanyService {
+    List<CompanyDTO> companyList();
 }
