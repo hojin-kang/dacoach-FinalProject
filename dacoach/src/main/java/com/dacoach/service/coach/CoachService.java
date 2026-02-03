@@ -15,4 +15,5 @@ public interface CoachService {
     List<Map<String, Object>> getMinorRegions(int majorRegionIdx) throws Exception;
     public Integer getUsersIdx(String login_id) throws Exception;
     public Integer coachJoin(CoachDTO cdto) throws Exception;
+    public CoachDTO getCoachInfo(int users_idx) throws Exception;
 }

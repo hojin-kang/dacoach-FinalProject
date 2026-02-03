@@ -17,15 +17,14 @@
 	          <input type="text" placeholder="검색" />
 	        </div>
         </div>
-<!-- 
-        <div class="header__spacer"></div>
         
-        <div class="gnb">
+        <div class="header__spacer" th:if="${session.users_idx == null}"></div>
+        
+        <div class="gnb" th:if="${session.users_idx == null}">
         	<a th:href="@{/login}">로그인 / 회원가입</a>
         </div>
- -->
-        
-        <div class="headerIcons">
+
+        <div class="headerIcons" th:unless="${session.users_idx == null}">
           <a class="iconBtn" th:href="@{/tokenHistory}" title="닭꼬치"><img src="/img/icon/dakcoach.png"></a>
           <a class="iconBtn" th:href="@{/notification}" title="알림"><img src="/img/icon/notification.png"></a>
           <a class="iconBtn" th:href="@{/chat}" title="채팅"><img src="/img/icon/chat.png"></a>

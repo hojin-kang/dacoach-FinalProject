@@ -67,4 +67,7 @@
 		    	' '
 		    )
 	</insert>
+	<select id="getCoachInfo" parameterType="int" resultType="com.dacoach.model.coach.CoachDTO">
+		select * from coach where users_idx = #{users_idx}
+	</select>
 </mapper>
