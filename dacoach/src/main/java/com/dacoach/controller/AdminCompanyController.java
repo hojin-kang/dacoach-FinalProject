@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.dacoach.admin.company.model.AdminCompanyRowDTO;
 import com.dacoach.admincompany.service.AdminCompanyService;
 import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.users.UsersDTO;
@@ -34,7 +35,7 @@ public class AdminCompanyController {
 
     @GetMapping("/companyList")
     public String companyList(Model model) {
-    	List<CompanyDTO> companyList = new ArrayList<>();
+    	List<AdminCompanyRowDTO> companyList = new ArrayList<>();
     	companyList = adminCompanyService.companyList();
     	
     	model.addAttribute("companyList",companyList);
@@ -51,7 +52,7 @@ public class AdminCompanyController {
     	}
     	model.addAttribute("companyDetail", companyDto);
     	model.addAttribute("contentPage", "admin/company/companyDetail");
-    	model.addAttribute("contentFragment", "detailContent");
+    	model.addAttribute("contentFragment", "contentPage");
     	return "admin/dashboard";
     }
 }

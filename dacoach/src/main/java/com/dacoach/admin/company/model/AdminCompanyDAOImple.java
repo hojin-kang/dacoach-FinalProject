@@ -19,13 +19,13 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
     }
 
     @Override
-    public List<CompanyDTO> companyList() {
+    public List<AdminCompanyRowDTO> companyList() {
         return sqlSession.selectList("com.dacoach.mapper.admin.company.AdminCompanyMapper.companyList");
     }
 
 	@Override
 	public CompanyDTO companyDetail(int usersIdx) {
-		return sqlSession.selectOne("companyDetail",usersIdx);
+		return sqlSession.selectOne("com.dacoach.mapper.admin.company.AdminCompanyMapper.companyDetail",usersIdx);
 	}
 }
 

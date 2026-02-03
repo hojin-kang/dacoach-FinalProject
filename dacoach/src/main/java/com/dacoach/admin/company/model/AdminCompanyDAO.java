@@ -6,6 +6,6 @@ import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface AdminCompanyDAO {
-    List<CompanyDTO> companyList();
+	List<AdminCompanyRowDTO> companyList();
     CompanyDTO companyDetail(int usersIdx);
 }
