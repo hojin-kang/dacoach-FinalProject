@@ -8,12 +8,12 @@
     <!-- 내 문의 목록 -->
     <select id="myQnaList" parameterType="int" resultType="com.dacoach.model.qna.QnaDTO">
         SELECT
-	        Q.QNA_IDX     AS qnaIdx,
-	        Q.USER_IDX    AS userIdx,
-	        Q.QNA_TYPE    AS qnaType,
+	        Q.QNA_IDX     AS qna_idx,
+	        Q.USER_IDX    AS user_idx,
+	        Q.QNA_TYPE    AS qna_type,
 	        Q.TITLE       AS title,
 	        Q.QUESTION    AS question,
-	        Q.CREATED_AT  AS createdAt,
+	        Q.CREATED_AT  AS created_at,
 	        CASE
 	            WHEN A.QNA_A_IDX IS NULL THEN '답변대기'
 	            ELSE '답변완료'
@@ -28,12 +28,12 @@
     <!-- 문의 상세 -->
     <select id="myQnaDetail" parameterType="map" resultType="com.dacoach.model.qna.QnaDTO">
         SELECT
-            QNA_IDX     AS qnaIdx,
-            USER_IDX    AS userIdx,
-            QNA_TYPE    AS qnaType,
+            QNA_IDX     AS qna_idx,
+            USER_IDX    AS user_idx,
+            QNA_TYPE    AS qna_type,
             TITLE       AS title,
             QUESTION    AS question,
-            CREATED_AT  AS createdAt
+            CREATED_AT  AS created_at
         FROM QNA
         WHERE QNA_IDX = #{qna_idx}
           AND USER_IDX = #{user_idx}
@@ -45,7 +45,7 @@
 	        QNA_IDX    AS qna_idx,
 	        TITLE      AS title,
 	        ANSWER     AS answer,
-	        CREATED_AT AS createdAt
+	        CREATED_AT AS created_at
 	    FROM QNA_A
 	    WHERE QNA_IDX = #{qna_idx}
 	</select>
