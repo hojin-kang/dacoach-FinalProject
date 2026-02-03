@@ -66,6 +66,12 @@ public class CoachServiceImple implements CoachService {
 		return coachMapper.coachJoin(cdto);
 	}
 
+	@Override
+	public CoachDTO getCoachInfo(int users_idx) throws Exception {
+		
+		return coachMapper.getCoachInfo(users_idx);
+	}
+
 	
 
 	

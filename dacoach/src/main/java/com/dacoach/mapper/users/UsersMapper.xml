@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dacoach.mapper.users.UsersMapper">
+    <select id="userLogin" parameterType="com.dacoach.model.users.UsersDTO" resultType="com.dacoach.model.users.UsersDTO">
+        select * from users 
+        where login_id = #{login_id}
+    </select>
+</mapper>
