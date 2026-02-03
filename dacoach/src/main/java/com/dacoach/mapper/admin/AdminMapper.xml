@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dacoach.mapper.admin.AdminMapper">
+	<select id="getCoachList" resultType="map">
+	select
+	c.coach_idx,
+	u.user_name,
+	c.nickname,
+	c.phone,
+	u.created_at,
+	u.status,
+	(select count(*) 
+		from cert c_sub
+		where c_sub.users_idx = c.users_idx
+		and cert_status = '대기') as cert_wait_count
+	from
+	coach c
+	join
+	users u on c.users_idx = u.users_idx
+	order by
+	u.created_at desc
+	</select>
+	<select id="getCertCount" resultType="int">
+	select count(*) from cert where cert_type = '자격증' and cert_status = '대기'
+	</select>
+</mapper>
