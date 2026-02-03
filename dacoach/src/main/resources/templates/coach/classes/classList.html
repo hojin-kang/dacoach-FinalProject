@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>dacoach</title>
+
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/coach_class.css}" />
+</head>
+<body>
+	<div th:replace="layout/header :: siteHeader"></div>
+
+	<main class="main">
+		<div class="container">
+			<h2>클래스</h2>
+			<hr>
+
+			<div class="classPage">
+				<!-- LEFT: 검색 패널 -->
+				<aside class="searchArea">
+					<div class="searchHead">검색 조건</div>
+
+					<form class="filterForm" th:action="@{/class}" method="get">
+						<!-- 분야 -->
+						<div class="filterRow">
+							<div class="filter">
+								<label class="filterLabel">분야</label>
+								<div>
+									<select class="filterSelect" name="majorField">
+										<option value="">대분류</option>
+										<option th:each="mf : ${majorFields}"
+											th:value="${mf.majorFieldIdx}" th:text="${mf.majorFieldCd}">
+										</option>
+									</select>
+									<select class="filterSelect" name="minorField">
+										<option value="">소분류</option>
+										<option th:each="sf : ${minorFields}"
+											th:value="${sf.minorFieldIdx}" th:text="${sf.minorFieldNm}">
+										</option>
+									</select>
+								</div>
+							</div>
+							<div class="filter">
+								<label class="filterLabel">지역</label>
+								<div>
+									<select class="filterSelect" name="majorRegion">
+										<option value="">대분류</option>
+										<option th:each="mr : ${majorRegions}"
+											th:value="${mr.majorRegionIdx}" th:text="${mr.regionNm}">
+										</option>
+									</select>
+									<select class="filterSelect" name="minorRegion">
+										<option value="">소분류</option>
+										<option th:each="dr : ${minorRegions}"
+											th:value="${dr.minorRegionIdx}" th:text="${dr.districtNm}">
+										</option>
+									</select>
+								</div>
+							</div>
+							<!-- 검색어 -->
+							<div class="keywordBox">
+								<input class="keywordInput" type="text" name="q" placeholder="검색어 입력" />
+									
+							</div>
+							<button class="keywordBtn" type="submit">검색</button>
+						</div>
+
+
+						
+					</form>
+				</aside>
+
+				<!-- RIGHT: 컨텐츠 -->
+				<section class="contentArea">
+					<div class="contentTop">
+
+						<div class="sortBox">
+							<select class="sortSelect" name="sort" form="sortForm">
+								<option value="rating">평점순</option>
+								<option value="priceAsc">가격 낮은순</option>
+								<option value="priceDesc">가격 높은순</option>
+								<option value="latest">최신순</option>
+							</select>
+
+							<!-- 정렬만 따로 submit하고 싶으면 -->
+							<form id="sortForm" th:action="@{/class}" method="get"></form>
+						</div>
+					</div>
+
+					<!-- 카드 그리드 -->
+					<div class="cardGrid">
+					  <!-- 카드 1개 -->
+					  <a class="classCard" href="#">
+					    <div class="thumb">
+					      <img src="/images/default_class.png" alt="class">
+					    </div>
+					
+					    <div class="meta">
+					      <div class="rating">★ 4.7(54)</div>
+					
+					      <div class="bottom">
+					        <div class="title">[인기]음악 줄넘기</div>
+					        <div class="price">99,000₩</div>
+					      </div>
+					    </div>
+					  </a>
+					
+					  <!-- 카드 더 추가하면 자동으로 그리드로 배치됨 -->
+					</div>
+					<!--
+					<div class="cardGrid">
+					  <a class="classCard"
+					     th:each="c : ${classList}"
+					     th:href="@{/class/{id}(id=${c.classIdx})}">
+					    <div class="thumb">
+					      <img th:src="@{/images/{img}(img=${c.photo})}" alt="class">
+					    </div>
+					
+					    <div class="meta">
+					      <div class="rating" th:text="|★ ${c.rating}(${c.reviewCnt})|">★ 4.7(54)</div>
+					
+					      <div class="bottom">
+					        <div class="title" th:text="${c.title}">[인기]음악 줄넘기</div>
+					        <div class="price" th:text="|${#numbers.formatInteger(c.price, 3, 'COMMA')}₩|">99,000₩</div>
+					      </div>
+					    </div>
+					  </a>
+					</div>
+					-->
+				</section>
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="layout/footer :: siteFooter"></div>
+</body>
+</html>

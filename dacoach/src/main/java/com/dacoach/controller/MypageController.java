@@ -15,47 +15,47 @@ public class MypageController {
 
 	@GetMapping("/mypage")
 	public String mypageMain() {
-		return "/mypage/mypage";
+		return "/coach/mypage/mypage";
 	}
 	
 	@GetMapping("/myInfo")
 	public String myInfo() {
-		return "/mypage/myInfo";
+		return "/coach/mypage/myInfo";
 	}
 	
 	@GetMapping("/myHeart")
 	public String myHeartList() {
-		return "/mypage/myHeart";
+		return "/coach/mypage/myHeart";
 	}
 	
 	@GetMapping("/myReview")
 	public String myReviewList() {
-		return "/mypage/myReview";
+		return "/coach/mypage/myReview";
 	}
 	
 	
 	
 	@GetMapping("/myPayment")
 	public String myPaymentList() {
-		return "/mypage/myPayment";
+		return "/coach/mypage/myPayment";
 	}
 	
 	@GetMapping("/notice")
 	public String noticeList() {
-		return "/mypage/notice";
+		return "/coach/mypage/notice";
 	}
 	
 	@GetMapping("/myQnaList")
 	public ModelAndView myQnaList() {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("qnaList", qnaService.myQnaList(1));
-		mav.setViewName("/mypage/myQna");
+		mav.setViewName("/coach/mypage/myQna");
 		
 		return mav;
 	}
 	
 	@GetMapping("qna/myQnaDetail")
 	public String myQnaDetail() {
-		return "/mypage/myQnaDetail";
+		return "/coach/mypage/myQnaDetail";
 	}
 }
