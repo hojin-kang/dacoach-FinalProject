@@ -11,7 +11,7 @@
           <th class="py-2">사업자번호</th>
           <th class="py-2">승인여부</th>
           <th class="py-2">상세</th>
-        </tr>
+	        </tr>
       </thead>
       <tbody>
        <tr th:each="row : ${companyList}">
@@ -20,8 +20,12 @@
   <td th:text="${row.company.company_num}"></td>
   <td th:text="${row.cert_status}"></td>
   <td>
-    <a th:href="@{'/admin/companyDetail/' + ${row.company.users_idx}}">상세</a>
-  </td>
+  <a th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row.users_idx})}">
+    상세
+  </a>
+</td>
+
+
 </tr>
 
 

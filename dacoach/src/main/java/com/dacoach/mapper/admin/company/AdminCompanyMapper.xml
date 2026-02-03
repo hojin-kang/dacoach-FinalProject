@@ -6,43 +6,71 @@
 <mapper namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 
   <resultMap id="adminCompanyRowMap" type="com.dacoach.admin.company.model.AdminCompanyRowDTO">
+  <id property="users_idx" column="users_idx"/>
+  <result property="cert_status" column="cert_status"/>
 
-    <!-- AdminCompanyRowDTO 안에 cert_status 필드가 있을 때 -->
-    <result property="cert_status" column="cert_status"/>
+  <association property="company" javaType="com.dacoach.model.company.CompanyDTO">
+    <id     property="company_idx" column="company_idx"/>
+    <result property="users_idx"   column="users_idx"/>
+    <result property="company_num" column="company_num"/>
+    <result property="phone"       column="phone"/>
+    <result property="address"     column="address"/>
+    <result property="email"       column="email"/>
+  </association>
 
-    <!-- company: AdminCompanyRowDTO.company -->
-    <association property="company" javaType="com.dacoach.model.company.CompanyDTO">
-      <id     property="company_idx" column="company_idx"/>
-      <result property="users_idx"   column="users_idx"/>
-      <result property="company_num" column="company_num"/>
-    </association>
+  <association property="users" javaType="com.dacoach.model.users.UsersDTO">
+    <id     property="user_idx"   column="users_idx"/>
+    <result property="user_name"  column="user_name"/>
+    <result property="login_id"   column="login_id"/>
+    <result property="status"     column="status"/>
+  </association>
+</resultMap>
 
-    <!-- users: AdminCompanyRowDTO.users -->
-    <association property="users" javaType="com.dacoach.model.users.UsersDTO">
-      <id     property="user_idx"   column="user_idx"/>
-      <result property="user_name"  column="user_name"/>
-      <result property="status"     column="status"/>
-    </association>
 
-  </resultMap>
 
   <select id="companyList" resultMap="adminCompanyRowMap">
-    SELECT
-      c.COMPANY_IDX AS company_idx,
-      u.USER_IDX    AS users_idx,
-      u.USER_IDX    AS user_idx,
-      u.USER_NAME   AS user_name,
-      u.STATUS      AS status,
-      c.COMPANY_NUM AS company_num,
-      NVL(ce.CERT_STATUS, '미등록') AS cert_status
-    FROM USERS u
-    JOIN COMPANY c
-      ON u.USER_IDX = c.USER_IDX
-    LEFT JOIN CERT ce
-      ON u.USER_IDX = ce.USER_IDX
-     AND ce.CERT_TYPE = '사업자등록증'
-    WHERE u.USER_TYPE = 'COMPANY'
-    ORDER BY u.USER_IDX DESC
+   SELECT
+  c.COMPANY_IDX AS company_idx,
+  u.USER_IDX    AS users_idx,
+  u.USER_NAME   AS user_name,
+  u.STATUS      AS status,
+  c.COMPANY_NUM AS company_num,
+  NVL(ce.CERT_STATUS, '미등록') AS cert_status
+FROM USERS u
+JOIN COMPANY c
+  ON u.USER_IDX = c.USER_IDX
+LEFT JOIN CERT ce
+  ON ce.USER_IDX = u.USER_IDX
+ AND ce.CERT_TYPE = '사업증'
+WHERE u.USER_TYPE = 'COMPANY'
+ORDER BY
+  CASE WHEN NVL(ce.CERT_STATUS,'미등록') = '대기' THEN 0 ELSE 1 END,
+  u.USER_IDX DESC
   </select>
+
+<select id="companyDetail" parameterType="int" resultMap="adminCompanyRowMap">
+  SELECT
+    c.COMPANY_IDX AS company_idx,
+    u.USER_IDX    AS users_idx,
+    u.USER_NAME   AS user_name,
+    u.LOGIN_ID    AS login_id,
+    u.STATUS      AS status,
+
+    c.COMPANY_NUM AS company_num,
+    c.PHONE       AS phone,
+    c.ADDRESS     AS address,
+    c.EMAIL       AS email,
+
+    NVL(ce.CERT_STATUS, '미등록') AS cert_status
+  FROM USERS u
+  JOIN COMPANY c
+    ON c.USER_IDX = u.USER_IDX
+  LEFT JOIN CERT ce
+    ON ce.USER_IDX = u.USER_IDX
+   AND ce.CERT_TYPE = '사업증'
+  WHERE u.USER_IDX = #{value}
+</select>
+
+
 
 </mapper>
