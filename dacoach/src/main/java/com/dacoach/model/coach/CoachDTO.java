@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class CoachDTO {
 	private int coach_idx;
-	private int users_idx;
+	private int user_idx;
 	private Date birth_date;
 	private String nickname;
 	private String phone;

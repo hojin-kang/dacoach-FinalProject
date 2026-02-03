@@ -127,7 +127,7 @@ public class CoachController {
 
 	    try {
 	        int users_idx = coachService.getUsersIdx(login_id);
-	        cdto.setUsers_idx(users_idx);
+	        cdto.setUser_idx(users_idx);
 	        int result = coachService.coachJoin(cdto);
 
 	        if(result > 0) {
