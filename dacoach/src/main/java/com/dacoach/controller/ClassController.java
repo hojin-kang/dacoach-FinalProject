@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dacoach.mapper.classes.ClassMapper;
 import com.dacoach.model.classes.ClassDTO;
@@ -170,4 +171,13 @@ public class ClassController {
 		// TODO: 클래스 목록 조회 로직 구현 예정
 		return "company/classes/classList";
 	}
+	
+	/************* coach *************/
+	@GetMapping("/coach/classList")
+	public ModelAndView coachClassList() {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("/coach/classes/classList");
+		return mav;
+	}
+	/*********************************/
 }
