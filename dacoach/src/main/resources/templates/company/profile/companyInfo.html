@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+   <meta charset="UTF-8" />
+   <title>dacoach</title>
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+   <form action="#">
+   <div class="container">  
+      <div class="companyInfo">
+      	<p class="comTel"><input type="text" name="companyTel" placeholder="사업장 전화번호를 입력해주세요"></p>
+      	<p class="comAddr"><input type="text" name="companyAddr" placeholder="사업장 주소를 입력해주세요"></p>
+      </div>
+   
+   	<div class="comCert">
+   		<p class="certName"><input type="hidden" name="certName" value="cert"></p>
+   		<p class="certFile"><input type="file" name="certfile"></p>
+   	</div>
+   </main>
+  </div>
+  </form>
+   <div th:replace="layout/footer :: siteFooter"></div>
+
+</body>
+</html>

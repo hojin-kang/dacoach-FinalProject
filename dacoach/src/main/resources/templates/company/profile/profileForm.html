@@ -20,11 +20,26 @@
       <div class="profileInfoArea">
       	<textarea rows="4" cols="8" name="profileArea" placeholder="프로필 설명을 입력해주세요"></textarea>
       </div>
-      <div class="classMagerRegion">
-      	<p class="classMagerRegion">
-      	
+      <div class="classRegion">
+      	<p class="classMagerRegion" id="MagerRegion">
+      		대분류태그가져올거
+      		
       	</p>
-
+		<p class="classMinorRegion" id="MinorRegion">
+			소분류태그가져올거
+		</p>
+		<p><input type="text" name="regionDetal" placeholder="상세주소를 입력해주세요"></p>
+		<p class="classAddRegion" id="AddRegion">
+			<input type="button" value="주소 추가하기" id="addRegion">
+		</p>
+      </div>
+      <div class="tags">
+      	<p class="majorField">
+      		<input type="button" value="분야대분류">
+      	</p>
+      	<p class="minorField">
+      		<input type="button" id="minorField" value="분야소분류">
+      	</p>
       </div>
      </form>
    </div>
