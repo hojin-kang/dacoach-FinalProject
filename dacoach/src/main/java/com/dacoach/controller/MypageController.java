@@ -24,12 +24,17 @@ public class MypageController {
 	public ModelAndView mypageMain(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		int users_idx = (Integer)session.getAttribute("users_idx");
-		System.out.println(users_idx);
-		Map users_info = mypageService.getUserInfo(users_idx);
-		String user_nickname = (String)users_info.get("NICKNAME");
-		String user_rank = (String)users_info.get("RANKNAME");
-		System.out.println(user_nickname);
-		System.out.println(user_rank);
+		String user_nickname = "";
+		String user_rank = "";
+		
+		try {
+			Map users_info = mypageService.getUserInfo(users_idx);
+			user_nickname = (String)users_info.get("NICKNAME");
+			user_rank = (String)users_info.get("RANKNAME");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 		mav.addObject("user_nickname", user_nickname);
 		mav.addObject("user_rank", user_rank);
 		mav.setViewName("/coach/mypage/mypage");
@@ -67,7 +72,12 @@ public class MypageController {
 	public ModelAndView myQnaList(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		int users_idx = (Integer)session.getAttribute("users_idx");
-		mav.addObject("qnaList", qnaService.myQnaList(users_idx));
+		try {
+			mav.addObject("qnaList", qnaService.myQnaList(users_idx));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		mav.setViewName("/coach/mypage/myQna");
 		
 		return mav;

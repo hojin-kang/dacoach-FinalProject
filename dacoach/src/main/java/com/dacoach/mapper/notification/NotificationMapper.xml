@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dacoach.mapper.notification.NotificationMapper">
+
+	<select id="notiList" resultType="com.dacoach.model.notification.NotificationDTO">
+		select 
+			NOTI_IDX,
+		    RECEIVER_IDX,
+		    PROVIDER_IDX,
+		    NOTI_TYPE,
+		    CONTENT,
+		    CREATED_AT
+		from notification
+	    where IS_READ='N' and receiver_idx=#{users_idx}
+	    order by created_at desc
+	
+	</select>
+	
+	<select id="countUnread" resultType="int">
+		SELECT COUNT(*)
+		FROM NOTIFICATION
+		WHERE RECEIVER_IDX = #{users_idx} AND IS_READ = 'N'
+	</select>
+
+</mapper>
