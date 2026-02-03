@@ -52,7 +52,7 @@
 		MINOR_FIELD_NM
 		FROM MINOR_FIELD
 		WHERE
-		MAJOR_FIELD_IDX = #{majorFieldIdx}
+		MAJOR_FIELD_IDX = #{major_field_idx}
 		ORDER BY MINOR_FIELD_NM
 	</select>
 
@@ -73,7 +73,7 @@
 		DISTRICT_NM
 		FROM MINOR_REGION
 		WHERE
-		MAJOR_REGION_IDX = #{majorRegionIdx}
+		MAJOR_REGION_IDX = #{major_region_idx}
 		ORDER BY DISTRICT_NM
 	</select>
 
