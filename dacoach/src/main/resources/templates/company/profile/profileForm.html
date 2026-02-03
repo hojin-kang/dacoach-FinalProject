@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+   <meta charset="UTF-8" />
+   <title>dacoach</title>
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+   <div class="container">
+   	<form name="profileInfo" action="">
+      <div class="picUpload">
+      	<p class="profilePic">업로드한 사진 올릴영역</p>
+      	<p class="picUpBtn"><input type="file" name="profilePicFile" id="profilePicFileId"></p>
+      </div>
+      <div class="profileInfoArea">
+      	<textarea rows="4" cols="8" name="profileArea" placeholder="프로필 설명을 입력해주세요"></textarea>
+      </div>
+      <div class="classMagerRegion">
+      	<p class="classMagerRegion">
+      	
+      	</p>
+
+      </div>
+     </form>
+   </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+
+</body>
+</html>
