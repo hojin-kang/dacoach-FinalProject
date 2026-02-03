@@ -286,10 +286,10 @@ hr {
 }
 
 .iconBtn img {
-	width: 100%;
+	width: 30px;
 }
 
-.iconBtn img:last-child {
+.iconBtn:last-child img {
 	border-radius: 50%;
 }
 
