@@ -26,15 +26,7 @@ public class CoachController {
 	@Autowired
 	private CoachService coachService;
 	
-	@GetMapping("/test")
-	public String test() {
-		return "coach/test";
-	}
-	@PostMapping("coachJoin2")
-	public String coachJoin2(@RequestParam(value="photo", required=false)MultipartFile photo){
-		System.out.println(photo.isEmpty());
-		return "/";
-	}
+	
 	@GetMapping("/coachJoin")
 	public String coachJoinForm() {
 		return "coach/coachJoin";
@@ -111,19 +103,30 @@ public class CoachController {
 	        return null;
 	    }
 	}
+	@GetMapping("/test")
+	public String test() {
+		return "coach/test";
+	}
+	@PostMapping("/coachJoin2")
+	public String coachJoin2(@RequestParam(value="photo", required=false)MultipartFile photo,
+			@RequestParam(value="video", required=false)MultipartFile video){
+		System.out.println(photo.isEmpty());
+		System.out.println(video.isEmpty());
+		return "redirect:/";
+	}
 	
 	@PostMapping("/coachJoin")
-	public ModelAndView coachJoin(CoachDTO cdto, 
-	        @RequestParam(value="mail") String mail,
-	        @RequestParam(value="login_id") String login_id) {
+	public ModelAndView coachJoin(CoachDTO cdto,
+			@RequestParam(value="login_id") String login_id,
+	        @RequestParam(value="uploadPhoto", required = false)MultipartFile uploadPhoto,
+	        @RequestParam(value="uploadVideo", required = false)MultipartFile uploadVideo) {
 
 	    ModelAndView mav = new ModelAndView();
-	    
+	    mav.setViewName("redirect:/coachJoin");
 
 	    try {
 	        int users_idx = coachService.getUsersIdx(login_id);
 	        cdto.setUsers_idx(users_idx);
-	        cdto.setMail(mail);
 	        int result = coachService.coachJoin(cdto);
 
 	        if(result > 0) {
