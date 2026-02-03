@@ -1,10 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+<meta charset="UTF-8" />
+<title>dacoach</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/company/company_class.css}" />
 </head>
 <body>
+
+	<main class="main">
+		<div class="container">
+			<h2>클래스</h2>
+			<hr>
+
+			<div class="classPage">
+				<!-- LEFT: 버튼 패널 -->
+				<aside class="menuArea">
+					<div class="menuHead">관리 메뉴</div>
+					<div class="menuButtons">
+						<button type="button" class="menuBtn"
+							th:onclick="|window.location='@{/class/company/classList}'|">컴퍼니</button>
+						<button type="button" class="menuBtn"
+							th:onclick="|window.location='@{/coach/ongoing}'|">진행중인
+							클래스</button>
+						<button type="button" class="menuBtn"
+							th:onclick="|window.location='@{/coach/finished}'|">종료된
+							클래스</button>
+						<button type="button" class="menuBtn"
+							th:onclick="|window.location='@{/coach/statistics}'|">클래스
+							통계</button>
+						<button type="button" class="menuBtn"
+							th:onclick="|window.location='@{/coach/reviews}'|">후기 관리</button>
+					</div>
+				</aside>
+
+				<!-- RIGHT: 컨텐츠 -->
+				<section class="contentArea">
+					<div class="cardGrid">
+						<!-- 데이터 반복 출력 -->
+						<a th:each="classItem : ${classList}" class="classCard"
+							th:href="@{/class/detail/{id}(id=${classItem.class_idx})}">
+
+							<div class="thumb">
+								<!-- FileUploadController 경로 -->
+								<img
+									th:src="${classItem.photo} ? |/uploads/class/${classItem.photo}| : '/images/default_class.png'"
+									onerror="this.src='/images/default_class.png'"
+									th:alt="${classItem.title}" />
+							</div>
+
+							<div class="meta">
+								<div class="title" th:text="${classItem.title}"></div>
+								<div class="price"
+									th:text="${#numbers.formatInteger(classItem.price, 0, 'COMMA')} + '원'"></div>
+								<div class="classInfo">
+									<span
+										th:text="${#dates.format(classItem.start_date, 'MM.dd')} + ' ~ ' + ${#dates.format(classItem.end_date, 'MM.dd')}"></span>
+									<span th:text="${classItem.max_user_cnt} + '명'"></span>
+								</div>
+								<div class="intro"
+									th:text="${#strings.abbreviate(classItem.intro, 80)}"></div>
+							</div>
+						</a>
+
+						<!-- 데이터 없을 때 -->
+						<div th:if="${classList == null || #lists.isEmpty(classList)}"
+							class="noData">
+							<p>📭 등록된 클래스가 없습니다.</p>
+							<p>
+								<a th:href="@{/class/register}" class="btnRegister">클래스 등록하기</a>
+							</p>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+	</main>
 
 </body>
 </html>

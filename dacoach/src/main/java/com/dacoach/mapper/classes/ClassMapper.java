@@ -21,4 +21,7 @@ public interface ClassMapper {
 
 	// 소지역 조회 (대지역 선택시 Ajax)
 	List<Map<String, Object>> selectMinorRegions(Integer major_region_idx);
+	
+	// 클래스 조회
+	List<ClassDTO> selectClassesByProvider(Integer provider_idx);
 }
