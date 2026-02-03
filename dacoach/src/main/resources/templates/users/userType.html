@@ -148,7 +148,7 @@
                         클래스별 수강생을 모집하고<br>
                         통계 데이터를 관리해보세요!
                     </p>
-                    <button class="btn-base btn-company" onclick="location.href='/signup/company'">가입하기</button>
+                    <button class="btn-base btn-company" id="companyJoin" onclick="location.href='/signup/company'">가입하기</button>
                 </div>
             </div>
         </div>
@@ -159,6 +159,9 @@
     <script>
         document.getElementById('coachJoin').addEventListener('click', function() {
             window.location.href = '/coachJoin';
+        });
+        document.getElementById('companyJoin').addEventListener('click', function() {
+            window.location.href = '/companyJoin';
         });
     </script>
 </body>
