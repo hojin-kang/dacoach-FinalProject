@@ -10,11 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.coach.CoachService;
+
+import jakarta.servlet.annotation.MultipartConfig;
 
 @Controller
 public class CoachController {
@@ -97,9 +100,11 @@ public class CoachController {
 	        return null;
 	    }
 	}
+	
 	@PostMapping("/coachJoin")
 	public ModelAndView coachJoin(CoachDTO cdto,@RequestParam(value="mail")String mail,
 			@RequestParam(value="login_id")String login_id) {
+		
 	    ModelAndView mav = new ModelAndView();
 	    int users_idx=0;
 	    try {
