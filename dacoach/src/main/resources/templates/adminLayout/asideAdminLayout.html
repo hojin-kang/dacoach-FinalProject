@@ -13,48 +13,184 @@
                     개인고객관리
                 </a>
             </li>
+             <!-- ✅ 기업고객관리 -->
             <li>
-                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
-                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                <a th:href="@{/admin/companyList}"
+                   class="block px-8 py-3 text-gray-700 font-medium hover:bg-[#f0f9f7] hover:text-[#4a7c74]"
+                   th:classappend="${activeMenu == 'company'} ? ' bg-[#e6f4f1] text-[#4a7c74] font-semibold'">
                     기업고객관리
                 </a>
             </li>
+
+            <!-- ✅ 서브메뉴 포함 대메뉴 (수익관리) -->
             <li>
-                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
-                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
-                    모니터링
-                </a>
+                <button type="button"
+                        class="w-full text-left px-8 py-3 text-gray-700 font-semibold transition hover:bg-[#f0f9f7] hover:text-[#4a7c74]"
+                        onclick="toggleSubMenu('profitSubmenu')">
+                    수익관리
+                </button>
+
+                <!-- ✅ 하위 메뉴: 결제관리 / 통계관리 -->
+                <ul id="profitSubmenu" class="ml-4 mt-1 space-y-1 hidden">
+                    <li>
+                        <a th:href="@{/admin/payment}" 
+                           class="block px-4 py-2 text-sm text-gray-700 transition hover:text-[#4a7c74]"
+                           th:classappend="${activeSubmenu == 'payment'} ? ' underline text-[#4a7c74] font-bold'">
+                            결제관리
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/statistics}" 
+                           class="block px-4 py-2 text-sm text-gray-700 transition hover:text-[#4a7c74]"
+                           th:classappend="${activeSubmenu == 'statistics'} ? ' underline text-[#4a7c74] font-bold'">
+                            통계관리
+                        </a>
+                    </li>
+                </ul>
             </li>
+
+            <!-- ✅ 기타 메뉴들 -->
+            <!-- ✅ 모니터링 + 서브메뉴 -->
+<li>
+    <button type="button"
+            class="w-full text-left px-8 py-3 text-gray-700 font-semibold transition hover:bg-[#f0f9f7] hover:text-[#4a7c74]"
+            onclick="toggleSubMenu('monitoringSubmenu')"
+            th:classappend="${activeMenu == 'monitoring'} ? ' bg-[#e6f4f1] text-[#4a7c74]'">
+        모니터링
+    </button>
+
+    <ul id="monitoringSubmenu" class="ml-4 mt-1 space-y-1" th:classappend="${activeMenu != 'monitoring'} ? ' hidden'">
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'comment'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'comment'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/monitoring/comment}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'comment'} ? ' underline text-[#4a7c74] font-bold'">
+                댓글
+            </a>
+        </li>
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'class'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'class'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/monitoring/class}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'class'} ? ' underline text-[#4a7c74] font-bold'">
+                클래스
+            </a>
+        </li>
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'content'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'content'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/monitoring/content}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'content'} ? ' underline text-[#4a7c74] font-bold'">
+                콘텐츠
+            </a>
+        </li>
+    </ul>
+</li>
+<!-- ✅ 고객센터 + 서브메뉴 -->
+<li>
+    <button type="button"
+            class="w-full text-left px-8 py-3 text-gray-700 font-semibold transition hover:bg-[#f0f9f7] hover:text-[#4a7c74]"
+            onclick="toggleSubMenu('supportSubmenu')"
+            th:classappend="${activeMenu == 'support'} ? ' bg-[#e6f4f1] text-[#4a7c74]'">
+        고객센터
+    </button>
+
+    <ul id="supportSubmenu" class="ml-4 mt-1 space-y-1" th:classappend="${activeMenu != 'support'} ? ' hidden'">
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'notice'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'notice'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/support/notice}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'notice'} ? ' underline text-[#4a7c74] font-bold'">
+                공지
+            </a>
+        </li>
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'qna'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'qna'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/support/qna}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'qna'} ? ' underline text-[#4a7c74] font-bold'">
+                Q&amp;A
+            </a>
+        </li>
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'policy'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'policy'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/support/policy}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'policy'} ? ' underline text-[#4a7c74] font-bold'">
+                운영정책
+            </a>
+        </li>
+    </ul>
+</li>
+
             <li>
-                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
-                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
-                    고객센터
-                </a>
-            </li>
-            <li>
-                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
-                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                <a th:href="@{/admin/ads}" 
+                   class="block px-8 py-3 text-gray-700 font-medium transition hover:bg-[#f0f9f7] hover:text-[#4a7c74]"
+                   th:classappend="${activeMenu == 'ads'} ? ' bg-[#e6f4f1] text-[#4a7c74] font-semibold'">
                     광고관리
                 </a>
             </li>
+            <!-- ✅ 키워드관리 + 서브메뉴 -->
+<li>
+    <button type="button"
+            class="w-full text-left px-8 py-3 text-gray-700 font-semibold transition hover:bg-[#f0f9f7] hover:text-[#4a7c74]"
+            onclick="toggleSubMenu('keywordSubmenu')"
+            th:classappend="${activeMenu == 'keyword'} ? ' bg-[#e6f4f1] text-[#4a7c74]'">
+        키워드관리
+    </button>
+
+    <ul id="keywordSubmenu" class="ml-4 mt-1 space-y-1" th:classappend="${activeMenu != 'keyword'} ? ' hidden'">
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'banned'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'banned'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/keyword/banned}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'banned'} ? ' underline text-[#4a7c74] font-bold'">
+                검열키워드
+            </a>
+        </li>
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'category'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'category'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/keyword/category}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'category'} ? ' underline text-[#4a7c74] font-bold'">
+                분야 필터
+            </a>
+        </li>
+        <li class="flex items-center">
+            <span th:if="${activeSubmenu == 'region'}" class="text-sm text-[#4a7c74] mr-1">▶</span>
+            <span th:unless="${activeSubmenu == 'region'}" class="w-3 inline-block"></span>
+            <a th:href="@{/admin/keyword/region}"
+               class="block py-2 text-sm text-gray-700 hover:text-[#4a7c74]"
+               th:classappend="${activeSubmenu == 'region'} ? ' underline text-[#4a7c74] font-bold'">
+                지역 필터
+            </a>
+        </li>
+    </ul>
+</li>
+
             <li>
-                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
-                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
-                    키워드관리
-                </a>
-            </li>
-            <li>
-                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
-                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
-                    수익관리
-                </a>
-            </li>
-            <li>
-                <a href="#" class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
-                                  hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]">
+                <a th:href="@{/admin/reports}" 
+                   class="block px-8 py-3 text-gray-700 font-medium transition hover:bg-[#f0f9f7] hover:text-[#4a7c74]"
+                   th:classappend="${activeMenu == 'reports'} ? ' bg-[#e6f4f1] text-[#4a7c74] font-semibold'">
                     신고관리
                 </a>
             </li>
         </ul>
     </nav>
+
+    <!-- ✅ JavaScript: 하위 메뉴 토글 -->
+    <script>
+        function toggleSubMenu(id) {
+            const submenu = document.getElementById(id);
+            submenu.classList.toggle('hidden');
+        }
+    </script>
 </aside>
