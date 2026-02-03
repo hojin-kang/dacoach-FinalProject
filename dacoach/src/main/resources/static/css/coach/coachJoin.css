@@ -1,0 +1,134 @@
+@charset "UTF-8";
+        /* [1] 기본 레이아웃 및 초기화 */
+        body { 
+            background-color: #ffffff; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            font-family: 'Pretendard', -apple-system, sans-serif;
+        }
+
+        nav a, .header-container a, [th\:replace] a { 
+            text-decoration: none !important; 
+            color: inherit !important; 
+        }
+
+        main {
+            flex: 1; 
+            display: flex;
+            justify-content: center;
+            padding: 80px 0;
+        }
+
+        .signup-container { 
+            width: 450px; 
+            text-align: center; 
+        }
+
+        .signup-title { 
+            font-weight: bold; 
+            margin-bottom: 60px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 25px; 
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* [2] 폼 레이아웃 */
+        .form-section { text-align: left; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        /* 특정 간격 조정용 */
+        .mt-40 { margin-top: 40px; }
+
+        /* 입력창 스타일 */
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .form-control { 
+            flex: 1;
+            width: 100%; /* 기존 인라인 100% 통합 */
+            background-color: #f8f9fa !important; 
+            border: none !important; 
+            border-radius: 12px !important; 
+            padding: 16px; 
+            font-size: 16px;
+            outline: none;
+            transition: background 0.2s;
+        }
+        
+        .form-control:focus {
+            background-color: #f1f3f5 !important;
+        }
+
+        /* 입력창 비활성화 상태 스타일 */
+        .form-control:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 보조 버튼 */
+        .btn-sub {
+            background-color: #3d8b89;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 18px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        
+        /* 인증 버튼 강조 색상 */
+        .btn-auth-confirm {
+            background-color: #52a3a1;
+        }
+
+        .btn-sub:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* [3] 메인 저장 버튼 */
+        .btn-submit { 
+            background-color: #3d8b89; 
+            color: white; 
+            border: none; 
+            border-radius: 15px; 
+            padding: 20px 0; 
+            font-weight: bold; 
+            font-size: 18px;
+            width: 100%;
+            margin-top: 50px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background-color: #2d6b69; }
+        
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* [4] 메시지 스타일 */
+        .error-msg {
+            color: red;
+            font-size: 12px;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .success-msg {
+            color: #3d8b89;
+            font-size: 12px;
+            display: none;
+            margin-top: 5px;
+        }
