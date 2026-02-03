@@ -16,4 +16,16 @@
     WHERE u.user_type = 'COMPANY'
   </select>
 
+ <select id="companyDetail" parameterType="Integer" resultType="com.dacoach.model.company.CompanyDTO">
+ 	select u.user_name,
+ 	c.company_num,
+ 	c.phone,
+ 	c.address,
+ 	u.login_id,
+ 	u.password,
+ 	c.email
+ 	from users u
+ 	join company c on u.users_idx = c.users_idx
+ 	where u.users_idx = #{userIdx}
+ </select>
 </mapper>

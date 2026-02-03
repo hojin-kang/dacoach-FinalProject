@@ -1,0 +1,22 @@
+<!-- admin/company/companyDetail.html -->
+<div th:fragment="contentPage">
+  <h2 class="text-2xl font-bold mb-6">기업 상세 정보</h2>
+
+  <div class="max-w-4xl mx-auto bg-white p-8 rounded shadow">
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div><strong>회사 이름:</strong> <span th:text="${companyDetail.userName}">주식회사 예제</span></div>
+      <div><strong>사업자 번호:</strong> <span th:text="${companyDetail.companyNum}">123-45-67890</span></div>
+      <div><strong>전화번호:</strong> <span th:text="${companyDetail.phone}">010-1234-5678</span></div>
+      <div><strong>주소:</strong> <span th:text="${companyDetail.address}">서울시 예제구</span></div>
+      <div><strong>아이디:</strong> <span th:text="${companyDetail.loginId}">example_company</span></div>
+      <div><strong>비밀번호:</strong> <span th:text="${companyDetail.password}">hashed_pw</span></div>
+      <div><strong>이메일:</strong> <span th:text="${companyDetail.email}">email@example.com</span></div>
+    </div>
+
+    <div class="flex gap-2">
+      <a th:href="@{/admin/companyList}">
+        <button class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">목록</button>
+      </a>
+    </div>
+  </div>
+</div>

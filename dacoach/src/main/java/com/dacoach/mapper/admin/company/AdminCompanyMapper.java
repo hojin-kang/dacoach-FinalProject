@@ -7,4 +7,5 @@ import com.dacoach.model.company.CompanyDTO;
 @Mapper
 public interface AdminCompanyMapper {
     List<CompanyDTO> companyList();
+    CompanyDTO companyDetail(int usersIdx);
 }
