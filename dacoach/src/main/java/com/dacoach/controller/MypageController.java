@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -90,8 +91,9 @@ public class MypageController {
 	}
 	
 	@PostMapping("/myQnaDetail")
-	public ModelAndView myQnaDetail(int qna_idx, HttpSession session) {
+	public ModelAndView myQnaDetail(@RequestParam("qna_idx") Integer qna_idx, HttpSession session) {
 	    ModelAndView mav = new ModelAndView();
+	    System.out.println("qna_idx = " + qna_idx);
 	    int user_idx = (Integer) session.getAttribute("user_idx");
 	    Map<String, Object> data = null;
 		try {

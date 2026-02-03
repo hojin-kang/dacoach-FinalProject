@@ -24,8 +24,8 @@ public class QnaServiceImple implements QnaService {
 	@Override
 	public QnaDTO myQnaDetail(int qna_idx, int user_idx) {
 		Map<String, Object> param = new HashMap<>();
-        param.put("qnaIdx", qna_idx);
-        param.put("userIdx", user_idx);
+        param.put("qna_idx", qna_idx);
+        param.put("user_idx", user_idx);
 
         return qnaMapper.myQnaDetail(param);
 	}
@@ -33,8 +33,8 @@ public class QnaServiceImple implements QnaService {
 	@Override
 	public Map<String, Object> myQnaDetailWithAnswer(int qna_idx, int user_idx) {
 		Map<String, Object> param = new HashMap<>();
-	    param.put("qnaIdx", qna_idx);
-	    param.put("userIdx", user_idx);
+	    param.put("qna_idx", qna_idx);
+	    param.put("user_idx", user_idx);
 
 	    QnaDTO qna = qnaMapper.myQnaDetail(param);
 	    Qna_aDTO answer = qnaMapper.selectAnswer(qna_idx);
