@@ -18,7 +18,7 @@
 	        </div>
         </div>
 
-        <div class="header__spacer"></div>
+        <div class="header__spacer" th:if="${session.users_idx == null}"></div>
         
         <div class="gnb" th:if="${session.users_idx == null}">
         	<a th:href="@{/login}">로그인 / 회원가입</a>
