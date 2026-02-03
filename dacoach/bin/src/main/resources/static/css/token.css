@@ -1,0 +1,123 @@
+@charset "UTF-8";
+
+.tokenSummary{
+  width: 80%;
+  height: 140px;
+  border: none;
+  border-radius: 12px;
+  background: #F7F8F7;
+  padding: 16px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.tokenSummary__left{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.tokenIcon{
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.tokenLabel{
+  font-size: 16px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.tokenCount{
+  font-size: 19px;
+  font-weight: 800;
+  color: #111;
+}
+
+.tokenCount .num{
+  font-size: 16px;
+  font-weight: 900;
+  margin-right: 2px;
+}
+
+.tokenSummary__right{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tokenBtn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 60px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tokenBtn--fill{
+  background: #328889;
+  color: #fff;
+  border: 1px solid #328889;
+}
+
+.tokenBtn--line{
+  background: #fff;
+  color: #328889;
+  border: 1px solid #328889;
+}
+
+.sectionTitle{
+  font-size: 13px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+/* table */
+.historyTable{
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #dfe4ea;
+}
+
+.historyTable thead th{
+  background: #328889;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 5px 8px;
+  text-align: center;
+}
+
+.historyTable tbody td{
+  font-size: 12px;
+  padding: 10px 8px;
+  border-top: 1px solid #e9edf2;
+  text-align: center;
+  color: #222;
+}
+
+.emptyRow{
+  padding: 18px 8px !important;
+  color: #777 !important;
+}
+
+
+
+.pageTitle {
+  margin: 6px 0 14px;
+  text-align: left !important;
+  font-size: 20px;
+  margin: 35px 0px 20px;
+}

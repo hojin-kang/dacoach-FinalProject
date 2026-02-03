@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dacoach.mapper.coach.CoachMapper">
+	<select id="idCheck" parameterType="String" resultType="Integer">
+		select count(*) from users where login_id = #{loginId}
+	</select>
+	<insert id="coachProfile" parameterType="com.dacoach.model.users.UsersDTO">
+    INSERT INTO users (
+        user_idx, user_type, user_name, login_id, password, status, created_at) 
+    VALUES (
+        seq_users.nextval, 
+        #{user_type}, 
+        #{user_name}, 
+        #{login_id}, 
+        #{password}, 
+        #{status}, 
+        sysdate
+    )
+	</insert>
+	<select id="checkNick" parameterType="String" resultType="Integer">
+		select count(*) from coach where nickname = #{nickname}
+	</select>
+	<select id="getMajorFields" resultType="map">
+	    select major_field_idx, major_field_cd 
+	    from major_field 
+	    order by major_field_idx asc
+	</select>
+
+	<select id="getMinorFields" parameterType="int" resultType="map">
+	    select minor_field_idx, minor_field_nm 
+	    from minor_field 
+	    where major_field_idx = #{majoridx}
+	    order by minor_field_nm asc
+	</select>
+	<select id="getMajorRegions" resultType="map">
+	    select major_region_idx, region_nm 
+		from major_region 
+		order by region_nm asc
+	</select>
+
+	<select id="getMinorRegions" parameterType="int" resultType="map">
+	    select minor_region_idx, district_nm
+		from minor_region
+		where major_region_idx = #{majorRegionIdx}
+		order by district_nm asc
+	</select>
+	<select id="getUsersIdx" parameterType="String" resultType="Integer">
+		select user_idx from users where login_id=#{login_id}
+	</select>
+	<insert id="coachJoin" parameterType="com.dacoach.model.coach.CoachDTO">
+		insert into coach (
+		    coach_idx, user_idx, birth_date, nickname, phone, mail, intro, photo, video, point_score,
+		    token_balance, kakao_key) values (
+		    	seq_coach.nextval,
+		    	#{user_idx},
+		    	#{birth_date, jdbcType=DATE},
+		    	#{nickname},
+		    	#{phone},
+		    	#{mail},
+		    	#{intro},
+		    	' ',
+		    	' ',
+		    	0,
+		    	0,
+		    	' '
+		    )
+	</insert>
+	<select id="getCoachInfo" parameterType="int" resultType="com.dacoach.model.coach.CoachDTO">
+		select * from coach where user_idx = #{user_idx}
+	</select>
+</mapper>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 선택</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <style>
+        /* [1] 레이아웃 초기화 및 중앙 정렬 */
+        body { 
+            background-color: #ffffff; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+        
+        nav a, .header-container a, [th\:replace] a { 
+            text-decoration: none !important; 
+            color: inherit !important; 
+        }
+
+        main {
+            flex: 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 0;
+        }
+
+        .signup-selection { 
+            width: 100%;
+            max-width: 850px; 
+            text-align: center; 
+        }
+
+        .section-title { 
+            font-weight: bold; 
+            margin-bottom: 50px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 20px; 
+            font-size: 26px;
+            color: #333;
+        }
+
+        /* [2] 카드 디자인 */
+        .signup-card-container { 
+            display: flex; 
+            gap: 40px; 
+            justify-content: center; 
+        }
+
+        .signup-card { 
+            flex: 1; 
+            padding: 50px 30px; 
+            border: 1px solid #eee; 
+            border-radius: 20px; 
+            background-color: #fff;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .signup-card:hover { 
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08); 
+        }
+
+        /* [수정] 아이콘 원형 스타일 */
+        .card-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 25px;
+            object-fit: cover;
+            border-radius: 50%; /* 원형 만들기 */
+            border: 1px solid #eee; /* 테두리 추가 (선택사항) */
+            padding: 10px; /* 내부 여백 */
+            background-color: #f9f9f9;
+        }
+        
+        .type-title-coach { color: #3d8b89; font-weight: bold; font-size: 24px; margin-bottom: 10px; }
+        .type-title-company { color: #d67d1d; font-weight: bold; font-size: 24px; margin-bottom: 10px; }
+        
+        .type-desc { 
+            font-size: 15px; 
+            color: #666; 
+            margin: 20px 0 40px; 
+            line-height: 1.7; 
+        }
+
+        /* [3] 버튼 스타일 공통 */
+        .btn-base {
+            background-color: transparent; /* 배경 투명으로 통일 */
+            border-radius: 10px;
+            padding: 14px 0;
+            font-weight: bold;
+            width: 85%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* [수정] 코치 버튼 스타일 (컴퍼니와 동일한 아웃라인 형식) */
+        .btn-coach { 
+            color: #3d8b89; 
+            border: 2px solid #3d8b89; 
+        }
+        .btn-coach:hover { 
+            background-color: #f0f9f8; 
+        }
+
+        /* 컴퍼니 버튼 스타일 */
+        .btn-company { 
+            color: #d67d1d; 
+            border: 2px solid #d67d1d; 
+        }
+        .btn-company:hover { 
+            background-color: #fff5eb; 
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{layout/header :: siteHeader}"></div>
+
+    <main>
+        <div class="signup-selection">
+            <h4 class="section-title">회원가입</h4>
+            
+            <div class="signup-card-container">
+                <div class="signup-card">
+                    <div class="type-title-coach">코치</div>
+                    <img th:src="@{/img/icon/coach.png}" alt="코치 아이콘" class="card-icon">
+                    <p class="type-desc">
+                        코치 회원이 되어<br>
+                        재능을 무료로 교환하거나<br>
+                        클래스를 수강해 보세요!
+                    </p>
+                    <button id="coachJoin" class="btn-base btn-coach">가입하기</button>
+                </div>
+
+                <div class="signup-card">
+                    <div class="type-title-company">컴퍼니</div>
+                    <img th:src="@{/img/icon/company.png}" alt="컴퍼니 아이콘" class="card-icon">
+                    <p class="type-desc">
+                        컴퍼니 회원이 되어<br>
+                        클래스별 수강생을 모집하고<br>
+                        통계 데이터를 관리해보세요!
+                    </p>
+                    <button class="btn-base btn-company" id="companyJoin" onclick="location.href='/signup/company'">가입하기</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{layout/footer :: siteFooter}"></div>
+
+    <script>
+        document.getElementById('coachJoin').addEventListener('click', function() {
+            window.location.href = '/coachJoin';
+        });
+        document.getElementById('companyJoin').addEventListener('click', function() {
+            window.location.href = '/companyJoin';
+        });
+    </script>
+</body>
+</html>

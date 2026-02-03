@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <header class="header" th:fragment="siteHeader">
+      <div class="container header__inner">
+      	<div class="header-left">
+	        <a class="logo" th:href="@{/}"><img src="/img/logo.png"></a>
+	
+	        <nav class="gnb">
+	          <a th:href="@{/}">홈</a>
+	          <a th:href="@{/coach/search}">코치찾기</a>
+	          <a th:href="@{/class/coach/classList}">클래스</a>
+	        </nav>
+	
+	
+	        <div class="search">
+	          <input type="text" placeholder="검색" />
+	        </div>
+        </div>
+        
+        <div class="header__spacer" th:if="${session.user_idx == null}"></div>
+        
+        <div class="gnb" th:if="${session.user_idx == null}">
+        	<a th:href="@{/login}">로그인 / 회원가입</a>
+        </div>
+
+        <div class="headerIcons" th:unless="${session.user_idx == null}">
+          <a class="iconBtn" th:href="@{/tokenHistory}" title="닭꼬치"><img src="/img/icon/dakcoachIcon.png"></a>
+          <a class="iconBtn notiIcon" th:href="@{/notification}" title="알림">
+			<img src="/img/icon/notification.png">
+  			<span class="notiDot" th:if="${unreadNotiCount > 0}"></span>
+		  </a>
+          <a class="iconBtn" th:href="@{/chat}" title="채팅"><img src="/img/icon/chat.png"></a>
+          <a class="iconBtn" th:href="@{/mypage}" title="마이페이지"><img src="/img/profile/defaultProfile.jpg"></a>
+        </div>
+        
+      </div>
+		<script>
+		  document.addEventListener("DOMContentLoaded", function () {
+		    const header = document.querySelector(".header");
+		
+		    window.addEventListener("scroll", () => {
+		      if (window.scrollY > 0) {
+		        header.classList.add("scrolled");
+		      } else {
+		        header.classList.remove("scrolled");
+		      }
+		    });
+		  });
+		</script>
+	</header>
+  </body>
+</html>

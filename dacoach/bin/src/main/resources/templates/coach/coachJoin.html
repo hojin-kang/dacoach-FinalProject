@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>코치 회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/coach/coachJoin.css}" />
+    
+</head>
+<body>
+
+    <div th:replace="~{layout/header :: siteHeader}"></div>
+
+    <main>
+        <div class="signup-container">
+            <h4 class="signup-title">코치 회원가입</h4>
+
+            <form class="form-section" action="coachProfile" method="post">
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="username" name="login_id" class="form-control" placeholder="아이디">
+                        <button type="button" id="checkDuplicate" class="btn-sub" disabled>중복확인</button>
+                    </div>
+                    <span id="usernameError" class="error-msg">아이디는 영문과 숫자를 모두 사용해 8~20자로 입력해주세요.</span>
+                    <span id="usernameSuccess" class="success-msg">사용 가능한 아이디입니다.</span>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" disabled>
+                    <span id="passwordError" class="error-msg">비밀번호는 영문 대문자, 소문자, 숫자, 특수문자를 모두 사용해 8~20자로 입력해주세요.</span>
+                </div>
+
+                <div class="form-group mt-40">
+                    <input type="text" id="name" name="user_name" class="form-control" placeholder="이름">
+                </div>
+
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
+                        <button type="button" class="btn-sub">인증번호 받기</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="authCode" class="form-control" placeholder="인증번호">
+                        <button type="button" class="btn-sub btn-auth-confirm">인증</button>
+                    </div>
+                </div>
+				<input type="hidden" name="user_type" value="coach">
+				<input type="hidden" name="status" value="inactive">
+                <button type="submit" id="submitBtn" class="btn-submit" disabled>저장 후 계속하기</button>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="~{layout/footer :: siteFooter}"></div>
+
+    <script th:inline="javascript">
+    // [1] 요소 및 상태 변수 선언
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const authInput = document.getElementById('authCode');
+    
+    const checkDuplicateButton = document.getElementById('checkDuplicate');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    const usernameError = document.getElementById('usernameError');
+    const usernameSuccess = document.getElementById('usernameSuccess');
+    const passwordError = document.getElementById('passwordError');
+
+    let isIdVerified = false; // 중복 확인 통과 여부
+
+    // [2] 전체 유효성 검사 함수 (버튼 활성화 여부 결정)
+    function checkAllValid() {
+        // 유효성 체크 조건들
+        const isUserOk = isIdVerified && usernameInput.value !== "";
+        const isPassOk = passwordError.style.display === 'none' && passwordInput.value !== "";
+        const isNameOk = nameInput.value.trim() !== "";
+        const isemailOk = emailInput.value.trim() !== "";
+        const isAuthOk = authInput.value.trim() !== "";
+
+        // 모든 조건 만족 시 가입 버튼 활성화
+        submitBtn.disabled = !(isUserOk && isPassOk && isNameOk && isemailOk && isAuthOk);
+    }
+
+    // [3] 아이디 실시간 유효성 및 상태 제어
+    usernameInput.addEventListener('input', function() {
+        const username = this.value;
+        const isValid = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{8,20}$/.test(username);
+
+        // 아이디 변경 시 무조건 중복확인 다시 해야함
+        isIdVerified = false;
+        usernameSuccess.style.display = 'none';
+        passwordInput.disabled = true;
+        passwordInput.value = "";
+
+        if (!isValid) {
+            usernameError.style.display = (username === "") ? 'none' : 'block';
+            checkDuplicateButton.disabled = true;
+        } else {
+            usernameError.style.display = 'none';
+            checkDuplicateButton.disabled = false;
+        }
+        checkAllValid();
+    });
+
+    // [4] 중복확인 AJAX 요청
+    checkDuplicateButton.addEventListener('click', function() {
+        const username = usernameInput.value;
+
+        fetch(`/api/member/idCheck?username=${username}`)
+            .then(response => response.json())
+            .then(isAvailable => {
+                if (isAvailable) {
+                    usernameSuccess.style.display = 'block';
+                    usernameError.style.display = 'none';
+                    isIdVerified = true;
+                    passwordInput.disabled = false;
+                    alert("사용 가능한 아이디입니다.");
+                } else {
+                    usernameError.textContent = "이미 사용 중인 아이디입니다.";
+                    usernameError.style.display = 'block';
+                    usernameSuccess.style.display = 'none';
+                    isIdVerified = false;
+                }
+                checkAllValid();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("중복 확인 중 오류가 발생했습니다.");
+            });
+    });
+
+    // [5] 비밀번호 유효성 검사
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        const isValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/.test(password);
+
+        if (password === "") {
+            passwordError.style.display = 'none';
+        } else {
+            passwordError.style.display = isValid ? 'none' : 'block';
+        }
+        checkAllValid();
+    });
+
+    // [6] 기타 입력 필드 이벤트 바인딩
+    [nameInput, emailInput, authInput].forEach(el => {
+        el.addEventListener('input', checkAllValid);
+    });
+</script>
+</body>
+</html>

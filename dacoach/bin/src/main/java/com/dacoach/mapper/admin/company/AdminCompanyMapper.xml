@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
+
+  <select id="companyList" resultType="com.dacoach.model.company.CompanyDTO">
+    SELECT 
+      u.users_idx     AS usersIdx,
+      u.user_name     AS userName,
+      c.company_num   AS companyNum,
+      ce.cert_status  AS certStatus
+    FROM users u
+    JOIN company c ON u.users_idx = c.users_idx
+    LEFT JOIN cert ce ON u.users_idx = ce.users_idx
+    WHERE u.user_type = 'COMPANY'
+  </select>
+
+ <select id="companyDetail" parameterType="Integer" resultType="com.dacoach.model.company.CompanyDTO">
+ 	select u.user_name,
+ 	c.company_num,
+ 	c.phone,
+ 	c.address,
+ 	u.login_id,
+ 	u.password,
+ 	c.email
+ 	from users u
+ 	join company c on u.users_idx = c.users_idx
+ 	where u.users_idx = #{userIdx}
+ </select>
+</mapper>

@@ -1,11 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+
+  <meta charset="UTF-8" />
+  <title>dacoach</title>
+
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
-<h1>메인화면 index.html</h1>
-<h1>오호홍</h1>
+  <div th:replace="layout/header :: siteHeader"></div>
+
+  <main class="main">
+    <div class="container">
+    	<div class="categoryArea">
+    		<span>관심 분야를 선택해보세요</span>
+    		
+		      <div class="category">
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/computer.png">
+		      		<span>IT/전자</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/art.png">
+		      		<span>예술</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/language.png">
+		      		<span>어학</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/money.png">
+		      		<span>투자/금융</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/sport.png">
+		      		<span>스포츠</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/life.png">
+		      		<span>생활</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/beauty.png">
+		      		<span>패션/뷰티</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/interior.png">
+		      		<span>인테리어</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/cooking.png">
+		      		<span>요리</span>
+		      	</div>
+		      	<div class="categoryUnit">
+		      		<img src="/img/icon/game.png">
+		      		<span>게임</span>
+		      	</div>
+		      </div>
+		      
+    	</div>
+      
+      <section class="mainSection">
+      	<span>실시간 </span><span style="color:#328889;">인기 코치</span>
+      	<div class="mainSectionUnit">
+      		<div class="card">
+      		여기에 각 내용
+      		</div>
+      	</div>
+      </section>
+      
+      <section class="mainSection">
+      	<span>실시간 </span><span style="color:#328889;">인기 분야</span>
+      	<div class="mainSectionUnit">
+      		<!-- 실시간 인기 코치 나오는 곳 -->
+      	</div>
+      </section>
+      
+      <section class="adBanner">
+      	<img src="/img/banner/banner.png">
+      </section>
+      
+      <section class="mainSection">
+      	<span>실시간 </span><span style="color:#328889;">인기 클래스</span>
+      	<div class="mainSectionUnit">
+      		
+      	</div>
+      </section>
+    </div>
+  </main>
+  
+  <div th:replace="layout/footer :: siteFooter"></div>
+
 </body>
 </html>

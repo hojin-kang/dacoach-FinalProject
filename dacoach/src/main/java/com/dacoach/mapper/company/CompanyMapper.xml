@@ -3,11 +3,11 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.dacoach.mapper.company.CompanyMapper">
-  	<select id="fieldTag" resultType="List">
-  		select * from MAJOR_FIELD
+  	<select id="fieldTag">
+  		select * from major_field order by major_field_idx desc
   	</select>
   	
-  	<select id="regionTag" resultType="List">
-  		select * from MAJOR_REGION
+  	<select id="regionTag">
+  		select * from major_region order by major_region_idx desc
   	</select>
   </mapper>
