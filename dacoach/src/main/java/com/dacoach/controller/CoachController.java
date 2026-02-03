@@ -1,5 +1,6 @@
 package com.dacoach.controller;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +19,22 @@ import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.coach.CoachService;
 
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class CoachController {
 	@Autowired
 	private CoachService coachService;
 	
+	@GetMapping("/test")
+	public String test() {
+		return "coach/test";
+	}
+	@PostMapping("coachJoin2")
+	public String coachJoin2(@RequestParam(value="photo", required=false)MultipartFile photo){
+		System.out.println(photo.isEmpty());
+		return "/";
+	}
 	@GetMapping("/coachJoin")
 	public String coachJoinForm() {
 		return "coach/coachJoin";
@@ -57,7 +68,7 @@ public class CoachController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(result>=0) {
+		if(result>0) {
 			mav.setViewName("/coach/coachProfile");
 			mav.addObject("login_id",udto.getLogin_id());
 			mav.addObject("mail",mail);
@@ -102,33 +113,31 @@ public class CoachController {
 	}
 	
 	@PostMapping("/coachJoin")
-	public ModelAndView coachJoin(CoachDTO cdto,@RequestParam(value="mail")String mail,
-			@RequestParam(value="login_id")String login_id) {
-		
+	public ModelAndView coachJoin(CoachDTO cdto, 
+	        @RequestParam(value="mail") String mail,
+	        @RequestParam(value="login_id") String login_id) {
+
 	    ModelAndView mav = new ModelAndView();
-	    int users_idx=0;
+	    
+
 	    try {
-			users_idx=coachService.getUsersIdx(login_id);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    cdto.setUsers_idx(users_idx);
-	    cdto.setMail(mail);
-	    int result=0;
-	    try {
-			result=coachService.coachJoin(cdto);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    if(result>0) {
-	    	mav.setViewName("redirect:/login");
-	    }else {
-	    	mav.setViewName("redirect:/coachJoin");
+	        int users_idx = coachService.getUsersIdx(login_id);
+	        cdto.setUsers_idx(users_idx);
+	        cdto.setMail(mail);
+	        int result = coachService.coachJoin(cdto);
+
+	        if(result > 0) {
+	            mav.setViewName("redirect:/login");
+	        } else {
+	            mav.setViewName("redirect:/coachJoin");
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        mav.setViewName("redirect:/coachJoin");
 	    }
 	    
-	   return mav;
+	    return mav;
 	}
 	
 	
