@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+   <meta charset="UTF-8" />
+   <title>dacoach</title>
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+   <div class="container">
+   	<form name="profileInfo" action="">
+      <div class="picUpload">
+      	<p class="profilePic">업로드한 사진 올릴영역</p>
+      	<p class="picUpBtn"><input type="file" name="profilePicFile" id="profilePicFileId"></p>
+      </div>
+      <div class="profileInfoArea">
+      	<textarea rows="4" cols="8" name="profileArea" placeholder="프로필 설명을 입력해주세요"></textarea>
+      </div>
+      <div class="classRegion">
+      	<p class="classMagerRegion" id="MagerRegion">
+      		대분류태그가져올거
+      		
+      	</p>
+		<p class="classMinorRegion" id="MinorRegion">
+			소분류태그가져올거
+		</p>
+		<p><input type="text" name="regionDetal" placeholder="상세주소를 입력해주세요"></p>
+		<p class="classAddRegion" id="AddRegion">
+			<input type="button" value="주소 추가하기" id="addRegion">
+		</p>
+      </div>
+      <div class="tags">
+      	<p class="majorField">
+      		<input type="button" value="분야대분류">
+      	</p>
+      	<p class="minorField">
+      		<input type="button" id="minorField" value="분야소분류">
+      	</p>
+      </div>
+     </form>
+   </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+    
+</head>
+<body>
+
+    <div th:replace="~{layout/header :: siteHeader}"></div>
+
+    <main>
+        <div class="login-container">
+            <h4 class="login-title">로그인</h4>
+
+            <form action="/loginOk" method="post">
+
+                <div class="login-row">
+                    <div class="input-group-stack">
+                        <input type="text" name="login_id" class="form-control" placeholder="아이디">
+                        <input type="password" name="password" class="form-control" placeholder="비밀번호">
+                    </div>
+                    <button type="submit" class="btn-login">로그인</button>
+                </div>
+
+                <div class="find-links">
+                    <a href="#">아이디 찾기</a> | <a href="#">비밀번호 찾기</a>
+                </div>
+
+                <button type="button" class="btn-kakao">
+                    <span style="margin-right: 8px;">💬</span> 카카오로 시작하기
+                </button>
+
+                <div class="divider">or</div>
+
+                <button type="button" class="btn-signup" onclick="location.href='/userType'">회원가입</button>
+            </form>
+        </div>
+    </main>
+
+    <div th:replace="~{layout/footer :: siteFooter}"></div>
+
+</body>
+</html>

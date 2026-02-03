@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>dacoach Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: 'Pretendard', sans-serif;
+    }
+
+    .sidebar-item {
+      border-left: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar-item:hover {
+      border-left: 4px s	olid #4a7c74;
+      color: #4a7c74;
+      background: #f1f5f9;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .header-tag {
+      background: #b2c8c4;
+      color: #333;
+      padding: 4px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    /* 테이블용 추가 스타일 (원하시면 유지) */
+    .table-thead { background-color: #b2c8c4; color: #333; }
+  </style>
+</head>
+<body class="flex min-h-screen">
+
+  <div th:replace="~{adminLayout/asideAdminLayout :: siteAside}"></div>
+
+  <div class="flex-1 flex flex-col">
+    
+    <div th:replace="~{adminLayout/adminHeader :: adminHeader}"></div>
+
+    <main class="p-8">
+      <div th:replace="~{${contentPage} :: ${contentFragment}}">
+          </div>
+    </main>
+    
+  </div>
+
+</body>
+</html>

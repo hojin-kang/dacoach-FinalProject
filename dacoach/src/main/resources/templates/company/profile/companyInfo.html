@@ -15,13 +15,15 @@
    <form name="companyInfoForm" action="profileForm">
    
       <div class="companyInfo">
-      	<p class="comTel"><input type="text" name="companyTel" placeholder="사업장 전화번호를 입력해주세요"></p>
-      	<p class="comAddr"><input type="text" name="companyAddr" placeholder="사업장 주소를 입력해주세요"></p>
+      	<p class="comTel"><input type="text" name="phone" placeholder="사업장 전화번호를 입력해주세요"></p>
+      	<p class="comAddr"><input type="text" name="address" placeholder="사업장 주소를 입력해주세요"></p>
+      	<p class="comAddr"><input type="text" name="email" placeholder="E-mail 주소를 입력해주세요"></p>
       </div>
    
    	<div class="comCert">
-   		<p class="certName"><input type="hidden" name="certName" value="cert"></p>
-   		<p class="certFile"><input type="file" name="certfile"></p>
+   		<p class=companyNum><input type="text" name="company_num" placeholder="사업자 번호를 입력해주세요"></p>
+   		<input type="hidden" name="cert_name" value="cert"><input type="hidden" name="cert_status" value="yet">
+   		<p class="certFile"><input type="file" name="cert_file"></p>
    	</div>
    
   

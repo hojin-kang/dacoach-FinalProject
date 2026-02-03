@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="coachDetail">
+    <style>
+        .bg-mint-light { background-color: #f0f8f7; }
+        .bg-mint-dark { background-color: #9dbbb5; }
+        .text-mint-dark { color: #5a7d75; }
+        .rounded-section { border-radius: 40px; }
+        .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; }
+    </style>
+
+    <div class="max-w-[1100px] mx-auto space-y-6 p-8 font-main text-gray-700">
+        
+        <div class="bg-white border-2 border-gray-200 rounded-section p-8 shadow-sm">
+            <h2 class="inline-block bg-mint-dark text-white px-8 py-2 rounded-full font-bold mb-6 text-base">코치 정보</h2>
+            
+            <div class="flex gap-10">
+                <div class="flex-1 grid grid-cols-2 gap-x-6 gap-y-2">
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">이름</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].USER_NAME : ''}"></div>
+                    </div>
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">닉네임</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].NICKNAME : ''}"></div>
+                    </div>
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">아이디</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].LOGIN_ID : ''}"></div>
+                    </div>
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">비밀번호</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? '********' : ''}"></div>
+                    </div>
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">카카오ID</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].KAKAO_KEY : ''}"></div>
+                    </div>
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">이메일</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].MAIL : ''}"></div>
+                    </div>
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">생년월일</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].BIRTH_DATE : ''}"></div>
+                    </div>
+                    <div class="flex items-stretch h-10">
+                        <span class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">전화번호</span>
+                        <div class="bg-mint-light flex-1 flex items-center px-4 rounded-r-md" th:text="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].PHONE : ''}"></div>
+                    </div>
+                </div>
+                
+                <div class="w-56 h-56 bg-mint-light rounded-3xl flex items-center justify-center border border-mint-dark/10 shrink-0">
+                    <svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+			<div
+				class="bg-white border-2 border-gray-200 rounded-section p-8 shadow-sm">
+				<h2
+					class="inline-block bg-mint-dark text-white px-8 py-2 rounded-full font-bold mb-6 text-base">계정관리</h2>
+				<div class="flex items-stretch min-h-[80px]">
+					<div
+						class="bg-mint-dark text-white w-24 flex items-center justify-center rounded-l-md font-bold text-sm shrink-0">계정상태</div>
+					<div
+						class="flex flex-col justify-center gap-2 flex-1 bg-mint-light px-4 rounded-r-md py-2">
+						<label
+							class="flex items-center gap-2 text-sm font-bold cursor-pointer">
+							<input type="radio" name="status" value="U"
+							th:checked="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].STATUS == 'U' : true}"
+							class="accent-mint-dark w-4 h-4"> 사용
+						</label>
+
+						<div class="flex items-center gap-2">
+							<label
+								class="flex items-center gap-2 text-sm font-bold cursor-pointer whitespace-nowrap">
+								<input type="radio" name="status" value="S"
+								th:checked="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].STATUS == 'S' : false}"
+								class="accent-mint-dark w-4 h-4"> 정지
+							</label>
+
+							<div
+								class="flex items-center gap-1 bg-white px-2 py-1 rounded border border-gray-100">
+								<input type="date"
+									class="text-[11px] outline-none cursor-pointer bg-transparent"
+									th:value="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].STOP_START_DATE : ''}">
+								<span class="text-gray-300">~</span> <input type="date"
+									class="text-[11px] outline-none cursor-pointer bg-transparent"
+									th:value="${coachDetail != null and !coachDetail.isEmpty() ? coachDetail[0].STOP_END_DATE : ''}">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="bg-white border-2 border-gray-200 rounded-section p-8 shadow-sm relative">
+                <h2 class="inline-block bg-mint-dark text-white px-8 py-2 rounded-full font-bold mb-6 text-base">자격증</h2>
+                <div class="overflow-hidden rounded-lg border border-gray-200">
+                    <table class="w-full text-center text-xs">
+                        <thead class="bg-mint-dark text-white">
+                            <tr class="h-8">
+                                <th class="border-r border-white/20">발급일자</th>
+                                <th class="border-r border-white/20">자격명</th>
+                                <th class="border-r border-white/20">발급기관</th>
+                                <th>파일</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-mint-light">
+                            <tr class="h-12 border-t border-white text-gray-400">
+                                <td colspan="4">데이터가 없습니다.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-4 mt-4">
+            <button class="bg-mint-dark text-white px-10 py-2.5 rounded-lg font-bold text-sm shadow-md hover:brightness-90 transition-all">저장</button>
+            <button class="bg-gray-400 text-white px-10 py-2.5 rounded-lg font-bold text-sm shadow-md hover:bg-gray-500 transition-all">목록</button>
+        </div>
+    </div>
+</div>

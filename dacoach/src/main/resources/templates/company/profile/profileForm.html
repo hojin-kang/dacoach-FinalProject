@@ -22,8 +22,9 @@
       </div>
       <div class="classRegion">
       	<p class="classMagerRegion" id="MagerRegion">
-      		대분류태그가져올거
-      		
+      		<span th:each="region:${region_con}">
+      		<input type="button" th:value="${region.REGION_NM}">
+      		</span>
       	</p>
 		<p class="classMinorRegion" id="MinorRegion">
 			소분류태그가져올거
@@ -34,8 +35,10 @@
 		</p>
       </div>
       <div class="tags">
-      	<p class="majorField">
-      		<input type="button" value="분야대분류">
+      	<p class="majorField">     		
+      		<span th:each="field:${field_con}">
+      		<input type="button" th:value="${field.MAJOR_FIELD_CD}">
+      		</span>
       	</p>
       	<p class="minorField">
       		<input type="button" id="minorField" value="분야소분류">

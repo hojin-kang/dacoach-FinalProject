@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="statsContent">
+    <!-- 통계 카드 -->
+    <div class="grid grid-cols-4 gap-6 mb-8 text-center">
+      <div class="card flex flex-col items-center">
+        <span class="header-tag mb-4">오늘의 매출</span>
+        <i class="fa-solid fa-chart-line text-4xl text-blue-400 mb-2"></i>
+        <p class="text-xl font-bold" th:text="${#numbers.formatInteger(todaySales, 3, 'COMMA') + '만원'}">8,900만원</p>
+      </div>
+      <div class="card flex flex-col items-center">
+        <span class="header-tag mb-4">신규 가입</span>
+        <i class="fa-solid fa-user-plus text-4xl text-orange-300 mb-2"></i>
+        <p class="text-xl font-bold" th:text="${newJoins + '건'}">10건</p>
+      </div>
+      <div class="card flex flex-col items-center">
+        <span class="header-tag mb-4 text-white bg-gray-500">미처리 신고</span>
+        <i class="fa-solid fa-bell text-4xl text-red-400 mb-2"></i>
+        <p class="text-xl font-bold" th:text="${pendingReports + '건'}">3건</p>
+      </div>
+      <div class="card flex flex-col items-center">
+        <span class="header-tag mb-4">승인 대기</span>
+        <i class="fa-solid fa-stamp text-4xl text-yellow-500 mb-2"></i>
+        <p class="text-xl font-bold" th:text="${waitingApprovals + '건'}">10건</p>
+      </div>
+    </div>
+
+    <!-- 그래프 & 할 일 -->
+    <div class="grid grid-cols-2 gap-6 mb-8">
+      <div class="card">
+        <div class="flex justify-center mb-6">
+          <span class="header-tag">월별 매출 현황</span>
+        </div>
+        <div class="flex items-end justify-around h-48 border-l border-b border-gray-300 px-4">
+          <div class="w-8 bg-teal-400 h-32 rounded-t"></div>
+          <div class="w-8 bg-gray-200 h-40 rounded-t"></div>
+          <div class="w-8 bg-teal-400 h-24 rounded-t"></div>
+          <div class="w-8 bg-gray-200 h-28 rounded-t"></div>
+          <div class="w-8 bg-teal-400 h-44 rounded-t"></div>
+          <div class="w-8 bg-gray-200 h-36 rounded-t"></div>
+        </div>
+      </div>
+
+      <div class="card relative overflow-hidden">
+        <div class="flex justify-center mb-4">
+          <span class="header-tag !bg-gray-400 text-white">To-Do List</span>
+        </div>
+        <div class="bg-white p-4 rounded border border-gray-100 italic text-sm text-gray-700 leading-relaxed">
+          <ul class="list-disc list-inside space-y-3">
+            <li>승인 대기 현황: 개인 자격증 승인 [5건]
+              <ul class="list-none ml-6 text-gray-500">
+                <li>◦ 기업 가입 승인 [2건]</li>
+                <li>◦ 광고 등록 승인 [8건]</li>
+              </ul>
+            </li>
+            <li>최근 신고 내역: 유저 및 클래스 신고 중 가장 최근 건 5개 노출</li>
+          </ul>
+        </div>
+        <div class="absolute top-0 right-0 w-10 h-10 bg-gray-100" style="clip-path: polygon(0 0, 100% 100%, 0 100%);"></div>
+      </div>
+    </div>
+
+    <!-- 최근 게시물 -->
+    <div class="card">
+      <div class="flex justify-center mb-6">
+        <span class="header-tag">최근 게시물 및 댓글 관리</span>
+      </div>
+      <div class="space-y-4">
+        <div class="border rounded-lg p-4">
+          <h4 class="font-bold flex items-center mb-2"><span class="w-2 h-2 bg-gray-800 rounded-full mr-2"></span>최근 후기</h4>
+          <p class="text-gray-500 text-sm pl-4">검열이 필요한 최신 후기 리스트.</p>
+        </div>
+        <div class="border rounded-lg p-4">
+          <h4 class="font-bold flex items-center mb-2"><span class="w-2 h-2 bg-gray-800 rounded-full mr-2"></span>고객센터 Q&A</h4>
+          <p class="text-gray-500 text-sm pl-4">아직 답변하지 않은 최신 질문들.</p>
+        </div>
+      </div>
+    </div>
+</div>
