@@ -3,10 +3,12 @@ package com.dacoach.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 import com.dacoach.service.qna.QnaService;
+import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.service.mypage.MypageService;
 
 import jakarta.servlet.http.HttpSession;
@@ -23,18 +25,22 @@ public class MypageController {
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
-		int users_idx = (Integer)session.getAttribute("users_idx");
+		int user_idx = (Integer)session.getAttribute("user_idx");
+		System.out.println(user_idx);  //1
 		String user_nickname = "";
 		String user_rank = "";
 		
 		try {
-			Map users_info = mypageService.getUserInfo(users_idx);
-			user_nickname = (String)users_info.get("NICKNAME");
-			user_rank = (String)users_info.get("RANKNAME");
+			Map users_info = mypageService.getUserInfo(user_idx);
+			if (users_info != null) {
+			    user_nickname = (String) users_info.get("NICKNAME");
+			    user_rank = (String) users_info.get("RANKNAME");
+			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-		
+		System.out.println(user_nickname);
+		System.out.println(user_rank);
 		mav.addObject("user_nickname", user_nickname);
 		mav.addObject("user_rank", user_rank);
 		mav.setViewName("/coach/mypage/mypage");
@@ -71,9 +77,9 @@ public class MypageController {
 	@GetMapping("/myQnaList")
 	public ModelAndView myQnaList(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
-		int users_idx = (Integer)session.getAttribute("users_idx");
+		int user_idx = (Integer)session.getAttribute("user_idx");
 		try {
-			mav.addObject("qnaList", qnaService.myQnaList(users_idx));
+			mav.addObject("qnaList", qnaService.myQnaList(user_idx));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -83,8 +89,43 @@ public class MypageController {
 		return mav;
 	}
 	
-	@GetMapping("qna/myQnaDetail")
-	public String myQnaDetail() {
-		return "/coach/mypage/myQnaDetail";
+	@PostMapping("/myQnaDetail")
+	public ModelAndView myQnaDetail(int qna_idx, HttpSession session) {
+	    ModelAndView mav = new ModelAndView();
+	    int user_idx = (Integer) session.getAttribute("user_idx");
+	    Map<String, Object> data = null;
+		try {
+			data = qnaService.myQnaDetailWithAnswer(qna_idx, user_idx);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	    mav.addObject("qna", data.get("qna"));
+	    mav.addObject("answer", data.get("answer"));
+	    mav.setViewName("/coach/mypage/myQnaDetail");
+	    return mav;
+	}
+	
+	@GetMapping("/myQnaForm")
+	public String myQnaForm() {
+		return "/coach/mypage/myQnaForm";
+	}
+	
+	@PostMapping("/myQnaNew")
+	public ModelAndView myQnaNew(QnaDTO qdto, HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		qdto.setUser_idx((Integer) session.getAttribute("user_idx"));
+		int result = 0;
+		try {
+			result = qnaService.myQnaNew(qdto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (result > 0) {
+	        mav.setViewName("redirect:/myQnaList");
+	    } else {
+	        mav.setViewName("/coach/mypage/myQnaForm");
+	    }
+		return mav;
 	}
 }

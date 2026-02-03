@@ -53,7 +53,7 @@
 		    coach_idx, user_idx, birth_date, nickname, phone, mail, intro, photo, video, point_score,
 		    token_balance, kakao_key) values (
 		    	seq_coach.nextval,
-		    	#{users_idx},
+		    	#{user_idx},
 		    	#{birth_date, jdbcType=DATE},
 		    	#{nickname},
 		    	#{phone},
@@ -67,6 +67,6 @@
 		    )
 	</insert>
 	<select id="getCoachInfo" parameterType="int" resultType="com.dacoach.model.coach.CoachDTO">
-		select * from coach where users_idx = #{users_idx}
+		select * from coach where user_idx = #{user_idx}
 	</select>
 </mapper>

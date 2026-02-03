@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.dacoach.admin.company.model.AdminCompanyDAO;
 import com.dacoach.model.company.CompanyDTO;
-import com.dacoach.model.users.UsersDTO;
 
 @Service
 public class AdminCompanyServiceImple implements AdminCompanyService {
@@ -21,4 +20,9 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     public List<CompanyDTO> companyList() {
         return adminCompanyDAO.companyList();
     }
+
+	@Override
+	public CompanyDTO companyDetail(int usersIdx) {
+		return adminCompanyDAO.companyDetail(usersIdx);
+	}
 }

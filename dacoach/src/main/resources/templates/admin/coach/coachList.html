@@ -38,7 +38,9 @@
                     class="border-b border-gray-100 hover:bg-gray-50">
 
                     <td class="py-4" th:text="${coach.COACH_IDX}"></td>
-                    <td class="py-4 font-bold" th:text="${coach.USER_NAME}"></td>
+                    <td class="py-4 font-bold">
+                    	<a th:text="${coach.USER_NAME}" th:href="@{/admin/coach/coachDetail(coachIdx=${coach.COACH_IDX})}"></a>
+                    </td>
                     <td class="py-4" th:text="${coach.NICKNAME}"></td>
                     <td class="py-4" th:text="${coach.PHONE}"></td>
                     <td class="py-4" th:text="${coach.CREATED_AT != null ? #dates.format(coach.CREATED_AT, 'yyyy-MM-dd') : '-'}"></td>

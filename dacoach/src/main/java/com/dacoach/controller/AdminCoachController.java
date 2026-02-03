@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.service.admin.AdminService;
@@ -38,6 +39,25 @@ public class AdminCoachController {
 	    model.addAttribute("contentFragment", "coachContent");
 	    
 	    return "admin/dashboard";
+	}
+	
+	
+	@GetMapping("/coachDetail")
+	public String coachDetail(Model model,@RequestParam("coachIdx") int coachidx) {
+		List<Map<String, Object>> coachDetail = new ArrayList<>();
+		
+		try {
+			coachDetail = adminService.getCoachDetail(coachidx);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("coachDetail", coachDetail);
+		
+		model.addAttribute("contentPage", "admin/coach/coachDetail");
+		model.addAttribute("contentFragment", "coachDetail");
+		
+		return "admin/dashboard";
 	}
 	
 }
