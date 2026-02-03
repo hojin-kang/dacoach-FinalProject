@@ -2,30 +2,47 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 
-  <select id="companyList" resultType="com.dacoach.model.company.CompanyDTO">
-    SELECT 
-      u.users_idx     AS usersIdx,
-      u.user_name     AS userName,
-      c.company_num   AS companyNum,
-      ce.cert_status  AS certStatus
-    FROM users u
-    JOIN company c ON u.users_idx = c.users_idx
-    LEFT JOIN cert ce ON u.users_idx = ce.users_idx
-    WHERE u.user_type = 'COMPANY'
+  <resultMap id="adminCompanyRowMap" type="com.dacoach.admin.company.model.AdminCompanyRowDTO">
+
+    <!-- AdminCompanyRowDTO 안에 cert_status 필드가 있을 때 -->
+    <result property="cert_status" column="cert_status"/>
+
+    <!-- company: AdminCompanyRowDTO.company -->
+    <association property="company" javaType="com.dacoach.model.company.CompanyDTO">
+      <id     property="company_idx" column="company_idx"/>
+      <result property="users_idx"   column="users_idx"/>
+      <result property="company_num" column="company_num"/>
+    </association>
+
+    <!-- users: AdminCompanyRowDTO.users -->
+    <association property="users" javaType="com.dacoach.model.users.UsersDTO">
+      <id     property="user_idx"   column="user_idx"/>
+      <result property="user_name"  column="user_name"/>
+      <result property="status"     column="status"/>
+    </association>
+
+  </resultMap>
+
+  <select id="companyList" resultMap="adminCompanyRowMap">
+    SELECT
+      c.COMPANY_IDX AS company_idx,
+      u.USER_IDX    AS users_idx,
+      u.USER_IDX    AS user_idx,
+      u.USER_NAME   AS user_name,
+      u.STATUS      AS status,
+      c.COMPANY_NUM AS company_num,
+      NVL(ce.CERT_STATUS, '미등록') AS cert_status
+    FROM USERS u
+    JOIN COMPANY c
+      ON u.USER_IDX = c.USER_IDX
+    LEFT JOIN CERT ce
+      ON u.USER_IDX = ce.USER_IDX
+     AND ce.CERT_TYPE = '사업자등록증'
+    WHERE u.USER_TYPE = 'COMPANY'
+    ORDER BY u.USER_IDX DESC
   </select>
 
- <select id="companyDetail" parameterType="Integer" resultType="com.dacoach.model.company.CompanyDTO">
- 	select u.user_name,
- 	c.company_num,
- 	c.phone,
- 	c.address,
- 	u.login_id,
- 	u.password,
- 	c.email
- 	from users u
- 	join company c on u.users_idx = c.users_idx
- 	where u.users_idx = #{userIdx}
- </select>
 </mapper>

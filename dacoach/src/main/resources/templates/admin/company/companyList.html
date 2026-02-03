@@ -14,17 +14,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr th:each="company : ${companyList}">
-          <td th:text="${company.usersIdx}"></td>
-          <td th:text="${company.userName}"></td>
-          <td th:text="${company.companyNum}"></td>
-          <td th:text="${company.certStatus}"></td>
-          <td>
-            <a th:href="@{'/companyDetail/' + ${company.usersIdx}}">
-              <button class="bg-blue-500 text-white px-3 py-1 rounded">상세보기</button>
-            </a>
-          </td>
-        </tr>
+       <tr th:each="row : ${companyList}">
+  <td th:text="${row.company.company_idx}"></td>
+  <td th:text="${row.users.user_name}"></td>
+  <td th:text="${row.company.company_num}"></td>
+  <td th:text="${row.cert_status}"></td>
+  <td>
+    <a th:href="@{'/admin/companyDetail/' + ${row.company.users_idx}}">상세</a>
+  </td>
+</tr>
+
+
+
+
         <tr th:if="${#lists.isEmpty(companyList)}">
           <td colspan="5" class="text-gray-500 py-4">데이터가 없습니다.</td>
         </tr>
