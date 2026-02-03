@@ -103,7 +103,7 @@
 					<h3 class="required">클래스 제목</h3>
 					<div>
 						<input type="text" id="classTitle" name="title"
-							placeholder="클래스 제목을 입력하세요 (최대 200자)" maxlength="200" required>
+							placeholder="클래스 제목을 입력하세요 (최대 30자)" maxlength="30" required>
 					</div>
 					<div id="titleError" class="error-message"></div>
 				</div>
@@ -146,7 +146,7 @@
 					<h3 class="required">클래스 가격</h3>
 					<div>
 						<input type="number" id="classCost" name="price"
-							placeholder="클래스 가격을 입력하세요 (원)" min="0" max="10000000" required>
+							placeholder="클래스 가격을 입력하세요 (원)" min="0" max="1000000" required>
 						<span>원</span>
 					</div>
 					<div id="priceError" class="error-message"></div>
@@ -185,7 +185,7 @@
 					<h3 class="required">수강인원 제한</h3>
 					<div>
 						<input type="range" id="participantLimit" name="max_user_cnt"
-							min="1" max="100" value="10">
+							min="1" max="99" value="10">
 						<output id="participantOutput">10명</output>
 					</div>
 				</div>

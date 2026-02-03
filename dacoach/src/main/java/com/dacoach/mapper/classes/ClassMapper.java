@@ -14,11 +14,11 @@ public interface ClassMapper {
 	List<Map<String, Object>> selectMajorFields();
 
 	// 소분류 조회 (대분류 선택시 Ajax)
-	List<Map<String, Object>> selectMinorFields(Integer majorFieldIdx);
+	List<Map<String, Object>> selectMinorFields(Integer major_field_idx);
 
 	// 대지역 조회 (Ajax용)
 	List<Map<String, Object>> selectMajorRegions();
 
 	// 소지역 조회 (대지역 선택시 Ajax)
-	List<Map<String, Object>> selectMinorRegions(Integer majorRegionIdx);
+	List<Map<String, Object>> selectMinorRegions(Integer major_region_idx);
 }
