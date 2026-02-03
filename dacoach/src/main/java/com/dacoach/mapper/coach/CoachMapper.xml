@@ -7,7 +7,7 @@
 	</select>
 	<insert id="coachProfile" parameterType="com.dacoach.model.users.UsersDTO">
     INSERT INTO users (
-        users_idx, user_type, user_name, login_id, password, status, created_at) 
+        user_idx, user_type, user_name, login_id, password, status, created_at) 
     VALUES (
         seq_users.nextval, 
         #{user_type}, 
@@ -46,14 +46,14 @@
 		order by district_nm asc
 	</select>
 	<select id="getUsersIdx" parameterType="String" resultType="Integer">
-		select users_idx from users where login_id=#{login_id}
+		select user_idx from users where login_id=#{login_id}
 	</select>
 	<insert id="coachJoin" parameterType="com.dacoach.model.coach.CoachDTO">
 		insert into coach (
-		    coach_idx, users_idx, birth_date, nickname, phone, mail, intro, photo, video, point_score,
+		    coach_idx, user_idx, birth_date, nickname, phone, mail, intro, photo, video, point_score,
 		    token_balance, kakao_key) values (
 		    	seq_coach.nextval,
-		    	#{users_idx},
+		    	#{user_idx},
 		    	#{birth_date, jdbcType=DATE},
 		    	#{nickname},
 		    	#{phone},
@@ -67,6 +67,6 @@
 		    )
 	</insert>
 	<select id="getCoachInfo" parameterType="int" resultType="com.dacoach.model.coach.CoachDTO">
-		select * from coach where users_idx = #{users_idx}
+		select * from coach where user_idx = #{user_idx}
 	</select>
 </mapper>
