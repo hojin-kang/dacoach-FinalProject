@@ -198,4 +198,12 @@ public class ClassServiceImple implements ClassService {
 		}
 		return classMapper.selectMinorRegions(majorRegionIdx);
 	}
+	
+	@Override
+	public List<ClassDTO> getClassesByProvider(Integer providerIdx) {
+	    if (providerIdx == null) {
+	        throw new IllegalArgumentException("provider_idx가 필요합니다.");
+	    }
+	    return classMapper.selectClassesByProvider(providerIdx);
+	}
 }

@@ -15,4 +15,6 @@ public interface ClassService {
 	List<Map<String, Object>> getMajorRegions();
 
 	List<Map<String, Object>> getMinorRegions(Integer majorRegionIdx);
+	
+	List<ClassDTO> getClassesByProvider(Integer providerIdx);
 }

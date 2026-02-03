@@ -97,10 +97,24 @@ public class ClassController {
 
 		return "redirect:/class/register";
 	}
+
 	/************* company *************/
 	@GetMapping("/company/classList")
-	public String classList(Model model) {
-		return "company/classes/ongoingClassList";
+	public String classList(Model model, HttpSession session) {
+	    // 세션에서 provider_idx 가져오기
+	    Integer providerIdx = (Integer) session.getAttribute("user_idx");
+	    
+	    if (providerIdx == null) {
+	        // 로그인 안된 경우 처리
+	        model.addAttribute("error", "로그인이 필요합니다.");
+	        return "redirect:/login";
+	    }
+	    
+	    // 클래스 목록 조회
+	    List<ClassDTO> classList = classService.getClassesByProvider(providerIdx);
+	    model.addAttribute("classList", classList);
+	    
+	    return "company/classes/ongoingClassList";  // HTML 템플릿 경로
 	}
 	/*********************************/
 	
