@@ -117,9 +117,9 @@ public class CoachController {
 	
 	@PostMapping("/coachJoin")
 	public ModelAndView coachJoin(CoachDTO cdto,
-			@RequestParam(value="login_id") String login_id,
+			@RequestParam(value="login_id") String login_id/*,
 	        @RequestParam(value="uploadPhoto", required = false)MultipartFile uploadPhoto,
-	        @RequestParam(value="uploadVideo", required = false)MultipartFile uploadVideo) {
+	        @RequestParam(value="uploadVideo", required = false)MultipartFile uploadVideo*/) {
 
 	    ModelAndView mav = new ModelAndView();
 	    mav.setViewName("redirect:/coachJoin");
