@@ -1,58 +1,34 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <title>기업고객관리</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" th:href="@{/css/admin.css}" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="flex bg-gray-50 min-h-screen">
+<!-- admin/company/companyList.html -->
+<div th:fragment="contentPage">
+  <h2 class="text-xl font-bold mb-6">기업고객관리</h2>
 
-  <aside th:replace="adminLayout/asideAdminLayout :: siteAside"></aside>
-
-  <div class="flex-1 flex flex-col">
-
-    <div th:replace="adminLayout/adminHeader :: adminHeader"></div>
-
-    <main class="p-6 flex-1">
-      <div th:fragment="companyContent">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-gray-800">기업고객관리</h2>
-        </div>
-
-        <div class="card !p-0 overflow-hidden">
-          <table class="w-full text-center border-collapse">
-            <thead class="bg-gray-200">
-              <tr>
-                <th class="py-2">번호</th>
-                <th class="py-2">기업명</th>
-                <th class="py-2">사업자번호</th>
-                <th class="py-2">승인여부</th>
-                <th class="py-2">상세</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="company : ${companyList}">
-                <td th:text="${company.usersIdx}">1</td>
-                <td th:text="${company.userName}">기업명</td>
-                <td th:text="${company.companyNum}">123-45-6789</td>
-                <td th:text="${company.certStatus}">승인</td>
-                <td>
-                  <a th:href="@{'/company/detail/' + ${company.usersIdx}}">
-                    <button class="bg-blue-500 text-white px-3 py-1 rounded">상세보기</button>
-                  </a>
-                </td>
-              </tr>
-              <tr th:if="${#lists.isEmpty(companyList)}">
-                <td colspan="5" class="text-gray-500 py-4">데이터가 없습니다.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
+  <div class="card !p-0 overflow-hidden">
+    <table class="w-full text-center border-collapse">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="py-2">번호</th>
+          <th class="py-2">기업명</th>
+          <th class="py-2">사업자번호</th>
+          <th class="py-2">승인여부</th>
+          <th class="py-2">상세</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="company : ${companyList}">
+          <td th:text="${company.usersIdx}"></td>
+          <td th:text="${company.userName}"></td>
+          <td th:text="${company.companyNum}"></td>
+          <td th:text="${company.certStatus}"></td>
+          <td>
+            <a th:href="@{'/company/detail/' + ${company.usersIdx}}">
+              <button class="bg-blue-500 text-white px-3 py-1 rounded">상세보기</button>
+            </a>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(companyList)}">
+          <td colspan="5" class="text-gray-500 py-4">데이터가 없습니다.</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-
-</body>
-</html>
+</div>

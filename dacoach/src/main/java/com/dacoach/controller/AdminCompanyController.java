@@ -1,6 +1,8 @@
 package com.dacoach.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,11 +24,21 @@ public class AdminCompanyController {
         this.adminCompanyService = adminCompanyService;
     }
 
+//    @GetMapping("/companyList")
+//    public String companyList(Model model) {
+//        List<CompanyDTO> companyList = adminCompanyService.companyList();
+//        model.addAttribute("companyList", companyList);
+//        return "admin/company/companyList";
+//    }
+
     @GetMapping("/companyList")
     public String companyList(Model model) {
-        List<CompanyDTO> companyList = adminCompanyService.companyList();
-        model.addAttribute("companyList", companyList);
-        return "admin/company/companyList";
+    	List<CompanyDTO> companyList = new ArrayList<>();
+    	companyList = adminCompanyService.companyList();
+    	
+    	model.addAttribute("companyList",companyList);
+    	model.addAttribute("contentPage","admin/company/companyList");
+    	model.addAttribute("contentFragment","contentPage");
+		return "admin/dashboard";
     }
-
 }
