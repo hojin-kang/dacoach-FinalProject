@@ -27,5 +27,8 @@ public interface ClassMapper {
 
 	// 코치 - 클래스 검색
 	List<ClassDTO> classSearch(Map<String, Object> param) throws Exception;
+	
+	// 코치 - 클래스 상세
+	ClassDTO getClassDetail(int class_idx) throws Exception;
 
 }

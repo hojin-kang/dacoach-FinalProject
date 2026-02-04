@@ -99,7 +99,7 @@
 							<!-- 결과 있을 때 -->
 							<a class="classCard" th:if="${!#lists.isEmpty(classList)}"
 								th:each="c : ${classList}"
-								th:href="@{/class/{id}(id=${c.class_idx})}">
+								th:href="@{/class/coach/classDetail(id=${c.class_idx})}">
 
 								<div class="thumb">
 									<img
