@@ -24,7 +24,7 @@
 							th:onclick="|window.location='@{/class/company/register}'|">클래스
 							등록</button>
 						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/class/company/register}'|">클래스
+							th:onclick="|window.location='@{/class/company/status}'|">클래스
 							통계</button>
 						<button type="button" class="menuBtn"
 							th:onclick="|window.location='@{/class/company/register}'|">후기
@@ -40,8 +40,11 @@
 							th:href="@{/class/company/classDetail(id=${classItem.class_idx})}">
 
 							<div class="thumb">
-								<!-- FileManageView 사용 -->
-								<img th:src="${@fileManageView.getPhotoUrl(classItem.photo)}"
+								<!-- FileUploadController 사용 -->
+								<img
+									th:src="${classItem.photo != null and classItem.photo != ''} 
+									? '/files/photo/' + ${classItem.photo} 
+									: '/images/default_class.png'"
 									onerror="this.src='/images/default_class.png'"
 									th:alt="${classItem.title}" />
 							</div>

@@ -2,15 +2,528 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
-<title>dacoach</title>
+<title>클래스 통계 - dacoach</title>
 <link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/company/company_class.css}" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.statsPage {
+	display: flex;
+	gap: 30px;
+	margin-top: 20px;
+}
+
+.statsContent {
+	flex: 1;
+}
+
+.classSelector {
+	margin-bottom: 30px;
+}
+
+.classSelector select {
+	width: 100%;
+	padding: 12px;
+	font-size: 16px;
+	border: 2px solid #ddd;
+	border-radius: 8px;
+	background: white;
+}
+
+.statsSection {
+	background: white;
+	border-radius: 12px;
+	padding: 25px;
+	margin-bottom: 25px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 20px;
+	color: #333;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.sectionTitle::before {
+	content: '';
+	width: 4px;
+	height: 24px;
+	background: #4CAF50;
+	display: block;
+}
+
+/* 수강생 테이블 */
+.studentTable {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.studentTable thead {
+	background: #f8f9fa;
+}
+
+.studentTable th, .studentTable td {
+	padding: 12px;
+	text-align: left;
+	border-bottom: 1px solid #eee;
+}
+
+.studentTable th {
+	font-weight: 600;
+	color: #666;
+	font-size: 14px;
+}
+
+.studentTable tbody tr:hover {
+	background: #f8f9fa;
+}
+
+.statusBadge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.statusBadge.enrolled {
+	background: #e3f2fd;
+	color: #1976d2;
+}
+
+.statusBadge.completed {
+	background: #e8f5e9;
+	color: #388e3c;
+}
+
+.statusBadge.cancelled {
+	background: #ffebee;
+	color: #d32f2f;
+}
+
+.noData {
+	text-align: center;
+	padding: 40px;
+	color: #999;
+}
+
+/* 차트 컨테이너 */
+.chartContainer {
+	position: relative;
+	height: 300px;
+	margin-top: 20px;
+}
+
+/* 통계 요약 카드 */
+.summaryCards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.summaryCard {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	padding: 20px;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.summaryCard.green {
+	background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+}
+
+.summaryCard.blue {
+	background: linear-gradient(135deg, #2196F3 0%, #1976d2 100%);
+}
+
+.summaryCard.orange {
+	background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+}
+
+.cardLabel {
+	font-size: 14px;
+	opacity: 0.9;
+	margin-bottom: 8px;
+}
+
+.cardValue {
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.loadingSpinner {
+	text-align: center;
+	padding: 40px;
+	color: #666;
+}
+
+.errorMessage {
+	background: #ffebee;
+	color: #c62828;
+	padding: 15px;
+	border-radius: 8px;
+	text-align: center;
+}
+</style>
 </head>
 <body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
 
 	<main class="main">
 		<div class="container">
-			
+			<h2>클래스 통계</h2>
+			<hr>
+
+			<div class="classPage">
+				<!-- LEFT: 메뉴 패널 -->
+				<aside class="menuArea">
+					<div class="menuHead">관리 메뉴</div>
+					<div class="menuButtons">
+						<button type="button" class="menuBtn"
+							onclick="location.href='/class/company/classList'">컴퍼니</button>
+						<button type="button" class="menuBtn"
+							onclick="location.href='/class/company/register'">클래스 등록</button>
+						<button type="button" class="menuBtn active"
+							onclick="location.href='/class/company/status'">클래스 통계</button>
+						<button type="button" class="menuBtn"
+							onclick="location.href='/class/company/reviews'">후기 관리</button>
+					</div>
+				</aside>
+
+				<!-- RIGHT: 통계 컨텐츠 -->
+				<section class="statsContent">
+					<!-- 클래스 선택 -->
+					<div class="classSelector">
+						<select id="classSelect" onchange="loadClassStats()">
+							<option value="">클래스를 선택하세요</option>
+						</select>
+					</div>
+
+					<div id="statsContainer" style="display: none;">
+						<!-- 요약 통계 카드 -->
+						<div class="summaryCards">
+							<div class="summaryCard blue">
+								<div class="cardLabel">총 수강 신청</div>
+								<div class="cardValue" id="totalEnrollments">0</div>
+							</div>
+							<div class="summaryCard green">
+								<div class="cardLabel">현재 수강 중</div>
+								<div class="cardValue" id="activeStudents">0</div>
+							</div>
+							<div class="summaryCard orange">
+								<div class="cardLabel">예상 수입</div>
+								<div class="cardValue" id="totalRevenue">0원</div>
+							</div>
+						</div>
+
+						<!-- 수강생 목록 -->
+						<div class="statsSection">
+							<div class="sectionTitle">수강생 정보</div>
+							<div id="studentTableContainer">
+								<table class="studentTable">
+									<thead>
+										<tr>
+											<th>이름</th>
+											<th>전화번호</th>
+											<th>등록 일시</th>
+											<th>상태</th>
+										</tr>
+									</thead>
+									<tbody id="studentTableBody">
+										<!-- 데이터가 여기에 로드됨 -->
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- 시간별 수강 신청 통계 -->
+						<div class="statsSection">
+							<div class="sectionTitle">시간별 수강 신청 통계</div>
+							<div class="chartContainer">
+								<canvas id="enrollmentChart"></canvas>
+							</div>
+						</div>
+
+						<!-- 수입 통계 -->
+						<div class="statsSection">
+							<div class="sectionTitle">수입 통계</div>
+							<div class="chartContainer">
+								<canvas id="revenueChart"></canvas>
+							</div>
+						</div>
+					</div>
+
+					<!-- 로딩/에러 메시지 -->
+					<div id="loadingMessage" class="loadingSpinner"
+						style="display: none;">
+						<p>📊 통계를 불러오는 중...</p>
+					</div>
+
+					<div id="noClassMessage" class="noData">
+						<p>📭 클래스를 선택하면 통계를 확인할 수 있습니다.</p>
+					</div>
+
+					<div id="errorMessage" class="errorMessage" style="display: none;">
+						<p>⚠️ 데이터를 불러오는 중 오류가 발생했습니다.</p>
+					</div>
+				</section>
+			</div>
 		</div>
 	</main>
+
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+
+	<script>
+		let enrollmentChart = null;
+		let revenueChart = null;
+
+		// 페이지 로드 시 클래스 목록 불러오기
+		document.addEventListener('DOMContentLoaded', function() {
+			loadClassList();
+		});
+
+		// 클래스 목록 로드
+		function loadClassList() {
+			fetch('/class/company/classListForStats')
+				.then(response => response.json())
+				.then(data => {
+					const select = document.getElementById('classSelect');
+					select.innerHTML = '<option value="">클래스를 선택하세요</option>';
+					
+					data.forEach(classItem => {
+						const option = document.createElement('option');
+						option.value = classItem.class_idx;
+						option.textContent = classItem.title;
+						select.appendChild(option);
+					});
+				})
+				.catch(error => {
+					console.error('클래스 목록 로드 실패:', error);
+					showError();
+				});
+		}
+
+		// 클래스 통계 로드
+		function loadClassStats() {
+			const classIdx = document.getElementById('classSelect').value;
+			
+			if (!classIdx) {
+				document.getElementById('statsContainer').style.display = 'none';
+				document.getElementById('noClassMessage').style.display = 'block';
+				document.getElementById('errorMessage').style.display = 'none';
+				return;
+			}
+
+			showLoading();
+
+			fetch(`/class/company/status/api?classIdx=${classIdx}`)
+				.then(response => response.json())
+				.then(data => {
+					hideLoading();
+					displayStats(data);
+				})
+				.catch(error => {
+					console.error('통계 로드 실패:', error);
+					hideLoading();
+					showError();
+				});
+		}
+
+		// 통계 데이터 표시
+		function displayStats(data) {
+			document.getElementById('statsContainer').style.display = 'block';
+			document.getElementById('noClassMessage').style.display = 'none';
+			document.getElementById('errorMessage').style.display = 'none';
+
+			// 요약 카드 업데이트
+			document.getElementById('totalEnrollments').textContent = data.totalEnrollments;
+			document.getElementById('activeStudents').textContent = data.activeStudents;
+			document.getElementById('totalRevenue').textContent = 
+				new Intl.NumberFormat('ko-KR').format(data.totalRevenue) + '원';
+
+			// 수강생 테이블 업데이트
+			displayStudentTable(data.students);
+
+			// 차트 업데이트
+			displayEnrollmentChart(data.enrollmentByDate);
+			displayRevenueChart(data.revenueByDate);
+		}
+
+		// 수강생 테이블 표시
+		function displayStudentTable(students) {
+			const tbody = document.getElementById('studentTableBody');
+			tbody.innerHTML = '';
+
+			if (!students || students.length === 0) {
+				tbody.innerHTML = '<tr><td colspan="4" class="noData">수강생이 없습니다.</td></tr>';
+				return;
+			}
+
+			students.forEach(student => {
+				const tr = document.createElement('tr');
+				
+				let statusClass = '';
+				let statusText = '';
+				if (student.status === 'ENROLLED') {
+					statusClass = 'enrolled';
+					statusText = '수강 중';
+				} else if (student.status === 'COMPLETED') {
+					statusClass = 'completed';
+					statusText = '수강 완료';
+				} else if (student.status === 'CANCELLED') {
+					statusClass = 'cancelled';
+					statusText = '취소';
+				}
+
+				tr.innerHTML = `
+					<td>${student.user_name}</td>
+					<td>${student.phone || '-'}</td>
+					<td>${formatDate(student.enrolled_at)}</td>
+					<td><span class="statusBadge ${statusClass}">${statusText}</span></td>
+				`;
+				tbody.appendChild(tr);
+			});
+		}
+
+		// 시간별 수강 신청 차트
+		function displayEnrollmentChart(enrollmentData) {
+			const ctx = document.getElementById('enrollmentChart').getContext('2d');
+
+			// 기존 차트 제거
+			if (enrollmentChart) {
+				enrollmentChart.destroy();
+			}
+
+			const labels = enrollmentData.map(item => item.date);
+			const data = enrollmentData.map(item => item.count);
+
+			enrollmentChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: labels,
+					datasets: [{
+						label: '수강 신청 수',
+						data: data,
+						backgroundColor: 'rgba(54, 162, 235, 0.6)',
+						borderColor: 'rgba(54, 162, 235, 1)',
+						borderWidth: 2
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {
+							display: true,
+							position: 'top'
+						},
+						title: {
+							display: false
+						}
+					},
+					scales: {
+						y: {
+							beginAtZero: true,
+							ticks: {
+								stepSize: 1
+							}
+						}
+					}
+				}
+			});
+		}
+
+		// 수입 통계 차트
+		function displayRevenueChart(revenueData) {
+			const ctx = document.getElementById('revenueChart').getContext('2d');
+
+			// 기존 차트 제거
+			if (revenueChart) {
+				revenueChart.destroy();
+			}
+
+			const labels = revenueData.map(item => item.date);
+			const data = revenueData.map(item => item.revenue);
+
+			revenueChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					labels: labels,
+					datasets: [{
+						label: '누적 수입 (원)',
+						data: data,
+						borderColor: 'rgba(75, 192, 192, 1)',
+						backgroundColor: 'rgba(75, 192, 192, 0.2)',
+						fill: true,
+						tension: 0.4,
+						borderWidth: 3
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {
+							display: true,
+							position: 'top'
+						},
+						title: {
+							display: false
+						}
+					},
+					scales: {
+						y: {
+							beginAtZero: true,
+							ticks: {
+								callback: function(value) {
+									return new Intl.NumberFormat('ko-KR').format(value) + '원';
+								}
+							}
+						}
+					}
+				}
+			});
+		}
+
+		// 날짜 포맷팅
+		function formatDate(dateString) {
+			if (!dateString) return '-';
+			const date = new Date(dateString);
+			return date.toLocaleDateString('ko-KR', {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit'
+			});
+		}
+
+		// 로딩 표시
+		function showLoading() {
+			document.getElementById('loadingMessage').style.display = 'block';
+			document.getElementById('statsContainer').style.display = 'none';
+			document.getElementById('noClassMessage').style.display = 'none';
+			document.getElementById('errorMessage').style.display = 'none';
+		}
+
+		// 로딩 숨김
+		function hideLoading() {
+			document.getElementById('loadingMessage').style.display = 'none';
+		}
+
+		// 에러 표시
+		function showError() {
+			document.getElementById('errorMessage').style.display = 'block';
+			document.getElementById('statsContainer').style.display = 'none';
+			document.getElementById('noClassMessage').style.display = 'none';
+			document.getElementById('loadingMessage').style.display = 'none';
+		}
+	</script>
 </body>
 </html>

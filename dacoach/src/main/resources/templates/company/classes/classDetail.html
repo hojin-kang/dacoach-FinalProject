@@ -19,7 +19,9 @@
 					<!-- 프로필 이미지 (provider) -->
 					<div class="providerAvatar">
 						<img
-							th:src="${providerPhoto != null and providerPhoto != ''} ? @{/uploads/profile/{img}(img=${providerPhoto})} : @{/images/default_profile.png}"
+							th:src="${providerPhoto != null and providerPhoto != ''} 
+								? '/files/profile/' + ${providerPhoto} 
+								: '/images/default_profile.png'"
 							alt="provider" />
 					</div>
 
@@ -89,8 +91,7 @@
 							<div class="mediaBox">
 								<video class="mediaVideo" controls
 									th:if="${classDTO.video != null and classDTO.video != ''}">
-									<source
-										th:src="@{/uploads/classes/videos/{v}(v=${classDTO.video})}"
+									<source th:src="'/files/video/' + ${classDTO.video}"
 										type="video/mp4">
 								</video>
 
@@ -103,7 +104,9 @@
 							<!-- 사진(대표 1장) -->
 							<div class="mediaBox">
 								<img class="mediaImg"
-									th:src="${classDTO.photo != null and classDTO.photo != ''} ? @{/uploads/classes/photos/{img}(img=${classDTO.photo})} : @{/images/default_class.png}"
+									th:src="${classDTO.photo != null and classDTO.photo != ''} 
+										? '/files/photo/' + ${classDTO.photo} 
+										: '/images/default_class.png'"
 									alt="class photo" />
 							</div>
 
@@ -138,7 +141,9 @@
 									<div class="reviewTop">
 										<div class="reviewAvatar">
 											<img
-												th:src="${r.reviewerPhoto != null and r.reviewerPhoto != ''} ? @{/uploads/profile/{img}(img=${r.reviewerPhoto})} : @{/images/default_profile.png}"
+												th:src="${r.reviewerPhoto != null and r.reviewerPhoto != ''} 
+													? '/files/profile/' + ${r.reviewerPhoto} 
+													: '/images/default_profile.png'"
 												alt="reviewer" />
 										</div>
 

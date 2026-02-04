@@ -3,6 +3,8 @@ package com.dacoach.controller;
 import jakarta.servlet.http.HttpSession;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -96,8 +98,11 @@ public class ClassController {
 		return mav;
 	}
 
-	/************* company 
-	 * @throws Exception *************/
+	/*************
+	 * company
+	 * 
+	 * @throws Exception
+	 *************/
 	@GetMapping("/company/classList")
 	public ModelAndView classList(HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView("company/classes/classList");
@@ -112,37 +117,76 @@ public class ClassController {
 		mav.addObject("classList", classList);
 		return mav;
 	}
-	
-	// 모델 어트리뷰트로 수정 예정
+
 	@GetMapping("/company/classDetail")
 	public ModelAndView companyClassDetail(@RequestParam("id") int id) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		ClassDTO classDTO = classService.getClassDetail(id); // id로 조회
 
-	    if (classDTO == null) {
-	        // 1) 없는 id면 목록으로 보내거나
-	        mav.setViewName("redirect:/class/coach/classList");
-	        return mav;
+		if (classDTO == null) {
+			// 1) 없는 id면 목록으로 보내거나
+			mav.setViewName("redirect:/class/coach/classList");
+			return mav;
 
-	        // 또는 2) 에러 페이지/메시지 보여주고 싶으면
-	        // mav.addObject("error", "존재하지 않는 클래스입니다.");
-	        // return mav;
-	    }
+			// 또는 2) 에러 페이지/메시지 보여주고 싶으면
+			// mav.addObject("error", "존재하지 않는 클래스입니다.");
+			// return mav;
+		}
 
-	    mav.addObject("classDTO", classDTO);
+		mav.addObject("classDTO", classDTO);
 
-	    // 일단 화면 안 터지게 최소값도 같이
-	    mav.addObject("providerName", "");   // 나중에 채우기
-	    mav.addObject("providerPhoto", "");
-	    mav.addObject("avgRating", 0);
-	    mav.addObject("reviewCount", 0);
-	    mav.addObject("reviewList", Collections.emptyList());
-	    mav.addObject("tagList", Collections.emptyList());
-	    mav.setViewName("company/classes/classDetail");
-	    return mav;
+		// 일단 화면 안 터지게 최소값도 같이
+		mav.addObject("providerName", ""); // 나중에 채우기
+		mav.addObject("providerPhoto", "");
+		mav.addObject("avgRating", 0);
+		mav.addObject("reviewCount", 0);
+		mav.addObject("reviewList", Collections.emptyList());
+		mav.addObject("tagList", Collections.emptyList());
+		mav.setViewName("company/classes/classDetail");
+		return mav;
 	}
 
+	// 클래스 통계 페이지
+	@GetMapping("/company/status")
+	public String classStatus() {
+		return "company/classes/classStatus";
+	}
+
+	// 클래스 목록 API (통계 페이지의 드롭다운용)
+	@GetMapping("/company/classListForStats")
+	@ResponseBody
+	public ResponseEntity<?> getClassListForStats(HttpSession session) {
+		try {
+			Integer providerIdx = (Integer) session.getAttribute("user_idx");
+			if (providerIdx == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			}
+
+			List<ClassDTO> classList = classService.getClassesByProvider(providerIdx);
+			return ResponseEntity.ok(classList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("클래스 목록을 불러오는데 실패했습니다.");
+		}
+	}
+
+	// 클래스 통계 API (Ajax용)
+	@GetMapping("/company/status/api")
+	@ResponseBody
+	public ResponseEntity<?> getClassStats(@RequestParam("classIdx") int classIdx, HttpSession session) {
+		try {
+			Integer providerIdx = (Integer) session.getAttribute("user_idx");
+			if (providerIdx == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			}
+
+			Map<String, Object> stats = classService.getClassStats(classIdx, providerIdx);
+			return ResponseEntity.ok(stats);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("통계 데이터를 불러오는데 실패했습니다.");
+		}
+	}
 	/*********************************/
 
-	
 }
