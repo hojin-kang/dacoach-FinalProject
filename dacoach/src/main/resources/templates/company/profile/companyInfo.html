@@ -12,7 +12,7 @@
 
    <main class="main">
    <div class="container">  
-   <form name="companyInfoForm" action="profileForm">
+   <form name="companyJoinOk" action="/company/profile/profileForm" method="post">
    
       <div class="companyInfo">
       	<p class="comTel"><input type="text" name="phone" placeholder="사업장 전화번호를 입력해주세요"></p>
@@ -22,11 +22,11 @@
    
    	<div class="comCert">
    		<p class=companyNum><input type="text" name="company_num" placeholder="사업자 번호를 입력해주세요"></p>
-   		<input type="hidden" name="cert_name" value="cert"><input type="hidden" name="cert_status" value="yet">
+   		<input type="hidden" name="cert_name" value="사업자등록증">
+   		<input type="hidden" name="cert_status" value="대기">
    		<p class="certFile"><input type="file" name="cert_file"></p>
    	</div>
-   
-  
+   <input type="hidden" name="login_id" th:value="${login_id}">
   <p><input type="submit" value="저장하고 다음으로"></p>
   </form>
   </div>
