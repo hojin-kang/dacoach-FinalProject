@@ -36,11 +36,15 @@
 
         <div class="topRight">
           <div class="topIcons">
-            <button type="button" class="iconBtn" aria-label="찜">
-              <span class="icon">♡</span>
-            </button>
+            <button type="button" class="iconBtn likeBtn" aria-label="찜">
+			  <img class="icon"
+			       src="/img/icon/heart.png"
+			       data-off="/img/icon/heart.png"
+			       data-on="/img/icon/heart_fill.png"
+			       alt="heart">
+			</button>
             <button type="button" class="iconBtn" aria-label="알림">
-              <span class="icon">🔔</span>
+              <img class="icon" src="/img/icon/siren.png">
             </button>
           </div>
 
@@ -133,8 +137,8 @@
               <!-- 요약: 리뷰수/평점 -->
               <div class="reviewSummary">
                 <span class="summaryText">
-                  <b th:text="${reviewCount != null ? reviewCount : 0}">54</b>명이 해당 클래스를 긍정적
-                  (★<b th:text="${avgRating != null ? avgRating : 0}">4.7</b>/5.0)으로 평가했습니다.
+                  <b th:text="${reviewCount != null ? reviewCount : 0}">54</b>명의 코치가 해당 클래스를 긍정적
+                  (<b th:text="|★${avgRating != null ? avgRating : 0}|">4.7</b>/5.0)으로 평가했습니다.
                 </span>
               </div>
             </div>
@@ -155,7 +159,7 @@
 
                     <div class="reviewMeta">
                       <div class="reviewStars">
-                        <span class="stars" th:text="|★ ${r.rating}|">★ 4.5</span>
+                        <span class="stars" th:text="|★ ${r.rating}|">★4.5</span>
                       </div>
                       <div class="reviewText" th:text="${r.content}">
                         너무너무 좋고 재밌게 처음 입문했습니다. 감사합니다!
@@ -235,6 +239,48 @@
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
+    
+    // ✅ 하트 이미지 토글
+    document.querySelectorAll('.likeBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const img = btn.querySelector('img');
+        if (!img) return;
+
+        const off = img.dataset.off;
+        const on  = img.dataset.on;
+
+        const isOn = btn.classList.toggle('isLiked'); // 상태 토글
+        img.src = isOn ? on : off;
+        btn.setAttribute('aria-pressed', String(isOn));
+      });
+    });
+    
+ // ✅ 탭 active 토글
+    const tabs = document.querySelectorAll('.detailTabs .tab');
+
+    function setActiveByHash() {
+      const hash = window.location.hash;
+      tabs.forEach(t => t.classList.remove('active'));
+
+      if (hash === '#reviews') {
+        document.querySelector('.detailTabs .tab[href="#reviews"]')?.classList.add('active');
+      } else {
+        document.querySelector('.detailTabs .tab[href="#detail"]')?.classList.add('active');
+      }
+    }
+
+    // 클릭 시 active 변경 (앵커 스크롤은 기존 코드가 하니까 여기서는 class만)
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
+    // 새로고침/뒤로가기/직접 #reviews 로 접근했을 때도 맞춰주기
+    window.addEventListener('hashchange', setActiveByHash);
+    document.addEventListener('DOMContentLoaded', setActiveByHash);
+
   </script>
 </body>
 </html>
