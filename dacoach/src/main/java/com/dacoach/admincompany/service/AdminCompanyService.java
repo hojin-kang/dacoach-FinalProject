@@ -8,7 +8,13 @@ import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface AdminCompanyService {
-    List<AdminCompanyRowDTO> companyList();
-    AdminCompanyRowDTO companyDetail(int usersIdx);
-    void saveCompanyDetail(Map<String, Object> param);
+	List<AdminCompanyRowDTO> companyList();
+	  AdminCompanyRowDTO companyDetail(int usersIdx);
+
+	  void saveCompanyDetail(int usersIdx,
+	                         String certStatus,
+	                         String status,
+	                         String suspendFrom,
+	                         String suspendUntil,
+	                         String reason);
 }
