@@ -147,5 +147,10 @@ public class ClassServiceImple implements ClassService {
 
 		return classMapper.classSearch(param);
 	}
+	
+	@Override
+	public ClassDTO getClassDetail(int classIdx) throws Exception {
+	    return classMapper.getClassDetail(classIdx);
+	}
 
 }

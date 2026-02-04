@@ -184,4 +184,24 @@
 			</otherwise>
 		</choose>
 	</select>
+	
+	<select id="getClassDetail" parameterType="int" resultType="com.dacoach.model.classes.ClassDTO">
+		SELECT
+		CLASS_IDX,
+		PROVIDER_IDX,
+		TITLE,
+		INTRO,
+		MINOR_FIELD_IDX,
+		MINOR_REGION_IDX,
+		PRICE,
+		PHOTO,
+		VIDEO,
+		START_DATE,
+		END_DATE,
+		CREATED_AT,
+		MAX_USER_CNT
+		FROM CLASS
+		WHERE CLASS_IDX = #{class_idx}
+	</select>
+	
 </mapper>
