@@ -18,7 +18,7 @@
 			<div class="classPage">
 				<!-- LEFT: 검색 패널 -->
 				<form id="filterForm" class="filterForm"
-					th:action="@{/class/coach/classList}" method="get">
+					th:action="@{/coach/classList}" method="get">
 					<aside class="searchArea">
 						<div class="searchHead">검색 조건</div>
 
@@ -99,7 +99,7 @@
 							<!-- 결과 있을 때 -->
 							<a class="classCard" th:if="${!#lists.isEmpty(classList)}"
 								th:each="c : ${classList}"
-								th:href="@{/class/coach/classDetail(id=${c.class_idx})}">
+								th:href="@{/coach/classDetail(id=${c.class_idx})}">
 
 								<div class="thumb">
 									<img
@@ -170,12 +170,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
   majorField?.addEventListener('change', () =>
-  loadMinor(majorField, minorField, '/class/minorFields',
+  loadMinor(majorField, minorField, '/minorFields',
             'MINOR_FIELD_IDX', 'MINOR_FIELD_NM', '소분류', 'majorFieldIdx')
 );
 
 majorRegion?.addEventListener('change', () =>
-  loadMinor(majorRegion, minorRegion, '/class/minorRegions',
+  loadMinor(majorRegion, minorRegion, '/minorRegions',
             'MINOR_REGION_IDX', 'DISTRICT_NM', '소분류', 'majorRegionIdx')
 );
 });

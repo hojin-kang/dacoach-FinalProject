@@ -7,19 +7,42 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coachClasses.CoachClassDTO;
 import com.dacoach.service.coachClasses.CoachClassService;
 
 @Controller
-@RequestMapping("/class")
 public class CoachClassController {
 	
 	@Autowired
 	private CoachClassService classService;
+	
+	@GetMapping("/majorFields")
+	@ResponseBody
+	public List<Map<String, Object>> getMajorFields() throws Exception {
+		return classService.getMajorFields();
+	}
+
+	@GetMapping("/minorFields")
+	@ResponseBody
+	public List<Map<String, Object>> getMinorFields(@RequestParam Integer majorFieldIdx) throws Exception {
+		return classService.getMinorFields(majorFieldIdx);
+	}
+
+	@GetMapping("/majorRegions")
+	@ResponseBody
+	public List<Map<String, Object>> getMajorRegions() throws Exception {
+		return classService.getMajorRegions();
+	}
+
+	@GetMapping("/minorRegions")
+	@ResponseBody
+	public List<Map<String, Object>> getMinorRegions(@RequestParam Integer majorRegionIdx) throws Exception {
+		return classService.getMinorRegions(majorRegionIdx);
+	}
 
 	/************* coach *************/
 	// 코치 - 클래스 검색
