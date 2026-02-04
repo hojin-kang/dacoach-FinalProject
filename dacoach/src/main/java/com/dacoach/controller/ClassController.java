@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpSession;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +23,11 @@ public class ClassController {
 	@Autowired
 	private ClassService classService;
 
-	@GetMapping("/register")
-	public String classRegisterForm(Model model) {
-		model.addAttribute("classDTO", new ClassDTO());
-		return "company/classes/classRegister";
+	@GetMapping("/company/register")
+	public ModelAndView classRegisterForm() {
+		ModelAndView mav = new ModelAndView("company/classes/classRegister");
+		mav.addObject("classDTO", new ClassDTO());
+		return mav;
 	}
 
 	@GetMapping("/majorFields")
@@ -54,70 +54,66 @@ public class ClassController {
 		return classService.getMinorRegions(majorRegionIdx);
 	}
 
-	@PostMapping("/register")
-	public String classRegisterSubmit(
-			@ModelAttribute ClassDTO classDTO,
+	@PostMapping("/company/register")
+	public ModelAndView classRegisterSubmit(@ModelAttribute ClassDTO classDTO,
 			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
-			@RequestParam(value = "videoFile", required = false) MultipartFile videoFile,
-			HttpSession session,
+			@RequestParam(value = "videoFile", required = false) MultipartFile videoFile, HttpSession session,
 			RedirectAttributes rttr) {
-		try {
-			// 세션에서 사용자 정보 가져오기
-			Integer userIdx = (Integer) session.getAttribute("user_idx");
 
+		ModelAndView mav = new ModelAndView("redirect:/class/company/classList");
+
+		try {
+			Integer userIdx = (Integer) session.getAttribute("user_idx");
 			if (userIdx == null) {
 				rttr.addFlashAttribute("error", "로그인이 필요합니다.");
-				return "redirect:/login";
+				mav.setViewName("redirect:/login");
+				return mav;
 			}
 
 			classDTO.setProvider_idx(userIdx);
 
-			// 파일 설정
 			if (photoFile != null && !photoFile.isEmpty()) {
 				classDTO.setPhotoFile(photoFile);
 			}
-			
 			if (videoFile != null && !videoFile.isEmpty()) {
 				classDTO.setVideoFile(videoFile);
 			}
 
-			// Service를 통해 클래스 등록
 			int result = classService.classRegister(classDTO);
 
 			if (result > 0) {
 				rttr.addFlashAttribute("msg", "클래스 등록이 완료되었습니다!");
-				return "redirect:/class/company/classList";
 			} else {
 				rttr.addFlashAttribute("error", "클래스 등록에 실패했습니다.");
+				mav.setViewName("redirect:/class/company/register");
 			}
 		} catch (Exception e) {
 			rttr.addFlashAttribute("error", "오류 발생: " + e.getMessage());
+			mav.setViewName("redirect:/class/company/register");
 			e.printStackTrace();
 		}
 
-		return "redirect:/class/register";
+		return mav;
 	}
 
 	/************* company *************/
 	@GetMapping("/company/classList")
-	public String classList(Model model, HttpSession session) {
-	    // 세션에서 provider_idx 가져오기
-	    Integer providerIdx = (Integer) session.getAttribute("user_idx");
-	    
-	    if (providerIdx == null) {
-	        // 로그인 안된 경우 처리
-	        model.addAttribute("error", "로그인이 필요합니다.");
-	        return "redirect:/login";
-	    }
-	    
-	    // 클래스 목록 조회
-	    List<ClassDTO> classList = classService.getClassesByProvider(providerIdx);
-	    model.addAttribute("classList", classList);
-	    
-	    return "company/classes/ongoingClassList";  // HTML 템플릿 경로
+	public ModelAndView classList(HttpSession session) {
+		ModelAndView mav = new ModelAndView("company/classes/classList");
+
+		Integer providerIdx = (Integer) session.getAttribute("user_idx");
+		if (providerIdx == null) {
+			mav.setViewName("redirect:/login");
+			return mav;
+		}
+
+		List<ClassDTO> classList = classService.getClassesByProvider(providerIdx);
+		mav.addObject("classList", classList);
+		return mav;
 	}
+
 	/*********************************/
-	
+
 	/************* coach *************/
 	@GetMapping("/coach/classList")
 	public ModelAndView coachClassList() {
