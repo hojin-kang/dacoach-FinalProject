@@ -26,7 +26,12 @@ public class MypageController {
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/needLogin");
+			return mav;
+		}
 		int user_idx = (Integer)session.getAttribute("user_idx");
+		
 		System.out.println(user_idx);  //1
 		String user_nickname = "";
 		String user_rank = "";
@@ -78,6 +83,10 @@ public class MypageController {
 	@GetMapping("/myQnaList")
 	public ModelAndView myQnaList(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/needLogin");
+			return mav;
+		}
 		int user_idx = (Integer)session.getAttribute("user_idx");
 		try {
 			mav.addObject("qnaList", qnaService.myQnaList(user_idx));
@@ -90,10 +99,13 @@ public class MypageController {
 		return mav;
 	}
 	
-	@PostMapping("/myQnaDetail")
-	public ModelAndView myQnaDetail(@RequestParam("qna_idx") Integer qna_idx, HttpSession session) {
+	@GetMapping("/myQnaDetail")
+	public ModelAndView myQnaDetail(@RequestParam(value="qna_idx", defaultValue = "0") Integer qna_idx, HttpSession session) {
 	    ModelAndView mav = new ModelAndView();
-	    System.out.println("qna_idx = " + qna_idx);
+	    if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/needLogin");
+			return mav;
+		}
 	    int user_idx = (Integer) session.getAttribute("user_idx");
 	    Map<String, Object> data = null;
 		try {
@@ -109,13 +121,20 @@ public class MypageController {
 	}
 	
 	@GetMapping("/myQnaForm")
-	public String myQnaForm() {
+	public String myQnaForm(HttpSession session) {
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			return "/needLogin";
+		}
 		return "/coach/mypage/myQnaForm";
 	}
 	
 	@PostMapping("/myQnaNew")
 	public ModelAndView myQnaNew(QnaDTO qdto, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/needLogin");
+			return mav;
+		}
 		qdto.setUser_idx((Integer) session.getAttribute("user_idx"));
 		int result = 0;
 		try {

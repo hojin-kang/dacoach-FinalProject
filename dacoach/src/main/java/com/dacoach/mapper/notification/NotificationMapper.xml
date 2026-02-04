@@ -14,7 +14,7 @@
 		    CONTENT,
 		    CREATED_AT
 		from notification
-	    where IS_READ='N' and receiver_idx=#{users_idx}
+	    where IS_READ='N' and receiver_idx=#{user_idx}
 	    order by created_at desc
 	
 	</select>
@@ -22,7 +22,15 @@
 	<select id="countUnread" resultType="int">
 		SELECT COUNT(*)
 		FROM NOTIFICATION
-		WHERE RECEIVER_IDX = #{users_idx} AND IS_READ = 'N'
+		WHERE RECEIVER_IDX = #{user_idx} AND IS_READ = 'N'
 	</select>
+	
+	<update id="notiDelete">
+		update
+			notification
+		set
+			is_read='Y'
+		where noti_idx=#{noti_idx}
+	</update>
 
 </mapper>
