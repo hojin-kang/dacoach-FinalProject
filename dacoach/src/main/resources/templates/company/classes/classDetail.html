@@ -2,138 +2,225 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
-<title th:text="${classItem.title} + ' - dacoach'">클래스 상세</title>
+<title>dacoach</title>
+
 <link rel="stylesheet" th:href="@{/css/main.css}" />
-<style>
-.class-detail-container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 20px;
-}
-
-.class-header {
-	margin-bottom: 30px;
-}
-
-.class-title {
-	font-size: 32px;
-	font-weight: bold;
-	margin-bottom: 10px;
-}
-
-.class-price {
-	font-size: 24px;
-	color: #2196F3;
-	font-weight: bold;
-}
-
-.class-media {
-	margin: 30px 0;
-}
-
-.class-photo {
-	width: 100%;
-	max-width: 800px;
-	height: auto;
-	border-radius: 10px;
-	margin-bottom: 20px;
-}
-
-.class-video {
-	width: 100%;
-	max-width: 800px;
-	height: 450px;
-	border-radius: 10px;
-}
-
-.class-info {
-	background: #f5f5f5;
-	padding: 20px;
-	border-radius: 10px;
-	margin: 20px 0;
-}
-
-.info-row {
-	display: flex;
-	margin-bottom: 10px;
-}
-
-.info-label {
-	font-weight: bold;
-	width: 120px;
-}
-
-.class-intro {
-	line-height: 1.8;
-	white-space: pre-wrap;
-	margin-top: 30px;
-}
-</style>
+<link rel="stylesheet" th:href="@{/css/coach_class.css}" />
 </head>
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
 
 	<main class="main">
-		<div class="class-detail-container">
-			<!-- 클래스 헤더 -->
-			<div class="class-header">
-				<h1 class="class-title" th:text="${classItem.title}">클래스 제목</h1>
-				<div class="class-price" 
-					th:text="${#numbers.formatInteger(classItem.price, 0, 'COMMA')} + '원'">가격</div>
-			</div>
+		<div class="container">
 
-			<!-- 클래스 미디어 -->
-			<div class="class-media">
-				<!-- 사진 표시 - FileManageView 사용 -->
-				<div th:if="${@fileManageView.hasFile(classItem.photo)}">
-					<img class="class-photo" 
-						th:src="${@fileManageView.getPhotoUrl(classItem.photo)}"
-						th:alt="${classItem.title}" />
+			<!-- ===== 상단 프로필/타이틀 영역 ===== -->
+			<section class="classDetailTop">
+				<div class="topLeft">
+					<!-- 프로필 이미지 (provider) -->
+					<div class="providerAvatar">
+						<img
+							th:src="${providerPhoto != null and providerPhoto != ''} ? @{/uploads/profile/{img}(img=${providerPhoto})} : @{/images/default_profile.png}"
+							alt="provider" />
+					</div>
+
+					<div class="topInfo">
+						<div class="providerLine">
+							<div class="providerName" th:text="${providerName}">도자기빛다</div>
+							<div class="providerBadge" title="인증">👑</div>
+						</div>
+
+						<div class="classTitle" th:text="${classDTO.title}">[연인 추천]
+							도자기 공예 원데이 클래스</div>
+					</div>
 				</div>
 
-				<!-- 비디오 표시 - FileManageView 사용 -->
-				<div th:if="${@fileManageView.hasFile(classItem.video)}">
-					<video class="class-video" controls>
-						<source th:src="${@fileManageView.getVideoUrl(classItem.video)}" 
-							type="video/mp4" />
-						브라우저가 비디오를 지원하지 않습니다.
-					</video>
+				<div class="topRight">
+					<div class="topIcons">
+						<button type="button" class="iconBtn" aria-label="찜">
+							<span class="icon">♡</span>
+						</button>
+						<button type="button" class="iconBtn" aria-label="알림">
+							<span class="icon">🔔</span>
+						</button>
+					</div>
 				</div>
-			</div>
+			</section>
 
-			<!-- 클래스 정보 -->
-			<div class="class-info">
-				<div class="info-row">
-					<span class="info-label">수강 기간:</span>
-					<span th:text="${#dates.format(classItem.start_date, 'yyyy-MM-dd HH:mm')} 
-						+ ' ~ ' + ${#dates.format(classItem.end_date, 'yyyy-MM-dd HH:mm')}">기간</span>
-				</div>
-				<div class="info-row">
-					<span class="info-label">수강 인원:</span>
-					<span th:text="${classItem.max_user_cnt} + '명'">인원</span>
-				</div>
-				<div class="info-row" th:if="${classItem.avg_rating != null}">
-					<span class="info-label">평점:</span>
-					<span th:text="${classItem.avg_rating} + '점 (' + ${classItem.review_cnt} + '개 리뷰)'">평점</span>
-				</div>
-			</div>
+			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
+			<nav class="detailTabs">
+				<a class="tab active" href="#detail">상세정보</a>
+				<!-- ✅ 여기 누르면 아래 후기 블록으로 앵커 이동 -->
+				<a class="tab" href="#reviews">클래스 후기</a>
+			</nav>
 
-			<!-- 클래스 소개 -->
-			<div class="class-intro">
-				<h2>클래스 소개</h2>
-				<p th:text="${classItem.intro}">클래스 소개 내용</p>
-			</div>
+			<hr class="divider" />
 
-			<!-- 신청 버튼 -->
-			<div style="text-align: center; margin-top: 40px;">
-				<button type="button" class="btn-primary" 
-					style="padding: 15px 40px; font-size: 18px;">
-					클래스 신청하기
-				</button>
+			<div class="classPage classDetailPage">
+
+				<!-- ===== LEFT: 상세 ===== -->
+				<section class="detailArea" id="detail">
+
+					<!-- 클래스소개 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">클래스 소개</h3>
+						<p class="blockText" th:text="${classDTO.intro}">원데이로! 연인과 함께!
+							도자기 작품을 만들어볼까요? 문의사항은 채팅 주세요!</p>
+					</article>
+
+					<!-- 제공분야(태그) -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">제공분야</h3>
+						<div class="tagRow">
+							<!-- 예: 해시태그 리스트 -->
+							<span class="tag" th:each="t : ${tagList}" th:text="${t}">#도자기</span>
+
+							<!-- tagList 없을 때 fallback -->
+							<span class="tag"
+								th:if="${tagList == null or #lists.isEmpty(tagList)}">#선택안함</span>
+						</div>
+					</article>
+
+					<!-- 사진/동영상 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">사진/동영상</h3>
+
+						<div class="mediaRow">
+							<!-- 동영상(있으면) -->
+							<div class="mediaBox">
+								<video class="mediaVideo" controls
+									th:if="${classDTO.video != null and classDTO.video != ''}">
+									<source
+										th:src="@{/uploads/classes/videos/{v}(v=${classDTO.video})}"
+										type="video/mp4">
+								</video>
+
+								<!-- 동영상 없으면 이미지 -->
+								<img class="mediaImg"
+									th:if="${classDTO.video == null or classDTO.video == ''}"
+									th:src="@{/images/default_video.png}" alt="video placeholder" />
+							</div>
+
+							<!-- 사진(대표 1장) -->
+							<div class="mediaBox">
+								<img class="mediaImg"
+									th:src="${classDTO.photo != null and classDTO.photo != ''} ? @{/uploads/classes/photos/{img}(img=${classDTO.photo})} : @{/images/default_class.png}"
+									alt="class photo" />
+							</div>
+
+							<!-- (선택) 슬라이드 화살표 UI만 -->
+							<button type="button" class="slideArrow" aria-label="next">›</button>
+						</div>
+					</article>
+
+					<!-- ===== 후기 블록 (앵커 목적지) ===== -->
+					<article class="detailBlock" id="reviews">
+						<div class="reviewHead">
+							<h3 class="blockTitle">클래스 후기</h3>
+
+							<!-- 요약: 리뷰수/평점 -->
+							<div class="reviewSummary">
+								<span class="summaryText"> <b
+									th:text="${reviewCount != null ? reviewCount : 0}">54</b>명이 해당
+									클래스를 긍정적 (★<b th:text="${avgRating != null ? avgRating : 0}">4.7</b>/5.0)으로
+									평가했습니다.
+								</span>
+							</div>
+						</div>
+
+						<!-- 후기 카드 슬라이더 느낌 -->
+						<div class="reviewSlider">
+
+							<button type="button" class="slideArrow left" aria-label="prev">‹</button>
+
+							<div class="reviewCards">
+								<!-- 리뷰 1개 -->
+								<div class="reviewCard" th:each="r : ${reviewList}">
+									<div class="reviewTop">
+										<div class="reviewAvatar">
+											<img
+												th:src="${r.reviewerPhoto != null and r.reviewerPhoto != ''} ? @{/uploads/profile/{img}(img=${r.reviewerPhoto})} : @{/images/default_profile.png}"
+												alt="reviewer" />
+										</div>
+
+										<div class="reviewMeta">
+											<div class="reviewStars">
+												<span class="stars" th:text="|★ ${r.rating}|">★ 4.5</span>
+											</div>
+											<div class="reviewText" th:text="${r.content}">너무너무 좋고
+												재밌게 처음 입문했습니다. 감사합니다!</div>
+										</div>
+									</div>
+
+									<div class="reviewBottom">
+										<div class="reviewerName" th:text="${r.reviewerName}">양코치</div>
+										<div class="reviewTag"
+											th:if="${r.tag != null and r.tag != ''}" th:text="${r.tag}">#친절해요</div>
+									</div>
+								</div>
+
+								<!-- reviewList 없을 때 -->
+								<div class="reviewCard"
+									th:if="${reviewList == null or #lists.isEmpty(reviewList)}">
+									<div class="reviewTop">
+										<div class="reviewMeta">
+											<div class="reviewText">아직 후기가 없습니다. 첫 후기를 남겨보세요!</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<button type="button" class="slideArrow right" aria-label="next">›</button>
+
+						</div>
+					</article>
+
+				</section>
+
+				<!-- ===== RIGHT: (원하면) 고정 사이드 요약 박스 ===== -->
+				<aside class="sideArea">
+					<div class="sideCard">
+						<div class="sideTitle">클래스 정보</div>
+
+						<div class="sideRow">
+							<span class="sideLabel">기간</span> <span class="sideValue"
+								th:text="|${#dates.format(classDTO.start_date,'yyyy.MM.dd')} ~ ${#dates.format(classDTO.end_date,'yyyy.MM.dd')}|">
+								2026.02.01 ~ 2026.02.15 </span>
+						</div>
+
+						<div class="sideRow">
+							<span class="sideLabel">가격</span> <span class="sideValue"
+								th:text="|${#numbers.formatInteger(classDTO.price, 3, 'COMMA')}₩|">99,000₩</span>
+						</div>
+
+						<div class="sideRow">
+							<span class="sideLabel">정원</span> <span class="sideValue"
+								th:text="|${classDTO.max_user_cnt}명|">6명</span>
+						</div>
+
+						<div class="sideBtns">
+							<a class="actionBtn solid"
+								th:href="@{/class/update(classId=${classDTO.class_idx})}">수정하기</a>
+						</div>
+					</div>
+				</aside>
+
 			</div>
 		</div>
 	</main>
 
 	<div th:replace="~{layout/footer :: siteFooter}"></div>
+
+	<script>
+    // (선택) 앵커 이동 부드럽게
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
 </body>
 </html>
