@@ -5,40 +5,44 @@
 
 <mapper namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 
-<resultMap id="adminCompanyRowMap" type="com.dacoach.admin.company.model.AdminCompanyRowDTO">
-  <id property="users_idx" column="users_idx"/>
+  <!-- 리스트용 (embedded 없음) -->
+  <resultMap id="adminCompanyRowMap" type="com.dacoach.admin.company.model.AdminCompanyRowDTO">
+    <id property="users_idx" column="users_idx"/>
+    <result property="cert_status" column="cert_status"/>
 
-  <result property="cert_status" column="cert_status"/>
+    <association property="company" javaType="com.dacoach.model.company.CompanyDTO">
+      <id     property="company_idx" column="company_idx"/>
+      <result property="users_idx"   column="users_idx"/>
+      <result property="company_num" column="company_num"/>
+      <result property="phone"       column="phone"/>
+      <result property="address"     column="address"/>
+      <result property="email"       column="email"/>
+    </association>
 
-  <association property="company" javaType="com.dacoach.model.company.CompanyDTO">
-    <id property="company_idx" column="company_idx"/>
-    <result property="users_idx" column="users_idx"/>
-    <result property="company_num" column="company_num"/>
-    <result property="phone" column="phone"/>
-    <result property="address" column="address"/>
-    <result property="email" column="email"/>
-  </association>
+    <association property="users" javaType="com.dacoach.model.users.UsersDTO">
+      <id     property="user_idx"  column="users_idx"/>
+      <result property="user_name" column="user_name"/>
+      <result property="login_id"  column="login_id"/>
+      <result property="status"    column="status"/>
+    </association>
+  </resultMap>
 
-  <association property="users" javaType="com.dacoach.model.users.UsersDTO">
-    <id property="user_idx" column="users_idx"/>
-    <result property="user_name" column="user_name"/>
-    <result property="login_id" column="login_id"/>
-    <result property="status" column="status"/>
-  </association>
+  <!-- 상세용 (embedded 포함) -->
+  <resultMap id="adminCompanyDetailMap"
+             type="com.dacoach.admin.company.model.AdminCompanyRowDTO"
+             extends="adminCompanyRowMap">
 
-  <association property="embedded" javaType="com.dacoach.model.admin.EmbeddedUserDTO">
-    <id property="embed_user_idx" column="embed_user_idx"/>
-    <result property="user_idx" column="users_idx"/>
-    <result property="start_date" column="start_date"/>
-    <result property="end_date" column="end_date"/>
-    <result property="reason" column="reason"/>
-  </association>
-</resultMap>
+    <association property="embedded" javaType="com.dacoach.model.admin.EmbeddedUserDTO">
+      <id     property="embed_user_idx" column="embed_user_idx"/>
+      <result property="user_idx"       column="users_idx"/>
+      <result property="start_date"     column="start_date"/>
+      <result property="end_date"       column="end_date"/>
+      <result property="reason"         column="reason"/>
+    </association>
+  </resultMap>
 
-
-
-
-<select id="companyList" resultMap="adminCompanyRowMap">
+  <!-- 리스트 -->
+  <select id="companyList" resultMap="adminCompanyRowMap">
     SELECT
       c.COMPANY_IDX AS company_idx,
       u.USER_IDX    AS users_idx,
@@ -62,36 +66,83 @@
       u.USER_IDX DESC
   </select>
 
-<select id="companyDetail" parameterType="int" resultMap="adminCompanyRowMap">
-SELECT
-  c.COMPANY_IDX AS company_idx,
-  u.USER_IDX    AS users_idx,
-  u.USER_NAME   AS user_name,
-  u.LOGIN_ID    AS login_id,
-  u.STATUS      AS status,
-  c.COMPANY_NUM AS company_num,
-  c.PHONE       AS phone,
-  c.ADDRESS     AS address,
-  c.EMAIL       AS email,
-  NVL(ce.CERT_STATUS, '미등록') AS cert_status,
+  <!-- 상세 -->
+  <select id="companyDetail" parameterType="int" resultMap="adminCompanyDetailMap">
+    SELECT
+      c.COMPANY_IDX AS company_idx,
+      u.USER_IDX    AS users_idx,
+      u.USER_NAME   AS user_name,
+      u.LOGIN_ID    AS login_id,
+      u.STATUS      AS status,
+      c.COMPANY_NUM AS company_num,
+      c.PHONE       AS phone,
+      c.ADDRESS     AS address,
+      c.EMAIL       AS email,
+      NVL(ce.CERT_STATUS, '미등록') AS cert_status,
 
-  eu.EMBED_USER_IDX AS embed_user_idx,
-  eu.START_DATE AS start_date,
-  eu.END_DATE   AS end_date,
-  eu.REASON     AS reason
+      eu.EMBED_USER_IDX AS embed_user_idx,
+      eu.START_DATE AS start_date,
+      eu.END_DATE   AS end_date,
+      eu.REASON     AS reason
+    FROM USERS u
+    JOIN COMPANY c
+      ON c.USER_IDX = u.USER_IDX
+    LEFT JOIN CERT ce
+      ON ce.USER_IDX = u.USER_IDX
+     AND ce.CERT_TYPE = '사업증'
+    LEFT JOIN EMBEDDED_USER eu
+      ON eu.USER_IDX = u.USER_IDX
+    WHERE u.USER_IDX = #{value}
+  </select>
 
-FROM USERS u
-JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
-LEFT JOIN CERT ce
-  ON ce.USER_IDX = u.USER_IDX
- AND ce.CERT_TYPE = '사업증'
-LEFT JOIN EMBEDDED_USER eu
-  ON eu.USER_IDX = u.USER_IDX
-WHERE u.USER_IDX = #{value}
-</select>
+  <!-- 승인상태 저장(없으면 insert, 있으면 update) -->
+  <update id="upsertCertStatus" parameterType="map">
+    MERGE INTO CERT c
+    USING (
+      SELECT
+        #{usersIdx,   jdbcType=NUMERIC} AS USER_IDX,
+        #{certType,   jdbcType=VARCHAR} AS CERT_TYPE,
+        #{certName,   jdbcType=VARCHAR} AS CERT_NAME,
+        #{certStatus, jdbcType=VARCHAR} AS CERT_STATUS
+      FROM dual
+    ) src
+    ON (c.USER_IDX = src.USER_IDX AND c.CERT_TYPE = src.CERT_TYPE)
+    WHEN MATCHED THEN
+      UPDATE SET
+        c.CERT_NAME   = src.CERT_NAME,
+        c.CERT_STATUS = src.CERT_STATUS
+    WHEN NOT MATCHED THEN
+      INSERT (CERT_IDX, USER_IDX, CERT_NAME, CERT_TYPE, CERT_STATUS)
+      VALUES (SEQ_CERT.NEXTVAL, src.USER_IDX, src.CERT_NAME, src.CERT_TYPE, src.CERT_STATUS)
+  </update>
 
+  <!-- USERS 상태 변경 -->
+  <update id="updateUserStatus" parameterType="map">
+    UPDATE USERS
+       SET STATUS = #{status, jdbcType=VARCHAR}
+     WHERE USER_IDX = #{usersIdx, jdbcType=NUMERIC}
+  </update>
 
+  <!-- 정지(EMBEDDED_USER) upsert -->
+  <update id="upsertEmbeddedUser" parameterType="map">
+    MERGE INTO EMBEDDED_USER eu
+    USING (
+      SELECT
+        #{usersIdx, jdbcType=NUMERIC} AS USER_IDX,
+        #{startDate, jdbcType=DATE}   AS START_DATE,
+        #{endDate, jdbcType=DATE}     AS END_DATE,
+        #{reason, jdbcType=VARCHAR}   AS REASON
+      FROM dual
+    ) src
+    ON (eu.USER_IDX = src.USER_IDX)
+    WHEN MATCHED THEN
+      UPDATE SET
+        eu.START_DATE = src.START_DATE,
+        eu.END_DATE   = src.END_DATE,
+        eu.REASON     = src.REASON
+    WHEN NOT MATCHED THEN
+      INSERT (EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON)
+      VALUES (SEQ_EMBED_USER.NEXTVAL, src.USER_IDX, src.START_DATE, src.END_DATE, src.REASON)
+  </update>
 
 </mapper>
-
-
