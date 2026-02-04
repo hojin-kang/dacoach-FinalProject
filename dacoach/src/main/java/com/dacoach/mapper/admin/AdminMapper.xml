@@ -5,6 +5,7 @@
 	<select id="getCoachList" resultType="map">
 	select
 	c.coach_idx,
+	u.user_idx,
 	u.user_name,
 	c.nickname,
 	c.phone,
@@ -12,12 +13,12 @@
 	u.status,
 	(select count(*) 
 		from cert c_sub
-		where c_sub.users_idx = c.users_idx
+		where c_sub.user_idx = c.user_idx
 		and cert_status = '대기') as cert_wait_count
 	from
 	coach c
 	join
-	users u on c.users_idx = u.users_idx
+	users u on c.user_idx = u.user_idx
 	order by
 	u.created_at desc
 	</select>
@@ -27,7 +28,8 @@
 	</select>
 	
 	<select id="getCoachDetail" parameterType="int" resultType="map">
-	SELECT u.user_name,
+	select 
+	u.user_name,
 	c.nickname,
 	u.login_id,
 	u.password,
@@ -35,13 +37,33 @@
 	c.mail,
 	c.birth_date,
 	c.phone,
-	c.token_balance,
-	r.rank_name
-	FROM coach c
-	JOIN users u ON c.users_idx = u.users_idx
-	JOIN rank r
-	ON r.min_score <![CDATA[<]]>  c.point_score
-	AND c.point_score <![CDATA[<]]>= r.max_score
-	WHERE c.coach_idx = #{coachIdx}
+	c.photo
+	from 
+	coach c
+	join
+	users u on c.user_idx = u.user_idx
+	where c.coach_idx=#{coachIdx}
 	</select>
+	
+	<select id="getCoachStatus" parameterType="int" resultType="String">
+	select status from users where user_idx=#{userIdx}
+	</select>
+	
+	<select id="getCoachEmbedded" parameterType="int" resultType="com.dacoach.model.admin.EmbeddedUserDTO">
+	select * from
+	(select *
+	from EMBEDDED_USER
+	where user_idx=#{userIdx}
+	order by start_date desc)
+	where rownum=1
+	
+	</select>
+	
+	<update id="updateCoachSuspended" parameterType="int">
+	update users set status='SUSPENDED' where user_idx=#{userIdx}
+	</update>
+	
+	<insert id="insertCoachSuspended" parameterType="com.dacoach.model.admin.EmbeddedUserDTO">
+	insert into embedded_user values (SEQ_EMBED_USER.nextval,#{user_idx},#{start_date},#{end_date},#{reason})
+	</insert>
 </mapper>
