@@ -26,28 +26,33 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> getCoachDetail(int coachidx) throws Exception {
-		return adminMapper.getCoachDetail(coachidx);
+	public List<Map<String, Object>> getCoachDetail(int coach_idx) throws Exception {
+		return adminMapper.getCoachDetail(coach_idx);
 	}
 	
 	@Override
-	public String getCoachStatus(int userIdx) throws Exception {
-		return adminMapper.getCoachStatus(userIdx);
+	public String getCoachStatus(int user_idx) throws Exception {
+		return adminMapper.getCoachStatus(user_idx);
 	}
 
 	@Override
-	public EmbeddedUserDTO getCoachEmbedded(int userIdx) throws Exception {
-		return adminMapper.getCoachEmbedded(userIdx);
+	public EmbeddedUserDTO getCoachEmbedded(int user_idx) throws Exception {
+		return adminMapper.getCoachEmbedded(user_idx);
 	}
 	
 	@Override
-	public int updateCoachSuspended(int userIdx) throws Exception {
-		return adminMapper.updateCoachSuspended(userIdx);
+	public int updateCoachStatus(Map<String, Object> params) throws Exception {
+		return adminMapper.updateCoachStatus(params);
 	}
 	
 	@Override
 	public int insertCoachSuspended(EmbeddedUserDTO dto) throws Exception {
 		return adminMapper.insertCoachSuspended(dto);
+	}
+	
+	@Override
+	public int updateEnddateSuspended(int user_idx) throws Exception {
+		return adminMapper.updateEnddateSuspended(user_idx);
 	}
 
 }
