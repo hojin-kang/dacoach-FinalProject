@@ -9,6 +9,7 @@ public interface CoachService {
 	public boolean idCheck(String username) throws Exception;
 	public Integer coachProfile(UsersDTO udto) throws Exception;
 	public boolean checkNick(String nickname) throws Exception;
+	public boolean emailCheck(String email) throws Exception;
 	public List<Map<String, Object>> getMajorFields() throws Exception;
     public List<Map<String, Object>> getMinorFields(int majorIdx) throws Exception;
     public List<Map<String, Object>> getMajorRegions() throws Exception;

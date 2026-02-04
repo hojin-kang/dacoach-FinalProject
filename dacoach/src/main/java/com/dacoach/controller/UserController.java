@@ -65,7 +65,9 @@ public class UserController {
                 session.setAttribute("user_idx", coach.getUser_idx());
                 session.setAttribute("photo", coach.getPhoto());
                 session.setAttribute("kakao",coach.getKakao_key());
-                mav.setViewName("redirect:/");
+                mav.addObject("msg", "카카오 연동 로그인 성공!\n메인페이지로 이동합니다.");
+                mav.addObject("url", "/");
+                mav.setViewName("alert");
             }else if(session.getAttribute("user_idx")!=null &&coach ==null) {
             	//로그인 중이지만 카카오 연동이 안된 회원
         		HashMap<String, Object> conKakao=new HashMap<>();
@@ -74,32 +76,44 @@ public class UserController {
         		int result=coachService.connectKakao(conKakao);
         		if(result>0) {
         			session.invalidate();
-        			mav.setViewName("redirect:/");
+        			mav.addObject("msg", "카카오 계정 연동 성공!\n다시 로그인해주세요.");
+					mav.addObject("url", "/login");
+        			mav.setViewName("alert");
         		}else {
-        			mav.setViewName("redirect:/mypage");
+        			mav.addObject("msg", "카카오 계정 연동 실패!\n마이페이지로 이동합니다.");
+        			mav.addObject("url", "/mypage");
+        			mav.setViewName("alert");
         		}
             }else {
             	// 로그인 중도 아니었고 신규 회원이면 가입 페이지로 이동 (데이터 포함)
                 mav.addObject("kakao_key", kakaoKey);
                 mav.addObject("nickname", nickname);
-                mav.addObject("newKakaoUser", "가입된 정보가 없습니다. 접속하신 카카오 계정 정보로 회원가입 진행됩니다.");
-                mav.setViewName("coach/coachJoin"); 
+                mav.addObject("msg", "가입된 정보가 없습니다. 접속하신 카카오 계정 정보로 회원가입 진행됩니다.");
+                mav.addObject("url", "coach/coachJoin");
+                mav.setViewName("alert"); 
             	
                 
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            mav.setViewName("redirect:/login");
+            mav.addObject("msg", "카카오 계정 연동 wnd  실패!\n마이페이지로 이동합니다.");
+			mav.addObject("url", "/mypage");
+			mav.setViewName("alert");
         }
         
         return mav;
     }
 	
 	@GetMapping("/logout")
-	public String logout(HttpSession session) {
+	public ModelAndView logout(HttpSession session) {
+		ModelAndView mav=new ModelAndView();
+		mav.addObject("msg","로그아웃 되었습니다.\n오늘도 좋은 하루 되세요!");
+		mav.addObject("url","/");
+		mav.setViewName("alert");
 		session.invalidate();
-		return "redirect:/";
+		
+		return mav;
 	}
 	@GetMapping("/login")
 	public String login() {
@@ -114,7 +128,9 @@ public class UserController {
 	    ModelAndView mav = new ModelAndView();
 
 	    if (udto == null) {
-	        mav.setViewName("users/login");
+	        mav.addObject("msg","ID 및 비밀번호를 확인해주세요");
+	        mav.addObject("url","/login");
+	        mav.setViewName("alert");
 	        return mav;
 	    }
 
@@ -122,7 +138,9 @@ public class UserController {
 	        UsersDTO loginUser = usersService.userLogin(udto);
 
 	        if (loginUser == null) {
-	            mav.setViewName("users/login");
+	        	mav.addObject("msg","ID 및 비밀번호를 확인해주세요");
+		        mav.addObject("url","/login");
+		        mav.setViewName("alert");
 	            return mav;
 	        }
 	        
@@ -135,12 +153,15 @@ public class UserController {
 	        } else {
 	            session.setAttribute("photo", "default_profile.png");
 	        }
-
-	        mav.setViewName("redirect:/");
+	        mav.addObject("msg","로그인 성공!\n메인페이지로 이동합니다");
+	        mav.addObject("url","/");
+	        mav.setViewName("alert");
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        mav.setViewName("users/login");
+	        mav.addObject("msg","ID 및 비밀번호를 확인해주세요");
+	        mav.addObject("url","/login");
+	        mav.setViewName("alert");
 	    }
 	    return mav;
 	}

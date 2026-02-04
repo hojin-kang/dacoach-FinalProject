@@ -46,6 +46,18 @@ public class CoachController {
 		}
         return !result;
     }
+	@GetMapping("/api/member/emailCheck")
+	@ResponseBody
+	public boolean checkEmail(@RequestParam("email") String email) {
+		boolean result=true;
+		try {
+			result=coachService.emailCheck(email);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return !result;
+	}
 	@RequestMapping("/coachProfile")
 	public ModelAndView coachProfile(UsersDTO udto
 			,@RequestParam(value = "email", required = false)String mail
@@ -108,17 +120,6 @@ public class CoachController {
 	        return null;
 	    }
 	}
-	@GetMapping("/test")
-	public String test() {
-		return "coach/test";
-	}
-	@PostMapping("/coachJoin2")
-	public String coachJoin2(@RequestParam(value="photo", required=false)MultipartFile photo,
-			@RequestParam(value="video", required=false)MultipartFile video){
-		System.out.println(photo.isEmpty());
-		System.out.println(video.isEmpty());
-		return "redirect:/";
-	}
 	
 	@PostMapping("/coachJoin")
 	public ModelAndView coachJoin(CoachDTO cdto,
@@ -136,14 +137,20 @@ public class CoachController {
 	        int result = coachService.coachJoin(cdto);
 
 	        if(result > 0) {
-	            mav.setViewName("redirect:/login");
+	        	mav.addObject("msg", "코치 회원가입이 완료되었습니다. 로그인 후 이용해주세요.");
+	        	mav.addObject("url", "/login");
+	        	mav.setViewName("alert");
 	        } else {
-	            mav.setViewName("redirect:/coachJoin");
+	            mav.addObject("msg", "코치 회원가입에 실패했습니다. 다시 시도해주세요.");
+	            mav.addObject("url", "/coachJoin");
+	            mav.setViewName("alert");
 	        }
 	        
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        mav.setViewName("redirect:/coachJoin");
+	        mav.addObject("msg", "오류가 발생했습니다. 다시 시도해주세요.");
+	        mav.addObject("url", "/coachJoin");
+	        mav.setViewName("alert");
 	    }
 	    
 	    return mav;
