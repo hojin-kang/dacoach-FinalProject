@@ -33,39 +33,32 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
 
 	  @Override
 	  @Transactional
-	  public void saveCompanyDetail(int usersIdx,
-	                                String certStatus,
-	                                String status,
-	                                String suspendFrom,
-	                                String suspendUntil,
-	                                String reason) {
+	  public void saveCompanyDetail(int usersIdx, String certStatus, String status, 
+	                                 String suspendFrom, String suspendUntil, String reason) {
 
-	    // 1) CERT 승인상태 저장 (없으면 insert, 있으면 update)
-	    String saveCertStatus = (certStatus == null || certStatus.isBlank()) ? "대기" : certStatus;
-	    dao.upsertCertStatus(usersIdx, saveCertStatus);
-
-	    // 2) USERS STATUS 저장 (ACTIVE/SUSPENDED)
-	    // 값이 안 오면 건드리지 않음
-	    if (status != null && !status.isBlank()) {
-	      dao.updateUserStatus(usersIdx, status);
-	    }
-
-	    // 3) 정지라면 EMBEDDED_USER 저장(선택)
-	    // - 날짜/사유가 비어있으면 "정지 기록 저장"은 스킵 가능
-	    if ("SUSPENDED".equals(status)) {
-	      Date from = (suspendFrom == null || suspendFrom.isBlank()) ? null : Date.valueOf(suspendFrom);
-	      Date until = (suspendUntil == null || suspendUntil.isBlank()) ? null : Date.valueOf(suspendUntil);
-
-	      // 너가 말한대로 "사용 정지만"이면 날짜 없어도 정지 가능하게 하고 싶을 수 있음.
-	      // → 그럼 from만 오늘로 넣거나, 그냥 reason만 저장도 가능.
-	      // 여기서는 입력이 하나라도 있으면 upsert 하게 처리.
-	      boolean hasAny = (from != null) || (until != null) || (reason != null && !reason.isBlank());
-	      if (hasAny) {
-	        dao.upsertEmbeddedUser(usersIdx, from, until, reason);
+	      // 1. 서류 승인 상태 업데이트 (독립적)
+	      if (certStatus != null && !certStatus.isBlank()) {
+	          dao.upsertCertStatus(usersIdx, certStatus);
 	      }
-	    } else if ("ACTIVE".equals(status)) {
-	      // 사용으로 돌리면 정지 테이블 기록 지우고 싶으면 아래 사용
-	      // dao.deleteEmbeddedUser(usersIdx);
-	    }
+
+	      // 2. 유저 계정 상태 업데이트
+	      if (status != null && !status.isBlank()) {
+	          dao.updateUserStatus(usersIdx, status);
+	          
+	          // 3. 정지 관련 로직 처리
+	          if ("SUSPENDED".equals(status)) {
+	              // 정지 상태라면 정보 저장 (종료일 필수)
+	              java.sql.Date until = null;
+	              if (suspendUntil != null && !suspendUntil.isBlank()) {
+	                  until = java.sql.Date.valueOf(suspendUntil);
+	                  dao.upsertEmbeddedUser(usersIdx, until, reason);
+	              }
+	          } 
+	          else if ("ACTIVE".equals(status)) {
+	              // 사용 상태로 변경 시, 진행 중인 정지 데이터가 있다면 오늘 날짜로 마감
+	              dao.terminateSuspension(usersIdx);
+	          }
+	      }
 	  }
+
 }

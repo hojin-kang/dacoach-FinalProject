@@ -40,8 +40,7 @@ public class AdminCompanyController {
 	      @RequestParam(value = "reason", required = false) String reason
 	  ) {
 
-	    // certStatus: 승인 버튼 누르면 '확인', 아니면 '' -> 서비스에서 '대기' 처리
-	    // status: 라디오로 ACTIVE/SUSPENDED
+	   
 	    service.saveCompanyDetail(usersIdx, certStatus, status, suspendFrom, suspendUntil, reason);
 
 	    return "redirect:/admin/companyDetail/" + usersIdx;

@@ -1,150 +1,161 @@
 <!-- templates/admin/company/companyDetail.html -->
-<div th:fragment="contentPage" class="w-full">
+<div th:fragment="contentPage">
 
-  <form th:action="@{/admin/companyDetail/save}" method="post" class="space-y-6">
+  <form th:action="@{/admin/companyDetail/save}" method="post">
 
     <input type="hidden" name="usersIdx" th:value="${row.users_idx}">
     <input type="hidden" id="certStatus" name="certStatus" value="">
     <input type="hidden" id="certType" name="certType" value="사업증">
 
-    <div class="space-y-6">
+    <h2>기업 상세</h2>
 
-      <section>
-        <h3>컴퍼니 정보</h3>
+    <hr>
 
-        <div>
-          <div>컴퍼니 이름</div>
-          <div th:text="${row.users != null ? row.users.user_name : '-'}">-</div>
-        </div>
-
-        <div>
-          <div>사업자번호</div>
-          <div th:text="${row.company != null ? row.company.company_num : '-'}">-</div>
-        </div>
-
-        <div>
-          <div>전화번호</div>
-          <div th:text="${(row.company != null and row.company.phone != null and row.company.phone != '') ? row.company.phone : '-'}">-</div>
-        </div>
-
-        <div>
-          <div>주소</div>
-          <div th:text="${(row.company != null and row.company.address != null and row.company.address != '') ? row.company.address : '-'}">-</div>
-        </div>
-
-        <div>
-          <div>아이디</div>
-          <div th:text="${(row.users != null and row.users.login_id != null and row.users.login_id != '') ? row.users.login_id : '-'}">-</div>
-        </div>
-
-        <div>
-          <div>이메일</div>
-          <div th:text="${(row.company != null and row.company.email != null and row.company.email != '') ? row.company.email : '-'}">-</div>
-        </div>
-
-        <div>
-          <div>승인여부</div>
-          <div id="certStatusText" th:text="${row.cert_status != null ? row.cert_status : '-'}">-</div>
-        </div>
-      </section>
-
-      <section>
-        <h3>계정관리</h3>
-
-        <div>
-          <div>계정상태</div>
-
-          <label>
-            <input type="radio" name="status" value="ACTIVE"
-                   th:checked="${row.users != null && row.users.status == 'ACTIVE'}">
-            사용
-          </label>
-
-          <label>
-            <input type="radio" name="status" value="SUSPENDED"
-                   th:checked="${row.users != null && row.users.status == 'SUSPENDED'}">
-            정지
-          </label>
-        </div>
-
-        <div>
-          <div>정지기간</div>
-
-          <input type="date" name="suspendFrom"
-                 th:value="${row.embedded != null and row.embedded.start_date != null
-                          ? #temporals.format(row.embedded.start_date, 'yyyy-MM-dd')
-                          : ''}">
-
-          <span>~</span>
-
-          <input type="date" name="suspendUntil"
-                 th:value="${row.embedded != null and row.embedded.end_date != null
-                          ? #temporals.format(row.embedded.end_date, 'yyyy-MM-dd')
-                          : ''}">
-
-          <input type="text" name="reason" placeholder="정지 사유(선택)"
-                 th:value="${row.embedded != null and row.embedded.reason != null ? row.embedded.reason : ''}">
-        </div>
-
-        <div>정지로 저장하면 EMBEDDED_USER에 기간/사유가 저장된다.</div>
-      </section>
-
-      <section>
-        <h3>사업자등록증</h3>
-
-        <table>
-          <thead>
-            <tr>
-              <th>발급일자</th>
-              <th>업종/업태</th>
-              <th>발급기관</th>
-              <th>첨부파일</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td><a href="#">파일보기</a></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div>승인 버튼은 알림만 띄우고, 실제 반영은 저장 버튼에서 된다.</div>
-      </section>
+    <section>
+      <h3>컴퍼니 정보</h3>
 
       <div>
-        <button type="button" onclick="approveNow()">승인</button>
-        <button type="submit">저장</button>
-        <a th:href="@{/admin/companyList}">목록</a>
+        <div>컴퍼니 이름</div>
+        <div th:text="${row.users != null ? row.users.user_name : '-'}">-</div>
       </div>
 
+      <div>
+        <div>사업자번호</div>
+        <div th:text="${row.company != null ? row.company.company_num : '-'}">-</div>
+      </div>
+
+      <div>
+        <div>전화번호</div>
+        <div th:text="${(row.company != null and row.company.phone != null and row.company.phone != '') ? row.company.phone : '-'}">-</div>
+      </div>
+
+      <div>
+        <div>주소</div>
+        <div th:text="${(row.company != null and row.company.address != null and row.company.address != '') ? row.company.address : '-'}">-</div>
+      </div>
+
+      <div>
+        <div>아이디</div>
+        <div th:text="${(row.users != null and row.users.login_id != null and row.users.login_id != '') ? row.users.login_id : '-'}">-</div>
+      </div>
+
+      <div>
+        <div>이메일</div>
+        <div th:text="${(row.company != null and row.company.email != null and row.company.email != '') ? row.company.email : '-'}">-</div>
+      </div>
+
+      <div>
+        <div>승인여부</div>
+        <div id="certStatusText" th:text="${row.cert_status != null ? row.cert_status : '-'}">-</div>
+      </div>
+    </section>
+
+    <hr>
+<section class="mt-6 border-t pt-6">
+  <h3 class="text-lg font-bold mb-4">계정관리</h3>
+  
+  <div class="flex items-center gap-4 mb-4">
+    <div class="bg-gray-100 px-4 py-2 rounded font-medium">계정상태</div>
+    <label class="flex items-center gap-1 cursor-pointer">
+      <input type="radio" name="status" value="ACTIVE" onclick="handleStatusChange('ACTIVE')"
+             th:checked="${row.users != null && row.users.status == 'ACTIVE'}"> 사용
+    </label>
+    <label class="flex items-center gap-1 cursor-pointer">
+      <input type="radio" name="status" value="SUSPENDED" onclick="handleStatusChange('SUSPENDED')"
+             th:checked="${row.users != null && row.users.status == 'SUSPENDED'}"> 정지
+    </label>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <div class="font-bold text-blue-900">정지기간</div>
+    <div class="flex items-center gap-2">
+      <input type="date" id="suspendFrom" name="suspendFrom" readonly
+             th:value="${row.embedded != null and row.embedded.start_date != null 
+                       ? #strings.substring(row.embedded.start_date.toString(), 0, 10) 
+                       : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
+             class="border border-gray-300 p-2 rounded bg-gray-50 text-gray-500 w-40">
+      
+      <span>~</span>
+      
+      <input type="date" name="suspendUntil" id="suspendUntil"
+             th:value="${row.embedded != null and row.embedded.end_date != null 
+                       ? #strings.substring(row.embedded.end_date.toString(), 0, 10) : ''}"
+             class="border border-gray-300 p-2 rounded w-40">
+      
+      <input type="text" name="reason" id="reason" placeholder="사유 입력 (예: 욕설)"
+             th:value="${row.embedded != null ? row.embedded.reason : ''}"
+             class="border border-gray-300 p-2 rounded flex-1">
     </div>
+  </div>
+</section>
+
+    <hr>
+
+    <section>
+      <h3>사업자등록증</h3>
+
+      <table border="1">
+        <thead>
+          <tr>
+            <th>발급일자</th>
+            <th>업종/업태</th>
+            <th>발급기관</th>
+            <th>첨부파일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td><a href="#">파일보기</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div>승인 버튼은 알림만 띄우고, 실제 반영은 저장 버튼에서 된다.</div>
+    </section>
+
+    <hr>
+
+    <div>
+      <button type="button" onclick="approveNow()">승인</button>
+      <button type="submit">저장</button>
+      <a th:href="@{/admin/companyList}">목록</a>
+    </div>
+
   </form>
 
-  <script>
-    function approveNow() {
-      document.getElementById('certStatus').value = '확인';
-      document.getElementById('certType').value = '사업증';
-      document.getElementById('certStatusText').innerText = '확인';
-      alert('승인되었습니다.');
+ <script>
+  // 상태 변경에 따른 입력창 제어
+  function handleStatusChange(status) {
+    const untilInput = document.getElementById('suspendUntil');
+    const reasonInput = document.getElementById('reason');
+    const fromInput = document.getElementById('suspendFrom');
+
+    if (status === 'ACTIVE') {
+      // 사용 선택 시: 종료일과 사유만 비활성화 (시작일은 그대로 둠)
+      untilInput.disabled = true;
+      reasonInput.disabled = true;
+      untilInput.classList.add('bg-gray-100');
+      reasonInput.classList.add('bg-gray-100');
+      
+      // 만약 신규 정지 설정 중이었다면 값 초기화
+      if (!untilInput.defaultValue) untilInput.value = '';
+      if (!reasonInput.defaultValue) reasonInput.value = '';
+    } else {
+      // 정지 선택 시: 입력창 활성화
+      untilInput.disabled = false;
+      reasonInput.disabled = false;
+      untilInput.classList.remove('bg-gray-100');
+      reasonInput.classList.remove('bg-gray-100');
     }
+  }
 
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const status = document.querySelector('input[name="status"]:checked')?.value;
-
-      if (status === 'SUSPENDED') {
-        const from = document.querySelector('input[name="suspendFrom"]').value;
-        const until = document.querySelector('input[name="suspendUntil"]').value;
-
-        if (!from || !until) {
-          alert('정지 상태는 정지기간(시작~종료)을 반드시 선택해야 한다.');
-          e.preventDefault();
-          return;
-        }
-      }
-    });
-  </script>
-
+  // 초기 로드 시 실행
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const checkedStatus = document.querySelector('input[name="status"]:checked').value;
+    handleStatusChange(checkedStatus);
+  });
+</script>
 </div>

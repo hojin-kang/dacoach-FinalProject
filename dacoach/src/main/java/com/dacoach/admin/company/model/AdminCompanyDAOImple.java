@@ -48,13 +48,20 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
 	  }
 
 	  @Override
-	  public int upsertEmbeddedUser(int usersIdx, Date startDate, Date endDate, String reason) {
-	    Map<String, Object> p = new HashMap<>();
-	    p.put("usersIdx", usersIdx);
-	    p.put("startDate", startDate);
-	    p.put("endDate", endDate);
-	    p.put("reason", reason);
-	    return sqlSession.update(NS + "upsertEmbeddedUser", p);
-	  }
+	  public int upsertEmbeddedUser(int usersIdx, java.sql.Date suspendUntil, String reason) {
+		    Map<String, Object> param = new java.util.HashMap<>();
+		    param.put("usersIdx", usersIdx);
+		    param.put("suspendUntil", suspendUntil); // null이어도 OK
+		    param.put("reason", reason);             // null이어도 OK
+
+		    return sqlSession.update(
+		        "com.dacoach.mapper.admin.company.AdminCompanyMapper.upsertEmbeddedUser",
+		        param
+		    );
+		}
+	  @Override
+	  public int terminateSuspension(int usersIdx) {
+	    return sqlSession.update(NS + "terminateSuspension", usersIdx);
+	  }	  
 
 }
