@@ -97,7 +97,7 @@ public class UserController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            mav.addObject("msg", "카카오 계정 연동 wnd  실패!\n마이페이지로 이동합니다.");
+            mav.addObject("msg", "카카오 계정 연동 로그인 실패!\n마이페이지로 이동합니다.");
 			mav.addObject("url", "/mypage");
 			mav.setViewName("alert");
         }
