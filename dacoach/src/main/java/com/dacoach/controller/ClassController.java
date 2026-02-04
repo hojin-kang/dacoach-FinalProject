@@ -112,6 +112,35 @@ public class ClassController {
 		mav.addObject("classList", classList);
 		return mav;
 	}
+	
+	// 모델 어트리뷰트로 수정 예정
+	@GetMapping("/company/classDetail")
+	public ModelAndView companyClassDetail(@RequestParam("id") int id) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		ClassDTO classDTO = classService.getClassDetail(id); // id로 조회
+
+	    if (classDTO == null) {
+	        // 1) 없는 id면 목록으로 보내거나
+	        mav.setViewName("redirect:/class/coach/classList");
+	        return mav;
+
+	        // 또는 2) 에러 페이지/메시지 보여주고 싶으면
+	        // mav.addObject("error", "존재하지 않는 클래스입니다.");
+	        // return mav;
+	    }
+
+	    mav.addObject("classDTO", classDTO);
+
+	    // 일단 화면 안 터지게 최소값도 같이
+	    mav.addObject("providerName", "");   // 나중에 채우기
+	    mav.addObject("providerPhoto", "");
+	    mav.addObject("avgRating", 0);
+	    mav.addObject("reviewCount", 0);
+	    mav.addObject("reviewList", Collections.emptyList());
+	    mav.addObject("tagList", Collections.emptyList());
+	    mav.setViewName("company/classes/classDetail");
+	    return mav;
+	}
 
 	/*********************************/
 
