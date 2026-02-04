@@ -83,6 +83,12 @@ public class CoachServiceImple implements CoachService {
 		return coachMapper.connectKakao(conKakao);
 	}
 
+	@Override
+	public boolean emailCheck(String email) throws Exception {
+		int result=coachMapper.emailCheck(email);
+		return result>0?true:false;
+	}
+
 	
 
 	

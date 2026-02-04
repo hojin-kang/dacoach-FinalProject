@@ -21,6 +21,13 @@
 	<select id="checkNick" parameterType="String" resultType="Integer">
 		select count(*) from coach where nickname = #{nickname}
 	</select>
+	<select id="checkMail" parameterType="String" resultType="Integer">
+	    SELECT CASE 
+	        WHEN EXISTS (SELECT 1 FROM coach WHERE mail = #{mail}) THEN 1
+	        WHEN EXISTS (SELECT 1 FROM company WHERE mail = #{mail}) THEN 1
+	        ELSE 0
+	    END
+	</select>
 	<select id="getMajorFields" resultType="map">
 	    select major_field_idx, major_field_cd 
 	    from major_field 

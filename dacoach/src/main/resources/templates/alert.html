@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>dacoach - 알림</title>
+    <link rel="stylesheet" th:href="@{/css/alert.css}" />
+</head>
+<body>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-text" id="modalMsg">
+                <span th:text="${msg}">알림 메시지</span>
+            </div>
+            <button class="modal-btn" onclick="handleConfirm()">확인</button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const redirectUrl = [[${url}]];
+
+        // 확인 버튼 클릭 시 실행
+        function handleConfirm() {
+            if (redirectUrl) {
+                location.replace(redirectUrl);
+            } else {
+                history.back();
+            }
+        }
+
+        // 엔터 키 실행
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') handleConfirm();
+        });
+    </script>
+</body>
+</html>
