@@ -21,16 +21,13 @@
 						<button type="button" class="menuBtn"
 							th:onclick="|window.location='@{/class/company/classList}'|">컴퍼니</button>
 						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/coach/ongoing}'|">진행중인
-							클래스</button>
+							th:onclick="|window.location='@{/class/company/register}'|">클래스
+							등록</button>
 						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/coach/finished}'|">종료된
-							클래스</button>
-						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/coach/statistics}'|">클래스
+							th:onclick="|window.location='@{/class/company/register}'|">클래스
 							통계</button>
 						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/coach/reviews}'|">후기 관리</button>
+							th:onclick="|window.location='@{/class/company/register}'|">후기 관리</button>
 					</div>
 				</aside>
 
@@ -68,7 +65,8 @@
 							class="noData">
 							<p>📭 등록된 클래스가 없습니다.</p>
 							<p>
-								<a th:href="@{/class/register}" class="btnRegister">클래스 등록하기</a>
+								<a th:href="@{/class/company/register}" class="btnRegister">클래스
+									등록하기</a>
 							</p>
 						</div>
 					</div>
@@ -76,6 +74,5 @@
 			</div>
 		</div>
 	</main>
-
 </body>
 </html>
