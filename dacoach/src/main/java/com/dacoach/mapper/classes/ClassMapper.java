@@ -24,4 +24,8 @@ public interface ClassMapper {
 	
 	// 클래스 조회
 	List<ClassDTO> selectClassesByProvider(Integer provider_idx);
+
+	// 코치 - 클래스 검색
+	List<ClassDTO> searchCoachClasses(Map<String, Object> param);
+
 }
