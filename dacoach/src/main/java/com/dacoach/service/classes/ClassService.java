@@ -19,6 +19,6 @@ public interface ClassService {
 	List<ClassDTO> getClassesByProvider(Integer providerIdx) throws Exception;
 	
 	// 코치 - 클래스 검색
-	List<ClassDTO> searchCoachClasses(Integer minorField, Integer minorRegion, String q, String sort) throws Exception;
+	List<ClassDTO> classSearch(Integer majorField, Integer minorField, Integer majorRegion, Integer minorRegion, String q, String sort) throws Exception;
 
 }

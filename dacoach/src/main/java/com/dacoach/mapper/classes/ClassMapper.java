@@ -26,6 +26,6 @@ public interface ClassMapper {
 	List<ClassDTO> selectClassesByProvider(Integer provider_idx) throws Exception;
 
 	// 코치 - 클래스 검색
-	List<ClassDTO> searchCoachClasses(Map<String, Object> param) throws Exception;
+	List<ClassDTO> classSearch(Map<String, Object> param) throws Exception;
 
 }

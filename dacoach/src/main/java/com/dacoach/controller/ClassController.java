@@ -115,39 +115,34 @@ public class ClassController {
 
 	/*********************************/
 
-	/************* coach 
-	 * @throws Exception *************/
+	/************* coach *************/
 	// 코치 - 클래스 검색
 	@GetMapping("/coach/classList")
-	public ModelAndView coachClassList(
-	        @RequestParam(required = false) Integer majorField,
-	        @RequestParam(required = false) Integer minorField,
-	        @RequestParam(required = false) Integer majorRegion,
-	        @RequestParam(required = false) Integer minorRegion,
-	        @RequestParam(required = false) String q,
-	        @RequestParam(required = false, defaultValue = "latest") String sort
-	) throws Exception {
-	    ModelAndView mav = new ModelAndView();
+	public ModelAndView coachClassList(@RequestParam(required = false) Integer majorField,
+			@RequestParam(required = false) Integer minorField, @RequestParam(required = false) Integer majorRegion,
+			@RequestParam(required = false) Integer minorRegion, @RequestParam(required = false) String q,
+			@RequestParam(required = false, defaultValue = "latest") String sort) throws Exception {
+		ModelAndView mav = new ModelAndView();
 
-	    List<Map<String, Object>> majorList = classService.getMajorFields();
-	    List<Map<String, Object>> majorRegions = classService.getMajorRegions();
+		List<Map<String, Object>> majorList = classService.getMajorFields();
+		List<Map<String, Object>> majorRegions = classService.getMajorRegions();
 
-	    List<ClassDTO> classList = classService.searchCoachClasses(minorField, minorRegion, q, sort);
+		List<ClassDTO> classList = classService.classSearch(majorField, minorField, majorRegion, minorRegion, q, sort);
 
-	    mav.addObject("majorList", majorList);
-	    mav.addObject("majorRegions", majorRegions);
-	    mav.addObject("classList", classList);
+		mav.addObject("majorList", majorList);
+		mav.addObject("majorRegions", majorRegions);
+		mav.addObject("classList", classList);
 
-	    // 검색값 유지
-	    mav.addObject("majorField", majorField);
-	    mav.addObject("minorField", minorField);
-	    mav.addObject("majorRegion", majorRegion);
-	    mav.addObject("minorRegion", minorRegion);
-	    mav.addObject("q", q);
-	    mav.addObject("sort", sort);
+		// 검색값 유지
+		mav.addObject("majorField", majorField);
+		mav.addObject("minorField", minorField);
+		mav.addObject("majorRegion", majorRegion);
+		mav.addObject("minorRegion", minorRegion);
+		mav.addObject("q", q);
+		mav.addObject("sort", sort);
 
-	    mav.setViewName("coach/classes/classList");
-	    return mav;
+		mav.setViewName("coach/classes/classList");
+		return mav;
 	}
 
 	/*********************************/

@@ -205,15 +205,16 @@ public class ClassServiceImple implements ClassService {
 	}
 
 	@Override
-	public List<ClassDTO> searchCoachClasses(Integer minorField, Integer minorRegion, String q, String sort)
-			throws Exception {
+	public List<ClassDTO> classSearch(Integer majorField, Integer minorField, Integer majorRegion, Integer minorRegion, String q, String sort) throws Exception {
 		Map<String, Object> param = new HashMap<>();
-		param.put("minorField", minorField);
-		param.put("minorRegion", minorRegion);
+		param.put("majorField", majorField);
+	    param.put("minorField", minorField);
+	    param.put("majorRegion", majorRegion);
+	    param.put("minorRegion", minorRegion);
 		param.put("q", (q == null ? null : q.trim()));
 		param.put("sort", (sort == null ? "latest" : sort));
 
-		return classMapper.searchCoachClasses(param);
+		return classMapper.classSearch(param);
 	}
 
 }
