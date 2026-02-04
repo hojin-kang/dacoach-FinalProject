@@ -26,7 +26,7 @@
     <result property="status" column="status"/>
   </association>
 
-  <association property="embedded" javaType="com.dacoach.admin.commandto.EmbeddedUserDTO">
+  <association property="embedded" javaType="com.dacoach.model.admin.EmbeddedUserDTO">
     <id property="embed_user_idx" column="embed_user_idx"/>
     <result property="user_idx" column="users_idx"/>
     <result property="start_date" column="start_date"/>
