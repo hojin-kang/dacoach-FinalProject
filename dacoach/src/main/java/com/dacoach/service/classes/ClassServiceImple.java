@@ -2,15 +2,17 @@ package com.dacoach.service.classes;
 
 import java.util.Date;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dacoach.controller.FileUploadController;
 import com.dacoach.mapper.classes.ClassMapper;
 import com.dacoach.model.classes.ClassDTO;
-import com.dacoach.view.FileManageView;
 
 @Service
 public class ClassServiceImple implements ClassService {
@@ -19,7 +21,7 @@ public class ClassServiceImple implements ClassService {
 	private ClassMapper classMapper;
 
 	@Autowired
-	private FileManageView fileManageView;
+	private FileUploadController fileUploadController;
 
 	@Override
 	@Transactional
@@ -30,13 +32,13 @@ public class ClassServiceImple implements ClassService {
 
 			// 2. 사진 파일 업로드
 			if (classDTO.getPhotoFile() != null && !classDTO.getPhotoFile().isEmpty()) {
-				String savedPhotoName = fileManageView.savePhoto(classDTO.getPhotoFile());
+				String savedPhotoName = fileUploadController.savePhoto(classDTO.getPhotoFile());
 				classDTO.setPhoto(savedPhotoName);
 			}
 
 			// 3. 영상 파일 업로드
 			if (classDTO.getVideoFile() != null && !classDTO.getVideoFile().isEmpty()) {
-				String savedVideoName = fileManageView.saveVideo(classDTO.getVideoFile());
+				String savedVideoName = fileUploadController.saveVideo(classDTO.getVideoFile());
 				classDTO.setVideo(savedVideoName);
 			}
 
@@ -97,7 +99,7 @@ public class ClassServiceImple implements ClassService {
 			throw new IllegalArgumentException("내용은 3000자 이내로 입력해주세요.");
 		}
 
-		// 파일 검증은 FileManageView에서 수행
+		// 파일 검증은 FileUploadController에서 수행
 	}
 
 	@Override
@@ -136,7 +138,69 @@ public class ClassServiceImple implements ClassService {
 
 	@Override
 	public ClassDTO getClassDetail(int classIdx) throws Exception {
-	    return classMapper.getClassDetail(classIdx);
+		return classMapper.getClassDetail(classIdx);
+	}
+
+	@Override
+	public Map<String, Object> getClassStats(int classIdx, int providerIdx) throws Exception {
+		// 클래스 소유자 확인
+		ClassDTO classDTO = classMapper.getClassDetail(classIdx);
+		if (classDTO == null) {
+			throw new IllegalArgumentException("존재하지 않는 클래스입니다.");
+		}
+		if (classDTO.getProvider_idx() != providerIdx) {
+			throw new IllegalArgumentException("권한이 없습니다.");
+		}
+
+		// 통계 데이터 조회
+		List<Map<String, Object>> enrollments = classMapper.selectEnrollmentsByClass(classIdx);
+
+		Map<String, Object> result = new HashMap<>();
+
+		// 기본 통계
+		int totalEnrollments = enrollments.size();
+		long activeStudents = enrollments.stream().filter(e -> "ENROLLED".equals(e.get("STATUS"))).count();
+		int totalRevenue = classDTO.getPrice() * (int) activeStudents;
+
+		result.put("totalEnrollments", totalEnrollments);
+		result.put("activeStudents", activeStudents);
+		result.put("totalRevenue", totalRevenue);
+
+		// 수강생 정보
+		result.put("students", enrollments);
+
+		// 시간별 수강 신청 통계 (날짜별 집계)
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd");
+		Map<String, Long> enrollmentByDateMap = enrollments.stream().filter(e -> e.get("ENROLLED_AT") != null)
+				.collect(Collectors.groupingBy(e -> sdf.format((Date) e.get("ENROLLED_AT")), Collectors.counting()));
+
+		List<Map<String, Object>> enrollmentByDate = new ArrayList<>();
+		for (Map.Entry<String, Long> entry : enrollmentByDateMap.entrySet()) {
+			Map<String, Object> dateData = new HashMap<>();
+			dateData.put("date", entry.getKey());
+			dateData.put("count", entry.getValue());
+			enrollmentByDate.add(dateData);
+		}
+
+		// 날짜순 정렬
+		enrollmentByDate.sort((a, b) -> ((String) a.get("date")).compareTo((String) b.get("date")));
+
+		result.put("enrollmentByDate", enrollmentByDate);
+
+		// 수입 통계 (누적)
+		List<Map<String, Object>> revenueByDate = new ArrayList<>();
+		int cumulativeRevenue = 0;
+		for (Map<String, Object> dateData : enrollmentByDate) {
+			cumulativeRevenue += ((Long) dateData.get("count")).intValue() * classDTO.getPrice();
+			Map<String, Object> revenueData = new HashMap<>();
+			revenueData.put("date", dateData.get("date"));
+			revenueData.put("revenue", cumulativeRevenue);
+			revenueByDate.add(revenueData);
+		}
+
+		result.put("revenueByDate", revenueByDate);
+
+		return result;
 	}
 
 }

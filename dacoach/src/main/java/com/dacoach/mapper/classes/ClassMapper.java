@@ -21,10 +21,13 @@ public interface ClassMapper {
 
 	// 소지역 조회 (대지역 선택시 Ajax)
 	List<Map<String, Object>> selectMinorRegions(Integer major_region_idx) throws Exception;
-	
+
 	// 클래스 조회
 	List<ClassDTO> selectClassesByProvider(Integer provider_idx) throws Exception;
 
 	ClassDTO getClassDetail(int class_idx) throws Exception;
+
+	// 클래스별 수강 신청 내역 조회
+	List<Map<String, Object>> selectEnrollmentsByClass(int class_idx) throws Exception;
 
 }

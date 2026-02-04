@@ -99,10 +99,12 @@
 		MAX_USER_CNT
 		FROM CLASS
 		WHERE PROVIDER_IDX = #{provider_idx}
-		ORDER BY CREATED_AT DESC
+		ORDER BY
+		CREATED_AT DESC
 	</select>
 
-	<select id="getClassDetail" parameterType="int" resultType="com.dacoach.model.coachClasses.CoachClassDTO">
+	<select id="getClassDetail" parameterType="int"
+		resultType="com.dacoach.model.classes.ClassDTO">
 		SELECT
 		CLASS_IDX,
 		PROVIDER_IDX,
@@ -120,5 +122,31 @@
 		FROM CLASS
 		WHERE CLASS_IDX = #{class_idx}
 	</select>
-	
+
+	<!-- 클래스별 수강 신청 내역 조회 -->
+	<select id="selectEnrollmentsByClass" parameterType="int"
+		resultType="map">
+		SELECT
+		e.ENROLL_IDX,
+		e.CLASS_IDX,
+		e.USER_IDX,
+		e.STATUS,
+		e.ENROLLED_AT,
+		e.COMPLETED_AT,
+		u.USER_NAME,
+		CASE
+		WHEN c.COACH_IDX IS NOT NULL THEN c.PHONE
+		WHEN co.COMPANY_IDX IS NOT NULL THEN co.PHONE
+		ELSE NULL
+		END AS PHONE
+		FROM CLASS_ENROLLMENT e
+		INNER JOIN USERS u ON e.USER_IDX =
+		u.USER_IDX
+		LEFT JOIN COACH c ON u.USER_IDX = c.USER_IDX
+		LEFT JOIN
+		COMPANY co ON u.USER_IDX = co.USER_IDX
+		WHERE e.CLASS_IDX = #{class_idx}
+		ORDER BY e.ENROLLED_AT DESC
+	</select>
+
 </mapper>
