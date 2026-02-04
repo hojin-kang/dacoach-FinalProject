@@ -43,28 +43,25 @@
 
   <!-- 리스트 -->
   <select id="companyList" resultMap="adminCompanyRowMap">
-    SELECT
-      c.COMPANY_IDX AS company_idx,
-      u.USER_IDX    AS users_idx,
-      u.USER_NAME   AS user_name,
-      u.LOGIN_ID    AS login_id,
-      u.STATUS      AS status,
-      c.COMPANY_NUM AS company_num,
-      c.PHONE       AS phone,
-      c.ADDRESS     AS address,
-      c.EMAIL       AS email,
-      NVL(ce.CERT_STATUS, '미등록') AS cert_status
-    FROM USERS u
-    JOIN COMPANY c
-      ON u.USER_IDX = c.USER_IDX
-    LEFT JOIN CERT ce
-      ON ce.USER_IDX = u.USER_IDX
-     AND ce.CERT_TYPE = '사업증'
-    WHERE u.USER_TYPE = 'COMPANY'
-    ORDER BY
-      CASE WHEN NVL(ce.CERT_STATUS,'미등록') = '대기' THEN 0 ELSE 1 END,
-      u.USER_IDX DESC
-  </select>
+  SELECT
+    c.COMPANY_IDX AS company_idx,
+    u.USER_IDX    AS users_idx,
+    u.USER_NAME   AS user_name,
+    u.LOGIN_ID    AS login_id,
+    u.STATUS      AS status,
+    c.COMPANY_NUM AS company_num,
+    c.PHONE       AS phone,
+    c.ADDRESS     AS address,
+    c.EMAIL       AS email,
+    NVL(ce.CERT_STATUS, '대기') AS cert_status
+  FROM USERS u
+  JOIN COMPANY c ON u.USER_IDX = c.USER_IDX
+  LEFT JOIN CERT ce ON ce.USER_IDX = u.USER_IDX AND ce.CERT_TYPE = '사업증'
+  WHERE u.USER_TYPE = 'COMPANY'
+  ORDER BY 
+    CASE WHEN NVL(ce.CERT_STATUS, '대기') = '대기' THEN 0 ELSE 1 END, 
+    u.USER_IDX DESC
+</select>
 
   <!-- 상세 -->
   <select id="companyDetail" parameterType="int" resultMap="adminCompanyDetailMap">
@@ -123,26 +120,29 @@
      WHERE USER_IDX = #{usersIdx, jdbcType=NUMERIC}
   </update>
 
-  <!-- 정지(EMBEDDED_USER) upsert -->
-  <update id="upsertEmbeddedUser" parameterType="map">
-    MERGE INTO EMBEDDED_USER eu
-    USING (
-      SELECT
-        #{usersIdx, jdbcType=NUMERIC} AS USER_IDX,
-        #{startDate, jdbcType=DATE}   AS START_DATE,
-        #{endDate, jdbcType=DATE}     AS END_DATE,
-        #{reason, jdbcType=VARCHAR}   AS REASON
-      FROM dual
-    ) src
-    ON (eu.USER_IDX = src.USER_IDX)
-    WHEN MATCHED THEN
-      UPDATE SET
-        eu.START_DATE = src.START_DATE,
-        eu.END_DATE   = src.END_DATE,
-        eu.REASON     = src.REASON
-    WHEN NOT MATCHED THEN
-      INSERT (EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON)
-      VALUES (SEQ_EMBED_USER.NEXTVAL, src.USER_IDX, src.START_DATE, src.END_DATE, src.REASON)
-  </update>
+ <update id="upsertEmbeddedUser">
+  MERGE INTO EMBEDDED_USER eu
+  USING (
+    SELECT
+      #{usersIdx, jdbcType=NUMERIC} AS USER_IDX,
+      #{suspendUntil, jdbcType=DATE} AS END_DATE,
+      #{reason, jdbcType=VARCHAR} AS REASON
+    FROM dual
+  ) src
+  ON (eu.USER_IDX = src.USER_IDX)
+  WHEN MATCHED THEN
+    UPDATE SET
+      eu.END_DATE = src.END_DATE,
+      eu.REASON   = src.REASON
+  WHEN NOT MATCHED THEN
+    INSERT (EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON)
+    VALUES (SEQ_EMBED_USER.NEXTVAL, src.USER_IDX, SYSDATE, src.END_DATE, src.REASON)
+</update>
 
+<update id="terminateSuspension" parameterType="int">
+  UPDATE EMBEDDED_USER
+     SET END_DATE = SYSDATE
+   WHERE USER_IDX = #{usersIdx}
+     AND (END_DATE IS NULL OR END_DATE > SYSDATE)
+</update>
 </mapper>
