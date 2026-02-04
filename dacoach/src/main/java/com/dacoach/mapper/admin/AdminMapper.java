@@ -10,9 +10,10 @@ import com.dacoach.model.admin.EmbeddedUserDTO;
 public interface AdminMapper {
 	public List<Map<String,Object>> getCoachList() throws Exception;
 	public int getCertCount() throws Exception;
-	public List<Map<String,Object>> getCoachDetail(int coachIdx) throws Exception;
-	public String getCoachStatus(int userIdx) throws Exception;
-	public EmbeddedUserDTO getCoachEmbedded(int userIdx) throws Exception;
-	public int updateCoachSuspended(int userIdx) throws Exception;
+	public List<Map<String,Object>> getCoachDetail(int coach_idx) throws Exception;
+	public String getCoachStatus(int user_idx) throws Exception;
+	public EmbeddedUserDTO getCoachEmbedded(int user_idx) throws Exception;
+	public int updateCoachStatus(Map<String, Object> params) throws Exception;
 	public int insertCoachSuspended(EmbeddedUserDTO dto) throws Exception;
+	public int updateEnddateSuspended(int user_idx) throws Exception;
 }

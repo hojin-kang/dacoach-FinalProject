@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.service.admin.AdminService;
@@ -45,19 +44,19 @@ public class AdminCoachController {
 	
 	
 	@GetMapping("/coachDetail")
-	public String coachDetail(Model model,@RequestParam("coach_idx") int coachidx, @RequestParam("user_idx") int useridx) {
+	public String coachDetail(Model model,@RequestParam int coach_idx, @RequestParam int user_idx) {
 		
 		List<Map<String, Object>> coachDetail = new ArrayList<>();
 		String status="";
 		
 		try {
-			coachDetail = adminService.getCoachDetail(coachidx);
-			status = adminService.getCoachStatus(useridx);
+			coachDetail = adminService.getCoachDetail(coach_idx);
+			status = adminService.getCoachStatus(user_idx);
 			
 			model.addAttribute("coachStatus", status);
 			
 			if("SUSPENDED".equals(status)) {
-				EmbeddedUserDTO dto = adminService.getCoachEmbedded(useridx);
+				EmbeddedUserDTO dto = adminService.getCoachEmbedded(user_idx);
 				model.addAttribute("coachEmbedded", dto);
 				
 			}
@@ -76,22 +75,38 @@ public class AdminCoachController {
 	
 	@PostMapping("/updateCoachStatus")
 	public String updateCoachSuspended(Model model,
-			@RequestParam("coachIdx") int coachidx,
-			@RequestParam("userIdx") int useridx,
+			@RequestParam int coach_idx,
+			@RequestParam int user_idx,
+			@RequestParam String status,
 			EmbeddedUserDTO dto) {
 		
 		int updateresult = 0;
 		int insertresult = 0;
 		
+		Map<String, Object> params = new HashMap<>();
+		params.put("user_idx", user_idx);
+	    params.put("status", status);
+		
 		try {
-			updateresult = adminService.updateCoachSuspended(useridx);
-			insertresult = adminService.insertCoachSuspended(dto);
+			updateresult = adminService.updateCoachStatus(params);
 			
-			if(updateresult > 0 && insertresult > 0) {
-				model.addAttribute("msg", "정지 처리 되었습니다.");
+			if(updateresult > 0) {
+				if("SUSPENDED".equals(status)) {
+					dto.setUser_idx(user_idx);
+					insertresult = adminService.insertCoachSuspended(dto);
+					
+					if(insertresult > 0) {
+						model.addAttribute("msg", "계정이 정지 처리 되었습니다.");
+					}
+				}else if("ACTIVE".equals(status)) {
+					
+					adminService.updateEnddateSuspended(user_idx);
+					model.addAttribute("msg", "사용 상태로 변경되었습니다.");
+				}
+				
 			}else {
-				model.addAttribute("msg", "정지 처리에 실패했습니다.");
-			}
+				model.addAttribute("msg", "상태 변경에 실패했습니다.");
+			}	
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -102,13 +117,11 @@ public class AdminCoachController {
 		model.addAttribute("contentPage", "admin/coach/coachDetail");
 		model.addAttribute("contentFragment", "coachDetail");
 	
-		model.addAttribute("userIdx", useridx);
-	    model.addAttribute("coachIdx", coachidx);
+		model.addAttribute("user_idx", user_idx);
+	    model.addAttribute("coach_idx", coach_idx);
 		
 		return "admin/dashboard";
 	}
-	
-	
 	
 	
 }

@@ -39,7 +39,7 @@
 
                     <td class="py-4" th:text="${coach.COACH_IDX}"></td>
                     <td class="py-4 font-bold">
-                    	<a th:text="${coach.USER_NAME}" th:href="@{/admin/coach/coachDetail(coachIdx=${coach.COACH_IDX},userIdx=${coach.USER_IDX})}"></a>
+                    	<a th:text="${coach.USER_NAME}" th:href="@{/admin/coach/coachDetail(coach_idx=${coach.COACH_IDX},user_idx=${coach.USER_IDX})}"></a>
                     </td>
                     <td class="py-4" th:text="${coach.NICKNAME}"></td>
                     <td class="py-4" th:text="${coach.PHONE}"></td>

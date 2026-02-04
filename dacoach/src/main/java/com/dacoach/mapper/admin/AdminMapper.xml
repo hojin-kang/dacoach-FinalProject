@@ -42,28 +42,37 @@
 	coach c
 	join
 	users u on c.user_idx = u.user_idx
-	where c.coach_idx=#{coachIdx}
+	where c.coach_idx=#{coach_idx}
 	</select>
 	
 	<select id="getCoachStatus" parameterType="int" resultType="String">
-	select status from users where user_idx=#{userIdx}
+	select status from users where user_idx=#{user_idx}
 	</select>
 	
 	<select id="getCoachEmbedded" parameterType="int" resultType="com.dacoach.model.admin.EmbeddedUserDTO">
 	select * from
 	(select *
 	from EMBEDDED_USER
-	where user_idx=#{userIdx}
-	order by start_date desc)
+	where user_idx=#{user_idx}
+	order by embed_user_idx desc)
 	where rownum=1
 	
 	</select>
 	
-	<update id="updateCoachSuspended" parameterType="int">
-	update users set status='SUSPENDED' where user_idx=#{userIdx}
+	<update id="updateCoachStatus" parameterType="map">
+	update users set status=#{status} where user_idx=#{user_idx}
 	</update>
 	
 	<insert id="insertCoachSuspended" parameterType="com.dacoach.model.admin.EmbeddedUserDTO">
 	insert into embedded_user values (SEQ_EMBED_USER.nextval,#{user_idx},#{start_date},#{end_date},#{reason})
 	</insert>
+	
+	<update id="updateEnddateSuspended" parameterType="int">
+	update embedded_user
+	set end_date=trunc(sysdate)
+	where embed_user_idx=
+	(select max(embed_user_idx)
+	from embedded_user
+	where user_idx=#{user_idx})
+	</update>
 </mapper>

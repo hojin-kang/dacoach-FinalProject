@@ -50,14 +50,14 @@
         <div class="grid grid-cols-2 gap-6">
             <div class="info-card flex flex-col min-h-[350px]">
             	<input type="hidden" id="serverMsg" th:value="${msg}">
-				<input type="hidden" id="serverUIdx" th:value="${userIdx}">
-				<input type="hidden" id="serverCIdx" th:value="${coachIdx}">
+				<input type="hidden" id="serverUIdx" th:value="${user_idx}">
+				<input type="hidden" id="serverCIdx" th:value="${coach_idx}">
             
                 <form th:action="@{/admin/coach/updateCoachStatus}" method="post" class="flex-1 flex flex-col">
                     <div>
                         <h2 class="section-badge">계정관리</h2>
-                        <input type="hidden" name="user_idx" th:value="${param.userIdx}">
-                        <input type="hidden" name="coach_idx" th:value="${param.coachIdx}">
+                        <input type="hidden" name="user_idx" th:value="${param.user_idx}">
+                        <input type="hidden" name="coach_idx" th:value="${param.coach_idx}">
                         
                         <div class="row-container min-h-[120px]">
                             <div class="label-base">계정상태</div>
@@ -130,7 +130,7 @@
         </div>
 
         <div class="flex justify-end mt-8">
-            <button type="button" onclick="history.back()" class="bg-gray-400 text-white px-12 py-3 rounded-xl font-bold hover:bg-gray-500 transition-all shadow-sm">목록으로 돌아가기</button>
+            <button type="button" onclick="location.href='/admin/coach/coachList'" class="bg-gray-400 text-white px-12 py-3 rounded-xl font-bold hover:bg-gray-500 transition-all shadow-sm">목록으로 돌아가기</button>
         </div>
     </div>
 
@@ -144,7 +144,7 @@
             alert(msg);
             
             if (uIdx && cIdx) {
-                location.href = "/admin/dashboard?userIdx=" + uIdx + "&coachIdx=" + cIdx;
+                location.href = "/admin/coach/coachDetail?user_idx=" + uIdx + "&coach_idx=" + cIdx;
             }
         }
     };
