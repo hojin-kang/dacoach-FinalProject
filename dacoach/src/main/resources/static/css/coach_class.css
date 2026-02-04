@@ -324,8 +324,8 @@
   margin-right: 30px;
 }
 .iconBtn{
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   border: none;
   background: var(--bg);
   display:flex;
@@ -334,8 +334,16 @@
   cursor:pointer;
 }
 .iconBtn .icon{
-  font-size: 16px;
+	width: 30px;
+  height: 30px;
+  border-radius: 0px !important;
 }
+
+.iconBtn:last-child .icon {
+	width: 15px;
+  height: 15px;
+}
+
 
 .topActions{
   display:flex;
@@ -553,18 +561,20 @@
    ========================= */
 .reviewHead{
   display:flex;
+  flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  
 }
 .reviewSummary{
+	margin-left: 20px;
   color: var(--muted);
-  font-weight: 700;
-  font-size: 13px;
+  font-weight: 500;
+  font-size: 15px;
   line-height: 1.4;
 }
 .summaryText b{
-  color: var(--ink);
+  color: var(--accent);
 }
 
 .reviewSlider{
@@ -693,10 +703,10 @@
 }
 
 .sideTitle{
-  font-weight: 900;
+  font-weight: 700;
   color: var(--ink);
   margin-bottom: 12px;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .sideRow{
@@ -712,13 +722,13 @@
 
 .sideLabel{
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 600;
   font-size: 12px;
 }
 .sideValue{
   color: var(--ink);
-  font-weight: 900;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 14px;
 }
 
 .sideBtns{
