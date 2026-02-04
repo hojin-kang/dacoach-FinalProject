@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import com.dacoach.service.coach.CoachService;
 
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CoachController {
@@ -45,7 +47,9 @@ public class CoachController {
         return !result;
     }
 	@RequestMapping("/coachProfile")
-	public ModelAndView coachProfile(UsersDTO udto,@RequestParam(value = "email", required = false)String mail) {
+	public ModelAndView coachProfile(UsersDTO udto
+			,@RequestParam(value = "email", required = false)String mail
+			,@RequestParam(value = "kakao_key", defaultValue="")String kakao_key) {
 		ModelAndView mav=new ModelAndView();
 		int result=0;
 		List<Map<String, Object>> majorList=null;
@@ -66,6 +70,7 @@ public class CoachController {
 			mav.addObject("mail",mail);
 			mav.addObject("majorList", majorList);
 			mav.addObject("majorRegions", majorRegions);
+			mav.addObject("kakao_key", kakao_key);
 		}else {
 			mav.setViewName("redirect:/coachJoin");
 		}

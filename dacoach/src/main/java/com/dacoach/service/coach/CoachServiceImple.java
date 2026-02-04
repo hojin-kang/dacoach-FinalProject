@@ -72,6 +72,11 @@ public class CoachServiceImple implements CoachService {
 		return coachMapper.getCoachInfo(users_idx);
 	}
 
+	@Override
+	public CoachDTO getCoachByKakaoKey(String kakaoKey) throws Exception {
+		return coachMapper.getCoachByKakaoKey(kakaoKey);
+	}
+
 	
 
 	
