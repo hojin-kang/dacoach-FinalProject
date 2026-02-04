@@ -4,7 +4,38 @@
 
    <meta charset="UTF-8" />
    <title>dacoach</title>
-
+	<script>
+	function getMinorRegion(){ 
+		var regionIdx=document.profileInfo.majorRegion.value;
+	fetch('/api/company/getMinorRegion?regionIdx='+regionIdx)
+			
+	.then(function(resp){
+		if(resp.ok){
+			return resp.text();
+		}else{
+			throw new Error('에러남');
+		}
+		
+	})
+	
+	.then(function(data){
+		var regionValue=JSON.parse(data);
+		
+		var getRegionTag=document.getElementById('MinorRegion');
+		var html='';
+		for(var i=0;i<regionValue.length;i++){
+			var dto=regionValue[i];
+			html+='<input type="radio" name="minorRegion" th:value="'+dto.MAJOR_REGION_IDX+'" onclick="minorRegionVal()">'+dto.DISTRICT_NM;
+		}
+		getRegionTag.innerHTML=html;
+		
+	})
+	
+	.catch(function(error){
+		alert(error.message);
+	});
+	}
+	</script>
    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
@@ -12,7 +43,7 @@
 
    <main class="main">
    <div class="container">
-   	<form name="profileInfo" action="">
+   	<form name="profileInfo" action="companyJoinOk" method="post">
       <div class="picUpload">
       	<p class="profilePic">업로드한 사진 올릴영역</p>
       	<p class="picUpBtn"><input type="file" name="profilePicFile" id="profilePicFileId"></p>
@@ -23,7 +54,7 @@
       <div class="classRegion">
       	<p class="classMagerRegion" id="MagerRegion">
       		<span th:each="region:${region_con}">
-      		<input type="button" th:value="${region.REGION_NM}">
+      		<input type="radio" name="majorRegion" th:value="${region.MAJOR_REGION_IDX}" onclick="getMinorRegion()">[[${region.REGION_NM}]]
       		</span>
       	</p>
 		<p class="classMinorRegion" id="MinorRegion">
@@ -35,9 +66,9 @@
 		</p>
       </div>
       <div class="tags">
-      	<p class="majorField">     		
+      	<p class="majorFieldClass">     		
       		<span th:each="field:${field_con}">
-      		<input type="button" th:value="${field.MAJOR_FIELD_CD}">
+      		<input type="radio" name="majorField" th:value="${field.MAJOR_FIELD_IDX}" onclick="getMinorField()">[[${field.MAJOR_FIELD_CD}]]
       		</span>
       	</p>
       	<p class="minorField">
