@@ -1,5 +1,6 @@
 package com.dacoach.service.coach;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +76,11 @@ public class CoachServiceImple implements CoachService {
 	@Override
 	public CoachDTO getCoachByKakaoKey(String kakaoKey) throws Exception {
 		return coachMapper.getCoachByKakaoKey(kakaoKey);
+	}
+
+	@Override
+	public int connectKakao(HashMap<String, Object> conKakao) throws Exception {
+		return coachMapper.connectKakao(conKakao);
 	}
 
 	

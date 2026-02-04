@@ -17,4 +17,5 @@ public interface CoachMapper {
     public Integer coachJoin(CoachDTO cdto) throws Exception;
     public CoachDTO getCoachInfo(int users_idx) throws Exception;
     public CoachDTO getCoachByKakaoKey(String kakaoKey) throws Exception;
+    public int connectKakao(HashMap<String, Object> conKakao) throws Exception;
 }

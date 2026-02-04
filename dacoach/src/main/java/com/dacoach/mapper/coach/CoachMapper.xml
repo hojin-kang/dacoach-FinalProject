@@ -73,4 +73,7 @@
 	    SELECT * FROM COACH 
 	    WHERE KAKAO_KEY = #{kakaoKey, jdbcType=VARCHAR}
 	</select>
+	<update id="connectKakao" parameterType="HashMap">
+		update coach set kakao_key = #{kakao_key} where user_idx = #{user_idx}
+	</update>
 </mapper>
