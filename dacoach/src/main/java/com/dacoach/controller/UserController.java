@@ -63,7 +63,9 @@ public class UserController {
             if (coach != null && session.getAttribute("user_idx")==null) {
                 // 이미 가입된 회원이면 세션 저장 후 메인으로
                 session.setAttribute("user_idx", coach.getUser_idx());
-                session.setAttribute("photo", coach.getPhoto());
+                if(coach.getPhoto() != null) {
+	                session.setAttribute("photo", coach.getPhoto().equals("") ? null : coach.getPhoto());
+	            }
                 session.setAttribute("kakao",coach.getKakao_key());
                 mav.addObject("msg", "카카오 연동 로그인 성공!\n메인페이지로 이동합니다.");
                 mav.addObject("url", "/");
@@ -142,15 +144,16 @@ public class UserController {
 		        mav.setViewName("alert");
 	            return mav;
 	        }
-	        
 	        session.setAttribute("user_idx", loginUser.getUser_idx());
 	        
 	        CoachDTO coachInfo = coachService.getCoachInfo(loginUser.getUser_idx());
-	        if (coachInfo != null && coachInfo.getPhoto() != null) {
-	            session.setAttribute("photo", coachInfo.getPhoto());
-	            session.setAttribute("kakao", coachInfo.getKakao_key());
-	        } else {
-	            session.setAttribute("photo", "default_profile.png");
+	        if (coachInfo != null) {
+	            if(coachInfo.getPhoto() != null) {
+	                session.setAttribute("photo", coachInfo.getPhoto().equals("") ? null : coachInfo.getPhoto());
+	            }
+	            if(coachInfo.getKakao_key() != null) {
+	                session.setAttribute("kakao", coachInfo.getKakao_key().equals("") ? null : coachInfo.getKakao_key());
+	            }
 	        }
 	        mav.addObject("msg","로그인 성공!\n메인페이지로 이동합니다");
 	        mav.addObject("url","/");

@@ -13,7 +13,7 @@
     	<div class="container">
     		<h2>마이페이지</h2>
     		<div class="profileArea">
-    			<img src="/img/profile/defaultProfile.jpg">
+    			<img th:src="${session.photo!=null}?@{'/uploads/'+${session.photo}}:@{/img/profile/defaultProfile.jpg}">
     			<div class="coachInfo">
     				<span th:text="${user_rank}">베테랑 코치</span>
 					<span th:text="${user_nickname}">김코치</span>

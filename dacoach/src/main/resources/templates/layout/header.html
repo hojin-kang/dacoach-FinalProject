@@ -31,7 +31,7 @@
   			<span class="notiDot" th:if="${unreadNotiCount > 0}"></span>
 		  </a>
           <a class="iconBtn" th:href="@{/chat}" title="채팅"><img src="/img/icon/chat.png"></a>
-          <a class="iconBtn" th:href="@{/mypage}" title="마이페이지"><img src="/img/profile/defaultProfile.jpg"></a>
+          <a class="iconBtn" th:href="@{/mypage}" title="마이페이지"><img th:src="${session.photo!=null}?@{'/uploads/'+${session.photo}}:@{/img/profile/defaultProfile.jpg}"></a>
         </div>
         
       </div>
