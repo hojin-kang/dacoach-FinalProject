@@ -176,31 +176,3 @@
 	border-radius: 12px;
 	font-size: 11px;
 }
-
-/* 반응형 */
-@media ( max-width : 980px) {
-	.classPage {
-		grid-template-columns: 1fr;
-		gap: 0;
-	}
-	.menuArea {
-		border-right: none;
-		border-bottom: 1px solid #D5D5D5;
-		order: 2;
-	}
-	.contentArea {
-		order: 1;
-	}
-	.cardGrid {
-		grid-template-columns: 1fr;
-		padding: 0 20px;
-	}
-}
-
-@media ( max-width : 768px) {
-	.cardGrid {
-		grid-template-columns: 1fr;
-		gap: 16px;
-		padding: 0 15px;
-	}
-}

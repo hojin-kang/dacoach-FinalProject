@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title th:text="${classItem.title} + ' - dacoach'">클래스 상세</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<style>
+.class-detail-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.class-header {
+	margin-bottom: 30px;
+}
+
+.class-title {
+	font-size: 32px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.class-price {
+	font-size: 24px;
+	color: #2196F3;
+	font-weight: bold;
+}
+
+.class-media {
+	margin: 30px 0;
+}
+
+.class-photo {
+	width: 100%;
+	max-width: 800px;
+	height: auto;
+	border-radius: 10px;
+	margin-bottom: 20px;
+}
+
+.class-video {
+	width: 100%;
+	max-width: 800px;
+	height: 450px;
+	border-radius: 10px;
+}
+
+.class-info {
+	background: #f5f5f5;
+	padding: 20px;
+	border-radius: 10px;
+	margin: 20px 0;
+}
+
+.info-row {
+	display: flex;
+	margin-bottom: 10px;
+}
+
+.info-label {
+	font-weight: bold;
+	width: 120px;
+}
+
+.class-intro {
+	line-height: 1.8;
+	white-space: pre-wrap;
+	margin-top: 30px;
+}
+</style>
+</head>
+<body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
+
+	<main class="main">
+		<div class="class-detail-container">
+			<!-- 클래스 헤더 -->
+			<div class="class-header">
+				<h1 class="class-title" th:text="${classItem.title}">클래스 제목</h1>
+				<div class="class-price" 
+					th:text="${#numbers.formatInteger(classItem.price, 0, 'COMMA')} + '원'">가격</div>
+			</div>
+
+			<!-- 클래스 미디어 -->
+			<div class="class-media">
+				<!-- 사진 표시 - FileManageView 사용 -->
+				<div th:if="${@fileManageView.hasFile(classItem.photo)}">
+					<img class="class-photo" 
+						th:src="${@fileManageView.getPhotoUrl(classItem.photo)}"
+						th:alt="${classItem.title}" />
+				</div>
+
+				<!-- 비디오 표시 - FileManageView 사용 -->
+				<div th:if="${@fileManageView.hasFile(classItem.video)}">
+					<video class="class-video" controls>
+						<source th:src="${@fileManageView.getVideoUrl(classItem.video)}" 
+							type="video/mp4" />
+						브라우저가 비디오를 지원하지 않습니다.
+					</video>
+				</div>
+			</div>
+
+			<!-- 클래스 정보 -->
+			<div class="class-info">
+				<div class="info-row">
+					<span class="info-label">수강 기간:</span>
+					<span th:text="${#dates.format(classItem.start_date, 'yyyy-MM-dd HH:mm')} 
+						+ ' ~ ' + ${#dates.format(classItem.end_date, 'yyyy-MM-dd HH:mm')}">기간</span>
+				</div>
+				<div class="info-row">
+					<span class="info-label">수강 인원:</span>
+					<span th:text="${classItem.max_user_cnt} + '명'">인원</span>
+				</div>
+				<div class="info-row" th:if="${classItem.avg_rating != null}">
+					<span class="info-label">평점:</span>
+					<span th:text="${classItem.avg_rating} + '점 (' + ${classItem.review_cnt} + '개 리뷰)'">평점</span>
+				</div>
+			</div>
+
+			<!-- 클래스 소개 -->
+			<div class="class-intro">
+				<h2>클래스 소개</h2>
+				<p th:text="${classItem.intro}">클래스 소개 내용</p>
+			</div>
+
+			<!-- 신청 버튼 -->
+			<div style="text-align: center; margin-top: 40px;">
+				<button type="button" class="btn-primary" 
+					style="padding: 15px 40px; font-size: 18px;">
+					클래스 신청하기
+				</button>
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
+</html>
