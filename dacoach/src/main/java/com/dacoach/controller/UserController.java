@@ -1,5 +1,6 @@
 package com.dacoach.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,24 +53,39 @@ public class UserController {
                 return mav;
             }
 
-            // 카카오 ID 값은 숫자형태이므로 안전하게 String.valueOf 사용을 권장합니다.
+            // 카카오 ID 값은 숫자형태이므로 String.valueOf 사용
             String kakaoKey = String.valueOf(userInfo.get("id"));
             String nickname = (String) userInfo.get("nickname");
 
             // 2. 기존 회원 여부 확인
             CoachDTO coach = coachService.getCoachByKakaoKey(kakaoKey);
 
-            if (coach != null) {
+            if (coach != null && session.getAttribute("user_idx")==null) {
                 // 이미 가입된 회원이면 세션 저장 후 메인으로
                 session.setAttribute("user_idx", coach.getUser_idx());
                 session.setAttribute("photo", coach.getPhoto());
+                session.setAttribute("kakao",coach.getKakao_key());
                 mav.setViewName("redirect:/");
-            } else {
-                // 신규 회원이면 가입 페이지로 이동 (데이터 포함)
+            }else if(session.getAttribute("user_idx")!=null &&coach ==null) {
+            	//로그인 중이지만 카카오 연동이 안된 회원
+        		HashMap<String, Object> conKakao=new HashMap<>();
+        		conKakao.put("user_idx", (Integer)session.getAttribute("user_idx"));
+        		conKakao.put("kakao_key", kakaoKey);
+        		int result=coachService.connectKakao(conKakao);
+        		if(result>0) {
+        			session.invalidate();
+        			mav.setViewName("redirect:/");
+        		}else {
+        			mav.setViewName("redirect:/mypage");
+        		}
+            }else {
+            	// 로그인 중도 아니었고 신규 회원이면 가입 페이지로 이동 (데이터 포함)
                 mav.addObject("kakao_key", kakaoKey);
                 mav.addObject("nickname", nickname);
                 mav.addObject("newKakaoUser", "가입된 정보가 없습니다. 접속하신 카카오 계정 정보로 회원가입 진행됩니다.");
                 mav.setViewName("coach/coachJoin"); 
+            	
+                
             }
 
         } catch (Exception e) {
@@ -115,6 +131,7 @@ public class UserController {
 	        CoachDTO coachInfo = coachService.getCoachInfo(loginUser.getUser_idx());
 	        if (coachInfo != null && coachInfo.getPhoto() != null) {
 	            session.setAttribute("photo", coachInfo.getPhoto());
+	            session.setAttribute("kakao", coachInfo.getKakao_key());
 	        } else {
 	            session.setAttribute("photo", "default_profile.png");
 	        }
