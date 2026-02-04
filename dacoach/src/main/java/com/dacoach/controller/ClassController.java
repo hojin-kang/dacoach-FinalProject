@@ -32,25 +32,25 @@ public class ClassController {
 
 	@GetMapping("/majorFields")
 	@ResponseBody
-	public List<Map<String, Object>> getMajorFields() {
+	public List<Map<String, Object>> getMajorFields() throws Exception {
 		return classService.getMajorFields();
 	}
 
 	@GetMapping("/minorFields")
 	@ResponseBody
-	public List<Map<String, Object>> getMinorFields(@RequestParam Integer majorFieldIdx) {
+	public List<Map<String, Object>> getMinorFields(@RequestParam Integer majorFieldIdx) throws Exception {
 		return classService.getMinorFields(majorFieldIdx);
 	}
 
 	@GetMapping("/majorRegions")
 	@ResponseBody
-	public List<Map<String, Object>> getMajorRegions() {
+	public List<Map<String, Object>> getMajorRegions() throws Exception {
 		return classService.getMajorRegions();
 	}
 
 	@GetMapping("/minorRegions")
 	@ResponseBody
-	public List<Map<String, Object>> getMinorRegions(@RequestParam Integer majorRegionIdx) {
+	public List<Map<String, Object>> getMinorRegions(@RequestParam Integer majorRegionIdx) throws Exception {
 		return classService.getMinorRegions(majorRegionIdx);
 	}
 
@@ -96,9 +96,10 @@ public class ClassController {
 		return mav;
 	}
 
-	/************* company *************/
+	/************* company 
+	 * @throws Exception *************/
 	@GetMapping("/company/classList")
-	public ModelAndView classList(HttpSession session) {
+	public ModelAndView classList(HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView("company/classes/classList");
 
 		Integer providerIdx = (Integer) session.getAttribute("user_idx");
@@ -114,7 +115,8 @@ public class ClassController {
 
 	/*********************************/
 
-	/************* coach *************/
+	/************* coach 
+	 * @throws Exception *************/
 	// 코치 - 클래스 검색
 	@GetMapping("/coach/classList")
 	public ModelAndView coachClassList(
@@ -124,7 +126,7 @@ public class ClassController {
 	        @RequestParam(required = false) Integer minorRegion,
 	        @RequestParam(required = false) String q,
 	        @RequestParam(required = false, defaultValue = "latest") String sort
-	) {
+	) throws Exception {
 	    ModelAndView mav = new ModelAndView();
 
 	    List<Map<String, Object>> majorList = classService.getMajorFields();
@@ -147,7 +149,6 @@ public class ClassController {
 	    mav.setViewName("coach/classes/classList");
 	    return mav;
 	}
-
 
 	/*********************************/
 }
