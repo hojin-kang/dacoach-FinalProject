@@ -11,9 +11,10 @@ public interface CoachMapper {
 	public boolean checkNick(String nickname) throws Exception;
 	public List<Map<String, Object>> getMajorFields() throws Exception;
 	public List<Map<String, Object>> getMinorFields(int majorIdx) throws Exception;
-	List<Map<String, Object>> getMajorRegions() throws Exception;
-    List<Map<String, Object>> getMinorRegions(int majorRegionIdx) throws Exception;
+	public List<Map<String, Object>> getMajorRegions() throws Exception;
+    public List<Map<String, Object>> getMinorRegions(int majorRegionIdx) throws Exception;
     public Integer getUsersIdx(String login_id) throws Exception;
     public Integer coachJoin(CoachDTO cdto) throws Exception;
     public CoachDTO getCoachInfo(int users_idx) throws Exception;
+    public CoachDTO getCoachByKakaoKey(String kakaoKey) throws Exception;
 }

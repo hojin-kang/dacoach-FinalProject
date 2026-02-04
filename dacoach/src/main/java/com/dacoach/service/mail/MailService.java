@@ -1,4 +1,4 @@
-package com.dacoach.service.mail;
+ package com.dacoach.service.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

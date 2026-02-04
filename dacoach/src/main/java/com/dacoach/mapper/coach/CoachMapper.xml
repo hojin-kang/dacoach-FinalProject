@@ -63,10 +63,14 @@
 		    	' ',
 		    	0,
 		    	0,
-		    	' '
+		    	#{kakao_key}
 		    )
 	</insert>
 	<select id="getCoachInfo" parameterType="int" resultType="com.dacoach.model.coach.CoachDTO">
 		select * from coach where user_idx = #{user_idx}
+	</select>
+	<select id="getCoachByKakaoKey" resultType="com.dacoach.model.coach.CoachDTO">
+	    SELECT * FROM COACH 
+	    WHERE KAKAO_KEY = #{kakaoKey, jdbcType=VARCHAR}
 	</select>
 </mapper>
