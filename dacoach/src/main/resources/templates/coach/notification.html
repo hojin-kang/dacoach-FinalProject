@@ -17,7 +17,7 @@
 		<hr>
 		<div class="notificationDiv">
 			<div class="empty" th:if="${#lists.isEmpty(ndtos)}">새로운 알림이 없습니다.</div>
-			<form action="">
+			<form action="notiDelete" method="post">
 				<div class="notiUnit" th:each="n : ${ndtos}">
 				<img alt="noti" src="img/icon/notification_color.png">
 				<span th:text="${n.content}"></span>

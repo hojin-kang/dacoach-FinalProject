@@ -15,13 +15,19 @@ public class NotificationServiceImple implements NotificationService {
 	private NotificationMapper notiMapper;
 	
 	@Override
-	public List<NotificationDTO> notiList(int users_idx) {
-		List<NotificationDTO> ndtos = notiMapper.notiList(users_idx);
+	public List<NotificationDTO> notiList(int user_idx) {
+		List<NotificationDTO> ndtos = notiMapper.notiList(user_idx);
 		return ndtos;
 	}
 	
 	@Override
-	public int countUnread(int users_idx) {
-        return notiMapper.countUnread(users_idx);
+	public int countUnread(int user_idx) {
+        return notiMapper.countUnread(user_idx);
     }
+	
+	@Override
+	public int notiDelete(int noti_idx) {
+		int result = notiMapper.notiDelete(noti_idx);
+		return result;
+	}
 }

@@ -11,6 +11,11 @@
 	gap: 12px;
 }
 
+.notificationDiv form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
 /* 알림 없음 문구 */
 .notificationDiv .empty {
 	padding: 40px 0;

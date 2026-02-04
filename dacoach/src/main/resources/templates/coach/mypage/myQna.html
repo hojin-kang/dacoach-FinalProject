@@ -29,7 +29,7 @@
 			
 			  <form th:each="q : ${qnaList}"
 			        th:action="@{/myQnaDetail}"
-			        method="post"
+			        method="get"
 			        class="qnaForm">
 			
 			    <input type="hidden" name="qna_idx" th:value="${q.qna_idx}"/>
