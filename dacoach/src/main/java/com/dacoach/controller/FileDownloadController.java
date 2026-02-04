@@ -8,29 +8,29 @@ import java.net.URLEncoder;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.dacoach.view.FileManageView;
+
 @Controller
 @RequestMapping("/files")
 public class FileDownloadController {
 
-	@Value("${file.upload.photo:/uploads/classes/photos}")
-	private String photoPath;
-
-	@Value("${file.upload.video:/uploads/classes/videos}")
-	private String videoPath;
+	@Autowired
+	private FileManageView fileManageView;
 
 	/**
 	 * 클래스 사진 다운로드/표시 URL: /files/photo/{filename}
 	 */
 	@GetMapping("/photo/{filename}")
 	public void downloadPhoto(@PathVariable String filename, HttpServletResponse response) {
-		downloadFile(filename, photoPath, response, "image");
+		String filePath = fileManageView.getPhotoPath(filename);
+		downloadFile(filePath, filename, response, "image");
 	}
 
 	/**
@@ -38,28 +38,28 @@ public class FileDownloadController {
 	 */
 	@GetMapping("/video/{filename}")
 	public void downloadVideo(@PathVariable String filename, HttpServletResponse response) {
-		downloadFile(filename, videoPath, response, "video");
+		String filePath = fileManageView.getVideoPath(filename);
+		downloadFile(filePath, filename, response, "video");
 	}
 
 	/**
 	 * 공통 파일 다운로드 메서드
 	 */
-	private void downloadFile(String filename, String basePath, HttpServletResponse response, String type) {
+	private void downloadFile(String filePath, String filename, HttpServletResponse response, String type) {
 		FileInputStream fis = null;
 		OutputStream os = null;
 
 		try {
-			// 파일 경로 생성
-			String filePath = basePath + File.separator + filename;
 			File file = new File(filePath);
 
-			if (!file.exists() || !file.isFile()) {
+			// 파일 존재 확인
+			if (!fileManageView.fileExists(filePath)) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "파일을 찾을 수 없습니다.");
 				return;
 			}
 
-			// 파일 확장자로 MIME 타입 설정
-			String mimeType = getMimeType(filename);
+			// MIME 타입 설정
+			String mimeType = fileManageView.getMimeType(filename);
 			response.setContentType(mimeType);
 
 			// 파일 크기 설정
@@ -78,10 +78,14 @@ public class FileDownloadController {
 				response.setHeader("Content-Disposition", "inline; filename=\"" + encodedFilename + "\"");
 			}
 
+			// 캐시 헤더 추가 (성능 향상)
+			response.setHeader("Cache-Control", "public, max-age=31536000");
+
 			// 파일 전송
 			fis = new FileInputStream(file);
 			os = response.getOutputStream();
 			FileCopyUtils.copy(fis, os);
+			os.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -99,43 +103,6 @@ public class FileDownloadController {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-	}
-
-	/**
-	 * MIME 타입 반환
-	 */
-	private String getMimeType(String filename) {
-		String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-
-		switch (extension) {
-		// 이미지 타입
-		case "jpg":
-		case "jpeg":
-			return "image/jpeg";
-		case "png":
-			return "image/png";
-		case "gif":
-			return "image/gif";
-		case "bmp":
-			return "image/bmp";
-		case "webp":
-			return "image/webp";
-
-		// 비디오 타입
-		case "mp4":
-			return "video/mp4";
-		case "avi":
-			return "video/x-msvideo";
-		case "mov":
-			return "video/quicktime";
-		case "wmv":
-			return "video/x-ms-wmv";
-		case "webm":
-			return "video/webm";
-
-		default:
-			return "application/octet-stream";
 		}
 	}
 }

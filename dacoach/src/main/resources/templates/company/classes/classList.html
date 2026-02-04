@@ -27,7 +27,8 @@
 							th:onclick="|window.location='@{/class/company/register}'|">클래스
 							통계</button>
 						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/class/company/register}'|">후기 관리</button>
+							th:onclick="|window.location='@{/class/company/register}'|">후기
+							관리</button>
 					</div>
 				</aside>
 
@@ -39,24 +40,23 @@
 							th:href="@{/class/detail/{id}(id=${classItem.class_idx})}">
 
 							<div class="thumb">
-								<!-- FileUploadController 경로 -->
-								<img
-									th:src="${classItem.photo} ? |/uploads/class/${classItem.photo}| : '/images/default_class.png'"
+								<!-- FileManageView 사용 -->
+								<img th:src="${@fileManageView.getPhotoUrl(classItem.photo)}"
 									onerror="this.src='/images/default_class.png'"
 									th:alt="${classItem.title}" />
 							</div>
 
 							<div class="meta">
-								<div class="title" th:text="${classItem.title}"></div>
+								<div class="title" th:text="${classItem.title}">클래스 제목</div>
 								<div class="price"
-									th:text="${#numbers.formatInteger(classItem.price, 0, 'COMMA')} + '원'"></div>
+									th:text="${#numbers.formatInteger(classItem.price, 0, 'COMMA')} + '원'">0원</div>
 								<div class="classInfo">
 									<span
-										th:text="${#dates.format(classItem.start_date, 'MM.dd')} + ' ~ ' + ${#dates.format(classItem.end_date, 'MM.dd')}"></span>
-									<span th:text="${classItem.max_user_cnt} + '명'"></span>
+										th:text="${#dates.format(classItem.start_date, 'MM.dd')} + ' ~ ' + ${#dates.format(classItem.end_date, 'MM.dd')}">기간</span>
+									<span th:text="${classItem.max_user_cnt} + '명'">인원</span>
 								</div>
 								<div class="intro"
-									th:text="${#strings.abbreviate(classItem.intro, 80)}"></div>
+									th:text="${#strings.abbreviate(classItem.intro, 80)}">소개</div>
 							</div>
 						</a>
 
