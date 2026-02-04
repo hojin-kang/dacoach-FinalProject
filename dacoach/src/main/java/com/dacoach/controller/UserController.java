@@ -86,10 +86,9 @@ public class UserController {
         		}
             }else {
             	// 로그인 중도 아니었고 신규 회원이면 가입 페이지로 이동 (데이터 포함)
-                mav.addObject("kakao_key", kakaoKey);
-                mav.addObject("nickname", nickname);
+                session.setAttribute("kakao_key", kakaoKey);
                 mav.addObject("msg", "가입된 정보가 없습니다. 접속하신 카카오 계정 정보로 회원가입 진행됩니다.");
-                mav.addObject("url", "coach/coachJoin");
+                mav.addObject("url", "/coachJoin");
                 mav.setViewName("alert"); 
             	
                 
