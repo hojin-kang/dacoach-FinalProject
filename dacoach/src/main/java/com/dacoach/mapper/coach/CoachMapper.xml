@@ -67,8 +67,8 @@
 		    	#{phone},
 		    	#{mail},
 		    	#{intro},
-		    	' ',
-		    	' ',
+		    	#{photo},
+		    	#{video},
 		    	0,
 		    	0,
 		    	#{kakao_key}

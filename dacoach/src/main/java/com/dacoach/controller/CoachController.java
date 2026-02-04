@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.coach.CoachService;
+import com.dacoach.service.file.FileUpload;
 
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -127,6 +128,15 @@ public class CoachController {
 	        ,@RequestParam(value="uploadPhoto", required = false)MultipartFile uploadPhoto
 	        ,@RequestParam(value="uploadVideo", required = false)MultipartFile uploadVideo
 	        ) {
+		if (uploadPhoto != null && !uploadPhoto.isEmpty()) {
+	        String photoPath = FileUpload.saveFile(uploadPhoto, "coach/profile");
+	        cdto.setPhoto(photoPath); // DB에는 "coach/profile/uuid.jpg" 가 저장됨
+	    }
+
+	    if (uploadVideo != null && !uploadVideo.isEmpty()) {
+	        String videoPath = FileUpload.saveFile(uploadVideo, "coach/video");
+	        cdto.setVideo(videoPath); // DB에는 "coach/video/uuid.mp4" 가 저장됨
+	    }
 
 	    ModelAndView mav = new ModelAndView();
 
