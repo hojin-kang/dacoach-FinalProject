@@ -19,4 +19,5 @@ public interface CoachMapper {
     public CoachDTO getCoachInfo(int users_idx) throws Exception;
     public CoachDTO getCoachByKakaoKey(String kakaoKey) throws Exception;
     public int connectKakao(HashMap<String, Object> conKakao) throws Exception;
+    public Integer activateCoach(int user_idx) throws Exception;
 }

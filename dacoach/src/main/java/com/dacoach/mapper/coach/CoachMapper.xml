@@ -21,12 +21,13 @@
 	<select id="checkNick" parameterType="String" resultType="Integer">
 		select count(*) from coach where nickname = #{nickname}
 	</select>
-	<select id="checkMail" parameterType="String" resultType="Integer">
+	<select id="emailCheck" parameterType="String" resultType="Integer">
 	    SELECT CASE 
 	        WHEN EXISTS (SELECT 1 FROM coach WHERE mail = #{mail}) THEN 1
-	        WHEN EXISTS (SELECT 1 FROM company WHERE mail = #{mail}) THEN 1
+	        WHEN EXISTS (SELECT 1 FROM company WHERE email = #{mail}) THEN 1
 	        ELSE 0
 	    END
+	    FROM DUAL
 	</select>
 	<select id="getMajorFields" resultType="map">
 	    select major_field_idx, major_field_cd 
@@ -82,5 +83,8 @@
 	</select>
 	<update id="connectKakao" parameterType="HashMap">
 		update coach set kakao_key = #{kakao_key} where user_idx = #{user_idx}
+	</update>
+	<update id="activateCoach" parameterType="int">
+		update users set status = 'ACTIVE' where user_idx = #{user_idx}
 	</update>
 </mapper>
