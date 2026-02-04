@@ -17,26 +17,26 @@
 
 			<div class="classPage">
 				<!-- LEFT: 검색 패널 -->
-				<form id="filterForm" class="filterForm" th:action="@{/class/coach/classList}" method="get">
-				<aside class="searchArea">
-					<div class="searchHead">검색 조건</div>
+				<form id="filterForm" class="filterForm"
+					th:action="@{/class/coach/classList}" method="get">
+					<aside class="searchArea">
+						<div class="searchHead">검색 조건</div>
 
-					
+
 						<!-- 분야 -->
 						<div class="filterRow">
 							<div class="filter">
 								<label class="filterLabel">분야</label>
 								<div>
-									<select class="filterSelect majorField" name="majorField" id="majorField">
-									  <option value="">대분류</option>
-									  <option th:each="m : ${majorList}"
-									          th:value="${m.MAJOR_FIELD_IDX}"
-									          th:text="${m.MAJOR_FIELD_CD}"
-									          th:selected="${m.MAJOR_FIELD_IDX == majorField}">
-									  </option>
-									</select>
-									<select class="filterSelect minorField" name="minorField" id="minorField" disabled>
-									  <option value="">소분류</option>
+									<select class="filterSelect majorField" name="majorField"
+										id="majorField">
+										<option value="">대분류</option>
+										<option th:each="m : ${majorList}"
+											th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"
+											th:selected="${m.MAJOR_FIELD_IDX == majorField}"></option>
+									</select> <select class="filterSelect minorField" name="minorField"
+										id="minorField" disabled>
+										<option value="">소분류</option>
 									</select>
 
 								</div>
@@ -44,84 +44,91 @@
 							<div class="filter">
 								<label class="filterLabel">지역</label>
 								<div>
-									<select class="filterSelect majorRegion" name="majorRegion" id="majorRegion">
-									  <option value="">대분류</option>
-									  <option th:each="r : ${majorRegions}"
-									          th:value="${r.MAJOR_REGION_IDX}"
-									          th:text="${r.REGION_NM}"
-									          th:selected="${r.MAJOR_REGION_IDX == majorRegion}">
-									  </option>
-									</select>
-									<select class="filterSelect minorRegion" name="minorRegion" id="minorRegion" disabled>
-									  <option value="">소분류</option>
+									<select class="filterSelect majorRegion" name="majorRegion"
+										id="majorRegion">
+										<option value="">대분류</option>
+										<option th:each="r : ${majorRegions}"
+											th:value="${r.MAJOR_REGION_IDX}" th:text="${r.REGION_NM}"
+											th:selected="${r.MAJOR_REGION_IDX == majorRegion}">
+										</option>
+									</select> <select class="filterSelect minorRegion" name="minorRegion"
+										id="minorRegion" disabled>
+										<option value="">소분류</option>
 									</select>
 								</div>
 							</div>
 							<!-- 검색어 -->
 							<div class="keywordBox">
-								<input class="keywordInput" type="text" name="q" placeholder="검색어 입력" th:value="${q}" />
-									
+								<input class="keywordInput" type="text" name="q"
+									placeholder="검색어 입력" th:value="${q}" />
+
 							</div>
 							<button class="keywordBtn" type="submit">검색</button>
 						</div>
 
 
-						 
-				</aside>
 
-				<!-- RIGHT: 컨텐츠 -->
-				<section class="contentArea">
-					<div class="contentTop">
+					</aside>
 
-						<div class="sortBox">
-							<select class="sortSelect" name="sort" id="sortSelect">
-							  <option value="latest"   th:selected="${sort == 'latest'}">최신순</option>
-							  <option value="rating"   th:selected="${sort == 'rating'}">평점순</option>
-							  <option value="most"   th:selected="${sort == 'most'}">리뷰 많은순</option>
-							  <option value="priceAsc" th:selected="${sort == 'priceAsc'}">가격 낮은순</option>
-							  <option value="priceDesc" th:selected="${sort == 'priceDesc'}">가격 높은순</option>
-							</select>
+					<!-- RIGHT: 컨텐츠 -->
+					<section class="contentArea">
+						<div class="contentTop">
+
+							<div class="sortBox">
+								<select class="sortSelect" name="sort" id="sortSelect">
+									<option value="latest" th:selected="${sort == 'latest'}">최신순</option>
+									<option value="rating" th:selected="${sort == 'rating'}">평점순</option>
+									<option value="most" th:selected="${sort == 'most'}">리뷰
+										많은순</option>
+									<option value="priceAsc" th:selected="${sort == 'priceAsc'}">가격
+										낮은순</option>
+									<option value="priceDesc" th:selected="${sort == 'priceDesc'}">가격
+										높은순</option>
+								</select>
+
+							</div>
+						</div>
+
+						<!-- 카드 그리드 -->
+						<div class="cardGrid">
+
+							<!-- 검색 결과 없을 때 -->
+							<div class="empty" th:if="${#lists.isEmpty(classList)}">검색
+								결과가 없습니다.</div>
+
+							<!-- 결과 있을 때 -->
+							<a class="classCard" th:if="${!#lists.isEmpty(classList)}"
+								th:each="c : ${classList}"
+								th:href="@{/class/{id}(id=${c.class_idx})}">
+
+								<div class="thumb">
+									<img
+										th:src="${c.photo != null and c.photo != ''} ? @{/uploads/classes/photos/{img}(img=${c.photo})} : @{/images/default_class.png}"
+										alt="class">
+								</div>
+
+								<div class="meta">
+									<div class="top">
+										<div class="rating"
+											th:text="|★ ${#numbers.formatDecimal(c.avg_rating, 1, 1)}(${c.review_cnt})|">
+											★ 0.0(0)</div>
+										<div class="provider" th:text="|[${c.user_name}]|"></div>
+									</div>
+
+
+									<div class="bottom">
+										<div class="title" th:text="${c.title}">클래스 제목</div>
+
+										<div class="price"
+											th:text="|${#numbers.formatInteger(c.price, 3, 'COMMA')}₩|">
+											0₩</div>
+									</div>
+								</div>
+							</a>
 
 						</div>
-					</div>
 
-					<!-- 카드 그리드 -->
-					<div class="cardGrid">
-					
-					  <!-- 검색 결과 없을 때 -->
-					  <div class="empty" th:if="${#lists.isEmpty(classList)}">
-					    검색 결과가 없습니다.
-					  </div>
-					
-					  <!-- 결과 있을 때 -->
-					  <a class="classCard"
-					     th:if="${!#lists.isEmpty(classList)}"
-					     th:each="c : ${classList}"
-					     th:href="@{/class/{id}(id=${c.class_idx})}">
-					     
-					    <div class="thumb">
-					      <img th:src="${c.photo != null and c.photo != ''} ? @{/uploads/classes/photos/{img}(img=${c.photo})} : @{/images/default_class.png}"
-					           alt="class">
-					    </div>
-					
-					    <div class="meta">
-					      <!-- 평점은 아직 join 안했으니 임시로 숨김/고정 -->
-					      <div class="rating"> </div>
-					
-					      <div class="bottom">
-					        <div class="title" th:text="${c.title}">클래스 제목</div>
-					
-					        <div class="price"
-					             th:text="|${#numbers.formatInteger(c.price, 3, 'COMMA')}₩|">
-					          0₩
-					        </div>
-					      </div>
-					    </div>
-					  </a>
-					
-					</div>
-
-				</section>
+					</section>
 				</form>
 			</div>
 		</div>

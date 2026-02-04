@@ -36,6 +36,7 @@ public class ClassDTO {
 	private MultipartFile videoFile;   // 영상 파일
 	
 	// 리뷰용
-	private Double avg_rating;
-	private Integer review_cnt;
+	private String user_name;   // 회사명
+	private Double avg_rating;  // 별점
+	private Integer review_cnt;  // 리뷰 수
 }
