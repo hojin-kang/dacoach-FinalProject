@@ -8,7 +8,7 @@
 <link rel="stylesheet" th:href="@{/css/coach_class.css}" />
 </head>
 <body>
-	<div th:replace="layout/header :: siteHeader"></div>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
 
 	<main class="main">
 		<div class="container">
@@ -17,57 +17,56 @@
 
 			<div class="classPage">
 				<!-- LEFT: 검색 패널 -->
+				<form id="filterForm" class="filterForm" th:action="@{/class/coach/classList}" method="get">
 				<aside class="searchArea">
 					<div class="searchHead">검색 조건</div>
 
-					<form class="filterForm" th:action="@{/class}" method="get">
+					
 						<!-- 분야 -->
 						<div class="filterRow">
 							<div class="filter">
 								<label class="filterLabel">분야</label>
 								<div>
-									<select class="filterSelect" name="majorField">
-										<option value="">대분류</option>
-										<option th:each="mf : ${majorFields}"
-											th:value="${mf.majorFieldIdx}" th:text="${mf.majorFieldCd}">
-										</option>
+									<select class="filterSelect majorField" name="majorField" id="majorField">
+									  <option value="">대분류</option>
+									  <option th:each="m : ${majorList}"
+									          th:value="${m.MAJOR_FIELD_IDX}"
+									          th:text="${m.MAJOR_FIELD_CD}"
+									          th:selected="${m.MAJOR_FIELD_IDX == majorField}">
+									  </option>
 									</select>
-									<select class="filterSelect" name="minorField">
-										<option value="">소분류</option>
-										<option th:each="sf : ${minorFields}"
-											th:value="${sf.minorFieldIdx}" th:text="${sf.minorFieldNm}">
-										</option>
+									<select class="filterSelect minorField" name="minorField" id="minorField" disabled>
+									  <option value="">소분류</option>
 									</select>
+
 								</div>
 							</div>
 							<div class="filter">
 								<label class="filterLabel">지역</label>
 								<div>
-									<select class="filterSelect" name="majorRegion">
-										<option value="">대분류</option>
-										<option th:each="mr : ${majorRegions}"
-											th:value="${mr.majorRegionIdx}" th:text="${mr.regionNm}">
-										</option>
+									<select class="filterSelect majorRegion" name="majorRegion" id="majorRegion">
+									  <option value="">대분류</option>
+									  <option th:each="r : ${majorRegions}"
+									          th:value="${r.MAJOR_REGION_IDX}"
+									          th:text="${r.REGION_NM}"
+									          th:selected="${r.MAJOR_REGION_IDX == majorRegion}">
+									  </option>
 									</select>
-									<select class="filterSelect" name="minorRegion">
-										<option value="">소분류</option>
-										<option th:each="dr : ${minorRegions}"
-											th:value="${dr.minorRegionIdx}" th:text="${dr.districtNm}">
-										</option>
+									<select class="filterSelect minorRegion" name="minorRegion" id="minorRegion" disabled>
+									  <option value="">소분류</option>
 									</select>
 								</div>
 							</div>
 							<!-- 검색어 -->
 							<div class="keywordBox">
-								<input class="keywordInput" type="text" name="q" placeholder="검색어 입력" />
+								<input class="keywordInput" type="text" name="q" placeholder="검색어 입력" th:value="${q}" />
 									
 							</div>
 							<button class="keywordBtn" type="submit">검색</button>
 						</div>
 
 
-						
-					</form>
+						 
 				</aside>
 
 				<!-- RIGHT: 컨텐츠 -->
@@ -75,63 +74,106 @@
 					<div class="contentTop">
 
 						<div class="sortBox">
-							<select class="sortSelect" name="sort" form="sortForm">
-								<option value="rating">평점순</option>
-								<option value="priceAsc">가격 낮은순</option>
-								<option value="priceDesc">가격 높은순</option>
-								<option value="latest">최신순</option>
+							<select class="sortSelect" name="sort" id="sortSelect">
+							  <option value="latest"   th:selected="${sort == 'latest'}">최신순</option>
+							  <option value="rating"   th:selected="${sort == 'rating'}">평점순</option>
+							  <option value="most"   th:selected="${sort == 'most'}">리뷰 많은순</option>
+							  <option value="priceAsc" th:selected="${sort == 'priceAsc'}">가격 낮은순</option>
+							  <option value="priceDesc" th:selected="${sort == 'priceDesc'}">가격 높은순</option>
 							</select>
 
-							<!-- 정렬만 따로 submit하고 싶으면 -->
-							<form id="sortForm" th:action="@{/class}" method="get"></form>
 						</div>
 					</div>
 
 					<!-- 카드 그리드 -->
 					<div class="cardGrid">
-					  <!-- 카드 1개 -->
-					  <a class="classCard" href="#">
-					    <div class="thumb">
-					      <img src="/images/default_class.png" alt="class">
-					    </div>
 					
-					    <div class="meta">
-					      <div class="rating">★ 4.7(54)</div>
+					  <!-- 검색 결과 없을 때 -->
+					  <div class="empty" th:if="${#lists.isEmpty(classList)}">
+					    검색 결과가 없습니다.
+					  </div>
 					
-					      <div class="bottom">
-					        <div class="title">[인기]음악 줄넘기</div>
-					        <div class="price">99,000₩</div>
-					      </div>
-					    </div>
-					  </a>
-					
-					  <!-- 카드 더 추가하면 자동으로 그리드로 배치됨 -->
-					</div>
-					<!--
-					<div class="cardGrid">
+					  <!-- 결과 있을 때 -->
 					  <a class="classCard"
+					     th:if="${!#lists.isEmpty(classList)}"
 					     th:each="c : ${classList}"
-					     th:href="@{/class/{id}(id=${c.classIdx})}">
+					     th:href="@{/class/{id}(id=${c.class_idx})}">
+					     
 					    <div class="thumb">
-					      <img th:src="@{/images/{img}(img=${c.photo})}" alt="class">
+					      <img th:src="${c.photo != null and c.photo != ''} ? @{/uploads/classes/photos/{img}(img=${c.photo})} : @{/images/default_class.png}"
+					           alt="class">
 					    </div>
 					
 					    <div class="meta">
-					      <div class="rating" th:text="|★ ${c.rating}(${c.reviewCnt})|">★ 4.7(54)</div>
+					      <!-- 평점은 아직 join 안했으니 임시로 숨김/고정 -->
+					      <div class="rating"> </div>
 					
 					      <div class="bottom">
-					        <div class="title" th:text="${c.title}">[인기]음악 줄넘기</div>
-					        <div class="price" th:text="|${#numbers.formatInteger(c.price, 3, 'COMMA')}₩|">99,000₩</div>
+					        <div class="title" th:text="${c.title}">클래스 제목</div>
+					
+					        <div class="price"
+					             th:text="|${#numbers.formatInteger(c.price, 3, 'COMMA')}₩|">
+					          0₩
+					        </div>
 					      </div>
 					    </div>
 					  </a>
+					
 					</div>
-					-->
+
 				</section>
+				</form>
 			</div>
 		</div>
 	</main>
 
-	<div th:replace="layout/footer :: siteFooter"></div>
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+	<script>
+	document.getElementById('sortSelect')?.addEventListener('change', () => {
+		  document.getElementById('filterForm')?.submit();
+		});
+	
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('filterForm');
+  if (!form) return;
+
+  const majorField  = form.querySelector('select[name="majorField"]');
+  const minorField  = form.querySelector('select[name="minorField"]');
+  const majorRegion = form.querySelector('select[name="majorRegion"]');
+  const minorRegion = form.querySelector('select[name="minorRegion"]');
+
+  async function loadMinor(majorSelect, minorSelect, apiUrl, idKey, nameKey, placeholder, paramName) {
+	  minorSelect.innerHTML = `<option value="">${placeholder}</option>`;
+	  minorSelect.disabled = true;
+
+	  const majorIdx = majorSelect.value;
+	  if (!majorIdx) return;
+
+	  const res = await fetch(`${apiUrl}?${paramName}=${encodeURIComponent(majorIdx)}`);
+	  const data = await res.json();
+
+	  data.forEach(item => {
+	    const opt = document.createElement('option');
+	    opt.value = item[idKey];
+	    opt.textContent = item[nameKey];
+	    minorSelect.appendChild(opt);
+	  });
+
+	  minorSelect.disabled = false;
+	}
+
+  majorField?.addEventListener('change', () =>
+  loadMinor(majorField, minorField, '/class/minorFields',
+            'MINOR_FIELD_IDX', 'MINOR_FIELD_NM', '소분류', 'majorFieldIdx')
+);
+
+majorRegion?.addEventListener('change', () =>
+  loadMinor(majorRegion, minorRegion, '/class/minorRegions',
+            'MINOR_REGION_IDX', 'DISTRICT_NM', '소분류', 'majorRegionIdx')
+);
+});
+</script>
+
 </body>
+
 </html>

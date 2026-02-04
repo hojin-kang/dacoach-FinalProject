@@ -17,4 +17,8 @@ public interface ClassService {
 	List<Map<String, Object>> getMinorRegions(Integer majorRegionIdx);
 	
 	List<ClassDTO> getClassesByProvider(Integer providerIdx);
+	
+	// 코치 - 클래스 검색
+	List<ClassDTO> searchCoachClasses(Integer minorField, Integer minorRegion, String q, String sort);
+
 }

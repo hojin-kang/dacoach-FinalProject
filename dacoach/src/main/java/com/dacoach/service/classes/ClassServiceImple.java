@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.Map;
 import java.util.UUID;
 
@@ -206,4 +206,16 @@ public class ClassServiceImple implements ClassService {
 	    }
 	    return classMapper.selectClassesByProvider(providerIdx);
 	}
+	
+	@Override
+	public List<ClassDTO> searchCoachClasses(Integer minorField, Integer minorRegion, String q, String sort) {
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("minorField", minorField);
+	    param.put("minorRegion", minorRegion);
+	    param.put("q", (q == null ? null : q.trim()));
+	    param.put("sort", (sort == null ? "latest" : sort));
+
+	    return classMapper.searchCoachClasses(param);
+	}
+
 }

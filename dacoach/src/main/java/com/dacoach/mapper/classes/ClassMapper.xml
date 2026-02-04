@@ -101,5 +101,65 @@
 		WHERE PROVIDER_IDX = #{provider_idx}
 		ORDER BY CREATED_AT DESC
 	</select>
+	
+	<!-- 코치 - 클래스 검색 -->
+	<select id="searchCoachClasses" parameterType="map"
+        resultType="com.dacoach.model.classes.ClassDTO">
+	    SELECT
+		    C.CLASS_IDX,
+		    C.PROVIDER_IDX,
+		    C.TITLE,
+		    C.INTRO,
+		    C.MINOR_FIELD_IDX,
+		    C.MINOR_REGION_IDX,
+		    C.PRICE,
+		    C.PHOTO,
+		    C.VIDEO,
+		    C.START_DATE,
+		    C.END_DATE,
+		    C.CREATED_AT,
+		    C.MAX_USER_CNT
+		  FROM CLASS C
+	  <where>
+	    <if test="minorField != null">
+	      AND MINOR_FIELD_IDX = #{minorField}
+	    </if>
+	
+	    <if test="minorRegion != null">
+	      AND MINOR_REGION_IDX = #{minorRegion}
+	    </if>
+	
+	    <if test="q != null and q != ''">
+	      AND (TITLE LIKE '%' || #{q} || '%'
+	           OR INTRO LIKE '%' || #{q} || '%')
+	    </if>
+	  </where>
+	
+	  <choose>
+		  <when test="sort == 'rating'">
+		    ORDER BY r.AVG_RATING DESC NULLS LAST,
+		             r.REVIEW_CNT DESC,
+		             c.CREATED_AT DESC
+		  </when>
+		  <when test="sort == 'most'">
+		    ORDER BY r.REVIEW_CNT DESC,
+		             r.AVG_RATING DESC,
+		             c.CREATED_AT DESC
+		  </when>
+		  <when test="sort == 'priceAsc'">
+		    ORDER BY c.PRICE ASC NULLS LAST,
+		             c.CREATED_AT DESC
+		  </when>
+		  <when test="sort == 'priceDesc'">
+		    ORDER BY c.PRICE DESC NULLS LAST,
+		             c.CREATED_AT DESC
+		  </when>
+		  <otherwise>
+		    ORDER BY c.CREATED_AT DESC
+		  </otherwise>
+		</choose>
+
+	</select>
+	
 
 </mapper>
