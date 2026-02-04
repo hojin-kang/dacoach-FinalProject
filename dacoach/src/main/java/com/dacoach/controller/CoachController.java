@@ -129,17 +129,17 @@ public class CoachController {
 	        ) {
 
 	    ModelAndView mav = new ModelAndView();
-	    mav.setViewName("redirect:/coachJoin");
 
 	    try {
-	        int users_idx = coachService.getUsersIdx(login_id);
-	        cdto.setUser_idx(users_idx);
+	        int user_idx = coachService.getUsersIdx(login_id);
+	        cdto.setUser_idx(user_idx);
 	        int result = coachService.coachJoin(cdto);
 
 	        if(result > 0) {
 	        	mav.addObject("msg", "코치 회원가입이 완료되었습니다. 로그인 후 이용해주세요.");
 	        	mav.addObject("url", "/login");
 	        	mav.setViewName("alert");
+	        	coachService.activateCoach(user_idx);
 	        } else {
 	            mav.addObject("msg", "코치 회원가입에 실패했습니다. 다시 시도해주세요.");
 	            mav.addObject("url", "/coachJoin");

@@ -89,6 +89,11 @@ public class CoachServiceImple implements CoachService {
 		return result>0?true:false;
 	}
 
+	@Override
+	public Integer activateCoach(int user_idx) throws Exception {
+		return coachMapper.activateCoach(user_idx);
+	}
+
 	
 
 	
