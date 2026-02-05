@@ -1,6 +1,8 @@
+// ================================
+// 1) AdminCompanyDAOImple (SqlSessionTemplate만 사용)
+// ================================
 package com.dacoach.admin.company.model;
 
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,60 +10,77 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 public class AdminCompanyDAOImple implements AdminCompanyDAO {
 
-	private final SqlSessionTemplate sqlSession;
-	  private static final String NS = "com.dacoach.mapper.admin.company.AdminCompanyMapper.";
+    private final SqlSessionTemplate sqlSession;
+    private static final String NS = "com.dacoach.mapper.admin.company.AdminCompanyMapper.";
 
-	  public AdminCompanyDAOImple(SqlSessionTemplate sqlSession) {
-	    this.sqlSession = sqlSession;
-	  }
+    public AdminCompanyDAOImple(SqlSessionTemplate sqlSession) {
+        this.sqlSession = sqlSession;
+    }
 
-	  @Override
-	  public List<AdminCompanyRowDTO> companyList() {
-	    return sqlSession.selectList(NS + "companyList");
-	  }
+    @Override
+    public List<AdminCompanyRowDTO> companyList() {
+        return sqlSession.selectList(NS + "companyList");
+    }
 
-	  @Override
-	  public AdminCompanyRowDTO companyDetail(int usersIdx) {
-	    return sqlSession.selectOne(NS + "companyDetail", usersIdx);
-	  }
+    @Override
+    public AdminCompanyRowDTO companyDetail(int usersIdx) {
+        // mapper xml에서 #{usersIdx} 쓰면 안전하게 map으로 전달
+        Map<String, Object> p = new HashMap<>();
+        p.put("usersIdx", usersIdx);
+        return sqlSession.selectOne(NS + "companyDetail", p);
+    }
 
-	  @Override
-	  public int upsertCertStatus(int usersIdx, String certStatus) {
-	    Map<String, Object> p = new HashMap<>();
-	    p.put("usersIdx", usersIdx);
-	    p.put("certType", "사업증");
-	    p.put("certName", "사업자등록증"); // CERT_NAME NOT NULL 대응
-	    p.put("certStatus", certStatus);    // 대기/확인
-	    return sqlSession.update(NS + "upsertCertStatus", p);
-	  }
+    @Override
+    public int updateUserStatus(long userIdx, String status) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("userIdx", userIdx);
+        p.put("status", status);
+        return sqlSession.update(NS + "updateUserStatus", p);
+    }
 
-	  @Override
-	  public int updateUserStatus(int usersIdx, String status) {
-	    Map<String, Object> p = new HashMap<>();
-	    p.put("usersIdx", usersIdx);
-	    p.put("status", status);
-	    return sqlSession.update(NS + "updateUserStatus", p);
-	  }
+    @Override
+    public int insertEmbeddedHistory(long userIdx, String startDate, String endDate, String reason) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("userIdx", userIdx);
+        p.put("startDate", startDate); // yyyy-MM-dd
+        p.put("endDate", endDate);     // yyyy-MM-dd or null/""
+        p.put("reason", reason);
+        return sqlSession.insert(NS + "insertEmbeddedHistory", p);
+    }
 
-	  @Override
-	  public int upsertEmbeddedUser(int usersIdx, java.sql.Date suspendUntil, String reason) {
-		    Map<String, Object> param = new java.util.HashMap<>();
-		    param.put("usersIdx", usersIdx);
-		    param.put("suspendUntil", suspendUntil); // null이어도 OK
-		    param.put("reason", reason);             // null이어도 OK
+    @Override
+    public int closeLatestEmbeddedHistory(long userIdx) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("userIdx", userIdx);
+        return sqlSession.update(NS + "closeLatestEmbeddedHistory", p);
+    }
 
-		    return sqlSession.update(
-		        "com.dacoach.mapper.admin.company.AdminCompanyMapper.upsertEmbeddedUser",
-		        param
-		    );
-		}
-	  @Override
-	  public int terminateSuspension(int usersIdx) {
-	    return sqlSession.update(NS + "terminateSuspension", usersIdx);
-	  }	  
+    @Override
+    public int countCertByUserAndType(long userIdx, String certType) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("userIdx", userIdx);
+        p.put("certType", certType);
+        Integer n = sqlSession.selectOne(NS + "countCertByUserAndType", p);
+        return (n == null) ? 0 : n;
+    }
 
+    @Override
+    public int updateCertStatus(long userIdx, String certStatus) {
+        // 너가 준 xml 파라미터명(user_idx, cert_status) 그대로 맞춤
+        Map<String, Object> p = new HashMap<>();
+        p.put("user_idx", userIdx);
+        p.put("cert_status", certStatus);
+        return sqlSession.update(NS + "updateCertStatus", p);
+    }
+
+    @Override
+    public int insertCertStatus(long userIdx, String certStatus) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("user_idx", userIdx);
+        p.put("cert_status", certStatus);
+        return sqlSession.insert(NS + "insertCertStatus", p);
+    }
 }

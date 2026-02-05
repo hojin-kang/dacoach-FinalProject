@@ -1,14 +1,22 @@
 package com.dacoach.admin.company.model;
 
-import java.sql.Date;
 import java.util.List;
 
 public interface AdminCompanyDAO {
-	List<AdminCompanyRowDTO> companyList();
-	AdminCompanyRowDTO companyDetail(int usersIdx);
-	int upsertCertStatus(int usersIdx, String certStatus);
-	int updateUserStatus(int usersIdx, String status);
-	int upsertEmbeddedUser(int usersIdx, Date suspendUntil, String reason);
-	int terminateSuspension(int usersIdx);
-	
+
+    // 목록/상세
+    List<AdminCompanyRowDTO> companyList();
+    AdminCompanyRowDTO companyDetail(int usersIdx);
+
+    // USERS 상태 저장
+    int updateUserStatus(long userIdx, String status);
+
+    // EMBEDDED_USER (정지 이력 누적 / 최신 종료)
+    int insertEmbeddedHistory(long userIdx, String startDate, String endDate, String reason);
+    int closeLatestEmbeddedHistory(long userIdx);
+
+    // CERT (사업증 승인여부)
+    int countCertByUserAndType(long userIdx, String certType);
+    int updateCertStatus(long userIdx, String certStatus);
+    int insertCertStatus(long userIdx, String certStatus);
 }

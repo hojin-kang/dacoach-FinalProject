@@ -5,44 +5,47 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.dacoach.admincompany.service.AdminCompanyService;
-import com.dacoach.admin.company.model.AdminCompanyRowDTO;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminCompanyController {
 
-	private final AdminCompanyService service;
+  private final AdminCompanyService service;
 
-	  public AdminCompanyController(AdminCompanyService service) {
-	    this.service = service;
-	  }
+  public AdminCompanyController(AdminCompanyService service) {
+    this.service = service;
+  }
+  
+  @GetMapping("/companyList")
+  public String companyList(Model model) {
+    model.addAttribute("list", service.companyList());
+    return "admin/company/companyList";
+  }
 
-	  @GetMapping("/companyList")
-	  public String companyList(Model model) {
-	    model.addAttribute("list", service.companyList());
-	    return "admin/company/companyList";
-	  }
+  @GetMapping("/companyDetail/{usersIdx}")
+  public String companyDetail(@PathVariable int usersIdx, Model model) {
+    model.addAttribute("row", service.companyDetail(usersIdx));
+    return "admin/company/companyDetail";
+  }
 
-	  @GetMapping("/companyDetail/{usersIdx}")
-	  public String companyDetail(@PathVariable int usersIdx, Model model) {
-	    AdminCompanyRowDTO row = service.companyDetail(usersIdx);
-	    model.addAttribute("row", row);
-	    return "admin/company/companyDetail";
-	  }
+  // 저장 버튼
+  @PostMapping("/companyDetail/save")
+  public String saveCompanyDetail(
+      @RequestParam("usersIdx") long usersIdx,
+      @RequestParam("status") String status,
+      @RequestParam(value="suspendFrom", required=false) String suspendFrom,
+      @RequestParam(value="suspendUntil", required=false) String suspendUntil,
+      @RequestParam(value="reason", required=false) String reason
+  ) {
+    service.saveAccountAndSuspend(usersIdx, status, suspendFrom, suspendUntil, reason);
+    return "redirect:/admin/companyDetail/" + usersIdx;
+  }
 
-	  @PostMapping("/companyDetail/save")
-	  public String saveCompanyDetail(
-	      @RequestParam("usersIdx") int usersIdx,
-	      @RequestParam(value = "certStatus", required = false) String certStatus,
-	      @RequestParam(value = "status", required = false) String status,
-	      @RequestParam(value = "suspendFrom", required = false) String suspendFrom,
-	      @RequestParam(value = "suspendUntil", required = false) String suspendUntil,
-	      @RequestParam(value = "reason", required = false) String reason
-	  ) {
-
-		  System.out.println("넘어온 승인상태: " + certStatus);
-	    service.saveCompanyDetail(usersIdx, certStatus, status, suspendFrom, suspendUntil, reason);
-
-	    return "redirect:/admin/companyDetail/" + usersIdx;
-	  }
+  // 승인 버튼(승인여부만)
+  @PostMapping("/companyDetail/{usersIdx}/approve")
+  @ResponseBody
+  public String approve(@PathVariable long usersIdx) {
+    service.approveCompany(usersIdx);
+    return "OK";
+  }
 }
