@@ -3,9 +3,14 @@
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.InternetAddress;
+
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.TemplateEngine;
+
 import lombok.RequiredArgsConstructor;
 import java.io.UnsupportedEncodingException;
 
@@ -14,25 +19,32 @@ import java.io.UnsupportedEncodingException;
 public class MailService {
 
     private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
 
-    public void sendEmail(String toEmail, String title, String text) {
+    public void sendVerificationEmail(String toEmail, String authCode) {
         MimeMessage message = mailSender.createMimeMessage();
         
         try {
-            // true는 멀티파트 메시지(파일 첨부 등)를 지원한다는 의미입니다.
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
             helper.setTo(toEmail);
-            helper.setSubject(title);
-            helper.setText(text, false); // false는 HTML이 아닌 일반 텍스트 모드
+            helper.setSubject("[다코치] 회원가입 인증번호 안내");
 
-            // 발신자 설정: (이메일 주소, 표시될 이름, 인코딩)
-            helper.setFrom(new InternetAddress("dacoach@dacoach.com", "dacoach", "UTF-8"));
+            // Thymeleaf 템플릿 처리
+            Context context = new Context();
+            context.setVariable("authCode", authCode);
+            String htmlContent = templateEngine.process("mail/auth", context);
+            
+            helper.setText(htmlContent, true);
+            helper.setFrom(new InternetAddress("dacoach@dacoach.com", "다코치 팀", "UTF-8"));
+
+            // ★ 로고 경로 수정: static/img/logo.png
+            // 프로젝트의 src/main/resources/static/img/logo.png를 가리킵니다.
+            ClassPathResource logoImage = new ClassPathResource("static/img/logo.png");
+            helper.addInline("logo", logoImage);
 
             mailSender.send(message);
             
-        } catch (MessagingException | UnsupportedEncodingException e) {
-            // 에러 핸들링 (로깅 등)
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

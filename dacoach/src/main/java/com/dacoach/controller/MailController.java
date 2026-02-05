@@ -20,16 +20,18 @@ public class MailController {
     private final HttpSession session;
 
     @PostMapping("/send")
-    public String sendMail(@RequestParam String email) {
+    @ResponseBody
+    public String sendMail(@RequestParam String email, HttpSession session) {
         // 1. 6자리 랜덤 인증번호 생성
         String authCode = String.valueOf((int)(Math.random() * 899999) + 100000);
         
-        // 2. 세션에 인증번호 저장 (3분 동안 유효하게 설정 가능)
+        // 2. 세션에 인증번호 저장
         session.setAttribute("authCode", authCode);
+        // 세션 유지 시간을 3분(180초)으로 설정
         session.setMaxInactiveInterval(180); 
 
-        // 3. 메일 발송
-        mailService.sendEmail(email, "다코치 인증번호입니다.", "인증번호: " + authCode);
+        // 3. 메일 발송 (우리가 만든 메서드는 제목/내용을 내부에서 처리하므로 email과 authCode만 전달)
+        mailService.sendVerificationEmail(email, authCode);
         
         return "success";
     }
