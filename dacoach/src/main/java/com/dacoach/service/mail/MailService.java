@@ -36,9 +36,8 @@ public class MailService {
             
             helper.setText(htmlContent, true);
             helper.setFrom(new InternetAddress("dacoach@dacoach.com", "다코치 팀", "UTF-8"));
-
-            // ★ 로고 경로 수정: static/img/logo.png
-            // 프로젝트의 src/main/resources/static/img/logo.png를 가리킵니다.
+            // 프로젝트의 src/main/resources/static/img/logo.png
+            
             ClassPathResource logoImage = new ClassPathResource("static/img/logo.png");
             helper.addInline("logo", logoImage);
 
