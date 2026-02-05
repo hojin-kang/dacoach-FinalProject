@@ -39,7 +39,9 @@ public class FileUpload {
 
         // 3. 실제 파일 저장
         try {
+        	//파일이 저장될 전체 경로 생성
             Path targetPath = Paths.get(fullDirectoryPath, savedFilename);
+            //멀티파트 객체의 파일 메타데이터로 해당 전체 경로에 실제 파일 저장
             file.transferTo(targetPath);
             
             // 4. DB 저장용 경로 반환 (루트 제외한 상대 경로 + 파일명)
