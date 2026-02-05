@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <title>dacoach</title>
 <link rel="stylesheet" th:href="@{/css/main.css}" />
-<link rel="stylesheet" th:href="@{/css/coach_class.css}" />
+<link rel="stylesheet" th:href="@{/css/company/company_class.css}" />
 </head>
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
@@ -70,9 +70,8 @@
 						<div class="tagRow">
 							<h3 class="blockTitle">해시태그</h3>
 							<span class="tag" th:each="tag : ${hashtagList}" th:text="${tag}"></span>
-							<span class="tag"
-								th:if="${hashtagList == null or #lists.isEmpty(hashtagList)}"
-								style="color: #999;">#해시태그없음</span>
+							<span class="tag tag-empty"
+								th:if="${hashtagList == null or #lists.isEmpty(hashtagList)}">#해시태그없음</span>
 						</div>
 					</article>
 
@@ -81,12 +80,11 @@
 						<h3 class="blockTitle">제공분야</h3>
 
 						<!-- ⭐ 분야 정보 (대분류 > 소분류) -->
-						<div style="margin-bottom: 15px;">
-							<span style="font-weight: bold; color: #328889;"
-								th:if="${fieldInfo != null}"
+						<div class="field-info">
+							<span class="field-text" th:if="${fieldInfo != null}"
 								th:text="${fieldInfo.MAJOR_FIELD_CD} + ' > ' + ${fieldInfo.MINOR_FIELD_NM}"></span>
-							<span th:if="${fieldInfo == null}" style="color: #999;">
-								분야 정보 없음 </span>
+							<span class="field-empty" th:if="${fieldInfo == null}"> 분야
+								정보 없음 </span>
 						</div>
 
 					</article>
