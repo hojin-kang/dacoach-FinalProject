@@ -31,6 +31,7 @@
    
    	<div class="comCert">
    		<p class=companyNum><input type="text" name="company_num" placeholder="사업자 번호를 입력해주세요"></p>
+   		<p id="companyNumMsg" style="font-size: 0.8rem; margin-top: 5px;"></p>
    		<input type="hidden" name="cert_name" value="사업자등록증">
    		<input type="hidden" name="cert_status" value="대기">
    		<p class="certFile"><input type="file" name="cert_file"></p>
@@ -41,5 +42,74 @@
   </div>
   </main>
    <div th:replace="layout/footer :: siteFooter"></div>
+     <script th:inline="javascript">
+     document.addEventListener('DOMContentLoaded', function() {
+    	    const form = document.forms['companyJoinOk'];
+    	    const companyNumInput = form['company_num'];
+    	    const companyNumMsg = document.getElementById('companyNumMsg'); // 메시지 영역
+
+    	    // 사업자 번호 실시간 검사
+    	    companyNumInput.addEventListener('input', function() {
+    	        // 1. 숫자만 남기기
+    	        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10);
+    	        
+    	        const val = this.value;
+
+    	        // 2. 글자수 체크 및 색상 변경
+    	        if (val.length === 0) {
+    	            companyNumMsg.innerText = ""; // 아무것도 안 썼을 땐 메시지 숨김
+    	        } else if (val.length < 10) {
+    	            companyNumMsg.innerText = "사업자 번호는 10자리를 입력해야 합니다. (" + val.length + "/10)";
+    	            companyNumMsg.style.color = "red";
+    	        } else {
+    	            companyNumMsg.innerText = "올바른 자리수입니다.";
+    	            companyNumMsg.style.color = "green";
+    	        }
+    	    });
+
+    	    // 폼 제출 시 최종 확인
+    	    form.onsubmit = function(e) {
+    	        // 이메일 형식 체크 (기존 유지)
+    	        const emailInput = form['email'];
+    	        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    	        if (!emailRegex.test(emailInput.value)) {
+    	            alert('올바른 이메일 형식을 입력해주세요.');
+    	            emailInput.focus();
+    	            return false;
+    	        }
+
+    	        // 사업자 번호 최종 체크
+    	        if (companyNumInput.value.length < 10) {
+    	            alert('사업자 번호 10자리를 모두 입력해주세요.');
+    	            companyNumInput.focus();
+    	            return false;
+    	        }
+
+    	        return true; 
+    	    };
+
+    	    // --- 전화번호 및 이미지 미리보기 로직은 기존과 동일하게 유지하시면 됩니다 ---
+    	    const phoneInput = form['phone'];
+    	    phoneInput.addEventListener('input', function() {
+    	        let val = this.value.replace(/[^0-9]/g, '');
+    	        if (val.length <= 3) { this.value = val; }
+    	        else if (val.length <= 7) { this.value = val.substring(0, 3) + '-' + val.substring(3); }
+    	        else { this.value = val.substring(0, 3) + '-' + val.substring(3, 7) + '-' + val.substring(7, 11); }
+    	    });
+
+    	    const fileInput = document.getElementById('profilePicFileId');
+    	    const previewArea = document.querySelector('.profilePic');
+    	    fileInput.addEventListener('change', function(e) {
+    	        const file = e.target.files[0];
+    	        if (file) {
+    	            const reader = new FileReader();
+    	            reader.onload = function(event) {
+    	                previewArea.innerHTML = `<img src="${event.target.result}" style="max-width: 100%; max-height: 200px; border-radius: 8px;">`;
+    	            };
+    	            reader.readAsDataURL(file);
+    	        }
+    	    });
+    	});
+</script>
 </body>
 </html>

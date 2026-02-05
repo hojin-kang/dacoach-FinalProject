@@ -36,7 +36,7 @@ public class CompanyServiceImple implements CompanyService {
 	
 	@Override
 	public int joinOk(UsersDTO dto) throws Exception {
-
+		dto.setPassword(com.dacoach.javasecure.JavaDataSecureModule.getSHA256(dto.getPassword()));
 		int result=companyMapper.joinOk(dto);
 		return  result;
 

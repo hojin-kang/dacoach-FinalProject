@@ -14,7 +14,7 @@ import lombok.ToString;
 public class CompanyDTO {
  private int company_idx;
  private int user_idx;
- private int company_num;
+ private String company_num;
  private String phone;
  private String address;
  private String intro;
