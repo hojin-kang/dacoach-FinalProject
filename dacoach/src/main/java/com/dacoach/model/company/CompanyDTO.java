@@ -13,7 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class CompanyDTO {
  private int company_idx;
- private int users_idx;
+ private int user_idx;
  private int company_num;
  private String phone;
  private String address;

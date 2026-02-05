@@ -48,8 +48,8 @@
   			#{phone},
   			#{address},
   			#{email},
-  			null,
-  			null,
+  			#{intro},
+  			#{photo},
   			null
   			
   		)
@@ -77,8 +77,41 @@
   			
   		)
   	</insert>
+  	<insert id="addRegion">
+  		insert into company_region (
+  			company_idx,
+  			major_region_idx,
+  			minor_region_idx,
+  			region_detail) 
+  		
+  		values (
+	  		#{company_idx},
+	  		#{major_region_idx},
+	  		#{minor_region_idx},
+	  		#{region_detail}
+  		)
+  		
+  	</insert>
+  	<insert id="provideOk">
+  		insert into company_provide (
+  			company_idx,
+  			minor_field_idx
+  		) 
+  		values (
+  			#{company_idx},
+  			#{minor_field_idx}
+  		)
   	
+  	</insert>
   	<select id="getUserIdx">
   		select user_idx from users where login_id=#{login_id}
+  	</select>
+  	
+  	<select id="getCompanyNum">
+  		select company_idx from company where user_idx=#{idx}
+  	</select>
+  	
+  	<select id="getMinorField">
+  		select * from minor_field where major_field_idx=#{idx}
   	</select>
   </mapper>

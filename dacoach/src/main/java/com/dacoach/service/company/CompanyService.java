@@ -3,6 +3,10 @@ package com.dacoach.service.company;
 import java.util.List;
 import java.util.Map;
 
+import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.company.CompanyDTO;
+import com.dacoach.model.company.CompanyProvideDTO;
+import com.dacoach.model.company.CompanyRegionDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CompanyService {
@@ -12,6 +16,10 @@ public interface CompanyService {
 	public List<Map<String, Object>> getRegionTag(int idx) throws Exception;
 	public int joinOk(UsersDTO dto) throws Exception;
 	public int getUserIdx(String login_id) throws Exception;
-	public int companyInfo(Map<String,Object> map) throws Exception;
-	public int insertcert(Map<String, Object> map) throws Exception;
+	public int companyInfo(CompanyDTO dto) throws Exception;
+	public int insertcert(CertDTO dto) throws Exception;
+	public int getCompanyNum(int idx) throws Exception;
+	public int addRegion(CompanyRegionDTO dto) throws Exception;
+	public List<Map<String,Object>> getMinorField(int idx) throws Exception;
+	public int provideOk(CompanyProvideDTO dto) throws Exception;
 }

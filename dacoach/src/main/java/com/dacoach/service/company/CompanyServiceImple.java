@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dacoach.mapper.company.CompanyMapper;
+import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.company.CompanyDTO;
+import com.dacoach.model.company.CompanyProvideDTO;
+import com.dacoach.model.company.CompanyRegionDTO;
 import com.dacoach.model.users.UsersDTO;
 
 @Service
@@ -43,11 +47,25 @@ public class CompanyServiceImple implements CompanyService {
 		return companyMapper.getUserIdx(login_id);
 	}
 	@Override
-	public int companyInfo(Map<String, Object> map) throws Exception {
+	public int companyInfo(CompanyDTO dto) throws Exception {
 		
-		return companyMapper.companyInfo(map);
+		return companyMapper.companyInfo(dto);
 	}
-	public int insertcert(Map<String, Object> map) throws Exception{
-		return companyMapper.insertcert(map);
+	public int insertcert(CertDTO dto) throws Exception{
+		return companyMapper.insertcert(dto);
+	}
+	
+	public int getCompanyNum(int idx) throws Exception{
+		return companyMapper.getCompanyNum(idx);
+		
+	}
+	public int addRegion(CompanyRegionDTO dto) throws Exception{
+		return companyMapper.addRegion(dto);
+	}
+	public List<Map<String,Object>> getMinorField(int idx) throws Exception{
+		return companyMapper.getMinorField(idx);
+	}
+	public int provideOk(CompanyProvideDTO dto) throws Exception{
+		return companyMapper.provideOk(dto);
 	}
 }

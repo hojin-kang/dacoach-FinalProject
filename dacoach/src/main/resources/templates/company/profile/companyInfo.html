@@ -11,9 +11,18 @@
    <div th:replace="layout/header :: siteHeader"></div>
 
    <main class="main">
-   <div class="container">  
-   <form name="companyJoinOk" action="/company/profile/profileForm" method="post">
    
+   <div class="container">  
+   <form name="companyJoinOk" action="/company/profile/companyInfoOk" method="post">
+	  
+      <div class="picUpload">
+      	<p class="profilePic">업로드한 사진 올릴영역</p>
+      	<p class="picUpBtn"><input type="file" name="photo" id="profilePicFileId"></p>
+      </div>
+      <div class="profileInfoArea">
+      	<textarea rows="4" cols="8" name="intro" placeholder="프로필 설명을 입력해주세요"></textarea>
+      </div>
+         
       <div class="companyInfo">
       	<p class="comTel"><input type="text" name="phone" placeholder="사업장 전화번호를 입력해주세요"></p>
       	<p class="comAddr"><input type="text" name="address" placeholder="사업장 주소를 입력해주세요"></p>

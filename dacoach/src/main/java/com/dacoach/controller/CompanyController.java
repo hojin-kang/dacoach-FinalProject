@@ -19,27 +19,31 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.company.CompanyDTO;
+import com.dacoach.model.company.CompanyProvideDTO;
+import com.dacoach.model.company.CompanyRegionDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.company.CompanyService;
 
 @Controller
 public class CompanyController {
-	
+
 	@Autowired
 	private CompanyService companyService;
-	
-	private HashMap<String,Object> m;
-	
+
+	private HashMap<String, Object> m;
+
 	public CompanyController() {
-		m=new HashMap<String,Object>();
+		m = new HashMap<String, Object>();
 	}
-	
+
 	@GetMapping("/companyJoin")
 	public String joinForm() {
 
 		return "/company/join/companyJoin";
 	}
-	
+
 	@PostMapping("company/join/loginInfoOK")
 	public ModelAndView LoginInfoOk(UsersDTO dto) {
 		try {
@@ -48,87 +52,120 @@ public class CompanyController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ModelAndView mav=new ModelAndView();
-		mav.addObject("login_id",dto.getLogin_id());
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("login_id", dto.getLogin_id());
 		mav.setViewName("forward:/company/profile/companyInfo");
 		return mav;
 	}
-	
+
 	@RequestMapping("/company/profile/companyInfo")
 	public ModelAndView companyInfo() {
-		
-		ModelAndView mav=new ModelAndView();
-		int idx=0;
-		try {
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
+		ModelAndView mav = new ModelAndView();
+
 		mav.setViewName("/company/profile/companyInfo");
 		return mav;
 	}
-	
-	@PostMapping("/company/profile/profileForm")
-	@ResponseBody()
-	public ModelAndView profileForm(String phone,
-									String address,
-									String email,
-									Integer company_num,
-									String cert_status,
-									String cert_name,
-									String cert_file,
-									String login_id) {
-		m.put("phone", phone);
-		m.put("address",address);
-		m.put("email", email);
-		m.put("company_num", company_num);
-		m.put("cert_status", cert_status);
-		m.put("cert_name", cert_name);
-		m.put("cert_file", cert_file);
-		System.out.println(login_id);
+
+	@PostMapping("/company/profile/companyInfoOk")
+	public ModelAndView companyInfoOk(CompanyDTO companyDto, CertDTO certDto, String login_id) {
+		ModelAndView mav = new ModelAndView();
+
 		try {
-			int user_idx=companyService.getUserIdx(login_id);
-			m.put("user_idx", user_idx);
-			System.out.println(m);
-			int infoResult=companyService.companyInfo(m);
-			int certResurt=companyService.insertcert(m);
+			int userIdx=companyService.getUserIdx(login_id);
+			companyDto.setUser_idx(companyService.getUserIdx(login_id));
+			certDto.setUser_idx(companyService.getUserIdx(login_id));
+
+			int infoResult = companyService.companyInfo(companyDto);
+			int certResurt = companyService.insertcert(certDto);
 			
+			mav.setViewName("redirect:/company/profile/profileForm?userIdx="+userIdx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		return mav;
+	}
+
+	@GetMapping("/company/profile/profileForm")
+	public ModelAndView profileForm(Integer userIdx) {
+		ModelAndView mav = new ModelAndView();
+		List<Map<String, Object>> field = null;
+		List<Map<String, Object>> region = null;
+		try {
 			
+			field = companyService.fieldTeg();
+			region = companyService.regionTeg();
+			mav.addObject("field_con", field);
+			mav.addObject("region_con", region);
+			mav.addObject("company_num",companyService.getCompanyNum(userIdx));
+			mav.setViewName("/company/profile/profileForm");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+	@PostMapping("/company/profile/provideOk")
+	public ModelAndView provideOk(CompanyProvideDTO dto) {
+		ModelAndView mav=new ModelAndView();
+		try {
+			int result=companyService.provideOk(dto);
+			String msg=result>0?"회원가입 감사드립니다":"회원가입 실패하였습니다 관리자에게 문의부탁드립니다";
+			mav.addObject("msg",msg);
+			mav.setViewName("/company/join/companyJoinOkMsg");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		ModelAndView mav=new ModelAndView();
-		List<Map<String,Object>> field=null;
-		List<Map<String,Object>> region=null;
-		try {
-			field=companyService.fieldTeg();
-			region=companyService.regionTeg();
-			mav.addObject("field_con",field);
-			mav.addObject("region_con",region);
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		mav.setViewName("/company/profile/profileForm");
 		return mav;
 	}
-	
-	
 	@GetMapping("/api/company/getMinorRegion")
-	public ResponseEntity<List<Map<String, Object>>> tst(Integer regionIdx) {
-		List<Map<String, Object>> minorRegion=null;
+	public ResponseEntity<List<Map<String, Object>>> getMinorRegion(Integer regionIdx) {
+		List<Map<String, Object>> minorRegion = null;
 		try {
 			minorRegion = companyService.getRegionTag(regionIdx);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ResponseEntity<List<Map<String, Object>>> re=new ResponseEntity<List<Map<String, Object>>>(minorRegion,HttpStatus.OK);
+		ResponseEntity<List<Map<String, Object>>> re = new ResponseEntity<List<Map<String, Object>>>(minorRegion,
+				HttpStatus.OK);
 		return re;
 	}
-
 	
+	@PostMapping("/api/company/addRegion")
+	public ResponseEntity<String> addRegion(@RequestBody CompanyRegionDTO dto,String minorName){
+		String msg=null;
+		try {
+			int addRegionVal=companyService.addRegion(dto);
+			msg=addRegionVal>0?minorName:null;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ResponseEntity<String> re=new ResponseEntity<>(msg,HttpStatus.OK);
+		return re;
+	}
+	
+	@GetMapping("/api/company/getMinorField") 
+	public ResponseEntity<List<Map<String, Object>>> getMinorField(Integer fieldIdx){
+		List<Map<String,Object>> fields=null;
+		
+		try {
+			fields=companyService.getMinorField(fieldIdx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ResponseEntity<List<Map<String, Object>>> re =new ResponseEntity<List<Map<String,Object>>>(fields,HttpStatus.OK);
+		return re;
+	}
+	
+	
+
 }
