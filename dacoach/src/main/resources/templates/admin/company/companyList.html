@@ -1,39 +1,189 @@
-<div th:fragment="contentPage">
-  <h2>기업고객관리</h2>
+<div th:fragment="contentPage" class="page-wrap font-main">
 
-  <table>
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>이름</th>
-        <th>사업자번호</th>
-        <th>계정상태</th>
-        <th>관리</th>
-      </tr>
-    </thead>
+  <style>
+    /* companyList.css - coachDetail 민트톤 기반 */
 
-    <tbody>
-      <tr th:each="row, stat : ${list}">
-        <td th:text="${stat.count}">1</td>
-        
-        <td th:text="${row.users != null ? row.users.user_name : '-'}">-</td>
-        
-        <td th:text="${row.company != null ? row.company.company_num : '-'}">-</td>
+    /* base */
+    .font-main {
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      color: #374151;
+    }
 
-        <td>
-          <span th:if="${row.users != null and row.users.status == 'ACTIVE'}">사용</span>
-          <span th:if="${row.users != null and row.users.status == 'SUSPENDED'}">정지</span>
-          <span th:if="${row.users == null or (row.users.status != 'ACTIVE' and row.users.status != 'SUSPENDED')}">비활성화</span>
-        </td>
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px;
+    }
 
-        <td>
-          <a th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row.users_idx})}">상세</a>
-        </td>
-      </tr>
+    /* card */
+    .info-card {
+      background-color: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 40px;
+      padding: 2rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      position: relative;
+    }
 
-      <tr th:if="${#lists.isEmpty(list)}">
-        <td colspan="5">조회된 데이터가 없습니다.</td>
-      </tr>
-    </tbody>
-  </table>
+    .page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-badge {
+      display: inline-block;
+      background-color: #9dbbb5;
+      color: white;
+      padding: 0.5rem 2rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    /* table wrapper */
+    .table-wrap {
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+    }
+
+    /* table */
+    .list-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .list-thead {
+      background-color: #9dbbb5;
+      color: white;
+      height: 2.5rem;
+    }
+
+    .list-thead th {
+      padding: 10px 8px;
+      border-right: 1px solid rgba(255,255,255,0.25);
+      font-weight: 700;
+    }
+
+    .list-thead th:last-child {
+      border-right: none;
+    }
+
+    .list-tbody {
+      background-color: #f0f8f7;
+    }
+
+    .list-tbody td {
+      padding: 12px 8px;
+      border-top: 1px solid rgba(255,255,255,0.8);
+      color: #374151;
+    }
+
+    /* hover */
+    .list-tbody tr:hover td {
+      filter: brightness(98%);
+    }
+
+    /* status badges */
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .status-active {
+      background-color: rgba(16,185,129,0.15);
+      color: #047857;
+    }
+
+    .status-suspended {
+      background-color: rgba(239,68,68,0.12);
+      color: #b91c1c;
+    }
+
+    .status-inactive {
+      background-color: rgba(107,114,128,0.12);
+      color: #4b5563;
+    }
+
+    /* detail link button 느낌 */
+    .link-detail {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 12px;
+      background-color: #9dbbb5;
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .link-detail:hover {
+      filter: brightness(90%);
+    }
+
+    /* empty row */
+    .empty-row {
+      padding: 28px 10px;
+      color: #9ca3af;
+    }
+  </style>
+
+  <div class="info-card">
+    <div class="page-head">
+      <h2 class="section-badge">기업고객관리</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="list-table">
+        <thead class="list-thead">
+          <tr>
+            <th>번호</th>
+            <th>이름</th>
+            <th>사업자번호</th>
+            <th>계정상태</th>
+            <th> <a th:href="@{/admin/companyList(sort='status')}" class="th-sort">
+    관리
+  </a></th>
+          </tr>
+        </thead>
+
+        <tbody class="list-tbody">
+          <tr th:each="row, stat : ${list}">
+            <td th:text="${stat.count}">1</td>
+
+            <td th:text="${row.users != null ? row.users.user_name : '-'}">-</td>
+
+            <td th:text="${row.company != null ? row.company.company_num : '-'}">-</td>
+
+            <td>
+              <span class="status-badge status-active"
+                    th:if="${row.users != null and row.users.status == 'ACTIVE'}">사용</span>
+              <span class="status-badge status-suspended"
+                    th:if="${row.users != null and row.users.status == 'SUSPENDED'}">정지</span>
+              <span class="status-badge status-inactive"
+                    th:if="${row.users == null or (row.users.status != 'ACTIVE' and row.users.status != 'SUSPENDED')}">비활성화</span>
+            </td>
+
+            <td>
+              <a class="link-detail"
+                 th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row.users_idx})}">상세</a>
+            </td>
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(list)}">
+            <td class="empty-row" colspan="5">조회된 데이터가 없습니다.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

@@ -2,6 +2,8 @@ package com.dacoach.admin.company.model;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 public interface AdminCompanyDAO {
 
     // 목록/상세

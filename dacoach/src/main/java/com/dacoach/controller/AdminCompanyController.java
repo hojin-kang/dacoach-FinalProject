@@ -19,13 +19,17 @@ public class AdminCompanyController {
   @GetMapping("/companyList")
   public String companyList(Model model) {
     model.addAttribute("list", service.companyList());
-    return "admin/company/companyList";
+    model.addAttribute("contentPage", "admin/company/companyList");
+    model.addAttribute("contentFragment", "contentPage");
+    return "admin/dashboard";	
   }
 
   @GetMapping("/companyDetail/{usersIdx}")
   public String companyDetail(@PathVariable int usersIdx, Model model) {
     model.addAttribute("row", service.companyDetail(usersIdx));
-    return "admin/company/companyDetail";
+    model.addAttribute("contentPage", "admin/company/companyDetail");
+    model.addAttribute("contentFragment", "contentPage");
+    return "admin/dashboard";
   }
 
   // 저장 버튼
@@ -48,4 +52,12 @@ public class AdminCompanyController {
     service.approveCompany(usersIdx);
     return "OK";
   }
+  
+  @GetMapping("/companyClassList")
+  public String companyClassList(Model model) {
+	model.addAttribute("contentPage", "admin/company/companyClassList");
+	model.addAttribute("contentFragment", "contentPage");
+	return "admin/dashboard";	
+  }
+  
 }
