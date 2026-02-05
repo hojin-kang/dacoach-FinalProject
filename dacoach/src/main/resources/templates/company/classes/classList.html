@@ -40,10 +40,10 @@
 							th:href="@{/class/company/classDetail(id=${classItem.class_idx})}">
 
 							<div class="thumb">
-								<!-- FileUploadController 사용 -->
+								<!-- 동료 방식: /uploads/ + 전체 경로 -->
 								<img
 									th:src="${classItem.photo != null and classItem.photo != ''} 
-									? '/files/photo/' + ${classItem.photo} 
+									? '/uploads/' + ${classItem.photo} 
 									: '/images/default_class.png'"
 									onerror="this.src='/images/default_class.png'"
 									th:alt="${classItem.title}" />

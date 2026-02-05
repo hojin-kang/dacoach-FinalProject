@@ -31,9 +31,6 @@ public class ClassDTO {
 	private Date created_at;
 	private Integer max_user_cnt;
 	
-	// 파일 업로드용 (DB에는 저장하지 않음, transient)
-	private MultipartFile photoFile;   // 사진 파일
-	private MultipartFile videoFile;   // 영상 파일
 	
 	// 리뷰용
 	private String user_name;   // 회사명

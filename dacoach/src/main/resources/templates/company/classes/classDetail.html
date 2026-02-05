@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8" />
 <title>dacoach</title>
-
 <link rel="stylesheet" th:href="@{/css/main.css}" />
 <link rel="stylesheet" th:href="@{/css/coach_class.css}" />
 </head>
@@ -20,7 +19,7 @@
 					<div class="providerAvatar">
 						<img
 							th:src="${providerPhoto != null and providerPhoto != ''} 
-								? '/files/profile/' + ${providerPhoto} 
+								? '/uploads/' + ${providerPhoto} 
 								: '/images/default_profile.png'"
 							alt="provider" />
 					</div>
@@ -50,9 +49,8 @@
 
 			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
 			<nav class="detailTabs">
-				<a class="tab active" href="#detail">상세정보</a>
-				<!-- ✅ 여기 누르면 아래 후기 블록으로 앵커 이동 -->
-				<a class="tab" href="#reviews">클래스 후기</a>
+				<a class="tab active" href="#detail">상세정보</a> <a class="tab"
+					href="#reviews">클래스 후기</a>
 			</nav>
 
 			<hr class="divider" />
@@ -73,10 +71,7 @@
 					<article class="detailBlock">
 						<h3 class="blockTitle">제공분야</h3>
 						<div class="tagRow">
-							<!-- 예: 해시태그 리스트 -->
 							<span class="tag" th:each="t : ${tagList}" th:text="${t}">#도자기</span>
-
-							<!-- tagList 없을 때 fallback -->
 							<span class="tag"
 								th:if="${tagList == null or #lists.isEmpty(tagList)}">#선택안함</span>
 						</div>
@@ -91,7 +86,7 @@
 							<div class="mediaBox">
 								<video class="mediaVideo" controls
 									th:if="${classDTO.video != null and classDTO.video != ''}">
-									<source th:src="'/files/video/' + ${classDTO.video}"
+									<source th:src="'/uploads/' + ${classDTO.video}"
 										type="video/mp4">
 								</video>
 
@@ -105,7 +100,7 @@
 							<div class="mediaBox">
 								<img class="mediaImg"
 									th:src="${classDTO.photo != null and classDTO.photo != ''} 
-										? '/files/photo/' + ${classDTO.photo} 
+										? '/uploads/' + ${classDTO.photo} 
 										: '/images/default_class.png'"
 									alt="class photo" />
 							</div>
@@ -142,7 +137,7 @@
 										<div class="reviewAvatar">
 											<img
 												th:src="${r.reviewerPhoto != null and r.reviewerPhoto != ''} 
-													? '/files/profile/' + ${r.reviewerPhoto} 
+													? '/uploads/' + ${r.reviewerPhoto} 
 													: '/images/default_profile.png'"
 												alt="reviewer" />
 										</div>

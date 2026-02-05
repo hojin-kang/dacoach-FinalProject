@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dacoach.model.classes.ClassDTO;
 import com.dacoach.service.classes.ClassService;
+import com.dacoach.service.file.FileUpload;
 
 @Controller
 @RequestMapping("/class")
@@ -74,11 +75,15 @@ public class ClassController {
 
 			classDTO.setProvider_idx(userIdx);
 
+			// 파일 저장 처리 (재인 형님꺼 사용하기~)
 			if (photoFile != null && !photoFile.isEmpty()) {
-				classDTO.setPhotoFile(photoFile);
+				String photoPath = FileUpload.saveFile(photoFile, "classes/photos");
+				classDTO.setPhoto(photoPath); // "classes/photos/uuid.jpg"
 			}
+
 			if (videoFile != null && !videoFile.isEmpty()) {
-				classDTO.setVideoFile(videoFile);
+				String videoPath = FileUpload.saveFile(videoFile, "classes/videos");
+				classDTO.setVideo(videoPath); // "classes/videos/uuid.mp4"
 			}
 
 			int result = classService.classRegister(classDTO);
@@ -98,11 +103,7 @@ public class ClassController {
 		return mav;
 	}
 
-	/*************
-	 * company
-	 * 
-	 * @throws Exception
-	 *************/
+	/************* company *************/
 	@GetMapping("/company/classList")
 	public ModelAndView classList(HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView("company/classes/classList");
@@ -121,22 +122,17 @@ public class ClassController {
 	@GetMapping("/company/classDetail")
 	public ModelAndView companyClassDetail(@RequestParam("id") int id) throws Exception {
 		ModelAndView mav = new ModelAndView();
-		ClassDTO classDTO = classService.getClassDetail(id); // id로 조회
+		ClassDTO classDTO = classService.getClassDetail(id);
 
 		if (classDTO == null) {
-			// 1) 없는 id면 목록으로 보내거나
 			mav.setViewName("redirect:/class/coach/classList");
 			return mav;
-
-			// 또는 2) 에러 페이지/메시지 보여주고 싶으면
-			// mav.addObject("error", "존재하지 않는 클래스입니다.");
-			// return mav;
 		}
 
 		mav.addObject("classDTO", classDTO);
 
 		// 일단 화면 안 터지게 최소값도 같이
-		mav.addObject("providerName", ""); // 나중에 채우기
+		mav.addObject("providerName", "");
 		mav.addObject("providerPhoto", "");
 		mav.addObject("avgRating", 0);
 		mav.addObject("reviewCount", 0);
