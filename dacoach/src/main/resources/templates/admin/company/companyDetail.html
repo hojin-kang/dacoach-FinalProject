@@ -1,14 +1,10 @@
-<!-- templates/admin/company/companyDetail.html -->
 <div th:fragment="contentPage">
-
   <form th:action="@{/admin/companyDetail/save}" method="post">
-
     <input type="hidden" name="usersIdx" th:value="${row.users_idx}">
-    <input type="hidden" id="certStatus" name="certStatus" value="">
+    <input type="hidden" id="certStatus" name="certStatus" th:value="${row.cert_status}">
     <input type="hidden" id="certType" name="certType" value="사업증">
 
     <h2>기업 상세</h2>
-
     <hr>
 
     <section>
@@ -46,55 +42,57 @@
 
       <div>
         <div>승인여부</div>
-        <div id="certStatusText" th:text="${row.cert_status != null ? row.cert_status : '-'}">-</div>
+        <div id="certStatusText" 
+             th:text="${row.cert_status != null ? row.cert_status : '-'}"
+             th:style="${row.cert_status == '확인' ? 'color:blue; font-weight:bold;' : 'color:red; font-weight:bold;'}">-</div>
       </div>
     </section>
 
     <hr>
-<section class="mt-6 border-t pt-6">
-  <h3 class="text-lg font-bold mb-4">계정관리</h3>
-  
-  <div class="flex items-center gap-4 mb-4">
-    <div class="bg-gray-100 px-4 py-2 rounded font-medium">계정상태</div>
-    <label class="flex items-center gap-1 cursor-pointer">
-      <input type="radio" name="status" value="ACTIVE" onclick="handleStatusChange('ACTIVE')"
-             th:checked="${row.users != null && row.users.status == 'ACTIVE'}"> 사용
-    </label>
-    <label class="flex items-center gap-1 cursor-pointer">
-      <input type="radio" name="status" value="SUSPENDED" onclick="handleStatusChange('SUSPENDED')"
-             th:checked="${row.users != null && row.users.status == 'SUSPENDED'}"> 정지
-    </label>
-  </div>
 
-  <div class="flex flex-col gap-2">
-    <div class="font-bold text-blue-900">정지기간</div>
-    <div class="flex items-center gap-2">
-      <input type="date" id="suspendFrom" name="suspendFrom" readonly
-             th:value="${row.embedded != null and row.embedded.start_date != null 
-                       ? #strings.substring(row.embedded.start_date.toString(), 0, 10) 
-                       : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
-             class="border border-gray-300 p-2 rounded bg-gray-50 text-gray-500 w-40">
+    <section class="mt-6 border-t pt-6">
+      <h3 class="text-lg font-bold mb-4">계정관리</h3>
       
-      <span>~</span>
-      
-      <input type="date" name="suspendUntil" id="suspendUntil"
-             th:value="${row.embedded != null and row.embedded.end_date != null 
-                       ? #strings.substring(row.embedded.end_date.toString(), 0, 10) : ''}"
-             class="border border-gray-300 p-2 rounded w-40">
-      
-      <input type="text" name="reason" id="reason" placeholder="사유 입력 (예: 욕설)"
-             th:value="${row.embedded != null ? row.embedded.reason : ''}"
-             class="border border-gray-300 p-2 rounded flex-1">
-    </div>
-  </div>
-</section>
+      <div class="flex items-center gap-4 mb-4">
+        <div class="bg-gray-100 px-4 py-2 rounded font-medium">계정상태</div>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input type="radio" name="status" value="ACTIVE" onclick="handleStatusChange('ACTIVE')"
+                 th:checked="${row.users != null && row.users.status == 'ACTIVE'}"> 사용
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input type="radio" name="status" value="SUSPENDED" onclick="handleStatusChange('SUSPENDED')"
+                 th:checked="${row.users != null && row.users.status == 'SUSPENDED'}"> 정지
+        </label>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="font-bold text-blue-900">정지기간</div>
+        <div class="flex items-center gap-2">
+          <input type="date" id="suspendFrom" name="suspendFrom" readonly
+                 th:value="${row.embedded != null and row.embedded.start_date != null 
+                           ? #strings.substring(row.embedded.start_date.toString(), 0, 10) 
+                           : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
+                 class="border border-gray-300 p-2 rounded bg-gray-50 text-gray-500 w-40">
+          
+          <span>~</span>
+          
+          <input type="date" name="suspendUntil" id="suspendUntil"
+                 th:value="${row.embedded != null and row.embedded.end_date != null 
+                           ? #strings.substring(row.embedded.end_date.toString(), 0, 10) : ''}"
+                 class="border border-gray-300 p-2 rounded w-40">
+          
+          <input type="text" name="reason" id="reason" placeholder="사유 입력 (예: 욕설)"
+                 th:value="${row.embedded != null ? row.embedded.reason : ''}"
+                 class="border border-gray-300 p-2 rounded flex-1">
+        </div>
+      </div>
+    </section>
 
     <hr>
 
     <section>
       <h3>사업자등록증</h3>
-
-      <table border="1">
+      <table border="1" class="w-full text-center">
         <thead>
           <tr>
             <th>발급일자</th>
@@ -108,54 +106,70 @@
             <td>-</td>
             <td>-</td>
             <td>-</td>
-            <td><a href="#">파일보기</a></td>
+            <td><a href="#" class="text-blue-500 underline">파일보기</a></td>
           </tr>
         </tbody>
       </table>
-
-      <div>승인 버튼은 알림만 띄우고, 실제 반영은 저장 버튼에서 된다.</div>
+      <p class="text-sm text-gray-500 mt-2">※ 승인 버튼은 상태값만 변경하며, [저장]을 눌러야 실제 DB에 반영됩니다.</p>
     </section>
 
     <hr>
 
-    <div>
-      <button type="button" onclick="approveNow()">승인</button>
-      <button type="submit">저장</button>
-      <a th:href="@{/admin/companyList}">목록</a>
+    <div class="mt-8 flex gap-2">
+      <button type="button" onclick="approveNow()" class="btn-approve">승인</button>
+      <button type="submit" class="btn-save">저장</button>
+      <a th:href="@{/admin/companyList}" class="btn-list">목록</a>
     </div>
-
   </form>
 
- <script>
-  // 상태 변경에 따른 입력창 제어
-  function handleStatusChange(status) {
-    const untilInput = document.getElementById('suspendUntil');
-    const reasonInput = document.getElementById('reason');
-    const fromInput = document.getElementById('suspendFrom');
+  <script th:inline="javascript">
+    // 1. 승인 버튼 클릭 시 처리
+    function approveNow() {
+      const certStatusInput = document.getElementById('certStatus');
+      const certStatusText = document.getElementById('certStatusText');
 
-    if (status === 'ACTIVE') {
-      // 사용 선택 시: 종료일과 사유만 비활성화 (시작일은 그대로 둠)
-      untilInput.disabled = true;
-      reasonInput.disabled = true;
-      untilInput.classList.add('bg-gray-100');
-      reasonInput.classList.add('bg-gray-100');
-      
-      // 만약 신규 정지 설정 중이었다면 값 초기화
-      if (!untilInput.defaultValue) untilInput.value = '';
-      if (!reasonInput.defaultValue) reasonInput.value = '';
-    } else {
-      // 정지 선택 시: 입력창 활성화
-      untilInput.disabled = false;
-      reasonInput.disabled = false;
-      untilInput.classList.remove('bg-gray-100');
-      reasonInput.classList.remove('bg-gray-100');
+      if (certStatusInput && certStatusText) {
+        certStatusInput.value = '확인';
+        certStatusText.innerText = '확인';
+        certStatusText.style.color = 'blue';
+        alert('승인 상태로 설정되었습니다. 하단 [저장] 버튼을 클릭해 주세요.');
+      }
     }
-  }
 
-  // 초기 로드 시 실행
-  window.addEventListener('DOMContentLoaded', (event) => {
-    const checkedStatus = document.querySelector('input[name="status"]:checked').value;
-    handleStatusChange(checkedStatus);
-  });
-</script>
+    // 2. 계정 상태 라디오 변경 시 입력 필드 제어
+    function handleStatusChange(status) {
+      const untilInput = document.getElementById('suspendUntil');
+      const reasonInput = document.getElementById('reason');
+
+      if (status === 'ACTIVE') {
+        untilInput.disabled = true;
+        reasonInput.disabled = true;
+        untilInput.style.backgroundColor = '#f3f4f6';
+        reasonInput.style.backgroundColor = '#f3f4f6';
+        
+        // 기존에 적혀있던 값 비우기 (DB 연동 시 defaultValue 체크)
+        if (!untilInput.defaultValue) untilInput.value = '';
+        if (!reasonInput.defaultValue) reasonInput.value = '';
+      } else {
+        untilInput.disabled = false;
+        reasonInput.disabled = false;
+        untilInput.style.backgroundColor = '#ffffff';
+        reasonInput.style.backgroundColor = '#ffffff';
+      }
+    }
+
+    // 3. 초기 실행 (현재 선택된 라디오 버튼 상태 반영)
+    document.addEventListener('DOMContentLoaded', () => {
+      const checkedRadio = document.querySelector('input[name="status"]:checked');
+      if (checkedRadio) {
+        handleStatusChange(checkedRadio.value);
+      }
+    });
+  </script>
+
+  <style>
+    .btn-approve { background-color: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
+    .btn-save { background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
+    .btn-list { background-color: #6b7280; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; }
+  </style>
 </div>

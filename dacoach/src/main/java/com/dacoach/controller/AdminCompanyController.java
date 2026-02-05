@@ -40,7 +40,7 @@ public class AdminCompanyController {
 	      @RequestParam(value = "reason", required = false) String reason
 	  ) {
 
-	   
+		  System.out.println("넘어온 승인상태: " + certStatus);
 	    service.saveCompanyDetail(usersIdx, certStatus, status, suspendFrom, suspendUntil, reason);
 
 	    return "redirect:/admin/companyDetail/" + usersIdx;

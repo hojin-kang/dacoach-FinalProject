@@ -1,32 +1,43 @@
-<!-- admin/company/companyList.html -->
 <div th:fragment="contentPage">
-	<h2 class="text-xl font-bold mb-6">기업고객관리</h2>
+    <h2 class="text-xl font-bold mb-6">기업고객관리</h2>
 
-	<div class="card !p-0 overflow-hidden">
-		<table class="w-full text-center border-collapse">
-			<thead class="bg-gray-200">
-				<tr>
-					<th class="py-2">번호</th>
-					<th class="py-2">기업명</th>
-					<th class="py-2">사업자번호</th>
-					<th class="py-2">승인여부</th>
-					<th class="py-2">상세</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="row : ${list}">
-					<td th:text="${row.company.company_idx}"></td>
-					<td th:text="${row.users.user_name}"></td>
-					<td th:text="${row.company.company_num}"></td>
-					<td th:text="${row.cert_status}"></td>
-					<td><a
-						th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row.users_idx})}">
-							상세 </a></td>
-				</tr>
-				<tr th:if="${#lists.isEmpty(companyList)}">
-					<td colspan="5" class="text-gray-500 py-4">데이터가 없습니다.</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <div class="card !p-0 overflow-hidden">
+        <table class="w-full text-center border-collapse">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="py-2">번호</th>
+                    <th class="py-2">기업명</th>
+                    <th class="py-2">사업자번호</th>
+                    <th class="py-2">승인여부</th>
+                    <th class="py-2">계정상태</th> <th class="py-2">상세</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${list}">
+                    <td th:text="${row.company.company_idx}"></td>
+                    <td th:text="${row.users.user_name}"></td>
+                    <td th:text="${row.company.company_num}"></td>
+                    <td>
+                        <span th:text="${row.cert_status}" 
+                              th:classappend="${row.cert_status == '대기' ? 'text-red-500 font-bold' : ''}">
+                        </span>
+                    </td>
+                    <td>
+                        <span th:if="${row.users.status == 'ACTIVE'}" class="text-green-600">사용</span>
+                        <span th:if="${row.users.status == 'INACTIVE'}" class="text-gray-400">비활성</span>
+                        <span th:if="${row.users.status == 'SUSPENDED'}" class="text-red-600 font-bold">정지</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row.users_idx})}"
+                           class="btn-sm bg-blue-500 text-white px-2 py-1 rounded">
+                            상세
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(list)}">
+                    <td colspan="6" class="text-gray-500 py-4">데이터가 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
