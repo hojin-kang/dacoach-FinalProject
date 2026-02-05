@@ -43,8 +43,9 @@ public class UserController {
         ModelAndView mav = new ModelAndView();
         
         try {
-            // 1. 토큰 및 사용자 정보 가져오기
+            // 토큰 및 사용자 정보 가져오기
             String accessToken = kakaoService.getAccessToken(code);
+            //(id, 카카오 고유 번호(long타입)), (nickname, 닉네임(문자열)), (email, 이메일(문자열))
             Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
             
             // 정보가 없는 경우 예외 처리
@@ -55,9 +56,8 @@ public class UserController {
 
             // 카카오 ID 값은 숫자형태이므로 String.valueOf 사용
             String kakaoKey = String.valueOf(userInfo.get("id"));
-            String nickname = (String) userInfo.get("nickname");
 
-            // 2. 기존 회원 여부 확인
+            // 기존 회원 여부 확인
             CoachDTO coach = coachService.getCoachByKakaoKey(kakaoKey);
 
             if (coach != null && session.getAttribute("user_idx")==null) {
