@@ -54,5 +54,10 @@ public class AdminServiceImple implements AdminService {
 	public int updateEnddateSuspended(int user_idx) throws Exception {
 		return adminMapper.updateEnddateSuspended(user_idx);
 	}
+	
+	@Override
+	public List<Map<String, Object>> getKeywordType() throws Exception {
+		return adminMapper.getKeywordType();
+	}
 
 }

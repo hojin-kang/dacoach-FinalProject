@@ -75,4 +75,11 @@
 	from embedded_user
 	where user_idx=#{user_idx})
 	</update>
+	
+	<select id="getKeywordType" resultType="map">
+	select keyword_type,count(*) as cnt
+	from keyword
+	group by keyword_type
+	order by keyword_type asc
+	</select>
 </mapper>
