@@ -22,8 +22,9 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
 
     @Override
     public List<AdminCompanyRowDTO> companyList() {
-        return sqlSession.selectList(NS + "companyList");
+    	return sqlSession.selectList(NS + "companyList");
     }
+    
 
     @Override
     public AdminCompanyRowDTO companyDetail(int usersIdx) {

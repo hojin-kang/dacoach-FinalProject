@@ -1,217 +1,395 @@
-<div th:fragment="contentPage">
-  <form id="companyForm" th:action="@{/admin/companyDetail/save}" method="post">
-    <input type="hidden" name="usersIdx" th:value="${row.users_idx}">
-    <input type="hidden" id="certStatus" name="certStatus" th:value="${row.cert_status}">
-    <input type="hidden" id="certType" name="certType" value="사업증">
+<div th:fragment="contentPage" class="company-detail-page">
+  <style>
+    /* companyDetail 전용 CSS (레이아웃 th:replace 구조에서도 적용되게 fragment 내부에 포함) */
 
-    <h2>기업 상세</h2>
-    <hr>
+    .company-detail-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px;
+      font-family: 'Pretendard', sans-serif;
+      font-size: 14px;
+      color: #374151;
+    }
 
-    <section>
-      <h3>컴퍼니 정보</h3>
+    .company-detail-page .info-card {
+      background-color: #ffffff;
+      border: 2px solid #e5e7eb;
+      border-radius: 40px;
+      padding: 2rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      position: relative;
+    }
 
-      <div>
-        <div>컴퍼니 이름</div>
-        <div th:text="${row.users != null ? row.users.user_name : '-'}">-</div>
+    .company-detail-page .section-badge {
+      display: inline-block;
+      background-color: #9dbbb5;
+      color: #ffffff;
+      padding: 0.5rem 2rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .company-detail-page .sub-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 10px 0 14px;
+      color: #111827;
+    }
+
+    .company-detail-page .divider {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 18px 0;
+    }
+
+    .company-detail-page .kv-grid {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 10px 14px;
+      align-items: stretch;
+    }
+
+    .company-detail-page .kv-label {
+      background-color: #9dbbb5;
+      color: #ffffff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      padding: 10px 12px;
+      min-height: 40px;
+    }
+
+    .company-detail-page .kv-value {
+      background-color: #f0f8f7;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      min-height: 40px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .company-detail-page .status-text {
+      font-weight: 800;
+    }
+
+    .company-detail-page .account-box {
+      background-color: #f0f8f7;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .company-detail-page .radio-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .company-detail-page .radio-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .company-detail-page .date-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .company-detail-page .input {
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 10px 12px;
+      outline: none;
+      background: #ffffff;
+    }
+
+    .company-detail-page .input:focus {
+      border-color: #9dbbb5;
+      box-shadow: 0 0 0 3px rgba(157,187,181,0.25);
+    }
+
+    .company-detail-page .input.readonly {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    .company-detail-page .w-40 { width: 160px; }
+    .company-detail-page .flex-1 { flex: 1; min-width: 240px; }
+
+    .company-detail-page .table-wrap {
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      margin-top: 10px;
+    }
+
+    .company-detail-page table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .company-detail-page thead {
+      background-color: #9dbbb5;
+      color: #ffffff;
+      height: 40px;
+    }
+
+    .company-detail-page th,
+    .company-detail-page td {
+      padding: 10px 8px;
+      border-top: 1px solid rgba(255,255,255,0.8);
+    }
+
+    .company-detail-page tbody {
+      background-color: #f0f8f7;
+    }
+
+    .company-detail-page .file-link {
+      color: #2563eb;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    .company-detail-page .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .company-detail-page .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .company-detail-page .btn-approve {
+      background-color: #10b981;
+      color: #ffffff;
+    }
+
+    .company-detail-page .btn-save {
+      background-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .company-detail-page .btn-list {
+      background-color: #6b7280;
+      color: #ffffff;
+    }
+
+    .company-detail-page .btn:hover {
+      filter: brightness(92%);
+    }
+  </style>
+
+  <div class="info-card">
+    <form id="companyForm" th:action="@{/admin/companyDetail/save}" method="post">
+      <input type="hidden" name="usersIdx" th:value="${row.users_idx}">
+      <input type="hidden" id="certStatus" name="certStatus" th:value="${row.cert_status}">
+      <input type="hidden" id="certType" name="certType" value="사업증">
+
+      <div class="section-badge">기업 상세</div>
+
+      <div class="sub-title">컴퍼니 정보</div>
+
+      <div class="kv-grid">
+        <div class="kv-label">컴퍼니 이름</div>
+        <div class="kv-value" th:text="${row.users != null ? row.users.user_name : '-'}">-</div>
+
+        <div class="kv-label">사업자번호</div>
+        <div class="kv-value" th:text="${row.company != null ? row.company.company_num : '-'}">-</div>
+
+        <div class="kv-label">전화번호</div>
+        <div class="kv-value" th:text="${(row.company != null and row.company.phone != null and row.company.phone != '') ? row.company.phone : '-'}">-</div>
+
+        <div class="kv-label">주소</div>
+        <div class="kv-value" th:text="${(row.company != null and row.company.address != null and row.company.address != '') ? row.company.address : '-'}">-</div>
+
+        <div class="kv-label">아이디</div>
+        <div class="kv-value" th:text="${(row.users != null and row.users.login_id != null and row.users.login_id != '') ? row.users.login_id : '-'}">-</div>
+
+        <div class="kv-label">이메일</div>
+        <div class="kv-value" th:text="${(row.company != null and row.company.email != null and row.company.email != '') ? row.company.email : '-'}">-</div>
+
+        <div class="kv-label">승인여부</div>
+        <div class="kv-value">
+          <span id="certStatusText"
+                class="status-text"
+                th:text="${row.cert_status != null ? row.cert_status : '-'}"
+                th:style="${row.cert_status == '확인' ? 'color:#2563eb;' : 'color:#dc2626;'}">-</span>
+        </div>
       </div>
 
-      <div>
-        <div>사업자번호</div>
-        <div th:text="${row.company != null ? row.company.company_num : '-'}">-</div>
-      </div>
+      <hr class="divider">
 
-      <div>
-        <div>전화번호</div>
-        <div th:text="${(row.company != null and row.company.phone != null and row.company.phone != '') ? row.company.phone : '-'}">-</div>
-      </div>
+      <div class="sub-title">계정관리</div>
 
-      <div>
-        <div>주소</div>
-        <div th:text="${(row.company != null and row.company.address != null and row.company.address != '') ? row.company.address : '-'}">-</div>
-      </div>
+      <div class="account-box">
+        <div class="radio-row">
+          <div class="kv-label" style="border-radius: 12px; min-height: 36px;">계정상태</div>
 
-      <div>
-        <div>아이디</div>
-        <div th:text="${(row.users != null and row.users.login_id != null and row.users.login_id != '') ? row.users.login_id : '-'}">-</div>
-      </div>
+          <label class="radio-pill">
+            <input type="radio" name="status" value="ACTIVE"
+                   onclick="handleStatusChange('ACTIVE')"
+                   th:checked="${row.users != null && row.users.status == 'ACTIVE'}">
+            사용
+          </label>
 
-      <div>
-        <div>이메일</div>
-        <div th:text="${(row.company != null and row.company.email != null and row.company.email != '') ? row.company.email : '-'}">-</div>
-      </div>
+          <label class="radio-pill">
+            <input type="radio" name="status" value="SUSPENDED"
+                   onclick="handleStatusChange('SUSPENDED')"
+                   th:checked="${row.users != null && row.users.status == 'SUSPENDED'}">
+            정지
+          </label>
+        </div>
 
-      <div>
-        <div>승인여부</div>
-        <div id="certStatusText"
-             th:text="${row.cert_status != null ? row.cert_status : '-'}"
-             th:style="${row.cert_status == '확인' ? 'color:blue; font-weight:bold;' : 'color:red; font-weight:bold;'}">-</div>
-      </div>
-    </section>
+        <div class="date-row">
+          <div style="font-weight:800; color:#1e3a8a; margin-right:6px;">정지기간</div>
 
-    <hr>
-
-    <section class="mt-6 border-t pt-6">
-      <h3 class="text-lg font-bold mb-4">계정관리</h3>
-
-      <div class="flex items-center gap-4 mb-4">
-        <div class="bg-gray-100 px-4 py-2 rounded font-medium">계정상태</div>
-
-        <label class="flex items-center gap-1 cursor-pointer">
-          <input type="radio" name="status" value="ACTIVE"
-                 onclick="handleStatusChange('ACTIVE')"
-                 th:checked="${row.users != null && row.users.status == 'ACTIVE'}"> 사용
-        </label>
-
-        <label class="flex items-center gap-1 cursor-pointer">
-          <input type="radio" name="status" value="SUSPENDED"
-                 onclick="handleStatusChange('SUSPENDED')"
-                 th:checked="${row.users != null && row.users.status == 'SUSPENDED'}"> 정지
-        </label>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <div class="font-bold text-blue-900">정지기간</div>
-        <div class="flex items-center gap-2">
           <input type="date" id="suspendFrom" name="suspendFrom" readonly
                  th:value="${row.embedded != null and row.embedded.start_date != null
                            ? #strings.substring(row.embedded.start_date.toString(), 0, 10)
                            : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
-                 class="border border-gray-300 p-2 rounded bg-gray-50 text-gray-500 w-40">
+                 class="input readonly w-40">
 
           <span>~</span>
 
           <input type="date" name="suspendUntil" id="suspendUntil"
                  th:value="${row.embedded != null and row.embedded.end_date != null
                            ? #strings.substring(row.embedded.end_date.toString(), 0, 10) : ''}"
-                 class="border border-gray-300 p-2 rounded w-40">
+                 class="input w-40">
 
           <input type="text" name="reason" id="reason" placeholder="사유 입력 (예: 욕설)"
                  th:value="${row.embedded != null ? row.embedded.reason : ''}"
-                 class="border border-gray-300 p-2 rounded flex-1">
+                 class="input flex-1">
         </div>
       </div>
-    </section>
 
-    <hr>
+      <hr class="divider">
 
-    <section>
-      <h3>사업자등록증</h3>
-      <table border="1" class="w-full text-center">
-        <thead>
-          <tr>
-            <th>발급일자</th>
-            <th>업종/업태</th>
-            <th>발급기관</th>
-            <th>첨부파일</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td><a href="#" class="text-blue-500 underline">파일보기</a></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="sub-title">사업자등록증</div>
 
-      <p class="text-sm text-gray-500 mt-2">
-        ※ 승인 버튼은 승인상태(확인)만 저장합니다. 계정상태는 변경하지 않습니다.
-      </p>
-    </section>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>발급일자</th>
+              <th>업종/업태</th>
+              <th>발급기관</th>
+              <th>첨부파일</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td><a href="#" class="file-link">파일보기</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <hr>
+      <div class="btn-row">
+        <button id="approveBtn"
+                type="button"
+                onclick="approveNow()"
+                class="btn btn-approve"
+                th:if="${row.cert_status == null || row.cert_status != '확인'}">
+          승인
+        </button>
 
-   <div class="mt-8 flex gap-2">
-  <button id="approveBtn"
-          type="button"
-          onclick="approveNow()"
-          class="btn-approve"
-          th:if="${row.cert_status == null || row.cert_status != '확인'}">
-    승인
-  </button>
+        <button type="submit" class="btn btn-save">저장</button>
+        <a th:href="@{/admin/companyList}" class="btn btn-list">목록</a>
+      </div>
+    </form>
+  </div>
 
-  <button type="submit" class="btn-save">저장</button>
-  <a th:href="@{/admin/companyList}" class="btn-list">목록</a>
-</div>
+  <script>
+    function approveNow() {
+      const usersIdx = document.querySelector('input[name="usersIdx"]').value;
 
-  </form>
+      const certStatusInput = document.getElementById('certStatus');
+      const certStatusText  = document.getElementById('certStatusText');
+      const approveBtn      = document.getElementById('approveBtn');
 
- <script>
-// 1. 승인 처리 함수 (기존 유지)
-function approveNow() {
-  const usersIdx = document.querySelector('input[name="usersIdx"]').value;
+      const activeRadio = document.querySelector('input[name="status"][value="ACTIVE"]');
+      const suspendRadio = document.querySelector('input[name="status"][value="SUSPENDED"]');
 
-  const certStatusInput = document.getElementById('certStatus');
-  const certStatusText  = document.getElementById('certStatusText');
-  const approveBtn      = document.getElementById('approveBtn');
+      fetch(`/admin/companyDetail/${usersIdx}/approve`, { method: 'POST' })
+        .then(resp => {
+          if (!resp.ok) throw new Error('approve fail');
+          return resp.text();
+        })
+        .then(() => {
+          if (certStatusInput) certStatusInput.value = '확인';
+          if (certStatusText) {
+            certStatusText.innerText = '확인';
+            certStatusText.style.color = '#2563eb';
+            certStatusText.style.fontWeight = '800';
+          }
+          if (approveBtn) approveBtn.style.display = 'none';
 
-  // 라디오 버튼 잡기
-  const activeRadio = document.querySelector('input[name="status"][value="ACTIVE"]');
-  const suspendRadio = document.querySelector('input[name="status"][value="SUSPENDED"]');
+          if (activeRadio) activeRadio.checked = true;
+          if (suspendRadio) suspendRadio.checked = false;
 
-  fetch(`/admin/companyDetail/${usersIdx}/approve`, { method: 'POST' })
-    .then(resp => {
-      if (!resp.ok) throw new Error('approve fail');
-      return resp.text();
-    })
-    .then(() => {
-      // 1) 승인여부 UI 갱신
-      if (certStatusInput) certStatusInput.value = '확인';
-      if (certStatusText) {
-        certStatusText.innerText = '확인';
-        certStatusText.style.color = 'blue';
-        certStatusText.style.fontWeight = 'bold';
+          handleStatusChange('ACTIVE');
+
+          alert('승인되었습니다.');
+        })
+        .catch(() => alert('승인 실패'));
+    }
+
+    function handleStatusChange(status) {
+      const suspendUntil = document.getElementById('suspendUntil');
+      const reason = document.getElementById('reason');
+
+      if (!suspendUntil || !reason) return;
+
+      if (status === 'SUSPENDED') {
+        suspendUntil.disabled = false;
+        suspendUntil.classList.remove('readonly');
+        suspendUntil.style.backgroundColor = 'white';
+
+        reason.disabled = false;
+        reason.style.backgroundColor = 'white';
+        reason.focus();
+      } else {
+        suspendUntil.disabled = true;
+        suspendUntil.value = '';
+        suspendUntil.style.backgroundColor = '#f3f4f6';
+
+        reason.disabled = true;
+        reason.value = '';
+        reason.style.backgroundColor = '#f3f4f6';
       }
-      if (approveBtn) approveBtn.style.display = 'none';
+    }
 
-      // 2) 계정상태 UI도 즉시 ACTIVE로 반영 (리로드 없이)
-      if (activeRadio) activeRadio.checked = true;
-      if (suspendRadio) suspendRadio.checked = false;
-
-      // 3) 정지 입력칸 상태도 ACTIVE 기준으로 즉시 갱신
-      handleStatusChange('ACTIVE');
-
-      alert('승인되었습니다.');
-    })
-    .catch(() => alert('승인 실패'));
-}
-
-// 2. 계정 상태 변경 핸들러 (새로 추가)
-function handleStatusChange(status) {
-  const suspendUntil = document.getElementById('suspendUntil');
-  const reason = document.getElementById('reason');
-
-  if (status === 'SUSPENDED') {
-    // 정지 선택 시 입력창 활성화
-    suspendUntil.disabled = false;
-    suspendUntil.style.backgroundColor = 'white';
-    reason.disabled = false;
-    reason.style.backgroundColor = 'white';
-    reason.focus();
-  } else {
-    // 사용(ACTIVE) 선택 시 입력창 비활성화 및 초기화
-    suspendUntil.disabled = true;
-    suspendUntil.style.backgroundColor = '#f3f4f6'; // gray-100
-    suspendUntil.value = '';
-    reason.disabled = true;
-    reason.style.backgroundColor = '#f3f4f6';
-    reason.value = '';
-  }
-}
-
-// 3. 페이지 로드 시 초기 상태 설정
-window.onload = function() {
-  const currentStatus = document.querySelector('input[name="status"]:checked')?.value;
-  if (currentStatus) {
-    handleStatusChange(currentStatus);
-  }
-};
-</script>
-
-  <style>
-    .btn-approve { background-color: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
-    .btn-save { background-color: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 4px; }
-    .btn-list { background-color: #6b7280; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; }
-  </style>
+    window.onload = function() {
+      const currentStatus = document.querySelector('input[name="status"]:checked')?.value;
+      if (currentStatus) handleStatusChange(currentStatus);
+    };
+  </script>
 </div>

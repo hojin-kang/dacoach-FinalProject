@@ -1,6 +1,3 @@
-// ================================
-// 2) Service 인터페이스
-// ================================
 package com.dacoach.admincompany.service;
 
 import java.util.List;
