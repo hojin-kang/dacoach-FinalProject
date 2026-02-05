@@ -1,4 +1,4 @@
- package com.dacoach.service.mail;
+package com.dacoach.service.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -18,33 +18,33 @@ import java.io.UnsupportedEncodingException;
 @RequiredArgsConstructor
 public class MailService {
 
-    private final JavaMailSender mailSender;
-    private final TemplateEngine templateEngine;
+	private final JavaMailSender mailSender;
+	private final TemplateEngine templateEngine;
 
-    public void sendVerificationEmail(String toEmail, String authCode) {
-        MimeMessage message = mailSender.createMimeMessage();
-        
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setTo(toEmail);
-            helper.setSubject("[다코치] 회원가입 인증번호 안내");
+	public void sendVerificationEmail(String toEmail, String authCode) {
+		MimeMessage message = mailSender.createMimeMessage();
 
-            // Thymeleaf 템플릿 처리
-            Context context = new Context();
-            context.setVariable("authCode", authCode);
-            String htmlContent = templateEngine.process("mail/auth", context);
-            
-            helper.setText(htmlContent, true);
-            helper.setFrom(new InternetAddress("dacoach@dacoach.com", "다코치 팀", "UTF-8"));
-            // 프로젝트의 src/main/resources/static/img/logo.png
-            
-            ClassPathResource logoImage = new ClassPathResource("static/img/logo.png");
-            helper.addInline("logo", logoImage);
+		try {
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			helper.setTo(toEmail);
+			helper.setSubject("[다코치] 회원가입 인증번호 안내");
 
-            mailSender.send(message);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+			// Thymeleaf 템플릿 처리
+			Context context = new Context();
+			context.setVariable("authCode", authCode);
+			String htmlContent = templateEngine.process("mail/auth", context);
+
+			helper.setText(htmlContent, true);
+			helper.setFrom(new InternetAddress("dacoach@dacoach.com", "다코치 팀", "UTF-8"));
+			// 프로젝트의 src/main/resources/static/img/logo.png
+
+			ClassPathResource logoImage = new ClassPathResource("static/img/logo.png");
+			helper.addInline("logo", logoImage);
+
+			mailSender.send(message);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -26,7 +26,7 @@ public class CoachDTO {
 	private int point_score;
 	private int token_balance;
 	private String kakao_key;
-	
+
 	private UsersDTO usersDto;
-	
+
 }
