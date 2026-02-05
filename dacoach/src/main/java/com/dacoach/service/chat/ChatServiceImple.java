@@ -1,0 +1,163 @@
+package com.dacoach.service.chat;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dacoach.mapper.chat.ChatMapper;
+import com.dacoach.model.chat.ChatMessageDTO;
+import com.dacoach.model.chat.ChatRoomDTO;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ChatServiceImple implements ChatService {
+
+    private final ChatMapper chatMapper;
+
+    private static final String CHAT_DIR = "C:/student_java/dacoach/dacoach/uploads/chats";
+    private static final DateTimeFormatter TS_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private static final Charset[] READ_CHARSETS = new Charset[] {
+            StandardCharsets.UTF_8,
+            Charset.forName("MS949"),
+            Charset.forName("CP949")
+    };
+
+    @Override
+    public List<ChatRoomDTO> listRooms(int myIdx) {
+        return chatMapper.selectRoomList(myIdx);
+    }
+
+    @Override
+    public ChatRoomDTO selectRoomByIdx(int roomIdx, int myIdx) {
+        return chatMapper.selectRoomByIdx(roomIdx, myIdx);
+    }
+    
+    @Override
+    public int getOrCreateRoom(int myIdx, int targetIdx) {
+
+        Integer room = chatMapper.findRoom(myIdx, targetIdx);
+
+        if(room != null) return room;
+
+        chatMapper.insertRoom(myIdx, targetIdx);
+
+        return chatMapper.findRoom(myIdx, targetIdx);
+    }
+
+
+    @Override
+    public String loadMessagesRaw(int roomIdx, int myIdx) {
+        // 권한 체크 + user1/user2 확보
+        ChatRoomDTO room = chatMapper.selectRoomByIdx(roomIdx, myIdx);
+        if (room == null) return "";
+
+        // 입장 시 unread 0
+        chatMapper.resetUnread(roomIdx, myIdx);
+
+        // 기존 파일명 규칙 + 확장자(.txt)까지 자동 매칭
+        Path filePath = resolveLegacyChatFilePath(room);
+        if (filePath == null || !Files.exists(filePath)) return "";
+
+        // UTF-8 → MS949/CP949 순서로 읽기 시도
+        for (Charset cs : READ_CHARSETS) {
+            try {
+                return Files.readString(filePath, cs);
+            } catch (IOException ignored) {
+                // 다음 charset으로 재시도
+            }
+        }
+        return "";
+    }
+
+    @Override
+    @Transactional
+    public ChatMessageDTO saveAndBuildBroadcast(ChatMessageDTO msg) {
+        if (msg == null) return null;
+
+        int roomIdx = msg.getRoomIdx();
+        int senderIdx = msg.getSenderIdx();
+        String message = (msg.getMessage() == null) ? "" : msg.getMessage();
+
+        // 권한 체크 + user1/user2 확보
+        ChatRoomDTO room = chatMapper.selectRoomByIdx(roomIdx, senderIdx);
+        if (room == null) return null;
+
+        // 폴더 생성
+        Path dir = Paths.get(CHAT_DIR);
+        try { Files.createDirectories(dir); } catch (IOException ignored) {}
+
+        // "기존에 있던 파일"을 우선으로 잡아서 append (파일 2개 생기는 거 방지)
+        Path filePath = resolveLegacyChatFilePath(room);
+        if (filePath == null) {
+            // 둘 다 없으면 새로 만들 때는 확장자 없는 기본 이름 사용 (원하면 .txt로 바꿔도 됨)
+            String base = legacyBaseName(room);
+            filePath = dir.resolve(base);
+        }
+
+        // 한 줄 저장: yyyy-MM-dd HH:mm:ss|senderIdx|message
+        String ts = LocalDateTime.now().format(TS_FMT);
+        String clean = message.replace("\r", " ").replace("\n", " ");
+        String line = ts + "|" + senderIdx + "|" + clean + "\n";
+
+        try {
+            Files.writeString(filePath, line, StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            return null;
+        }
+
+        // DB 미리보기/시간 업데이트
+        String preview = clean.length() > 200 ? clean.substring(0, 200) : clean;
+        chatMapper.updateRoomLast(roomIdx, preview);
+
+        // 상대 unread +1
+        chatMapper.increaseUnreadOther(roomIdx, senderIdx);
+
+        // 브로드캐스트용
+        ChatMessageDTO out = new ChatMessageDTO();
+        out.setRoomIdx(roomIdx);
+        out.setSenderIdx(senderIdx);
+        out.setMessage(clean);
+        out.setTs(ts);
+        return out;
+    }
+
+    /** base name: chat_{min}_{max} */
+    private String legacyBaseName(ChatRoomDTO room) {
+        int a = room.getUser1Idx();
+        int b = room.getUser2Idx();
+        int min = Math.min(a, b);
+        int max = Math.max(a, b);
+        return "chat_" + min + "_" + max;
+    }
+
+    /**
+     * 파일 경로 결정 규칙
+     * 1) chat_{min}_{max} 있으면 그거
+     * 2) chat_{min}_{max}.txt 있으면 그거
+     * 3) 둘 다 없으면 null
+     */
+    private Path resolveLegacyChatFilePath(ChatRoomDTO room) {
+        Path dir = Paths.get(CHAT_DIR);
+
+        String base = legacyBaseName(room);
+
+        Path p1 = dir.resolve(base);
+        if (Files.exists(p1)) return p1;
+
+        Path p2 = dir.resolve(base + ".txt");
+        if (Files.exists(p2)) return p2;
+
+        return null;
+    }
+}

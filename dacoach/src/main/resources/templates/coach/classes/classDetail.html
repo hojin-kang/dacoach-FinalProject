@@ -50,9 +50,10 @@
 
           <div class="topActions">
             <a class="actionBtn outline"
-               th:href="@{/qna/write(classId=${classDTO.class_idx})}">
-              문의하기
-            </a>
+			   th:if="${classDTO != null and classDTO.provider_idx != null}"
+			   th:href="@{/chat/start(targetIdx=${classDTO.provider_idx}, tab='COMPANY')}">
+			  문의하기
+			</a>
 
             <a class="actionBtn solid"
                th:href="@{/pay/class(classId=${classDTO.class_idx})}">

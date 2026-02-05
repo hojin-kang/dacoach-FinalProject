@@ -1,0 +1,55 @@
+package com.dacoach.mapper.chat;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.dacoach.model.chat.ChatRoomDTO;
+
+@Mapper
+public interface ChatMapper {
+
+    /* =========================
+       채팅방 리스트
+       ========================= */
+    List<ChatRoomDTO> selectRoomList(@Param("myIdx") int myIdx);
+
+    /* =========================
+       채팅방 단건(내가 멤버일 때만)
+       ========================= */
+    ChatRoomDTO selectRoomByIdx(@Param("roomIdx") int roomIdx,
+                                @Param("myIdx") int myIdx);
+
+    /* =========================
+       문의하기: 방 있으면 찾기
+       ========================= */
+    Integer findRoom(@Param("myIdx") int myIdx,
+                     @Param("targetIdx") int targetIdx);
+
+    /* =========================
+       문의하기: 방 없으면 만들기
+       ========================= */
+    int insertRoom(@Param("myIdx") int myIdx,
+                   @Param("targetIdx") int targetIdx);
+
+    /* =========================
+       마지막 메시지/시간 업데이트
+       ========================= */
+    int updateRoomLast(@Param("roomIdx") int roomIdx,
+                       @Param("lastMessage") String lastMessage);
+
+    /* =========================
+       unread 처리
+       - 방 입장 시 내 unread = 0
+       ========================= */
+    int resetUnread(@Param("roomIdx") int roomIdx,
+                    @Param("myIdx") int myIdx);
+
+    /* =========================
+       unread 처리
+       - 메시지 보낼 때 상대 unread +1
+       ========================= */
+    int increaseUnreadOther(@Param("roomIdx") int roomIdx,
+                            @Param("myIdx") int myIdx);
+}

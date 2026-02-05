@@ -35,3 +35,6 @@ build/
 
 ### Database & Sensitive Info ###
 dacoach/src/main/resources/application.properties
+
+### upload - chat ###
+dacoach/uploads/chats/*.txt
