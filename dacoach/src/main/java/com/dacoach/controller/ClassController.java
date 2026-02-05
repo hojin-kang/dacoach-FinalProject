@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dacoach.model.classes.ClassDTO;
 import com.dacoach.service.classes.ClassService;
 import com.dacoach.service.file.FileUpload;
+import com.dacoach.mapper.classes.ClassMapper;
 
 @Controller
 @RequestMapping("/class")
@@ -25,6 +26,9 @@ public class ClassController {
 
 	@Autowired
 	private ClassService classService;
+
+	@Autowired
+	private ClassMapper classMapper;
 
 	@GetMapping("/company/register")
 	public ModelAndView classRegisterForm() {
@@ -60,8 +64,9 @@ public class ClassController {
 	@PostMapping("/company/register")
 	public ModelAndView classRegisterSubmit(@ModelAttribute ClassDTO classDTO,
 			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
-			@RequestParam(value = "videoFile", required = false) MultipartFile videoFile, HttpSession session,
-			RedirectAttributes rttr) {
+			@RequestParam(value = "videoFile", required = false) MultipartFile videoFile,
+			@RequestParam(value = "hashtags", required = false) String hashtags, // ⭐ 추가
+			HttpSession session, RedirectAttributes rttr) {
 
 		ModelAndView mav = new ModelAndView("redirect:/class/company/classList");
 
@@ -86,7 +91,8 @@ public class ClassController {
 				classDTO.setVideo(videoPath); // "classes/videos/uuid.mp4"
 			}
 
-			int result = classService.classRegister(classDTO);
+			// ⭐ 클래스 등록 (해시태그 포함)
+			int result = classService.classRegister(classDTO, hashtags);
 
 			if (result > 0) {
 				rttr.addFlashAttribute("msg", "클래스 등록이 완료되었습니다!");
@@ -131,13 +137,21 @@ public class ClassController {
 
 		mav.addObject("classDTO", classDTO);
 
+		// ⭐ 해시태그 목록 조회
+		List<String> hashtagList = classMapper.selectHashtagsByClass(id);
+		mav.addObject("hashtagList", hashtagList);
+
+		// ⭐ 분야 정보 조회
+		Map<String, Object> fieldInfo = classMapper.selectClassFieldInfo(id);
+		mav.addObject("fieldInfo", fieldInfo);
+
 		// 일단 화면 안 터지게 최소값도 같이
 		mav.addObject("providerName", "");
 		mav.addObject("providerPhoto", "");
 		mav.addObject("avgRating", 0);
 		mav.addObject("reviewCount", 0);
 		mav.addObject("reviewList", Collections.emptyList());
-		mav.addObject("tagList", Collections.emptyList());
+
 		mav.setViewName("company/classes/classDetail");
 		return mav;
 	}

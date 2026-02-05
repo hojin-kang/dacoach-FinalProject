@@ -21,13 +21,43 @@ public class ClassServiceImple implements ClassService {
 
 	@Override
 	@Transactional
-	public int classRegister(ClassDTO classDTO) throws Exception {
+	public int classRegister(ClassDTO classDTO, String hashtags) throws Exception {
 		try {
 			// 1. 유효성 검증
 			validateClassDTO(classDTO);
 
-			// 2. 클래스 정보 DB 저장 (파일은 Controller에서 이미 처리됨)
+			// 2. 클래스 정보 DB 저장
 			int result = classMapper.insertClass(classDTO);
+
+			if (result <= 0) {
+				throw new RuntimeException("클래스 등록에 실패했습니다.");
+			}
+
+			// ⭐ 3. 해시태그 처리
+			if (hashtags != null && !hashtags.trim().isEmpty()) {
+				// 콤마로 구분된 해시태그 분리
+				String[] tagArray = hashtags.split(",");
+
+				for (String tag : tagArray) {
+					tag = tag.trim();
+					if (tag.isEmpty())
+						continue;
+
+					// 3-1. 해시태그가 이미 존재하는지 확인
+					Integer hashtagIdx = classMapper.findHashtagByName(tag);
+
+					// 3-2. 존재하지 않으면 새로 INSERT
+					if (hashtagIdx == null) {
+						classMapper.insertHashtag(tag);
+						hashtagIdx = classMapper.findHashtagByName(tag);
+					}
+
+					// 3-3. CLASS_HASHTAG 매핑 테이블에 저장
+					if (hashtagIdx != null) {
+						classMapper.insertClassHashtag(classDTO.getClass_idx(), hashtagIdx);
+					}
+				}
+			}
 
 			return result;
 		} catch (IllegalArgumentException e) {

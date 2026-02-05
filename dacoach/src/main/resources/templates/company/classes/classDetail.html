@@ -30,8 +30,7 @@
 							<div class="providerBadge" title="인증">👑</div>
 						</div>
 
-						<div class="classTitle" th:text="${classDTO.title}">[연인 추천]
-							도자기 공예 원데이 클래스</div>
+						<div class="classTitle" th:text="${classDTO.title}"></div>
 					</div>
 				</div>
 
@@ -63,18 +62,33 @@
 					<!-- 클래스소개 -->
 					<article class="detailBlock">
 						<h3 class="blockTitle">클래스 소개</h3>
-						<p class="blockText" th:text="${classDTO.intro}">원데이로! 연인과 함께!
-							도자기 작품을 만들어볼까요? 문의사항은 채팅 주세요!</p>
+						<p class="blockText" th:text="${classDTO.intro}"></p>
 					</article>
 
-					<!-- 제공분야(태그) -->
+					<!-- ⭐ 해시태그 -->
+					<article class="detailBlock">
+						<div class="tagRow">
+							<h3 class="blockTitle">해시태그</h3>
+							<span class="tag" th:each="tag : ${hashtagList}" th:text="${tag}"></span>
+							<span class="tag"
+								th:if="${hashtagList == null or #lists.isEmpty(hashtagList)}"
+								style="color: #999;">#해시태그없음</span>
+						</div>
+					</article>
+
+					<!-- 제공분야 블록 -->
 					<article class="detailBlock">
 						<h3 class="blockTitle">제공분야</h3>
-						<div class="tagRow">
-							<span class="tag" th:each="t : ${tagList}" th:text="${t}">#도자기</span>
-							<span class="tag"
-								th:if="${tagList == null or #lists.isEmpty(tagList)}">#선택안함</span>
+
+						<!-- ⭐ 분야 정보 (대분류 > 소분류) -->
+						<div style="margin-bottom: 15px;">
+							<span style="font-weight: bold; color: #328889;"
+								th:if="${fieldInfo != null}"
+								th:text="${fieldInfo.MAJOR_FIELD_CD} + ' > ' + ${fieldInfo.MINOR_FIELD_NM}"></span>
+							<span th:if="${fieldInfo == null}" style="color: #999;">
+								분야 정보 없음 </span>
 						</div>
+
 					</article>
 
 					<!-- 사진/동영상 -->
@@ -118,8 +132,8 @@
 							<!-- 요약: 리뷰수/평점 -->
 							<div class="reviewSummary">
 								<span class="summaryText"> <b
-									th:text="${reviewCount != null ? reviewCount : 0}">54</b>명이 해당
-									클래스를 긍정적 (★<b th:text="${avgRating != null ? avgRating : 0}">4.7</b>/5.0)으로
+									th:text="${reviewCount != null ? reviewCount : 0}"></b>명이 해당
+									클래스를 긍정적 (★<b th:text="${avgRating != null ? avgRating : 0}"></b>/5.0)으로
 									평가했습니다.
 								</span>
 							</div>

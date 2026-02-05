@@ -5,6 +5,54 @@
 <title>클래스 등록 - dacoach</title>
 <link rel="stylesheet" th:href="@{/css/main.css}" />
 <link rel="stylesheet" th:href="@{/css/company/company_class.css}" />
+<style>
+.hashtag-input-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-height: 50px;
+    background: #f9f9f9;
+}
+
+.hashtag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: #328889;
+    color: white;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.hashtag-chip button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+}
+
+.hashtag-chip button:hover {
+    color: #ff6b6b;
+}
+
+#hashtagInput {
+    flex: 1;
+    min-width: 150px;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+}
+
+</style>
 </head>
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
@@ -96,6 +144,17 @@
 								<div id="priceError" class="error-message"></div>
 							</div>
 
+							<!-- ⭐ 해시태그 입력 폼 추가 ⭐ -->
+							<div class="form-group">
+								<h3>해시태그</h3>
+								<div class="hashtag-input-area" id="hashtagArea">
+									<input type="text" id="hashtagInput"
+										placeholder="#해시태그 입력 후 Enter (띄어쓰기 자동 제거) 최대 3개" autocomplete="off">
+								</div>
+								<!-- 숨겨진 필드로 해시태그 전송 -->
+								<input type="hidden" id="hashtagsData" name="hashtags">
+							</div>
+
 							<!-- 사진 업로드 -->
 							<div class="form-group">
 								<h3>클래스 소개 사진</h3>
@@ -166,6 +225,7 @@
 		// 전역 변수
 		let selectedPhoto = null;
 		let selectedVideo = null;
+		let hashtags = []; // ⭐ 해시태그 배열
 
 		// 페이지 로드 시 초기화
 		document.addEventListener('DOMContentLoaded', function() {
@@ -178,7 +238,72 @@
 			document.getElementById('participantLimit').addEventListener('input', onParticipantChange);
 			document.getElementById('photoUpload').addEventListener('change', onPhotoUpload);
 			document.getElementById('videoUpload').addEventListener('change', onVideoUpload);
+			
+			// ⭐ 해시태그 입력 이벤트
+			document.getElementById('hashtagInput').addEventListener('keydown', onHashtagKeydown);
+			
+			// ⭐ 폼 제출 시 해시태그 데이터 설정
+			document.getElementById('classInsert').addEventListener('submit', function(e) {
+				document.getElementById('hashtagsData').value = hashtags.join(',');
+			});
 		});
+
+		// ⭐ 해시태그 입력 처리
+		function onHashtagKeydown(e) {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				
+				let input = e.target.value.trim();
+				if (!input) return;
+				
+				// 띄어쓰기 제거
+				input = input.replace(/\s+/g, '');
+				
+				// # 자동 추가
+				if (!input.startsWith('#')) {
+					input = '#' + input;
+				}
+				
+				// 중복 체크
+				if (hashtags.includes(input)) {
+					alert('이미 추가된 해시태그입니다.');
+					e.target.value = '';
+					return;
+				}
+				
+				// 최대 개수 체크
+				if (hashtags.length >= 3) {
+					alert('해시태그는 최대 3개까지 추가할 수 있습니다.');
+					e.target.value = '';
+					return;
+				}
+				
+				// 해시태그 추가
+				addHashtag(input);
+				e.target.value = '';
+			}
+		}
+
+		// ⭐ 해시태그 추가 (화면에 표시)
+		function addHashtag(tag) {
+			hashtags.push(tag);
+			
+			const chip = document.createElement('div');
+			chip.className = 'hashtag-chip';
+			chip.innerHTML = `
+				<span>${tag}</span>
+				<button type="button" onclick="removeHashtag('${tag}', this)">&times;</button>
+			`;
+			
+			const input = document.getElementById('hashtagInput');
+			input.parentElement.insertBefore(chip, input);
+		}
+
+		// ⭐ 해시태그 제거
+		function removeHashtag(tag, btn) {
+			hashtags = hashtags.filter(t => t !== tag);
+			btn.parentElement.remove();
+		}
 
 		// 대분류 로드
 		function loadMajorFields() {
