@@ -67,8 +67,8 @@
 		    	#{phone},
 		    	#{mail},
 		    	#{intro},
-		    	#{photo},
-		    	#{video},
+		    	#{photo, jdbcType=VARCHAR},
+		    	#{video, jdbcType=VARCHAR},
 		    	0,
 		    	0,
 		    	#{kakao_key}
