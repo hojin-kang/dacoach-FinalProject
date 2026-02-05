@@ -5,54 +5,6 @@
 <title>클래스 등록 - dacoach</title>
 <link rel="stylesheet" th:href="@{/css/main.css}" />
 <link rel="stylesheet" th:href="@{/css/company/company_class.css}" />
-<style>
-.hashtag-input-area {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    min-height: 50px;
-    background: #f9f9f9;
-}
-
-.hashtag-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    background: #328889;
-    color: white;
-    border-radius: 20px;
-    font-size: 14px;
-}
-
-.hashtag-chip button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 0;
-    margin: 0;
-    line-height: 1;
-}
-
-.hashtag-chip button:hover {
-    color: #ff6b6b;
-}
-
-#hashtagInput {
-    flex: 1;
-    min-width: 150px;
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 14px;
-}
-
-</style>
 </head>
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
@@ -149,7 +101,8 @@
 								<h3>해시태그</h3>
 								<div class="hashtag-input-area" id="hashtagArea">
 									<input type="text" id="hashtagInput"
-										placeholder="#해시태그 입력 후 Enter (띄어쓰기 자동 제거) 최대 3개" autocomplete="off">
+										placeholder="#해시태그 입력 후 Enter (띄어쓰기 자동 제거) 최대 3개"
+										autocomplete="off">
 								</div>
 								<!-- 숨겨진 필드로 해시태그 전송 -->
 								<input type="hidden" id="hashtagsData" name="hashtags">
