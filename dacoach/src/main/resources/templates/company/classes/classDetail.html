@@ -48,8 +48,8 @@
 
 			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
 			<nav class="detailTabs">
-				<a class="tab active" href="#detail">상세정보</a> <a class="tab"
-					href="#reviews">클래스 후기</a>
+				<a class="tab active" href="#detail">상세정보</a>
+				<a class="tab" href="#reviews">클래스 후기</a>
 			</nav>
 
 			<hr class="divider" />
@@ -67,8 +67,8 @@
 
 					<!-- ⭐ 해시태그 -->
 					<article class="detailBlock">
+						<h3 class="blockTitle">해시태그</h3>
 						<div class="tagRow">
-							<h3 class="blockTitle">해시태그</h3>
 							<span class="tag" th:each="tag : ${hashtagList}" th:text="${tag}"></span>
 							<span class="tag tag-empty"
 								th:if="${hashtagList == null or #lists.isEmpty(hashtagList)}">#해시태그없음</span>
@@ -83,8 +83,9 @@
 						<div class="field-info">
 							<span class="field-text" th:if="${fieldInfo != null}"
 								th:text="${fieldInfo.MAJOR_FIELD_CD} + ' > ' + ${fieldInfo.MINOR_FIELD_NM}"></span>
-							<span class="field-empty" th:if="${fieldInfo == null}"> 분야
-								정보 없음 </span>
+							<span class="field-empty" th:if="${fieldInfo == null}">
+								분야 정보 없음
+							</span>
 						</div>
 
 					</article>
@@ -129,8 +130,8 @@
 
 							<!-- 요약: 리뷰수/평점 -->
 							<div class="reviewSummary">
-								<span class="summaryText"> <b
-									th:text="${reviewCount != null ? reviewCount : 0}"></b>명이 해당
+								<span class="summaryText">
+									<b th:text="${reviewCount != null ? reviewCount : 0}"></b>명이 해당
 									클래스를 긍정적 (★<b th:text="${avgRating != null ? avgRating : 0}"></b>/5.0)으로
 									평가했습니다.
 								</span>
@@ -158,15 +159,14 @@
 											<div class="reviewStars">
 												<span class="stars" th:text="|★ ${r.rating}|">★ 4.5</span>
 											</div>
-											<div class="reviewText" th:text="${r.content}">너무너무 좋고
-												재밌게 처음 입문했습니다. 감사합니다!</div>
+											<div class="reviewText" th:text="${r.content}"></div>
 										</div>
 									</div>
 
 									<div class="reviewBottom">
-										<div class="reviewerName" th:text="${r.reviewerName}">양코치</div>
+										<div class="reviewerName" th:text="${r.reviewerName}"></div>
 										<div class="reviewTag"
-											th:if="${r.tag != null and r.tag != ''}" th:text="${r.tag}">#친절해요</div>
+											th:if="${r.tag != null and r.tag != ''}" th:text="${r.tag}"></div>
 									</div>
 								</div>
 
@@ -194,19 +194,22 @@
 						<div class="sideTitle">클래스 정보</div>
 
 						<div class="sideRow">
-							<span class="sideLabel">기간</span> <span class="sideValue"
+							<span class="sideLabel">기간</span>
+							<span class="sideValue"
 								th:text="|${#dates.format(classDTO.start_date,'yyyy.MM.dd')} ~ ${#dates.format(classDTO.end_date,'yyyy.MM.dd')}|">
-								2026.02.01 ~ 2026.02.15 </span>
+							</span>
 						</div>
 
 						<div class="sideRow">
-							<span class="sideLabel">가격</span> <span class="sideValue"
-								th:text="|${#numbers.formatInteger(classDTO.price, 3, 'COMMA')}₩|">99,000₩</span>
+							<span class="sideLabel">가격</span>
+							<span class="sideValue"
+								th:text="|${#numbers.formatInteger(classDTO.price, 3, 'COMMA')}₩|"></span>
 						</div>
 
 						<div class="sideRow">
-							<span class="sideLabel">정원</span> <span class="sideValue"
-								th:text="|${classDTO.max_user_cnt}명|">6명</span>
+							<span class="sideLabel">정원</span>
+							<span class="sideValue"
+								th:text="|${classDTO.max_user_cnt}명|"></span>
 						</div>
 
 						<div class="sideBtns">
@@ -223,16 +226,16 @@
 	<div th:replace="~{layout/footer :: siteFooter}"></div>
 
 	<script>
-    // (선택) 앵커 이동 부드럽게
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', (e) => {
-        const id = a.getAttribute('href');
-        const el = document.querySelector(id);
-        if (!el) return;
-        e.preventDefault();
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-  </script>
+		// (선택) 앵커 이동 부드럽게
+		document.querySelectorAll('a[href^="#"]').forEach(a => {
+			a.addEventListener('click', (e) => {
+				const id = a.getAttribute('href');
+				const el = document.querySelector(id);
+				if (!el) return;
+				e.preventDefault();
+				el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			});
+		});
+	</script>
 </body>
 </html>
