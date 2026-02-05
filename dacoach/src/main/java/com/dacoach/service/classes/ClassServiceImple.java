@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dacoach.controller.FileUploadController;
 import com.dacoach.mapper.classes.ClassMapper;
 import com.dacoach.model.classes.ClassDTO;
 
@@ -20,9 +19,6 @@ public class ClassServiceImple implements ClassService {
 	@Autowired
 	private ClassMapper classMapper;
 
-	@Autowired
-	private FileUploadController fileUploadController;
-
 	@Override
 	@Transactional
 	public int classRegister(ClassDTO classDTO) throws Exception {
@@ -30,24 +26,11 @@ public class ClassServiceImple implements ClassService {
 			// 1. 유효성 검증
 			validateClassDTO(classDTO);
 
-			// 2. 사진 파일 업로드
-			if (classDTO.getPhotoFile() != null && !classDTO.getPhotoFile().isEmpty()) {
-				String savedPhotoName = fileUploadController.savePhoto(classDTO.getPhotoFile());
-				classDTO.setPhoto(savedPhotoName);
-			}
-
-			// 3. 영상 파일 업로드
-			if (classDTO.getVideoFile() != null && !classDTO.getVideoFile().isEmpty()) {
-				String savedVideoName = fileUploadController.saveVideo(classDTO.getVideoFile());
-				classDTO.setVideo(savedVideoName);
-			}
-
-			// 4. 클래스 정보 DB 저장
+			// 2. 클래스 정보 DB 저장 (파일은 Controller에서 이미 처리됨)
 			int result = classMapper.insertClass(classDTO);
 
 			return result;
 		} catch (IllegalArgumentException e) {
-			// 파일 검증 실패 등
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("클래스 등록 중 오류가 발생했습니다: " + e.getMessage(), e);
@@ -98,8 +81,6 @@ public class ClassServiceImple implements ClassService {
 		if (classDTO.getIntro().length() > 3000) {
 			throw new IllegalArgumentException("내용은 3000자 이내로 입력해주세요.");
 		}
-
-		// 파일 검증은 FileUploadController에서 수행
 	}
 
 	@Override

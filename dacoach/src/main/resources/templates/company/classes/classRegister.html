@@ -105,7 +105,7 @@
 									<button type="button" class="upload-btn"
 										onclick="document.getElementById('photoUpload').click()">
 										📷 사진 업로드</button>
-									<div class="file-info">권장: 1200x800 이상, 최대 10MB (JPG,
+									<div class="file-info">권장: 1200x800 이상, 최대 50MB (JPG,
 										PNG, GIF, WEBP)</div>
 								</div>
 								<div id="photoPreviewContainer" class="file-preview-container"></div>
@@ -120,8 +120,7 @@
 									<button type="button" class="upload-btn"
 										onclick="document.getElementById('videoUpload').click()">
 										🎥 영상 업로드</button>
-									<div class="file-info">형식: MP4, AVI, MOV, WEBM 등, 최대
-										100MB</div>
+									<div class="file-info">형식: MP4, AVI, MOV, WEBM 등, 최대 50MB</div>
 								</div>
 								<div id="videoPreviewContainer" class="file-preview-container"></div>
 							</div>
@@ -288,9 +287,9 @@
 				return;
 			}
 
-			// 파일 크기 검증 (10MB)
-			if (file.size > 10 * 1024 * 1024) {
-				alert('파일 크기는 10MB 이하여야 합니다.');
+			// 파일 크기 검증 (50MB)
+			if (file.size > 50 * 1024 * 1024) {
+				alert('파일 크기는 50MB 이하여야 합니다.');
 				e.target.value = '';
 				return;
 			}
@@ -338,9 +337,9 @@
 				return;
 			}
 
-			// 파일 크기 검증 (100MB)
-			if (file.size > 100 * 1024 * 1024) {
-				alert('파일 크기는 100MB 이하여야 합니다.');
+			// 파일 크기 검증 (50MB)
+			if (file.size > 50 * 1024 * 1024) {
+				alert('파일 크기는 50MB 이하여야 합니다.');
 				e.target.value = '';
 				return;
 			}
