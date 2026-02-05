@@ -52,4 +52,8 @@ public interface ChatMapper {
        ========================= */
     int increaseUnreadOther(@Param("roomIdx") int roomIdx,
                             @Param("myIdx") int myIdx);
+    
+    // 채팅방 나가기
+    int leaveRoom(@Param("roomIdx") int roomIdx,
+            @Param("myIdx") int myIdx);
 }

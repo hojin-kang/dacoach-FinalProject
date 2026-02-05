@@ -414,6 +414,28 @@
     if(e.key === 'Escape') close();
   });
 })();
+   
+   // 채팅방 나가기
+   document.getElementById('leaveRoomBtn')?.addEventListener('click', async () => {
+	  if(!confirm('채팅방을 나가시겠습니까?')) return;
+	
+	  const win = document.querySelector('.chatWindow');
+	  if(!win) return;
+	
+	  const roomIdx = win.dataset.roomIdx;
+	
+	  const res = await fetch(`/chat/room/${roomIdx}/leave`, {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+	  });
+	
+	  const text = await res.text();
+	  if(text === 'OK'){
+	    location.href = '/chat'; // 나가고 채팅 메인
+	  }else{
+	    alert('나가기 실패');
+	  }
+	});
 </script>
 
 </body>

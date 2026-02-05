@@ -77,4 +77,16 @@ public class ChatController {
 			return "";
 		return chatService.loadMessagesRaw(roomIdx, my);
 	}
+	
+	
+	// 채팅방 나가기
+	@PostMapping("/chat/room/{roomIdx}/leave")
+	@ResponseBody
+	public String leaveRoom(@PathVariable int roomIdx, HttpSession session){
+	    Integer my = (Integer) session.getAttribute("user_idx");
+	    if(my == null) return "NOLOGIN";
+
+	    boolean ok = chatService.leaveRoom(roomIdx, my);
+	    return ok ? "OK" : "FAIL";
+	}
 }
