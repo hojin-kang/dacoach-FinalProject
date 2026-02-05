@@ -160,4 +160,16 @@ public class ChatServiceImple implements ChatService {
 
         return null;
     }
+    
+    // 채팅방 나가기
+    @Override
+    public boolean leaveRoom(int roomIdx, int myIdx) {
+        // 방 권한 체크 (내가 그 방 멤버인지)
+        ChatRoomDTO room = chatMapper.selectRoomByIdx(roomIdx, myIdx);
+        if(room == null) return false;
+
+        int updated = chatMapper.leaveRoom(roomIdx, myIdx);
+        return updated > 0;
+    }
+
 }

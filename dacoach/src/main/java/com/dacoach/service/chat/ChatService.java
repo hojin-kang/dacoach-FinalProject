@@ -17,4 +17,7 @@ public interface ChatService {
     ChatMessageDTO saveAndBuildBroadcast(ChatMessageDTO msg);
     
     int getOrCreateRoom(int myIdx, int targetIdx);
+    
+    // 채팅방 나가기
+    boolean leaveRoom(int roomIdx, int myIdx);
 }
