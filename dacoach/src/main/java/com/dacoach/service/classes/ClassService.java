@@ -6,7 +6,7 @@ import com.dacoach.model.classes.ClassDTO;
 
 public interface ClassService {
 
-	int classRegister(ClassDTO classDTO) throws Exception;
+	int classRegister(ClassDTO classDTO, String hashtags) throws Exception;
 
 	List<Map<String, Object>> getMajorFields() throws Exception;
 
