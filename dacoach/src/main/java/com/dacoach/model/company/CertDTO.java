@@ -14,7 +14,7 @@ import java.sql.*;
 @ToString
 public class CertDTO {
 	private int cert_idx;
-	private int users_idx;
+	private int user_idx;
 	private String cert_name;
 	private Date get_date;
 	private String cert_from;

@@ -2,84 +2,201 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 
-   <meta charset="UTF-8" />
-   <title>dacoach</title>
-	<script>
-	function getMinorRegion(){ 
-		var regionIdx=document.profileInfo.majorRegion.value;
-	fetch('/api/company/getMinorRegion?regionIdx='+regionIdx)
-			
-	.then(function(resp){
-		if(resp.ok){
-			return resp.text();
-		}else{
-			throw new Error('에러남');
-		}
-		
-	})
-	
-	.then(function(data){
-		var regionValue=JSON.parse(data);
-		
-		var getRegionTag=document.getElementById('MinorRegion');
-		var html='';
-		for(var i=0;i<regionValue.length;i++){
-			var dto=regionValue[i];
-			html+='<input type="radio" name="minorRegion" th:value="'+dto.MAJOR_REGION_IDX+'" onclick="minorRegionVal()">'+dto.DISTRICT_NM;
-		}
-		getRegionTag.innerHTML=html;
-		
-	})
-	
-	.catch(function(error){
-		alert(error.message);
-	});
-	}
-	</script>
-   <link rel="stylesheet" th:href="@{/css/main.css}" />
+<meta charset="UTF-8" />
+<title>dacoach</title>
+
+<link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
-   <div th:replace="layout/header :: siteHeader"></div>
+	<div th:replace="layout/header :: siteHeader"></div>
 
-   <main class="main">
-   <div class="container">
-   	<form name="profileInfo" action="companyJoinOk" method="post">
-      <div class="picUpload">
-      	<p class="profilePic">업로드한 사진 올릴영역</p>
-      	<p class="picUpBtn"><input type="file" name="profilePicFile" id="profilePicFileId"></p>
-      </div>
-      <div class="profileInfoArea">
-      	<textarea rows="4" cols="8" name="profileArea" placeholder="프로필 설명을 입력해주세요"></textarea>
-      </div>
-      <div class="classRegion">
-      	<p class="classMagerRegion" id="MagerRegion">
-      		<span th:each="region:${region_con}">
-      		<input type="radio" name="majorRegion" th:value="${region.MAJOR_REGION_IDX}" onclick="getMinorRegion()">[[${region.REGION_NM}]]
-      		</span>
-      	</p>
-		<p class="classMinorRegion" id="MinorRegion">
-			소분류태그가져올거
-		</p>
-		<p><input type="text" name="regionDetal" placeholder="상세주소를 입력해주세요"></p>
-		<p class="classAddRegion" id="AddRegion">
-			<input type="button" value="주소 추가하기" id="addRegion">
-		</p>
-      </div>
-      <div class="tags">
-      	<p class="majorFieldClass">     		
-      		<span th:each="field:${field_con}">
-      		<input type="radio" name="majorField" th:value="${field.MAJOR_FIELD_IDX}" onclick="getMinorField()">[[${field.MAJOR_FIELD_CD}]]
-      		</span>
-      	</p>
-      	<p class="minorField">
-      		<input type="button" id="minorField" value="분야소분류">
-      	</p>
-      </div>
-     </form>
-   </div>
-   </main>
-  
-   <div th:replace="layout/footer :: siteFooter"></div>
+	<main class="main">
+		<div class="container">
+			<form name="regionForm">
+			<div class="classRegion">
+				<p class="classMagerRegion" id="MagerRegion">
+					<select name="major_region_idx" id="majorSelect">
+						<option>대분류</option>
+						<option th:each="region:${region_con}"
+							th:value="${region.MAJOR_REGION_IDX}">[[${region.REGION_NM}]]</option>
+					</select>
 
+				</p>
+				<p class="classMinorRegion">
+					<select name="minor_region_idx" id="MinorRegion">
+						<option id="m_intro">소분류</option>
+					</select>
+				</p>
+				<p id="regionResultTag">
+					
+				</p>
+				<p>
+					<input type="text" name="region_detail" placeholder="상세주소를 입력해주세요">
+				</p>
+				<p class="classAddRegion" id="AddRegion">
+					<input type="button" value="주소 추가하기" id="addRegion">
+				</p>
+			</div>
+			<input type="hidden" name="company_num" th:value=${company_num}>
+			</form>
+			
+			<form name="profileInfo" action="/company/profile/provideOk" method="post" id="submitOk">
+				<div class="tags">
+					<p class="majorFieldClass">
+						<select name="major_field_idx" id="majorFieldSelect">
+						<option id="magor_field_intro">분야선택</option>
+						<option	th:each="field:${field_con}"
+							 th:value="${field.MAJOR_FIELD_IDX}"
+							id="major_field_con">[[${field.MAJOR_FIELD_CD}]]
+						</select>
+						<select name="minor_field_idx" id="minorFieldSelect">
+							<option id="minor_field_intro">소분야선택</option>
+						</select>
+					</p>
+					<p class="minorField">
+					<input type="hidden" name="company_idx" th:value=${company_num}>
+						<input type="submit" value="회원가입 완료">
+					</p>
+				</div>
+			</form>
+		</div>
+	</main>
+
+	<div th:replace="layout/footer :: siteFooter"></div>
 </body>
+<script>
+var val='';
+var addRegionCount=0;
+
+var submit=document.getElementById('submitOk');
+submit.onsubmit=function(event){
+	if(addRegionCount==0){
+		addRegionFun();
+	}
+}
+
+//분야 소분류 불러오기
+document.getElementById('majorFieldSelect').addEventListener('change',function(){
+	var major_field_idx=document.profileInfo.major_field_idx.value;
+	var select=document.getElementById('minorFieldSelect');
+	fetch('/api/company/getMinorField?fieldIdx='+major_field_idx)
+	 .then(function(resp) {
+            if (resp.ok) {
+                return resp.json(); 
+            } else {
+                throw new Error('데이터를 불러오는 중 에러가 발생했습니다.');
+            }
+        })
+        .then(function(data) {
+         
+            var html = '';
+            
+            for(var i=0;i<data.length;i++) {
+            	
+                html += '<option value="' + data[i].MINOR_FIELD_IDX +'" >' + data[i].MINOR_FIELD_NM + '</option>';
+            }
+
+            
+            select.innerHTML = html;
+        })
+        .catch(function(error) {
+            console.error(error);
+            alert(error.message);
+        });
+})
+
+//주소 추가
+
+var addRegion=document.getElementById('addRegion');
+addRegion.onclick= function(){
+	addRegionFun();
+}
+	
+	function addRegionFun(){
+    
+    var majorIdx = document.regionForm.major_region_idx.value;
+    var minorIdx = document.regionForm.minor_region_idx.value;
+    var detail = document.regionForm.region_detail.value;
+    var companyIdx = document.regionForm.company_num.value;
+    
+    
+    var minorSelect = document.getElementById('MinorRegion');
+    var minorName = minorSelect.options[minorSelect.selectedIndex].text;
+
+    var data = {
+        company_idx: companyIdx,
+        major_region_idx: majorIdx,
+        minor_region_idx: minorIdx,
+        region_detail: detail
+    };
+
+    
+    fetch('/api/company/addRegion?minorName=' + encodeURIComponent(minorName), {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(function(resp) {
+        if (resp.ok) {
+            return resp.text(); 
+        } else {
+            throw new Error('서버 통신 실패');
+        }
+    })
+    .then(function(resultText) {
+        var ResultTag = document.getElementById('regionResultTag');
+        
+        
+        if (resultText && resultText !== "실패") {
+            
+            ResultTag.innerHTML += "<span>" + resultText + " " + detail + "</span>";
+            
+            
+            document.regionForm.region_detail.value = "";
+            addRegionCount++;
+        } else {
+            alert('주소 추가 중 오류가 발생하였습니다.');
+        }
+    })
+    .catch(function(error) {
+        alert(error.message);
+    });
+}
+	
+
+
+
+//소즈소 불러오기
+document.getElementById('majorSelect').addEventListener('change', function() {
+    
+    var regionIdx = this.value; 
+    var minorRegionSelect = document.getElementById('MinorRegion');
+
+  
+    fetch('/api/company/getMinorRegion?regionIdx=' + regionIdx)
+        .then(function(resp) {
+            if (resp.ok) {
+                return resp.json(); 
+            } else {
+                throw new Error('데이터를 불러오는 중 에러가 발생했습니다.');
+            }
+        })
+        .then(function(data) {
+         
+            var html = '';
+            
+            data.forEach(function(val) {
+                html += '<option value="' + val.MINOR_REGION_IDX + '" name="'+val.DISTRICT_NM+'">' + val.DISTRICT_NM + '</option>';
+            });
+
+            
+            minorRegionSelect.innerHTML = html;
+        })
+        .catch(function(error) {
+            console.error(error);
+            alert(error.message);
+        });
+});
+	
+	</script>
 </html>
