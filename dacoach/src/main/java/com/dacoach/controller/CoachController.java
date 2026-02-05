@@ -28,143 +28,154 @@ import jakarta.servlet.http.HttpSession;
 public class CoachController {
 	@Autowired
 	private CoachService coachService;
-	
-	
+
 	@GetMapping("/coachJoin")
 	public String coachJoinForm() {
 		return "coach/coachJoin";
 	}
-	
+
 	@GetMapping("/api/member/idCheck")
-    @ResponseBody
-    public boolean checkId(@RequestParam("username") String username) {
-		boolean result=true;
-        try {
-        	result=coachService.idCheck(username);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return !result;
-    }
-	@GetMapping("/api/member/emailCheck")
 	@ResponseBody
-	public boolean checkEmail(@RequestParam("email") String email) {
-		boolean result=true;
+	public boolean checkId(@RequestParam("username") String username) {
+		boolean result = true;
 		try {
-			result=coachService.emailCheck(email);
+			result = coachService.idCheck(username);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return !result;
 	}
-	@RequestMapping("/coachProfile")
-	public ModelAndView coachProfile(UsersDTO udto
-			,@RequestParam(value = "email", required = false)String mail
-			,@RequestParam(value = "kakao_key", defaultValue="")String kakao_key) {
-		ModelAndView mav=new ModelAndView();
-		int result=0;
-		List<Map<String, Object>> majorList=null;
-		List<Map<String, Object>> majorRegions=null;
+
+	@GetMapping("/api/member/emailCheck")
+	@ResponseBody
+	public boolean checkEmail(@RequestParam("email") String email) {
+		boolean result = true;
 		try {
-			result=coachService.coachProfile(udto);
-			majorList = coachService.getMajorFields();
-			majorRegions = coachService.getMajorRegions();
-	        
-			
+			result = coachService.emailCheck(email);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(result>0) {
+		return !result;
+	}
+
+	@RequestMapping("/coachProfile")
+	public ModelAndView coachProfile(UsersDTO udto, @RequestParam(value = "email", required = false) String mail,
+			@RequestParam(value = "kakao_key", defaultValue = "") String kakao_key) {
+		ModelAndView mav = new ModelAndView();
+		int result = 0;
+		List<Map<String, Object>> majorList = null;
+		List<Map<String, Object>> majorRegions = null;
+		try {
+			result = coachService.coachProfile(udto);
+			majorList = coachService.getMajorFields();
+			majorRegions = coachService.getMajorRegions();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (result > 0) {
 			mav.setViewName("/coach/coachProfile");
-			mav.addObject("login_id",udto.getLogin_id());
-			mav.addObject("mail",mail);
+			mav.addObject("login_id", udto.getLogin_id());
+			mav.addObject("mail", mail);
 			mav.addObject("majorList", majorList);
 			mav.addObject("majorRegions", majorRegions);
 			mav.addObject("kakao_key", kakao_key);
-		}else {
+		} else {
 			mav.setViewName("redirect:/coachJoin");
 		}
 		return mav;
 	}
+
 	@GetMapping("/api/member/checkNick")
-    @ResponseBody
-    public boolean checkNick(@RequestParam("nickname") String nickname) {
-		boolean result=false;
-        try {
-        	result=coachService.checkNick(nickname);
+	@ResponseBody
+	public boolean checkNick(@RequestParam("nickname") String nickname) {
+		boolean result = false;
+		try {
+			result = coachService.checkNick(nickname);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        return result;
-    }
+		return result;
+	}
+
 	@GetMapping("/api/coach/minorFields")
 	@ResponseBody
 	public List<Map<String, Object>> getMinorFields(@RequestParam("majorIdx") int majorIdx) {
-	    try {
-	        return coachService.getMinorFields(majorIdx);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null;
-	    }
+		try {
+			return coachService.getMinorFields(majorIdx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
+
 	@GetMapping("/api/coach/minorRegions")
 	@ResponseBody
 	public List<Map<String, Object>> getMinorRegions(@RequestParam("majorIdx") int majorIdx) {
-	    try {
-	        return coachService.getMinorRegions(majorIdx);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return null;
-	    }
+		try {
+			return coachService.getMinorRegions(majorIdx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-	
+
 	@PostMapping("/coachJoin")
-	public ModelAndView coachJoin(CoachDTO cdto,
-			@RequestParam(value="login_id") String login_id
-	        ,@RequestParam(value="uploadPhoto", required = false)MultipartFile uploadPhoto
-	        ,@RequestParam(value="uploadVideo", required = false)MultipartFile uploadVideo
-	        ) {
+	public ModelAndView coachJoin(CoachDTO cdto, @RequestParam(value = "login_id") String login_id,
+			@RequestParam(value = "uploadPhoto", required = false) MultipartFile uploadPhoto,
+			@RequestParam(value = "uploadVideo", required = false) MultipartFile uploadVideo) {
 		if (uploadPhoto != null && !uploadPhoto.isEmpty()) {
-	        String photoPath = FileUpload.saveFile(uploadPhoto, "coach/profile");
-	        cdto.setPhoto(photoPath); // DB에는 "coach/profile/uuid.jpg" 가 저장됨
-	    }
+			String photoPath = FileUpload.saveFile(uploadPhoto, "coach/profile");
+			cdto.setPhoto(photoPath); // DB에는 "coach/profile/uuid.jpg" 가 저장됨
+		}
 
-	    if (uploadVideo != null && !uploadVideo.isEmpty()) {
-	        String videoPath = FileUpload.saveFile(uploadVideo, "coach/video");
-	        cdto.setVideo(videoPath); // DB에는 "coach/video/uuid.mp4" 가 저장됨
-	    }
+		if (uploadVideo != null && !uploadVideo.isEmpty()) {
+			String videoPath = FileUpload.saveFile(uploadVideo, "coach/video");
+			cdto.setVideo(videoPath); // DB에는 "coach/video/uuid.mp4" 가 저장됨
+		}
 
-	    ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView();
 
-	    try {
-	        int user_idx = coachService.getUsersIdx(login_id);
-	        cdto.setUser_idx(user_idx);
-	        int result = coachService.coachJoin(cdto);
+		try {
+			int user_idx = coachService.getUsersIdx(login_id);
+			cdto.setUser_idx(user_idx);
+			int result = coachService.coachJoin(cdto);
 
-	        if(result > 0) {
-	        	mav.addObject("msg", "코치 회원가입이 완료되었습니다. 로그인 후 이용해주세요.");
-	        	mav.addObject("url", "/login");
-	        	mav.setViewName("alert");
-	        	coachService.activateCoach(user_idx);
-	        } else {
-	            mav.addObject("msg", "코치 회원가입에 실패했습니다. 다시 시도해주세요.");
-	            mav.addObject("url", "/coachJoin");
-	            mav.setViewName("alert");
-	        }
-	        
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        mav.addObject("msg", "오류가 발생했습니다. 다시 시도해주세요.");
-	        mav.addObject("url", "/coachJoin");
-	        mav.setViewName("alert");
-	    }
-	    
-	    return mav;
+			if (result > 0) {
+				mav.addObject("msg", "코치 회원가입이 완료되었습니다. 로그인 후 이용해주세요.");
+				mav.addObject("url", "/login");
+				mav.setViewName("alert");
+				coachService.activateCoach(user_idx);
+			} else {
+				mav.addObject("msg", "코치 회원가입에 실패했습니다. 다시 시도해주세요.");
+				mav.addObject("url", "/coachJoin");
+				mav.setViewName("alert");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.addObject("msg", "오류가 발생했습니다. 다시 시도해주세요.");
+			mav.addObject("url", "/coachJoin");
+			mav.setViewName("alert");
+		}
+
+		return mav;
 	}
-	
-	
+
+	@GetMapping("/coach/search")
+	public String coachSearch() {
+		return "coach/coachSearch";
+	}
+
+	@PostMapping("/coach/search")
+	public ModelAndView coachSearchResult(@RequestParam(value = "keyword", defaultValue = "") String keyword) {
+		ModelAndView mav = new ModelAndView();
+
+		return mav;
+
+	}
 }
