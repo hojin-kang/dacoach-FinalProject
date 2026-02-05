@@ -14,14 +14,14 @@ import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.service.admin.AdminService;
 
 @Controller
-@RequestMapping("/admin/coach")
+@RequestMapping("/admin")
 public class AdminCoachController {
 
 	@Autowired
 	private AdminService adminService;
 	
 	
-	@GetMapping("/coachList")
+	@GetMapping("/coach/coachList")
 	public String coachList(Model model) {
 	    List<Map<String, Object>> coachList = new ArrayList<>();
 	    int certCount = 0;
@@ -43,7 +43,7 @@ public class AdminCoachController {
 	}
 	
 	
-	@GetMapping("/coachDetail")
+	@GetMapping("/coach/coachDetail")
 	public String coachDetail(Model model,@RequestParam int coach_idx, @RequestParam int user_idx) {
 		
 		List<Map<String, Object>> coachDetail = new ArrayList<>();
@@ -73,7 +73,7 @@ public class AdminCoachController {
 		return "admin/dashboard";
 	}
 	
-	@PostMapping("/updateCoachStatus")
+	@PostMapping("/coach/updateCoachStatus")
 	public String updateCoachSuspended(Model model,
 			@RequestParam int coach_idx,
 			@RequestParam int user_idx,
@@ -98,7 +98,7 @@ public class AdminCoachController {
 					if(insertresult > 0) {
 						model.addAttribute("msg", "계정이 정지 처리 되었습니다.");
 					}
-				}else if("ACTIVE".equals(status)) {
+				}else {
 					
 					adminService.updateEnddateSuspended(user_idx);
 					model.addAttribute("msg", "사용 상태로 변경되었습니다.");
@@ -121,6 +121,26 @@ public class AdminCoachController {
 	    model.addAttribute("coach_idx", coach_idx);
 		
 		return "admin/dashboard";
+	}
+	
+	
+	@GetMapping("/keyword/keyword")
+	public String keyword(Model model,
+			@RequestParam (required = false) String type) {
+	    
+		List<Map<String, Object>> keywordType = new ArrayList<>();
+		try {
+			keywordType = adminService.getKeywordType();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("keywordType", keywordType);
+	    model.addAttribute("contentPage", "admin/keyword/keyword");
+	    model.addAttribute("contentFragment", "keywordContent");
+	    
+	    return "admin/dashboard";
 	}
 	
 	

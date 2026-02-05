@@ -82,7 +82,7 @@
                     키워드관리
                 </button>
                 <ul id="keywordSubmenu" class="bg-gray-50 pb-2" th:classappend="${activeMenu != 'keyword'} ? ' hidden'">
-                    <li><a th:href="@{/admin/keyword/banned}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'banned'} ? ' text-[#4a7c74] font-bold underline'">검열키워드</a></li>
+                    <li><a th:href="@{/admin/keyword/keyword}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'banned'} ? ' text-[#4a7c74] font-bold underline'">검열키워드</a></li>
                     <li><a th:href="@{/admin/keyword/category}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'category'} ? ' text-[#4a7c74] font-bold underline'">분야 필터</a></li>
                     <li><a th:href="@{/admin/keyword/region}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'region'} ? ' text-[#4a7c74] font-bold underline'">지역 필터</a></li>
                 </ul>

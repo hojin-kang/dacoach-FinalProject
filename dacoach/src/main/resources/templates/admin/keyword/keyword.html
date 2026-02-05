@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="keywordContent">
+    <style>
+        /* [기존 스타일 유지] */
+        .bg-mint-light { background-color: #f0f8f7; }
+        .bg-mint-dark { background-color: #9dbbb5; }
+        .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
+        .info-card { background-color: white; border: 2px solid #e5e7eb; border-radius: 40px; padding: 2rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 1.5rem; position: relative; }
+        .section-badge { display: inline-block; background-color: #9dbbb5; color: white; padding: 0.5rem 2rem; border-radius: 9999px; font-weight: bold; margin-bottom: 1.5rem; font-size: 1rem; }
+        .side-tab-group { display: flex; flex-direction: column; gap: 0.75rem; width: 150px; padding: 1rem; background-color: #f0f8f7; border-radius: 25px; border: 1px solid #9dbbb540; }
+        .side-tab-btn { 
+            width: 100%; padding: 0.6rem 0.5rem; border-radius: 12px; font-weight: bold; font-size: 0.85rem;
+            background-color: white; border: 1px solid #e5e7eb; color: #6b7280; transition: all 0.2s; cursor: pointer;
+            text-align: center;
+        }
+        .side-tab-btn.active { background-color: #9dbbb5; color: white; border-color: #9dbbb5; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .side-tab-btn:hover:not(.active) { background-color: #e5e7eb; }
+        .keyword-area { background-color: #f0f8f7; border-radius: 20px; padding: 1.25rem; display: flex; flex-wrap: wrap; gap: 0.75rem; border: 1px solid #9dbbb520; min-height: 60px; }
+        .keyword-tag { 
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; 
+            background-color: white; border: 1px solid #e5e7eb; border-radius: 9999px; font-weight: bold; font-size: 0.85rem; color: #374151;
+        }
+        .tag-del-btn { border: none; background: transparent; cursor: pointer; color: inherit; opacity: 0.5; font-size: 10px; }
+        .comment-row { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.5rem; background-color: #f0f8f7; border-radius: 15px; margin-bottom: 0.75rem; border: 1px solid transparent; }
+        .writer-name { width: 85px; font-weight: bold; color: #374151; text-align: center; font-size: 0.9rem; }
+        .comment-content { flex: 1; font-size: 0.875rem; color: #4b5563; }
+        .btn-icon { color: #9ca3af; display: flex; align-items: center; justify-content: center; }
+        .btn-del-sm { background-color: white; border: 1px solid #e5e7eb; padding: 0.4rem 1.2rem; border-radius: 10px; font-weight: bold; font-size: 0.8rem; color: #6b7280; cursor: pointer; }
+    </style>
+
+    <div class="max-w-[1100px] mx-auto p-8 font-main">
+        <div class="info-card">
+            <h2 class="section-badge">검열 키워드 관리</h2>
+            
+            <div class="flex gap-8">
+				<div class="side-tab-group shrink-0">
+					<a th:href="@{/admin/keyword/keyword}"
+						th:classappend="${selectedType == null} ? 'active' : ''"
+						class="side-tab-btn">전체</a> <a th:each="type : ${keywordType}"
+						th:href="@{/admin/keyword/keyword(type=${type['KEYWORD_TYPE']})}"
+						th:classappend="${selectedType == type['KEYWORD_TYPE']} ? 'active' : ''"
+						class="side-tab-btn"> <span th:text="${type['KEYWORD_TYPE']}">타입명</span>
+						<span th:text="'(' + ${type['CNT']} + ')'"></span>
+					</a>
+				</div>
+
+				<div class="flex-1">
+                    <div class="keyword-area mb-8">
+                        <div th:if="${keywordList == null}" class="flex gap-2 flex-wrap">
+                            <div class="keyword-tag"><span>#바보</span><button class="tag-del-btn">✕</button></div>
+                            <div class="keyword-tag"><span>#멍청이</span><button class="tag-del-btn">✕</button></div>
+                            <div class="keyword-tag"><span>#조건만남</span><button class="tag-del-btn">✕</button></div>
+                        </div>
+                        
+                        <div th:unless="${keywordList == null}" th:each="kw : ${keywordList}" class="keyword-tag">
+                            <span th:text="'#' + ${kw.KEYWORD_NAME}">#키워드</span>
+                            <button class="tag-del-btn">✕</button>
+                        </div>
+                    </div>
+
+                    <div class="comment-container">
+                        <div th:if="${#lists.isEmpty(flaggedComments)}" class="py-12 text-center text-gray-400 italic bg-mint-light rounded-[20px]">
+                            현재 감지된 불량 댓글이 없습니다.
+                        </div>
+
+                        <div th:unless="${#lists.isEmpty(flaggedComments)}" th:each="comment : ${flaggedComments}" class="comment-row">
+                            <div class="writer-name" th:text="${comment.WRITER_NAME}">홍길동</div>
+                            <div class="comment-content">
+                                <span th:utext="${comment.HIGHLIGHTED_CONTENT}">내용</span>
+                            </div>
+                            <a th:href="@{/admin/coach/coachDetail(user_idx=${comment.USER_IDX})}" class="btn-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </a>
+                            <button class="btn-del-sm">삭제</button>
+                        </div>
+
+                        <div class="comment-row">
+                            <div class="writer-name">샘플유저</div>
+                            <div class="comment-content">이것은 <mark>바보</mark> 같은 테스트 댓글입니다.</div>
+                            <a href="#" class="btn-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </a>
+                            <button class="btn-del-sm">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.querySelectorAll('.side-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.side-tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</div>
+</html>

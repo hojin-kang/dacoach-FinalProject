@@ -6,6 +6,8 @@ import com.dacoach.model.admin.EmbeddedUserDTO;
 
 
 public interface AdminService {
+	
+	// 코치 프로필 및 상태 관리
 	List<Map<String,Object>> getCoachList() throws Exception;
 	public int getCertCount() throws Exception;
 	List<Map<String,Object>> getCoachDetail(int coach_idx) throws Exception;
@@ -14,4 +16,7 @@ public interface AdminService {
 	public int updateCoachStatus(Map<String, Object> params) throws Exception;
 	public int insertCoachSuspended(EmbeddedUserDTO dto) throws Exception;
 	public int updateEnddateSuspended(int user_idx) throws Exception;
+	
+	// 검열 키워드 관리
+	List<Map<String,Object>> getKeywordType() throws Exception;
 }
