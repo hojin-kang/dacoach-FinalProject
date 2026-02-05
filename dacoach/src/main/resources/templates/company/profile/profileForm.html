@@ -65,64 +65,77 @@
 	<div th:replace="layout/footer :: siteFooter"></div>
 </body>
 <script>
-var val='';
-var addRegionCount=0;
+var val = '';
+var addRegionCount = 0;
+var addedRegionIds = []; // [추가] 선택된 소분류 ID를 담을 배열
 
-var submit=document.getElementById('submitOk');
-submit.onsubmit=function(event){
-	if(addRegionCount==0){
-		addRegionFun();
-	}
+var submitBtn = document.querySelector('input[type="submit"]');
+var majorFieldSelect = document.getElementById('majorFieldSelect');
+var minorFieldSelect = document.getElementById('minorFieldSelect');
+
+// 가입 완료 버튼 활성화 체크
+function checkSubmitVaild() {
+    if (addRegionCount > 0 && minorFieldSelect.value !== "" && minorFieldSelect.value !== "minor_field_intro") {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = "1";
+        submitBtn.style.cursor = "pointer";
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.5";
+        submitBtn.style.cursor = "not-allowed";
+    }
 }
 
-//분야 소분류 불러오기
-document.getElementById('majorFieldSelect').addEventListener('change',function(){
-	var major_field_idx=document.profileInfo.major_field_idx.value;
-	var select=document.getElementById('minorFieldSelect');
-	fetch('/api/company/getMinorField?fieldIdx='+major_field_idx)
-	 .then(function(resp) {
-            if (resp.ok) {
-                return resp.json(); 
-            } else {
-                throw new Error('데이터를 불러오는 중 에러가 발생했습니다.');
-            }
-        })
-        .then(function(data) {
-         
-            var html = '';
-            
-            for(var i=0;i<data.length;i++) {
-            	
-                html += '<option value="' + data[i].MINOR_FIELD_IDX +'" >' + data[i].MINOR_FIELD_NM + '</option>';
-            }
+checkSubmitVaild();
 
-            
-            select.innerHTML = html;
-        })
-        .catch(function(error) {
-            console.error(error);
-            alert(error.message);
-        });
-})
+// 분야 대분류 선택 시 "분야선택" 옵션 삭제
+majorFieldSelect.addEventListener('change', function() {
+    var introOption = document.getElementById('magor_field_intro');
+    if (introOption) introOption.remove();
 
-//주소 추가
-
-var addRegion=document.getElementById('addRegion');
-addRegion.onclick= function(){
-	addRegionFun();
-}
-	
-	function addRegionFun(){
+    var major_field_idx = this.value;
+    var select = document.getElementById('minorFieldSelect');
     
-    var majorIdx = document.regionForm.major_region_idx.value;
-    var minorIdx = document.regionForm.minor_region_idx.value;
+    fetch('/api/company/getMinorField?fieldIdx=' + major_field_idx)
+        .then(resp => resp.ok ? resp.json() : Promise.reject('에러'))
+        .then(data => {
+            var html = '<option value="">소분야선택</option>';
+            data.forEach(item => {
+                html += `<option value="${item.MINOR_FIELD_IDX}">${item.MINOR_FIELD_NM}</option>`;
+            });
+            select.innerHTML = html;
+            checkSubmitVaild();
+        })
+        .catch(err => alert("데이터를 불러오지 못했습니다."));
+});
+
+minorFieldSelect.addEventListener('change', checkSubmitVaild);
+
+// 주소 추가 함수 (중복 체크 로직 포함)
+function addRegionFun() {
+    var majorSelect = document.getElementById('majorSelect');
+    var minorSelect = document.getElementById('MinorRegion');
+    var majorIdx = majorSelect.value;
+    var minorIdx = minorSelect.value;
     var detail = document.regionForm.region_detail.value;
     var companyIdx = document.regionForm.company_num.value;
-    
-    
-    var minorSelect = document.getElementById('MinorRegion');
-    var minorName = minorSelect.options[minorSelect.selectedIndex].text;
 
+    // 1. 유효성 검사
+    if (majorIdx === "대분류" || minorIdx === "소분류" || !minorIdx) {
+        alert("지역을 정확히 선택해주세요.");
+        return;
+    }
+
+    // [중복 체크] 이미 배열에 존재하는 ID인지 확인
+    if (addedRegionIds.includes(minorIdx)) {
+        alert("이미 추가된 지역입니다.");
+        // 초기화 시켜줌
+        majorSelect.selectedIndex = 0;
+        minorSelect.innerHTML = '<option id="m_intro">소분류</option>';
+        return;
+    }
+
+    var minorName = minorSelect.options[minorSelect.selectedIndex].text;
     var data = {
         company_idx: companyIdx,
         major_region_idx: majorIdx,
@@ -130,73 +143,51 @@ addRegion.onclick= function(){
         region_detail: detail
     };
 
-    
     fetch('/api/company/addRegion?minorName=' + encodeURIComponent(minorName), {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify(data)
     })
-    .then(function(resp) {
-        if (resp.ok) {
-            return resp.text(); 
-        } else {
-            throw new Error('서버 통신 실패');
-        }
-    })
-    .then(function(resultText) {
+    .then(resp => resp.ok ? resp.text() : Promise.reject('실패'))
+    .then(resultText => {
         var ResultTag = document.getElementById('regionResultTag');
-        
-        
         if (resultText && resultText !== "실패") {
+            // 주소 표시 (상세주소 포함)
+            ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail}</span>`;
             
-            ResultTag.innerHTML += "<span>" + resultText + " " + detail + "</span>";
+            // [중복 방지용 저장] 성공하면 배열에 추가
+            addedRegionIds.push(minorIdx);
             
-            
+            // 입력값 초기화
             document.regionForm.region_detail.value = "";
+            majorSelect.selectedIndex = 0;
+            minorSelect.innerHTML = '<option id="m_intro">소분류</option>';
+            
             addRegionCount++;
+            checkSubmitVaild();
         } else {
             alert('주소 추가 중 오류가 발생하였습니다.');
         }
     })
-    .catch(function(error) {
-        alert(error.message);
-    });
+    .catch(error => alert("서버 통신에 실패했습니다."));
 }
-	
 
+document.getElementById('addRegion').onclick = addRegionFun;
 
-
-//소즈소 불러오기
+// 소분류 불러오기 (기존 유지)
 document.getElementById('majorSelect').addEventListener('change', function() {
-    
     var regionIdx = this.value; 
     var minorRegionSelect = document.getElementById('MinorRegion');
 
-  
     fetch('/api/company/getMinorRegion?regionIdx=' + regionIdx)
-        .then(function(resp) {
-            if (resp.ok) {
-                return resp.json(); 
-            } else {
-                throw new Error('데이터를 불러오는 중 에러가 발생했습니다.');
-            }
-        })
-        .then(function(data) {
-         
-            var html = '';
-            
-            data.forEach(function(val) {
-                html += '<option value="' + val.MINOR_REGION_IDX + '" name="'+val.DISTRICT_NM+'">' + val.DISTRICT_NM + '</option>';
+        .then(resp => resp.ok ? resp.json() : Promise.reject('에러'))
+        .then(data => {
+            var html = '<option value="">소분류</option>';
+            data.forEach(val => {
+                html += `<option value="${val.MINOR_REGION_IDX}">${val.DISTRICT_NM}</option>`;
             });
-
-            
             minorRegionSelect.innerHTML = html;
-        })
-        .catch(function(error) {
-            console.error(error);
-            alert(error.message);
         });
 });
-	
 	</script>
 </html>
