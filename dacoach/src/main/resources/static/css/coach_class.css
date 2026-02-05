@@ -318,7 +318,7 @@
   gap: 10px;
   margin-right: 30px;
 }
-.iconBtn{
+.topRight .iconBtn{
   width: 30px;
   height: 30px;
   border: none;
@@ -328,13 +328,13 @@
   justify-content:center;
   cursor:pointer;
 }
-.iconBtn .icon{
+.topRight .iconBtn .icon{
 	width: 30px;
   height: 30px;
   border-radius: 0px !important;
 }
 
-.iconBtn:last-child .icon {
+.topRight .iconBtn:last-child .icon {
 	width: 15px;
   height: 15px;
 }
@@ -362,23 +362,16 @@
   transition: transform .12s ease, background .12s ease, border-color .12s ease;
   white-space: nowrap;
 }
-.actionBtn:hover{ transform: translateY(-1px); }
 
 .actionBtn.outline{
   background: var(--bg);
   border-color: var(--accent);
   color: var(--accent);
 }
-.actionBtn.outline:hover{
-  background: var(--accent-soft);
-}
 
 .actionBtn.solid{
   background: var(--accent);
   color: white;
-}
-.actionBtn.solid:hover{
-  filter: brightness(0.96);
 }
 
 .actionBtn.ghost{

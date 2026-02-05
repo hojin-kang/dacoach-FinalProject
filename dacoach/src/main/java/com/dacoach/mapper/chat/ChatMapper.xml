@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dacoach.mapper.chat.ChatMapper">
+
+  <!-- 방 리스트 -->
+  <select id="selectRoomList" resultType="com.dacoach.model.chat.ChatRoomDTO">
+    SELECT
+      r.chat_room_idx AS chatRoomIdx,
+
+      -- 파일명 만들려고 같이 내려줌
+      r.user1_idx AS user1Idx,
+      r.user2_idx AS user2Idx,
+
+      CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END AS otherIdx,
+
+      u.user_name AS otherName,
+      'default_profile.png' AS otherPhoto,
+      u.user_type AS otherType,
+
+      r.last_message    AS lastMessage,
+      CAST(r.last_message_at AS TIMESTAMP) AS lastMessageAt,
+
+      CASE
+        WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1,0)
+        ELSE NVL(r.unread_count2,0)
+      END AS unreadCount
+    FROM chat_room r
+    JOIN users u
+      ON u.user_idx =
+         CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END
+    WHERE #{myIdx} IN (r.user1_idx, r.user2_idx)
+    ORDER BY r.last_message_at DESC NULLS LAST, r.chat_room_idx DESC
+  </select>
+
+  <!-- 방 1개(권한 체크 포함) -->
+  <select id="selectRoomByIdx" resultType="com.dacoach.model.chat.ChatRoomDTO">
+    SELECT
+      r.chat_room_idx AS chatRoomIdx,
+
+      -- 파일명 만들려고 같이 내려줌
+      r.user1_idx AS user1Idx,
+      r.user2_idx AS user2Idx,
+
+      CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END AS otherIdx,
+
+      u.user_name AS otherName,
+      'default_profile.png' AS otherPhoto,
+      u.user_type AS otherType,
+
+      r.last_message    AS lastMessage,
+      CAST(r.last_message_at AS TIMESTAMP) AS lastMessageAt,
+
+      CASE
+        WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1,0)
+        ELSE NVL(r.unread_count2,0)
+      END AS unreadCount
+    FROM chat_room r
+    JOIN users u
+      ON u.user_idx =
+         CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END
+    WHERE r.chat_room_idx = #{roomIdx}
+      AND #{myIdx} IN (r.user1_idx, r.user2_idx)
+  </select>
+
+  <!-- 방 마지막 메시지/시간 업데이트 -->
+  <update id="updateRoomLast">
+    UPDATE chat_room
+       SET last_message = #{lastMessage},
+           last_message_at = SYSDATE
+     WHERE chat_room_idx = #{roomIdx}
+  </update>
+
+  <!-- 방 입장 시 내 unread 0 -->
+  <update id="resetUnread">
+    UPDATE chat_room
+       SET unread_count1 = CASE WHEN user1_idx = #{myIdx} THEN 0 ELSE unread_count1 END,
+           unread_count2 = CASE WHEN user2_idx = #{myIdx} THEN 0 ELSE unread_count2 END
+     WHERE chat_room_idx = #{roomIdx}
+       AND #{myIdx} IN (user1_idx, user2_idx)
+  </update>
+
+  <!-- 메시지 보낼 때 상대 unread +1 -->
+  <update id="increaseUnreadOther">
+    UPDATE chat_room
+       SET unread_count1 = CASE WHEN user1_idx != #{myIdx} THEN NVL(unread_count1,0)+1 ELSE unread_count1 END,
+           unread_count2 = CASE WHEN user2_idx != #{myIdx} THEN NVL(unread_count2,0)+1 ELSE unread_count2 END
+     WHERE chat_room_idx = #{roomIdx}
+       AND #{myIdx} IN (user1_idx, user2_idx)
+  </update>
+  
+  <select id="findRoom" resultType="int">
+  SELECT chat_room_idx
+  FROM chat_room
+  WHERE (user1_idx = #{myIdx} AND user2_idx = #{targetIdx})
+     OR (user1_idx = #{targetIdx} AND user2_idx = #{myIdx})
+</select>
+
+<insert id="insertRoom">
+  INSERT INTO chat_room
+  (chat_room_idx, user1_idx, user2_idx, created_at)
+  VALUES
+  (seq_chat_room.NEXTVAL, #{myIdx}, #{targetIdx}, SYSDATE)
+</insert>
+
+</mapper>
