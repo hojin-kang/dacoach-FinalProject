@@ -38,7 +38,6 @@ public class MypageController {
 		}
 		int user_idx = (Integer)session.getAttribute("user_idx");
 		
-		System.out.println(user_idx);  //1
 		String user_nickname = "";
 		String user_rank = "";
 		
@@ -51,8 +50,6 @@ public class MypageController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(user_nickname);
-		System.out.println(user_rank);
 		mav.addObject("user_nickname", user_nickname);
 		mav.addObject("user_rank", user_rank);
 		mav.setViewName("/coach/mypage/mypage");
