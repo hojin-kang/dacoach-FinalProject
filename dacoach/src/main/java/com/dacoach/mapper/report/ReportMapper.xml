@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dacoach.mapper.report.ReportMapper">
+
+	<!-- 신고 사유 목록: TYPE_NAME='REPORT' -->
+	<select id="getReportReasons" resultType="map">
+		SELECT
+		REASON_TYPE_IDX,
+		TYPE_NAME,
+		CONTENT
+		FROM REASON_TYPE
+		WHERE TYPE_NAME = 'REPORT'
+		ORDER BY REASON_TYPE_IDX ASC
+	</select>
+
+	<!-- 신고 등록 -->
+	<insert id="addReport"
+		parameterType="com.dacoach.model.report.ReportDTO">
+		INSERT INTO REPORT
+		(REPORT_IDX, REPORTER_IDX, REPORTED_IDX, REASON_TYPE_IDX, CONTENT, STATUS,
+		CREATED_AT, UPDATED_AT)
+		VALUES
+		(SEQ_REPORT.NEXTVAL, #{reporter_idx}, #{reported_idx}, #{reason_type_idx}, #{content},
+		'WAIT', SYSDATE, null)
+	</insert>
+</mapper>

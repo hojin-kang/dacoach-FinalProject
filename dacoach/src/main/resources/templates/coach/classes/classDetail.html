@@ -46,9 +46,14 @@
 			         alt="heart">
 			  </a>
 			
-			  <button type="button" class="iconBtn" aria-label="알림">
-			    <img class="icon" src="/img/icon/siren.png">
+			  <form th:action="@{/report/form}" method="post" style="display:inline;">
+				  <input type="hidden" name="reported_idx" th:value="${classDTO.provider_idx}">
+				  <input type="hidden" name="returnUrl"
+				         th:value="@{/coach/classDetail(id=${classDTO.class_idx})}">
+				  <button type="submit" class="iconBtn">
+				    <img src="/img/icon/siren.png">
 			  </button>
+			</form>
 			</div>
 
           <div class="topActions">
