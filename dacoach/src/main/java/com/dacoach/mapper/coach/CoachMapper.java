@@ -33,4 +33,10 @@ public interface CoachMapper {
 	public int connectKakao(HashMap<String, Object> conKakao) throws Exception;
 
 	public Integer activateCoach(int user_idx) throws Exception;
+	
+	public Integer saveMyMinorCate(HashMap map) throws Exception;
+	
+	public Integer saveInterMinorCate(HashMap map) throws Exception;
+	
+	public Integer saveMyRegions(HashMap map) throws Exception;
 }

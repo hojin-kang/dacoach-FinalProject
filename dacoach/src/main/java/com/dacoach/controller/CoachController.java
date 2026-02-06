@@ -127,15 +127,22 @@ public class CoachController {
 	@PostMapping("/coachJoin")
 	public ModelAndView coachJoin(CoachDTO cdto, @RequestParam(value = "login_id") String login_id,
 			@RequestParam(value = "uploadPhoto", required = false) MultipartFile uploadPhoto,
-			@RequestParam(value = "uploadVideo", required = false) MultipartFile uploadVideo) {
+			@RequestParam(value = "uploadVideo", required = false) MultipartFile uploadVideo,
+			@RequestParam(value = "myMinorCate")int myMinorCate,
+			@RequestParam(value = "interMinorCate")int interMinorCate,
+			@RequestParam(value = "myMajorRegion")int myMajorRegion,
+			@RequestParam(value = "myMinorRegion")int myMinorRegion,
+			@RequestParam(value = "myHashtags")String myHashtags,
+			@RequestParam(value = "interHashtags")String interHashtags
+			) {
 		if (uploadPhoto != null && !uploadPhoto.isEmpty()) {
 			String photoPath = FileUpload.saveFile(uploadPhoto, "coach/profile");
-			cdto.setPhoto(photoPath); // DB에는 "coach/profile/uuid.jpg" 가 저장됨
+			cdto.setPhoto(photoPath);
 		}
 
 		if (uploadVideo != null && !uploadVideo.isEmpty()) {
 			String videoPath = FileUpload.saveFile(uploadVideo, "coach/video");
-			cdto.setVideo(videoPath); // DB에는 "coach/video/uuid.mp4" 가 저장됨
+			cdto.setVideo(videoPath);
 		}
 
 		ModelAndView mav = new ModelAndView();
@@ -150,6 +157,10 @@ public class CoachController {
 				mav.addObject("url", "/login");
 				mav.setViewName("alert");
 				coachService.activateCoach(user_idx);
+				// 코치 전문 및 관심분야, 지역, 해시태그 저장
+				coachService.saveCoachDetatils(user_idx,myMinorCate,interMinorCate,myMajorRegion,myMinorRegion,myHashtags,interHashtags);
+				
+				
 			} else {
 				mav.addObject("msg", "코치 회원가입에 실패했습니다. 다시 시도해주세요.");
 				mav.addObject("url", "/coachJoin");

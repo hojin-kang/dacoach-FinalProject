@@ -94,6 +94,32 @@ public class CoachServiceImple implements CoachService {
 		return coachMapper.activateCoach(user_idx);
 	}
 
+	@Override
+	@Transactional
+	public Integer saveCoachDetatils(int user_idx, int myMinorCate, int interMinorCate, int myMajorRegion,
+			int myMinorRegion, String myHashtags, String interHashtags) throws Exception {
+		int coach_idx=coachMapper.getCoachInfo(user_idx).getCoach_idx();
+		//제공분야 및 활동지역
+		HashMap map=new HashMap();
+		map.put("coach_idx", coach_idx);
+		map.put("myMinorCate", myMinorCate);
+		map.put("interMinorCate", interMinorCate);
+		map.put("myMajorRegion", myMajorRegion);
+		map.put("myMinorRegion", myMinorRegion);
+		coachMapper.saveMyMinorCate(map);
+		coachMapper.saveInterMinorCate(map);
+		coachMapper.saveMyRegions(map);
+		//해시태그 저장
+		String tags[]=myHashtags.split("#");
+		for(int i=0;i<tags.length;i++) {
+			if(!tags[i].trim().equals("")) {
+				
+			}
+		}
+		
+		return 1;
+	}
+
 	
 
 	
