@@ -36,17 +36,20 @@
 
         <div class="topRight">
           <div class="topIcons">
-            <button type="button" class="iconBtn likeBtn" aria-label="찜">
-			  <img class="icon"
-			       src="/img/icon/heart.png"
-			       data-off="/img/icon/heart.png"
-			       data-on="/img/icon/heart_fill.png"
-			       alt="heart">
-			</button>
-            <button type="button" class="iconBtn" aria-label="알림">
-              <img class="icon" src="/img/icon/siren.png">
-            </button>
-          </div>
+			  
+			  <a class="iconBtn likeBtn"
+			     aria-label="찜"
+			     th:href="${isLiked} ? @{/delLikesClass(class_idx=${classDTO.class_idx})}
+			                      : @{/addLikesClass(class_idx=${classDTO.class_idx})}">
+			    <img class="icon"
+			         th:src="${isLiked} ? @{/img/icon/heart_fill.png} : @{/img/icon/heart.png}"
+			         alt="heart">
+			  </a>
+			
+			  <button type="button" class="iconBtn" aria-label="알림">
+			    <img class="icon" src="/img/icon/siren.png">
+			  </button>
+			</div>
 
           <div class="topActions">
             <a class="actionBtn outline"
@@ -238,21 +241,6 @@
         if (!el) return;
         e.preventDefault();
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-    
-    // ✅ 하트 이미지 토글
-    document.querySelectorAll('.likeBtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const img = btn.querySelector('img');
-        if (!img) return;
-
-        const off = img.dataset.off;
-        const on  = img.dataset.on;
-
-        const isOn = btn.classList.toggle('isLiked'); // 상태 토글
-        img.src = isOn ? on : off;
-        btn.setAttribute('aria-pressed', String(isOn));
       });
     });
     

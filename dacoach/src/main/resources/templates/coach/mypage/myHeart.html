@@ -1,10 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>dacoach - 나의 찜</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/mypage.css}" />
 </head>
 <body>
+	<div th:replace="layout/header :: siteHeader"></div>
 
+	<main class="main">
+		<div class="container">
+			<div class="breadcrumb">
+				<a th:href="@{/mypage}">마이페이지</a> <span class="sep">&gt;</span> <span>나의
+					찜</span>
+			</div>
+
+			<h2 class="pageTitle">나의 찜</h2>
+			<hr class="line" />
+
+			<div class="likesWrap">
+
+				<!-- ===== 코치 찜 ===== -->
+				<section class="likesSection" id="likedCoaches">
+					<div class="sectionHead">
+						<span class="sectionTitle">코치 찜</span>
+						<span class="count" th:text="|${likedCoachCount}개|">0개</span>
+					</div>
+
+					<div class="likesGrid">
+						<div th:each="c : ${likedCoaches}" class="likeCard">
+
+  <a class="cardLink"
+     th:href="@{/coach/profile(id=${c.coach_idx})}">
+
+    <img th:src="${c.photo != null and c.photo != ''}
+        ? @{/uploads/profile/{img}(img=${c.photo})}
+        : @{/images/default_profile.png}">
+
+    <div>
+      <div th:text="${c.nickname}"></div>
+      <div th:text="${c.intro}"></div>
+    </div>
+  </a>
+
+  <button type="button"
+        class="heartBtn coach"
+        th:attr="data-liked-user-idx=${c.user_idx}">
+  <img src="/img/icon/heart_fill.png" alt="unlike">
+</button>
+
+</div>
+
+						<div class="empty"
+							th:if="${likedCoaches == null or #lists.isEmpty(likedCoaches)}">
+							아직 찜한 코치가 없습니다.</div>
+					</div>
+				</section>
+
+				<hr class="line" />
+
+				<!-- ===== 클래스 찜 ===== -->
+				<section class="likesSection" id="likedClasses">
+					<div class="sectionHead">
+						<span class="sectionTitle">클래스 찜</span>
+						<span class="count" th:text="|${likedClassCount}개|">0개</span>
+					</div>
+
+					<div class="likesGrid">
+						<div th:each="cl : ${likedClasses}" class="likeCard">
+
+  <!-- 상세 이동 영역 -->
+  <a class="cardLink"
+     th:href="@{/coach/classDetail(id=${cl.class_idx})}">
+
+    <img th:src="${cl.photo != null and cl.photo != ''}
+          ? @{/uploads/classes/photos/{img}(img=${cl.photo})}
+          : @{/images/default_class.png}">
+
+    <div class="meta">
+      <div th:text="${cl.title}"></div>
+      <div th:text="|[${cl.providerName}]|"></div>
+      <div th:text="|${#numbers.formatInteger(cl.price,3,'COMMA')}₩|"></div>
+    </div>
+  </a>
+
+  <!-- ❤️ 찜 해제 -->
+  <button type="button"
+        class="heartBtn"
+        th:attr="data-class-idx=${cl.class_idx}">
+  <img src="/img/icon/heart_fill.png" alt="unlike">
+</button>
+
+</div>
+
+						<div class="empty"
+							th:if="${likedClasses == null or #lists.isEmpty(likedClasses)}">
+							아직 찜한 클래스가 없습니다.</div>
+					</div>
+				</section>
+
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="layout/footer :: siteFooter"></div>
+	<script>
+  // 클래스 찜 해제
+  document.querySelectorAll('.heartBtn:not(.coach)').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // ✅ 상세 이동 막기
+
+      const card = btn.closest('.likeCard');
+      const classIdx = btn.dataset.classIdx;
+      if (!classIdx) return;
+
+      const res = await fetch('/api/likes/class/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ class_idx: classIdx })
+      });
+
+      const data = await res.json();
+      if (data.code === 401) {
+        location.href = '/login';
+        return;
+      }
+      if (data.ok) {
+        card?.remove(); // ✅ 카드 즉시 제거
+      }
+    });
+  });
+
+  // 코치 찜 해제
+  document.querySelectorAll('.heartBtn.coach').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const card = btn.closest('.likeCard');
+      const likedUserIdx = btn.dataset.likedUserIdx;
+      if (!likedUserIdx) return;
+
+      const res = await fetch('/api/likes/user/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ liked_user_idx: likedUserIdx })
+      });
+
+      const data = await res.json();
+      if (data.code === 401) {
+        location.href = '/login';
+        return;
+      }
+      if (data.ok) {
+        card?.remove();
+      }
+    });
+  });
+</script>
+	
 </body>
 </html>
