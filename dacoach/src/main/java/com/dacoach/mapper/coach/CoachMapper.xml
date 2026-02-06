@@ -100,4 +100,22 @@
 		update users set status
 		= 'ACTIVE' where user_idx = #{user_idx}
 	</update>
+	<insert id="saveMyMinorCate" parameterType="HashMap">
+        insert into coach_provide (
+        coach_idx, minor_field_idx) values (
+        #{coach_idx}, #{myMinorCate}
+        )
+    </insert>
+    <insert id="saveInterMinorCate" parameterType="HashMap">
+        insert into coach_interest (
+        coach_idx, minor_field_idx) values (
+        #{coach_idx}, #{interMinorCate}
+        )
+    </insert>
+    <insert id="saveMyRegions" parameterType="HashMap">
+        insert into coach_region (
+        coach_idx, major_region_idx, minor_region_idx) values (
+        #{coach_idx}, #{myMajorRegion}, #{myMinorRegion}
+        )
+    </insert>
 </mapper>

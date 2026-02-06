@@ -20,4 +20,5 @@ public interface CoachService {
     public CoachDTO getCoachByKakaoKey(String kakaoKey) throws Exception;
     public int connectKakao(HashMap<String, Object> conKakao) throws Exception;
     public Integer activateCoach(int user_idx) throws Exception;
+    public Integer saveCoachDetatils(int user_idx, int myMinorCate, int interMinorCate, int myMajorRegion, int myMinorRegion,String myHashtags,String interHashtags) throws Exception;
 }
