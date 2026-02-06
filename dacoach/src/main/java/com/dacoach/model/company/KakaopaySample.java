@@ -38,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 		@GetMapping("/success")
 		public ResponseEntity<KakaoApproveResponse> afterPayRequest(@RequestParam("pg_token") String pgToken,String test){
 			
-			KakaoApproveResponse kakaoApprove= kakaoPayService.approveResponse(pgToken,test);
+			KakaoApproveResponse kakaoApprove= kakaoPayService.approveResponse(pgToken);
 			
 			return new ResponseEntity<KakaoApproveResponse>(kakaoApprove,HttpStatus.OK);
 			

@@ -57,7 +57,10 @@ public class CompanyController {
 		mav.setViewName("forward:/company/profile/companyInfo");
 		return mav;
 	}
-
+	@GetMapping("/membership/membershipForm")
+	public void test() {
+		
+	}
 	@RequestMapping("/company/profile/companyInfo")
 	public ModelAndView companyInfo() {
 

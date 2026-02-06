@@ -8,10 +8,10 @@ function kakaopayModule(order_id,user_id,item_name,quantity,total_amount,vat_amo
 			total_amount:total_amount,
 			vat_amount:vat_amount,
 			tax_free_amount:tax_free,
-			approval_url:"http://localhost:9090/"+url+"/success?order_id="+order_id,
-				fail_url:"http://localhost:9090/"+url+"/fail",
-				cancel_url:"http://localhost:9090/"+url+"/cancel"};
-fetch(url,
+			approval_url:"http://localhost:9090"+url+"/success",
+				fail_url:"http://localhost:9090"+url+"/fail",
+				cancel_url:"http://localhost:9090"+url+"/cancel"};
+fetch(url+'/ready',
 		{method:'POST',
 		headers:{'Content-Type':'application/json'},
 		body:JSON.stringify(parameters)})

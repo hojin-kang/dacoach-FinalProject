@@ -3,12 +3,14 @@ package com.dacoach.kakaopay;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.dacoach.mapper.kakaopay.KakaopayMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,8 @@ public class KakaoPayService {
 	private RestTemplate restTemplate = new RestTemplate();
 	private KakaoReadyResponse kakaoReady;
 	
+	@Autowired
+	private KakaopayMapper kakaopayMapper;
 	private HttpHeaders getHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		String auth="SECRET_KEY " + payProperties.getSecretKey();
@@ -44,16 +48,35 @@ public class KakaoPayService {
 				requestEntity,
 				KakaoReadyResponse.class);
 		
+		PayStatusDTO dto=new PayStatusDTO();
+		dto.setTid(kakaoReady.getTid());
+		dto.setPartner_order_id((String)parameters.get("partner_order_id"));
+		dto.setPartner_user_id((String)parameters.get("partner_user_id"));
+		dto.setStatus("요청");
+		
+		try {
+			kakaopayMapper.insertPayStatus(dto);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return kakaoReady;
 	}
 	//결제 완료 승인(결제화면 나오는 메서드 ex-QR결제)
-	public KakaoApproveResponse approveResponse(String pgToken,String test) {
+	public KakaoApproveResponse approveResponse(String pgToken) {
 		//카카오 요청
 		Map<String,String> parameters=new HashMap<>();
+		try {
+			PayStatusDTO dto=kakaopayMapper.getPayStatus(kakaoReady.getTid());
+			parameters.put("partner_order_id",dto.getPartner_order_id());
+			parameters.put("partner_user_id",dto.getPartner_user_id());//이거 나중에 로그인 인가정보로 바꿀예정
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		parameters.put("cid", payProperties.getCid());
 		parameters.put("tid", kakaoReady.getTid());
-		parameters.put("partner_order_id",test);
-		parameters.put("partner_user_id","2");
 		parameters.put("pg_token",pgToken);
 		
 		//파라미터, 헤더

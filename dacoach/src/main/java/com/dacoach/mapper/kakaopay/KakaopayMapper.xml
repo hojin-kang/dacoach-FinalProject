@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.dacoach.mapper.kakaopay.KakaopayMapper">
+  
+  <insert id="insertPayStatus">
+  	insert into pay_status values (
+  		#{tid},
+  		#{partner_order_id},
+  		#{partner_user_id},
+  		#{status}
+  	)
+  </insert>
+  <select id="getPayStatus">
+  	select * from pay_status where tid= #{tid}
+  </select>
+  
+  <update id="upPayStatus">
+  	update pay_status set status=#{status} where tid= #{tid}
+  </update>
+  <insert id="insertPay">
+  	insert into pay values(
+  		seq_pay.nextval,
+  		#{tid},
+  		#{cid},
+  		#{sid},
+  		#{partner_order_id},
+  		#{partner_user_id},
+  		#{item_name},
+  		#{item_code},
+  		#{quantity},
+  		#{created_at},
+  		#{approved_at},
+  		#{amount.total},
+  		#{amount.tax_free},
+  		#{amount.tax},
+  		#{amount.point},
+  		#{amount.discount},
+  		#{amount.green_deposit},
+  		#{payment_method_type}
+  	)
+  </insert>
+  </mapper>
