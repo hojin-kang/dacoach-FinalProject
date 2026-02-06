@@ -1,5 +1,3 @@
-로그인 html
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -7,6 +5,12 @@
     <title>로그인</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/login.css}" />
+    <script th:inline="javascript">
+    const userIdx = [[${session.user_idx}]];
+    if (userIdx != null) {
+        location.href = '/';
+    }
+	</script>
     
 </head>
 <body>
@@ -19,8 +23,8 @@
 
             <form action="/loginOk" method="post">
 				<div class="소연아 꾸며줘">
-					<input type="radio" name="userType" value="coach">코치 회원 로그인
-					<input type="radio" name="userType" value="company">기업 회원 로그인
+					<input type="radio" name="userType" value="coach">코치 회원
+					<input type="radio" name="userType" value="company">컴퍼니 회원
 				</div>
                 <div class="login-row">
                     <div class="input-group-stack">
