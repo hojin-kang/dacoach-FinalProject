@@ -118,4 +118,36 @@
         #{coach_idx}, #{myMajorRegion}, #{myMinorRegion}
         )
     </insert>
+    <select id="allHashtags" resultType="String">
+    	select tags from hashtag
+    </select>
+	<insert id="saveHashtags" parameterType="java.util.HashSet">
+	    INSERT INTO hashtag (hashtag_idx, tags)
+	    SELECT seq_hashtag.nextval, tags FROM (
+	        <foreach collection="collection" item="tag" separator="UNION ALL">
+	            SELECT #{tag} AS tags FROM DUAL
+	        </foreach>
+	    )
+	</insert>
+	<select id="getHashtagIdxs" resultType="int">
+	    SELECT hashtag_idx
+	    FROM hashtag
+	    <where>
+	        <if test="collection != null and !collection.isEmpty()">
+	            tags IN
+	            <foreach collection="collection" item="name" open="(" separator="," close=")">
+	                #{name}
+	            </foreach>
+	        </if>
+	        <if test="collection == null or collection.isEmpty()">
+	            1 = 0 </if>
+	    </where>
+	</select>
+	<insert id="myHashtagMapping">
+	    INSERT INTO user_hashtag (user_idx, hashtag_idx)
+	    <foreach collection="list" item="hIdx" separator="UNION ALL">
+	        SELECT #{user_idx}, #{hIdx} FROM DUAL
+	    </foreach>
+	</insert>
+    
 </mapper>

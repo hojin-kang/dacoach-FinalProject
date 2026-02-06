@@ -1,6 +1,9 @@
 package com.dacoach.service.coach;
 
+import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +99,7 @@ public class CoachServiceImple implements CoachService {
 
 	@Override
 	@Transactional
-	public Integer saveCoachDetatils(int user_idx, int myMinorCate, int interMinorCate, int myMajorRegion,
+	public void saveCoachDetails(int user_idx, int myMinorCate, int interMinorCate, int myMajorRegion,
 			int myMinorRegion, String myHashtags, String interHashtags) throws Exception {
 		int coach_idx=coachMapper.getCoachInfo(user_idx).getCoach_idx();
 		//제공분야 및 활동지역
@@ -109,15 +112,48 @@ public class CoachServiceImple implements CoachService {
 		coachMapper.saveMyMinorCate(map);
 		coachMapper.saveInterMinorCate(map);
 		coachMapper.saveMyRegions(map);
-		//해시태그 저장
-		String tags[]=myHashtags.split("#");
-		for(int i=0;i<tags.length;i++) {
-			if(!tags[i].trim().equals("")) {
-				
-			}
+		
+		// 1. DB의 기존 태그 가져오기
+		HashSet<String> allHashtags = new HashSet<>(coachMapper.allHashtags());
+
+		// 2. mytags 처리
+		HashSet<String> mytags = new HashSet<>();
+		for (String s : myHashtags.split("#")) {
+		    String t = s.trim();
+		    if (!t.isEmpty()) mytags.add(t); // 빈 값과 공백 제거 후 추가
 		}
 		
-		return 1;
+		HashSet<String> mytags_original = new HashSet<>(mytags); // 원본 복사본 생성
+		mytags.removeAll(allHashtags);
+
+		// 저장할 태그가 있을 때만 실행
+		if (!mytags.isEmpty()) {
+		    coachMapper.saveHashtags(mytags);
+		    allHashtags.addAll(mytags); // 다음 비교를 위해 전체 목록 업데이트
+		}
+		// 3. intertags 처리
+		HashSet<String> intertags = new HashSet<>();
+		for (String s : interHashtags.split("#")) {
+		    String t = s.trim();
+		    if (!t.isEmpty()) intertags.add(t);
+		}
+		HashSet<String> intertags_original = new HashSet<>(intertags); // 원본 복사본 생성
+		intertags.removeAll(allHashtags);
+
+		if (!intertags.isEmpty()) {
+		    coachMapper.saveHashtags(intertags);
+		}
+		
+		List<Integer> mytags_idx = coachMapper.getHashtagIdxs(mytags_original);
+		List<Integer> intertags_idx = coachMapper.getHashtagIdxs(intertags_original);
+		
+		if(!mytags_idx.isEmpty()) {
+			coachMapper.myHashtagMapping(user_idx, mytags_idx);
+		}
+//		if(!intertags_idx.isEmpty()) {
+//			coachMapper.interHashtagMapping(user_idx, intertags_idx);
+//		}
+		
 	}
 
 	

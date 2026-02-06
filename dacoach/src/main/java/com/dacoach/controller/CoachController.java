@@ -158,7 +158,7 @@ public class CoachController {
 				mav.setViewName("alert");
 				coachService.activateCoach(user_idx);
 				// 코치 전문 및 관심분야, 지역, 해시태그 저장
-				coachService.saveCoachDetatils(user_idx,myMinorCate,interMinorCate,myMajorRegion,myMinorRegion,myHashtags,interHashtags);
+				coachService.saveCoachDetails(user_idx,myMinorCate,interMinorCate,myMajorRegion,myMinorRegion,myHashtags,interHashtags);
 				
 				
 			} else {

@@ -2,6 +2,8 @@ package com.dacoach.mapper.coach;
 
 import java.util.*;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.users.UsersDTO;
 
@@ -39,4 +41,12 @@ public interface CoachMapper {
 	public Integer saveInterMinorCate(HashMap map) throws Exception;
 	
 	public Integer saveMyRegions(HashMap map) throws Exception;
+	
+	public List<String> allHashtags() throws Exception;
+	
+	public Integer saveHashtags(HashSet set) throws Exception;
+	
+	public List<Integer> getHashtagIdxs(HashSet set) throws Exception;
+	
+	public void myHashtagMapping(@Param("user_idx")int user_idx,@Param("list")List<Integer> list) throws Exception;
 }
