@@ -44,7 +44,7 @@
                 </button>
                 <ul id="monitoringSubmenu" class="bg-gray-50 pb-2" th:classappend="${activeMenu != 'monitoring'} ? ' hidden'">
                     <li><a th:href="@{/admin/monitoring/comment}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'comment'} ? ' text-[#4a7c74] font-bold underline'">댓글</a></li>
-                    <li><a th:href="@{/admin/monitoring/class}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'class'} ? ' text-[#4a7c74] font-bold underline'">클래스</a></li>
+                    <li><a th:href="@{/admin/companyClassList}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'class'} ? ' text-[#4a7c74] font-bold underline'">클래스</a></li>
                     <li><a th:href="@{/admin/monitoring/content}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'content'} ? ' text-[#4a7c74] font-bold underline'">콘텐츠</a></li>
                 </ul>
             </li>

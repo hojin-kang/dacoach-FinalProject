@@ -5,13 +5,17 @@ package com.dacoach.admincompany.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dacoach.admin.company.model.AdminCompanyDAO;
 import com.dacoach.admin.company.model.AdminCompanyRowDTO;
+import com.dacoach.model.review.ReviewClassSummaryDTO;
 
 @Service
 public class AdminCompanyServiceImple implements AdminCompanyService {
@@ -80,4 +84,14 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
         // 기존 saveAccountAndSuspend 로직과 동일하게 처리
         dao.closeLatestEmbeddedHistory(userIdx);
     }
+
+    @Override
+    public List<AdminCompanyRowDTO> getClassPage(Map<String, Object> param) {
+        return dao.selectClassPage(param);
+    }
+	@Override
+	public int getClassTotalCnt() {
+		return dao.countClassTotal();
+	}
+	
 }

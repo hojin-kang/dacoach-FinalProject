@@ -1,6 +1,3 @@
-// ================================
-// 1) AdminCompanyDAOImple (SqlSessionTemplate만 사용)
-// ================================
 package com.dacoach.admin.company.model;
 
 import java.util.HashMap;
@@ -9,6 +6,8 @@ import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.dacoach.model.review.ReviewClassSummaryDTO;
 
 @Repository
 public class AdminCompanyDAOImple implements AdminCompanyDAO {
@@ -84,4 +83,19 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
         p.put("cert_status", certStatus);
         return sqlSession.insert(NS + "insertCertStatus", p);
     }
+
+	@Override
+	public List<AdminCompanyRowDTO> selectClassPage(Map<String, Object> param) {
+		return sqlSession.selectList(NS+"selectClassPage",param);
+	}
+
+	@Override
+	public List<ReviewClassSummaryDTO> selectReviewSummaryByClassIds(List<Integer> classIds) {
+		return sqlSession.selectList(NS+"selectReviewSummaryByClassIds",classIds);
+	}
+
+	@Override
+	public int countClassTotal() {
+		return sqlSession.selectOne(NS+"countClassTotal");
+	}
 }

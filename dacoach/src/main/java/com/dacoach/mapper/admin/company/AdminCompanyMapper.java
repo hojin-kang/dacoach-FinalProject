@@ -1,17 +1,21 @@
 package com.dacoach.mapper.admin.company;
 
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.dacoach.admin.company.model.AdminCompanyRowDTO;
 import com.dacoach.model.company.CompanyDTO;
+import com.dacoach.model.review.ReviewClassSummaryDTO;
 import com.dacoach.model.admin.EmbeddedUserDTO;
 
 @Mapper
 public interface AdminCompanyMapper {
 
-    List<CompanyDTO> companyList(); // (네 기존 유지)
+	
+    List<CompanyDTO> companyList(); 
 
     AdminCompanyRowDTO companyDetail(@Param("usersIdx") int usersIdx);
 
@@ -38,4 +42,9 @@ public interface AdminCompanyMapper {
     int closeLatestEmbeddedHistory(@Param("userIdx") long userIdx);
 
     EmbeddedUserDTO selectLatestEmbeddedByUser(@Param("userIdx") long userIdx);
+    
+    //class review xml id
+    List<AdminCompanyRowDTO> selectClassPage(Map<String, Object> param);
+    List<ReviewClassSummaryDTO> selectReviewSummaryByClassIds(List<Integer> classIds);
+    int countClassTotal();
 }
