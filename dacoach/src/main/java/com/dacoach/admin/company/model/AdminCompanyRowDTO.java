@@ -19,6 +19,7 @@ import lombok.ToString;
 @ToString
 public class AdminCompanyRowDTO {
 	private int users_idx;
+	private Integer class_idx;
     private CompanyDTO company;   // COMPANY 테이블 컬럼들
     private UsersDTO users;       // USERS 테이블 컬럼들
     private String cert_status;   // CERT_STATUS (사업자등록증만)
@@ -26,4 +27,5 @@ public class AdminCompanyRowDTO {
     private ClassDTO classes;    // 클래스 정보
     private ReviewClassSummaryDTO reviewSummary; // 리뷰 요약 정보
     private ReviewClassDTO review; // 리뷰 정보
+    private String progressStatus; // 진행상태
 }

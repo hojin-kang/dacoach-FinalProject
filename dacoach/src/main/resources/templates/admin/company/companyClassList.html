@@ -1,5 +1,5 @@
+<div th:fragment="contentPage" class="page-wrap font-main">
 <style>
-/* companyClassList.css - 민트톤(코치/기업 페이지 톤 맞춤) */
 
 .font-main{
   font-family:'Pretendard', sans-serif;
@@ -132,7 +132,7 @@
 }
 </style>
 
-<div th:fragment="contentPage" class="page-wrap font-main">
+
   <div class="info-card">
     <h2 class="section-badge">클래스 관리</h2>
 
@@ -146,12 +146,13 @@
             <th>회사명</th>
             <th>별점</th>
             <th>사진</th>
+            <th>상태</th>
           </tr>
         </thead>
 
         <tbody>
           <tr th:if="${list == null or #lists.isEmpty(list)}">
-            <td class="empty" colspan="6">데이터가 없습니다.</td>
+            <td class="empty" colspan="7">데이터가 없습니다.</td>
           </tr>
 
           <tr th:each="row : ${list}">
@@ -182,6 +183,10 @@
 
               <span th:if="${row == null or row.classes == null or row.classes.photo == null or row.classes.photo == ''}">-</span>
             </td>
+            
+            <td data-label="상태"
+    			th:text="${row != null and row.progressStatus != null ? row.progressStatus : '-'}">-</td>
+            	
           </tr>
         </tbody>
       </table>
