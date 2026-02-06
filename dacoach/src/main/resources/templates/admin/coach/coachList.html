@@ -46,13 +46,18 @@
                     <td class="py-4" th:text="${coach.CREATED_AT != null ? #dates.format(coach.CREATED_AT, 'yyyy-MM-dd') : '-'}"></td>
                     
                     <td class="py-4">
-                        <span class="px-3 py-1 rounded-full text-xs font-bold"
-                              th:classappend="${coach.STATUS == 'SUSPENDED' ? 'bg-red-100 text-red-600' : 
-                                               (coach.STATUS == 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600')}"
-                              th:text="${coach.STATUS == 'ACTIVE' ? '사용' : 
-                                        (coach.STATUS == 'INACTIVE' ? '휴면' : '정지')}">
-                        </span>
-                    </td>
+                        <span
+						class="px-3 py-1 rounded-full text-xs font-bold"
+						th:classappend="${coach.STATUS == 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 
+                        (coach.STATUS == 'WARNING' ? 'bg-orange-100 text-orange-600' : 
+                        (coach.STATUS == 'DANGER' ? 'bg-red-100 text-red-600' : 
+                        (coach.STATUS == 'SUSPENDED' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600')))}"
+						th:text="${coach.STATUS == 'ACTIVE' ? '사용' : 
+            		    (coach.STATUS == 'WARNING' ? '주의' : 
+             		    (coach.STATUS == 'DANGER' ? '위험' : 
+             		    (coach.STATUS == 'SUSPENDED' ? '정지' : '휴면')))}">
+						</span>
+					</td>
 					<td class="py-4">
 						<div th:if="${coach.CERT_WAIT_COUNT > 0}">
 							<span

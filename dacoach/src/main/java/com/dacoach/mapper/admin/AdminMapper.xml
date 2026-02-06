@@ -82,4 +82,55 @@
 	group by keyword_type
 	order by keyword_type asc
 	</select>
+	
+	<select id="getKeywordName" parameterType="String" resultType="String">
+	select keyword_name 
+	from keyword 
+	<where>
+		<if test="keyword_type != null and keyword_type != ''">
+		keyword_type=#{keyword_type}
+		</if>
+	</where>
+	</select>
+	
+	<select id="getTypeReview" parameterType="String" resultType="map">
+	select
+		r.review_idx,
+		r.reviewer_idx,
+		max(u.user_name) as user_name,
+		r.role,
+		max(r.content)as content,
+		max(r.created_at) as created_at,	
+		listagg(k.keyword_name,',') within group (order by k.keyword_name) as keywords
+	from (
+		select review_coach_idx as review_idx,reviewer_idx,content,created_at,'coach' as role from review_coach
+		union all
+		select review_class_idx as review_idx,reviewer_idx,content,created_at,'class' as role from review_class
+	) r
+	join users u on r.reviewer_idx = u.user_idx
+	join (
+		select keyword_type,keyword_name
+		from keyword
+		<where>
+			<if test="keyword_type != null and keyword_type != ''">
+				keyword_type=#{keyword_type}
+			</if>
+		</where>
+	) k on r.content like '%' || k.keyword_name || '%'
+	group by r.review_idx,r.reviewer_idx,r.role
+	order by created_at desc
+	</select>
+	
+	<insert id="insertKeyword" parameterType="map">
+	insert into keyword (keyword_idx,keyword_type,keyword_name) values (seq_keyword.nextval,#{keyword_type},#{keyword_name})
+	</insert>
+	
+	<delete id="deleteKeyword" parameterType="String">
+	delete from keyword where keyword_name=#{keyword_name}
+	</delete>
+	
+	<select id="selectCoachidx" parameterType="int" resultType="int">
+	select coach_idx from coach where user_idx=#{user_idx}
+	</select>
+	
 </mapper>
