@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>클래스 수정 - dacoach</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/company/company_class.css}" />
+</head>
+<body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
+
+	<main class="main">
+		<div class="container">
+			<h2>클래스 관리</h2>
+			<hr>
+
+			<div class="classPage">
+				<!-- LEFT: 메뉴 패널 -->
+				<aside class="menuArea">
+					<div class="menuHead">관리 메뉴</div>
+					<div class="menuButtons">
+						<button type="button" class="menuBtn"
+							onclick="location.href='/class/company/classList'">컴퍼니</button>
+						<button type="button" class="menuBtn"
+							onclick="location.href='/class/company/register'">클래스 등록</button>
+						<button type="button" class="menuBtn"
+							onclick="location.href='/class/company/status'">클래스 통계</button>
+						<button type="button" class="menuBtn"
+							onclick="location.href='/class/company/reviews'">후기 관리</button>
+					</div>
+				</aside>
+
+				<!-- RIGHT: 수정 폼 -->
+				<section class="contentArea">
+					<div class="registerForm">
+						<!-- 알림 메시지 -->
+						<div th:if="${msg}" class="alert success" th:text="${msg}"></div>
+						<div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+						<form id="classUpdate" th:action="@{/class/company/update}"
+							method="post" enctype="multipart/form-data">
+
+							<h1>클래스 수정</h1>
+
+							<!-- CSRF 토큰 -->
+							<input type="hidden" th:name="${_csrf.parameterName}"
+								th:value="${_csrf.token}" th:if="${_csrf}" />
+
+							<!-- 클래스 IDX (hidden) -->
+							<input type="hidden" name="class_idx"
+								th:value="${classDTO.class_idx}" />
+
+							<!-- 제목 (수정 불가) -->
+							<div class="form-group">
+								<h3>클래스 제목 (수정 불가)</h3>
+								<input type="text" th:value="${classDTO.title}" disabled
+									style="background: #f0f0f0; cursor: not-allowed;">
+							</div>
+
+							<!-- 클래스 내용 -->
+							<div class="form-group">
+								<h3 class="required">클래스 소개</h3>
+								<textarea id="classContent" name="intro"
+									th:text="${classDTO.intro}"
+									placeholder="클래스 내용을 자세히 작성해주세요 (최대 3000자)" maxlength="3000"
+									required></textarea>
+								<div id="contentError" class="error-message"></div>
+							</div>
+
+							<!-- 분야 (수정 불가) -->
+							<div class="form-group">
+								<h3>클래스 제공 분야 (수정 불가)</h3>
+								<input type="text"
+									th:value="${fieldInfo != null ? fieldInfo.MAJOR_FIELD_CD + ' > ' + fieldInfo.MINOR_FIELD_NM : '정보 없음'}"
+									disabled style="background: #f0f0f0; cursor: not-allowed;">
+							</div>
+
+							<!-- 클래스 제공 장소 -->
+							<div class="form-group">
+								<h3 class="required">클래스 제공 장소</h3>
+								<div class="select-group">
+									<select id="majorRegion" required>
+										<option value="">시/도 선택</option>
+									</select> <select id="minorRegion" name="minor_region_idx" required>
+										<option value="">구/군 선택</option>
+									</select>
+								</div>
+								<div id="regionError" class="error-message"></div>
+							</div>
+
+							<!-- 가격 (수정 불가) -->
+							<div class="form-group">
+								<h3>클래스 가격 (수정 불가)</h3>
+								<input type="text"
+									th:value="${#numbers.formatInteger(classDTO.price, 3, 'COMMA')} + '원'"
+									disabled style="background: #f0f0f0; cursor: not-allowed;">
+							</div>
+
+							<!-- ⭐ 해시태그 입력 폼 -->
+							<div class="form-group">
+								<h3>해시태그</h3>
+								<div class="hashtag-input-area" id="hashtagArea">
+									<input type="text" id="hashtagInput"
+										placeholder="#해시태그 입력 후 Enter (띄어쓰기 자동 제거) 최대 3개"
+										autocomplete="off">
+								</div>
+								<!-- 숨겨진 필드로 해시태그 전송 -->
+								<input type="hidden" id="hashtagsData" name="hashtags">
+							</div>
+
+							<!-- 사진 업로드 -->
+							<div class="form-group">
+								<h3>클래스 소개 사진</h3>
+
+								<!-- 기존 사진 미리보기 -->
+								<div th:if="${classDTO.photo != null and classDTO.photo != ''}"
+									id="existingPhotoPreview" class="file-preview-container">
+									<div class="file-preview">
+										<img th:src="'/uploads/' + ${classDTO.photo}" alt="기존 사진">
+										<button type="button" class="remove-btn"
+											onclick="removeExistingPhoto()">✕</button>
+									</div>
+									<p style="font-size: 12px; color: #666; margin-top: 8px;">
+										※ 사진을 변경하려면 X 버튼으로 삭제 후 새로 업로드하세요</p>
+								</div>
+
+								<div class="file-upload-area">
+									<input type="file" id="photoUpload" name="photoFile"
+										accept="image/*" style="display: none;">
+									<button type="button" class="upload-btn"
+										onclick="document.getElementById('photoUpload').click()">
+										📷 사진 업로드</button>
+									<div class="file-info">권장: 1200x800 이상, 최대 50MB (JPG,
+										PNG, GIF, WEBP)</div>
+								</div>
+								<div id="photoPreviewContainer" class="file-preview-container"></div>
+
+								<!-- 기존 사진 삭제 플래그 -->
+								<input type="hidden" id="deletePhoto" name="deletePhoto"
+									value="false">
+							</div>
+
+							<!-- 영상 업로드 -->
+							<div class="form-group">
+								<h3>클래스 소개 영상</h3>
+
+								<!-- 기존 영상 미리보기 -->
+								<div th:if="${classDTO.video != null and classDTO.video != ''}"
+									id="existingVideoPreview" class="file-preview-container">
+									<div class="file-preview">
+										<video controls>
+											<source th:src="'/uploads/' + ${classDTO.video}"
+												type="video/mp4">
+										</video>
+										<button type="button" class="remove-btn"
+											onclick="removeExistingVideo()">✕</button>
+									</div>
+									<p style="font-size: 12px; color: #666; margin-top: 8px;">
+										※ 영상을 변경하려면 X 버튼으로 삭제 후 새로 업로드하세요</p>
+								</div>
+
+								<div class="file-upload-area">
+									<input type="file" id="videoUpload" name="videoFile"
+										accept="video/*" style="display: none;">
+									<button type="button" class="upload-btn"
+										onclick="document.getElementById('videoUpload').click()">
+										🎥 영상 업로드</button>
+									<div class="file-info">형식: MP4, AVI, MOV, WEBM 등, 최대 50MB</div>
+								</div>
+								<div id="videoPreviewContainer" class="file-preview-container"></div>
+
+								<!-- 기존 영상 삭제 플래그 -->
+								<input type="hidden" id="deleteVideo" name="deleteVideo"
+									value="false">
+							</div>
+
+							<!-- 클래스 기간 -->
+							<div class="form-group">
+								<h3 class="required">클래스 기간</h3>
+								<div class="date-time-group">
+									<div class="date-time-input">
+										<label for="startDate">시작일</label> <input
+											type="datetime-local" id="startDate" name="start_date"
+											required>
+									</div>
+									<div class="date-time-input">
+										<label for="endDate">종료일</label> <input type="datetime-local"
+											id="endDate" name="end_date" required>
+									</div>
+								</div>
+								<div id="dateError" class="error-message"></div>
+							</div>
+
+							<!-- 수강인원 제한 -->
+							<div class="form-group">
+								<h3 class="required">수강인원 제한</h3>
+								<div class="range-group">
+									<input type="range" id="participantLimit" name="max_user_cnt"
+										min="1" max="99" th:value="${classDTO.max_user_cnt}">
+									<output id="participantOutput"
+										th:text="${classDTO.max_user_cnt} + '명'">10명</output>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<button type="submit" id="submitBtn" class="submit-btn">수정하기</button>
+							</div>
+						</form>
+					</div>
+				</section>
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+
+	<script th:inline="javascript">
+		// 전역 변수
+		let selectedPhoto = null;
+		let selectedVideo = null;
+		let hashtags = /*[[${hashtagList}]]*/ []; // 기존 해시태그 로드
+		
+		// 기존 지역 정보
+		const existingMinorRegionIdx = /*[[${classDTO.minor_region_idx}]]*/ null;
+
+		// 페이지 로드 시 초기화
+		document.addEventListener('DOMContentLoaded', function() {
+			loadMajorRegions();
+			
+			// 기존 해시태그 표시
+			if (hashtags && hashtags.length > 0) {
+				hashtags.forEach(tag => addHashtagChip(tag));
+			}
+			
+			// 날짜 초기화
+			initializeDates();
+			
+			// 이벤트 리스너 등록
+			document.getElementById('majorRegion').addEventListener('change', onMajorRegionChange);
+			document.getElementById('participantLimit').addEventListener('input', onParticipantChange);
+			document.getElementById('photoUpload').addEventListener('change', onPhotoUpload);
+			document.getElementById('videoUpload').addEventListener('change', onVideoUpload);
+			document.getElementById('hashtagInput').addEventListener('keydown', onHashtagKeydown);
+			
+			// 폼 제출 시 해시태그 데이터 설정
+			document.getElementById('classUpdate').addEventListener('submit', function(e) {
+				document.getElementById('hashtagsData').value = hashtags.join(',');
+			});
+		});
+
+		// 날짜 초기화
+		function initializeDates() {
+			const startDate = /*[[${classDTO.start_date}]]*/ null;
+			const endDate = /*[[${classDTO.end_date}]]*/ null;
+			
+			if (startDate) {
+				document.getElementById('startDate').value = formatDateForInput(new Date(startDate));
+			}
+			if (endDate) {
+				document.getElementById('endDate').value = formatDateForInput(new Date(endDate));
+			}
+		}
+
+		// Date를 datetime-local input 형식으로 변환
+		function formatDateForInput(date) {
+			const year = date.getFullYear();
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const day = String(date.getDate()).padStart(2, '0');
+			const hours = String(date.getHours()).padStart(2, '0');
+			const minutes = String(date.getMinutes()).padStart(2, '0');
+			return `${year}-${month}-${day}T${hours}:${minutes}`;
+		}
+
+		// 기존 사진 삭제
+		function removeExistingPhoto() {
+			if (confirm('기존 사진을 삭제하시겠습니까?')) {
+				document.getElementById('existingPhotoPreview').style.display = 'none';
+				document.getElementById('deletePhoto').value = 'true';
+			}
+		}
+
+		// 기존 영상 삭제
+		function removeExistingVideo() {
+			if (confirm('기존 영상을 삭제하시겠습니까?')) {
+				document.getElementById('existingVideoPreview').style.display = 'none';
+				document.getElementById('deleteVideo').value = 'true';
+			}
+		}
+
+		// ⭐ 해시태그 입력 처리
+		function onHashtagKeydown(e) {
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				
+				let input = e.target.value.trim();
+				if (!input) return;
+				
+				// 띄어쓰기 제거
+				input = input.replace(/\s+/g, '');
+				
+				// # 자동 추가
+				if (!input.startsWith('#')) {
+					input = '#' + input;
+				}
+				
+				// 중복 체크
+				if (hashtags.includes(input)) {
+					alert('이미 추가된 해시태그입니다.');
+					e.target.value = '';
+					return;
+				}
+				
+				// 최대 개수 체크
+				if (hashtags.length >= 3) {
+					alert('해시태그는 최대 3개까지 추가할 수 있습니다.');
+					e.target.value = '';
+					return;
+				}
+				
+				// 해시태그 추가
+				addHashtagChip(input);
+				hashtags.push(input);
+				e.target.value = '';
+			}
+		}
+
+		// ⭐ 해시태그 칩 추가 (화면에 표시)
+		function addHashtagChip(tag) {
+			const chip = document.createElement('div');
+			chip.className = 'hashtag-chip';
+			chip.innerHTML = `
+				<span>${tag}</span>
+				<button type="button" onclick="removeHashtag('${tag}', this)">&times;</button>
+			`;
+			
+			const input = document.getElementById('hashtagInput');
+			input.parentElement.insertBefore(chip, input);
+		}
+
+		// ⭐ 해시태그 제거
+		function removeHashtag(tag, btn) {
+			hashtags = hashtags.filter(t => t !== tag);
+			btn.parentElement.remove();
+		}
+
+		// 대지역 로드
+		function loadMajorRegions() {
+			fetch('/class/majorRegions')
+				.then(response => response.json())
+				.then(data => {
+					const select = document.getElementById('majorRegion');
+					data.forEach(item => {
+						const option = document.createElement('option');
+						option.value = item.MAJOR_REGION_IDX;
+						option.textContent = item.REGION_NM;
+						select.appendChild(option);
+					});
+					
+					// 기존 지역 정보가 있으면 선택
+					if (existingMinorRegionIdx) {
+						loadExistingRegion();
+					}
+				})
+				.catch(error => {
+					console.error('대지역 로드 실패:', error);
+					alert('대지역 데이터를 불러오는데 실패했습니다.');
+				});
+		}
+
+		// 기존 지역 정보 로드
+		function loadExistingRegion() {
+			fetch('/class/getRegionInfo?minorRegionIdx=' + existingMinorRegionIdx)
+				.then(response => response.json())
+				.then(data => {
+					if (data && data.MAJOR_REGION_IDX) {
+						document.getElementById('majorRegion').value = data.MAJOR_REGION_IDX;
+						loadMinorRegions(data.MAJOR_REGION_IDX, existingMinorRegionIdx);
+					}
+				})
+				.catch(error => console.error('지역 정보 로드 실패:', error));
+		}
+
+		// 대지역 변경 이벤트
+		function onMajorRegionChange(e) {
+			const majorRegionIdx = e.target.value;
+			loadMinorRegions(majorRegionIdx, null);
+		}
+
+		// 소지역 로드
+		function loadMinorRegions(majorRegionIdx, selectedMinorIdx) {
+			const minorSelect = document.getElementById('minorRegion');
+			
+			// 소지역 초기화
+			minorSelect.innerHTML = '<option value="">구/군 선택</option>';
+			
+			if (majorRegionIdx) {
+				fetch('/class/minorRegions?majorRegionIdx=' + majorRegionIdx)
+					.then(response => response.json())
+					.then(data => {
+						data.forEach(item => {
+							const option = document.createElement('option');
+							option.value = item.MINOR_REGION_IDX;
+							option.textContent = item.DISTRICT_NM;
+							minorSelect.appendChild(option);
+						});
+						
+						// 기존 소지역 선택
+						if (selectedMinorIdx) {
+							minorSelect.value = selectedMinorIdx;
+						}
+					})
+					.catch(error => {
+						console.error('소지역 로드 실패:', error);
+						alert('소지역 데이터를 불러오는데 실패했습니다.');
+					});
+			}
+		}
+
+		// 수강인원 변경 이벤트
+		function onParticipantChange(e) {
+			document.getElementById('participantOutput').textContent = e.target.value + '명';
+		}
+
+		// 사진 업로드
+		function onPhotoUpload(e) {
+			const file = e.target.files[0];
+			if (!file) return;
+
+			// 이미지 파일 검증
+			if (!file.type.startsWith('image/')) {
+				alert('이미지 파일만 업로드 가능합니다.');
+				e.target.value = '';
+				return;
+			}
+
+			// 파일 크기 검증 (50MB)
+			if (file.size > 50 * 1024 * 1024) {
+				alert('파일 크기는 50MB 이하여야 합니다.');
+				e.target.value = '';
+				return;
+			}
+
+			selectedPhoto = file;
+
+			// 미리보기 생성
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				const container = document.getElementById('photoPreviewContainer');
+				container.innerHTML = '';
+
+				const previewDiv = document.createElement('div');
+				previewDiv.className = 'file-preview';
+
+				const img = document.createElement('img');
+				img.src = event.target.result;
+
+				const removeBtn = document.createElement('button');
+				removeBtn.className = 'remove-btn';
+				removeBtn.textContent = '✕';
+				removeBtn.type = 'button';
+				removeBtn.onclick = function() {
+					selectedPhoto = null;
+					container.innerHTML = '';
+					document.getElementById('photoUpload').value = '';
+				};
+
+				previewDiv.appendChild(img);
+				previewDiv.appendChild(removeBtn);
+				container.appendChild(previewDiv);
+			};
+			reader.readAsDataURL(file);
+		}
+
+		// 영상 업로드
+		function onVideoUpload(e) {
+			const file = e.target.files[0];
+			if (!file) return;
+
+			// 비디오 파일 검증
+			if (!file.type.startsWith('video/')) {
+				alert('비디오 파일만 업로드 가능합니다.');
+				e.target.value = '';
+				return;
+			}
+
+			// 파일 크기 검증 (50MB)
+			if (file.size > 50 * 1024 * 1024) {
+				alert('파일 크기는 50MB 이하여야 합니다.');
+				e.target.value = '';
+				return;
+			}
+
+			selectedVideo = file;
+
+			// 미리보기 생성
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				const container = document.getElementById('videoPreviewContainer');
+				container.innerHTML = '';
+
+				const previewDiv = document.createElement('div');
+				previewDiv.className = 'file-preview';
+
+				const video = document.createElement('video');
+				video.src = event.target.result;
+				video.controls = true;
+
+				const removeBtn = document.createElement('button');
+				removeBtn.className = 'remove-btn';
+				removeBtn.textContent = '✕';
+				removeBtn.type = 'button';
+				removeBtn.onclick = function() {
+					selectedVideo = null;
+					container.innerHTML = '';
+					document.getElementById('videoUpload').value = '';
+				};
+
+				previewDiv.appendChild(video);
+				previewDiv.appendChild(removeBtn);
+				container.appendChild(previewDiv);
+			};
+			reader.readAsDataURL(file);
+		}
+	</script>
+</body>
+</html>

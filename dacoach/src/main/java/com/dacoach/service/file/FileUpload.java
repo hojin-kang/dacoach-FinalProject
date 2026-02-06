@@ -13,6 +13,12 @@ public class FileUpload {
     // 기본 루트 경로 설정
     private static final String ROOT_PATH = "C:/uploads/";
 
+    /**
+     * 파일 저장
+     * @param file 업로드할 파일
+     * @param subPath 하위 디렉토리 경로 (예: "classes/photos")
+     * @return DB 저장용 상대 경로 (예: "classes/photos/uuid.jpg")
+     */
     public static String saveFile(MultipartFile file, String subPath) {
         if (file == null || file.isEmpty()) {
             return null;
@@ -39,13 +45,13 @@ public class FileUpload {
 
         // 3. 실제 파일 저장
         try {
-        	//파일이 저장될 전체 경로 생성
+            // 파일이 저장될 전체 경로 생성
             Path targetPath = Paths.get(fullDirectoryPath, savedFilename);
-            //멀티파트 객체의 파일 메타데이터로 해당 전체 경로에 실제 파일 저장
+            // 멀티파트 객체의 파일 메타데이터로 해당 전체 경로에 실제 파일 저장
             file.transferTo(targetPath);
             
             // 4. DB 저장용 경로 반환 (루트 제외한 상대 경로 + 파일명)
-            // 예: profile/userprofile/uuid_filename.png
+            // 예: classes/photos/uuid_filename.png
             return subPath + "/" + savedFilename;
             
         } catch (IOException e) {
@@ -53,4 +59,41 @@ public class FileUpload {
             throw new RuntimeException("파일 저장 중 오류가 발생했습니다.");
         }
     }
+    
+    /**
+     * 파일 삭제
+     * @param relativePath DB에 저장된 상대 경로 (예: "classes/photos/uuid.jpg")
+     * @return 삭제 성공 여부
+     */
+    public static boolean deleteFile(String relativePath) {
+        if (relativePath == null || relativePath.trim().isEmpty()) {
+            return false;
+        }
+        
+        try {
+            // 전체 경로 생성
+            String fullPath = ROOT_PATH + relativePath;
+            File file = new File(fullPath);
+            
+            // 파일이 존재하면 삭제
+            if (file.exists()) { // 파일 삭제 디버깅 콘솔 로그(추후 삭제 예정 - 양진유)
+                boolean deleted = file.delete();
+                if (deleted) {
+                    System.out.println("파일 삭제 성공: " + fullPath);
+                } else {
+                    System.err.println("파일 삭제 실패: " + fullPath);
+                }
+                return deleted;
+            } else {
+                System.out.println("삭제할 파일이 존재하지 않음: " + fullPath);
+                return false;
+            }
+            
+        } catch (Exception e) {
+            System.err.println("파일 삭제 중 오류 발생: " + relativePath);
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 }
