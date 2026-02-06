@@ -16,7 +16,7 @@
 }
 
 .searchHead {
-	background: #DC731D;
+	background: #328889;
 	color: #fff;
 	font-weight: 500;
 	padding: 5px 10px;
@@ -82,7 +82,7 @@
 	height: 26px;
 	border: none;
 	border-radius: 13px;
-	background: #DC731D;
+	background: #328889;
 	color: #fff;
 	font-size: 12px;
 	font-weight: 700;
@@ -222,7 +222,7 @@
   --bg:#ffffff;
   --card:#ffffff;
   --chip:#f3f4f6;
-  --accent:#DC731D;      /* 결제 버튼 */
+  --accent:#328889;      /* 결제 버튼 */
   --accent-soft:#e6fffe; /* hover */
   --danger:#ef4444;
   --shadow: 0 10px 30px rgba(0,0,0,0.06);
