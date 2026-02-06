@@ -19,4 +19,9 @@ public interface AdminService {
 	
 	// 검열 키워드 관리
 	List<Map<String,Object>> getKeywordType() throws Exception;
+	List<String> getKeywordName(String keyword_type) throws Exception;
+	List<Map<String,Object>> getTypeReview(String keyword_type) throws Exception;
+	public int insertKeyword(Map<String, String> params) throws Exception;
+	public int deleteKeyword(String keyword_name) throws Exception;
+	public int selectCoachidx(int user_idx) throws Exception;
 }

@@ -59,5 +59,39 @@ public class AdminServiceImple implements AdminService {
 	public List<Map<String, Object>> getKeywordType() throws Exception {
 		return adminMapper.getKeywordType();
 	}
+	
+	@Override
+	public List<String> getKeywordName(String keyword_type) throws Exception {
+		return adminMapper.getKeywordName(keyword_type);	
+	}
+	
+	@Override
+	public List<Map<String, Object>> getTypeReview(String keyword_type) throws Exception {
+		List<Map<String, Object>> typeReview = adminMapper.getTypeReview(keyword_type);
+		
+		for (Map<String, Object> review : typeReview) {
+			int user_idx = Integer.parseInt(String.valueOf(review.get("REVIEWER_IDX")));
+			
+			Integer coach_idx = adminMapper.selectCoachidx(user_idx);
+			
+			review.put("coach_idx", coach_idx);
+		}
+		return typeReview;
+	}
+	
+	@Override
+	public int insertKeyword(Map<String, String> params) throws Exception {
+		return adminMapper.insertKeyword(params);
+	}
+	
+	@Override
+	public int deleteKeyword(String keyword_name) throws Exception {
+		return adminMapper.deleteKeyword(keyword_name);
+	}
+	
+	@Override
+	public int selectCoachidx(int user_idx) throws Exception {
+		return adminMapper.selectCoachidx(user_idx);
+	}
 
 }

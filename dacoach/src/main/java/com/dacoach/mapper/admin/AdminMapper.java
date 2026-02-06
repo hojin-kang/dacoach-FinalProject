@@ -20,4 +20,9 @@ public interface AdminMapper {
 	
 	// 검열 키워드 관리
 	public List<Map<String,Object>> getKeywordType() throws Exception;
+	public List<String> getKeywordName(String keyword_type) throws Exception;
+	public List<Map<String,Object>> getTypeReview(String keyword_type) throws Exception;
+	public int insertKeyword(Map<String, String> params) throws Exception;
+	public int deleteKeyword(String keyword_name) throws Exception;
+	public int selectCoachidx(int user_idx) throws Exception;
 }

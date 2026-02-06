@@ -8,7 +8,7 @@
         .info-card { background-color: white; border: 2px solid #e5e7eb; border-radius: 40px; padding: 2rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 1.5rem; position: relative; }
         .section-badge { display: inline-block; background-color: #9dbbb5; color: white; padding: 0.5rem 2rem; border-radius: 9999px; font-weight: bold; margin-bottom: 1.5rem; font-size: 1rem; }
 
-        .row-container { display: flex; align-items: stretch; } /* height 제거하여 내부 min-h에 따름 */
+        .row-container { display: flex; align-items: stretch; }
         .label-base { background-color: #9dbbb5; color: white; width: 6.5rem; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem; flex-shrink: 0; border-radius: 6px 0 0 6px; }
         .content-base { background-color: #f0f8f7; flex: 1; display: flex; align-items: center; padding: 0 1rem; border-radius: 0 6px 6px 0; font-size: 0.875rem; }
 
@@ -66,13 +66,24 @@
                                     <input type="radio" name="status" value="ACTIVE" onclick="toggleDateInput(false)" 
                                            th:checked="${coachStatus == 'ACTIVE'}" class="accent-mint-dark w-4 h-4"> 사용
                                 </label>
-                                <div class="flex items-center gap-2">
+
+                                <label class="radio-group">
+                                    <input type="radio" name="status" value="WARNING" onclick="toggleDateInput(false)" 
+                                           th:checked="${coachStatus == 'WARNING'}" class="accent-mint-dark w-4 h-4"> 주의
+                                </label>
+
+                                <label class="radio-group">
+                                    <input type="radio" name="status" value="DANGER" onclick="toggleDateInput(false)" 
+                                           th:checked="${coachStatus == 'DANGER'}" class="accent-mint-dark w-4 h-4"> 위험
+                                </label>
+
+                                <div class="flex flex-col gap-2">
                                     <label class="radio-group whitespace-nowrap">
                                         <input type="radio" name="status" value="SUSPENDED" onclick="toggleDateInput(true)" 
                                                th:checked="${coachStatus == 'SUSPENDED'}" class="accent-mint-dark w-4 h-4"> 정지
                                     </label>
                                     
-                                    <div id="dateArea" class="flex flex-col gap-2" th:style="${coachStatus == 'SUSPENDED' ? 'display:flex' : 'display:none'}">
+                                    <div id="dateArea" class="flex flex-col gap-2 ml-6" th:style="${coachStatus == 'SUSPENDED' ? 'display:flex' : 'display:none'}">
                                         <div class="date-picker-wrap w-fit">
                                             <input type="date" id="startDate" name="start_date"
                                                 th:value="${coachStatus == 'SUSPENDED' ? coachEmbedded?.start_date : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
@@ -149,7 +160,6 @@
         }
     };
     
-    
     function toggleDateInput(show) {
         const dateArea = document.getElementById('dateArea');
         if (dateArea) {
@@ -157,6 +167,5 @@
         }
     }
     </script>
-    
 </div>
 </html>
