@@ -6,16 +6,21 @@
 <mapper
 	namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 	<resultMap id="AdminCompanyClassRowMap" type="com.dacoach.admin.company.model.AdminCompanyRowDTO">
+  <!-- 최상위 Row 식별용 (중첩경로 쓰지말고 RowDTO 필드로) -->
+  <id column="CLASS_IDX" property="class_idx"/>
+
+  <!-- association 앞에 result 먼저 -->
+  <result column="PROGRESS_STATUS" property="progressStatus"/>
+
   <association property="classes" javaType="com.dacoach.model.classes.ClassDTO">
-    <result property="class_idx" column="CLASS_IDX"/>
-    <result property="title" column="TITLE"/>
-    <result property="created_at" column="CREATED_AT"/>
-    <result property="photo" column="PHOTO"/>
-    <result property="user_name" column="USER_NAME"/>
-    <result property="avg_rating" column="AVG_RATING"/>
+    <id column="CLASS_IDX" property="class_idx"/>
+    <result column="TITLE" property="title"/>
+    <result column="CREATED_AT" property="created_at"/>
+    <result column="PHOTO" property="photo"/>
+    <result column="PROVIDER_NAME" property="user_name"/>
+    <result column="AVG_RATING" property="avg_rating"/>
   </association>
 </resultMap>
-
 
   <select id="selectClassPage" parameterType="map" resultMap="AdminCompanyClassRowMap">
   <![CDATA[
@@ -26,22 +31,37 @@
       c.TITLE,
       c.CREATED_AT,
       c.PHOTO,
-      u.USER_NAME AS USER_NAME,
+      c.START_DATE,
+      c.END_DATE,
+
+      u.USER_NAME AS PROVIDER_NAME,
+
       NVL(r.AVG_RATING, 0) AS AVG_RATING,
+      NVL(r.REVIEW_COUNT, 0) AS REVIEW_COUNT,
+
+      CASE
+        WHEN c.START_DATE IS NOT NULL AND SYSDATE < c.START_DATE THEN '예정'
+        WHEN c.END_DATE IS NOT NULL AND SYSDATE > c.END_DATE THEN '종료'
+        ELSE '진행중'
+      END AS PROGRESS_STATUS,
+
       ROW_NUMBER() OVER (ORDER BY c.CLASS_IDX DESC) AS RN
     FROM CLASS c
     LEFT JOIN USERS u
       ON u.USER_IDX = c.PROVIDER_IDX
     LEFT JOIN (
-      SELECT CLASS_IDX, ROUND(AVG(RATING), 1) AS AVG_RATING
+      SELECT
+        CLASS_IDX,
+        ROUND(AVG(RATING), 1) AS AVG_RATING,
+        COUNT(*) AS REVIEW_COUNT
       FROM REVIEW_CLASS
       GROUP BY CLASS_IDX
     ) r
       ON r.CLASS_IDX = c.CLASS_IDX
   ) t
-  WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}
-  ]]>
+  WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}]]>
 </select>
+
 
 
 
