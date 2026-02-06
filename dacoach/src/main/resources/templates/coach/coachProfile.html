@@ -54,7 +54,7 @@
                <div class="flex-row">
                   <select name="serviceCategoryMain" class="major-select field required-field">
                      <option value="">분야 대분류</option>
-                     <option th:each="m : ${majorList}" th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"></option>
+                     <option th:each="m : ${majorFields}" th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"></option>
                   </select>
                   <select name="serviceCategorySub" class="minor-select required-field" disabled><option value="">분야 소분류</option></select>
                </div>
