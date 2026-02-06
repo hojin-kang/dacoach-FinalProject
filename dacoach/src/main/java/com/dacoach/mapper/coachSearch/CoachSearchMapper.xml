@@ -3,22 +3,29 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dacoach.mapper.coachSearch.CoachSearchMapper">
 	<select id="coachList" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
-	    SELECT DISTINCT A.* FROM coach A 
-	    LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
-	    LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
-	    LEFT JOIN USER_HASHTAG UH ON A.user_idx = UH.user_idx
-	    LEFT JOIN HASHTAG H ON UH.hashtag_idx = H.hashtag_idx
-	    <where>
-	        (A.nickname LIKE '%' || #{keyword} || '%' OR H.TAGS LIKE '%' || #{keyword} || '%')
-	        <if test="minorField != 0">
-	            AND B.minor_field_idx = #{minorField}
-	        </if>
-	        <if test="majorRegion != 0">
-	            AND C.major_region_idx = #{majorRegion}
-	        </if>
-	        <if test="minorRegion != 0">
-	            AND C.minor_region_idx = #{minorRegion}
-	        </if>
-	    </where>
-	</select>
+    SELECT * FROM (
+        SELECT rownum AS rnum, R.* FROM (
+            SELECT DISTINCT A.* FROM coach A 
+            LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
+            LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
+            LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
+            LEFT JOIN hashtag H ON UH.hashtag_idx = H.hashtag_idx
+            <where>
+                (A.nickname LIKE '%' || #{keyword} || '%' OR H.TAGS LIKE '%' || #{keyword} || '%')
+                <if test="minorField != 0">
+                    AND B.minor_field_idx = #{minorField}
+                </if>
+                <if test="majorRegion != 0">
+                    AND C.major_region_idx = #{majorRegion}
+                </if>
+                <if test="minorRegion != 0">
+                    AND C.minor_region_idx = #{minorRegion}
+                </if>
+            </where>
+            ORDER BY A.coach_idx DESC
+        ) R
+    )
+    WHERE rnum BETWEEN #{start} AND #{end}
+    ORDER BY rnum ASC
+</select>
 </mapper>
