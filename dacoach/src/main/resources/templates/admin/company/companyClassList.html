@@ -1,5 +1,5 @@
 <style>
-/* classDetail.css - 민트톤(코치/기업 페이지 톤 맞춤) */
+/* companyClassList.css - 민트톤(코치/기업 페이지 톤 맞춤) */
 
 .font-main{
   font-family:'Pretendard', sans-serif;
@@ -31,52 +31,104 @@
   font-size:1rem;
 }
 
-.field-grid{
-  margin-top:1.5rem;
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0, 1fr));
-  gap:14px 18px;
-}
-
-.row{
-  display:flex;
-  align-items:stretch;
-  border-radius:12px;
-  overflow:hidden;
+.table-wrap{
+  margin-top:18px;
   border:1px solid #e5e7eb;
+  border-radius:18px;
+  overflow:hidden;
 }
 
-.row .label{
-  width:120px;
-  flex-shrink:0;
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.table thead th{
   background:#9dbbb5;
   color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   font-weight:700;
   font-size:13px;
   padding:12px 10px;
+  text-align:center;
 }
 
-.row .value{
-  flex:1;
+.table tbody td{
   background:#f0f8f7;
-  display:flex;
-  align-items:center;
-  padding:12px 14px;
+  padding:12px 10px;
   font-size:13px;
-  color:#374151;
+  text-align:center;
+  border-top:1px solid #e5e7eb;
 }
 
-.value.is-empty{
+.table tbody tr:hover td{
+  background:#e9f3f2;
+}
+
+.thumb{
+  width:56px;
+  height:40px;
+  border-radius:10px;
+  object-fit:cover;
+  border:1px solid #d1d5db;
+  background:#fff;
+}
+
+.empty{
+  padding:18px;
   color:#9ca3af;
+  background:#f0f8f7;
+  text-align:center;
+  border-top:1px solid #e5e7eb;
 }
 
-/* 작은 화면에서는 1열 */
+.paging{
+  margin-top:18px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+}
+
+.paging a{
+  display:inline-block;
+  padding:8px 12px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  border-radius:9999px;
+  text-decoration:none;
+  color:#374151;
+  font-size:13px;
+}
+
+.paging a:hover{
+  background:#f0f8f7;
+}
+
+.paging .current{
+  background:#9dbbb5;
+  color:#fff;
+  border-color:#9dbbb5;
+}
+
 @media (max-width: 900px){
-  .field-grid{ grid-template-columns:1fr; }
-  .row .label{ width:110px; }
+  .page-wrap{ padding:18px; }
+  .info-card{ border-radius:26px; padding:1.25rem; }
+  .table thead{ display:none; }
+  .table, .table tbody, .table tr, .table td{ display:block; width:100%; }
+  .table tr{ border-top:1px solid #e5e7eb; }
+  .table tbody td{
+    text-align:left;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .table tbody td::before{
+    content:attr(data-label);
+    font-weight:700;
+    color:#6b7280;
+    flex-shrink:0;
+    width:110px;
+  }
 }
 </style>
 
@@ -84,32 +136,57 @@
   <div class="info-card">
     <h2 class="section-badge">클래스 관리</h2>
 
-    <section class="field-grid">
-      <div class="row">
-        <div class="label">ID</div>
-        <div class="value" th:text="${row != null ? row.class_id : '-'}">-</div>
-      </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>클래스관리ID</th>
+            <th>클래스명</th>
+            <th>작성일자</th>
+            <th>회사명</th>
+            <th>별점</th>
+            <th>사진</th>
+          </tr>
+        </thead>
 
-      <div class="row">
-        <div class="label">클래스명</div>
-        <div class="value" th:text="${row != null ? row.class_name : '-'}">-</div>
-      </div>
+        <tbody>
+          <tr th:if="${list == null or #lists.isEmpty(list)}">
+            <td class="empty" colspan="6">데이터가 없습니다.</td>
+          </tr>
 
-      <div class="row">
-        <div class="label">작성일자</div>
-        <div class="value"
-             th:text="${row != null and row.created_at != null ? #strings.substring(row.created_at.toString(),0,10) : '-'}">-</div>
-      </div>
+          <tr th:each="row : ${list}">
+            <td data-label="클래스관리ID"
+                th:text="${row != null and row.classes != null ? row.classes.class_idx : '-'}">-</td>
 
-      <div class="row">
-        <div class="label">별점</div>
-        <div class="value" th:text="${row != null ? row.rating : '-'}">-</div>
-      </div>
+            <td data-label="클래스명"
+                th:text="${row != null and row.classes != null ? row.classes.title : '-'}">-</td>
 
-      <div class="row">
-        <div class="label">강의 진행상황</div>
-        <div class="value" th:text="${row != null ? row.progress_status : '-'}">-</div>
-      </div>
-    </section>
+            <td data-label="작성일자"
+   		 		th:text="${row != null and row.classes != null and row.classes.created_at != null
+              ? #dates.format(row.classes.created_at, 'yyyy-MM-dd')
+              : '-'}">-</td>
+
+
+            <td data-label="회사명"
+                th:text="${row != null and row.classes != null ? row.classes.user_name : '-'}">-</td>
+
+           <td data-label="별점"
+    			th:text="${row != null and row.classes != null ? row.classes.avg_rating : '0'}">0</td>
+
+
+            <td data-label="사진">
+              <img class="thumb"
+                   th:if="${row != null and row.classes != null and row.classes.photo != null and row.classes.photo != ''}"
+                   th:src="@{/uploads/classes/{f}(f=${row.classes.photo})}"
+                   alt="class photo"/>
+
+              <span th:if="${row == null or row.classes == null or row.classes.photo == null or row.classes.photo == ''}">-</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="paging" th:utext="${pageStr}"></div>
   </div>
 </div>

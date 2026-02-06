@@ -1,6 +1,8 @@
 package com.dacoach.admincompany.service;
 
 import java.util.List;
+import java.util.Map;
+
 import com.dacoach.admin.company.model.AdminCompanyRowDTO;
 
 public interface AdminCompanyService {
@@ -15,4 +17,9 @@ public interface AdminCompanyService {
 
     // 승인 버튼: 승인여부(CERT)만 확인 처리(USERS 상태는 변경하지 않음)
     void approveCompany(long userIdx);
+    
+    //클래스 리리스트,평점
+    List<AdminCompanyRowDTO> getClassPage(Map<String, Object> param);
+    int getClassTotalCnt();
+    
 }
