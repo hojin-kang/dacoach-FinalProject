@@ -36,7 +36,7 @@
    		<input type="hidden" name="cert_status" value="대기">
    		<p class="certFile"><input type="file" name="cert_file"></p>
    	</div>
-   <input type="hidden" name="login_id" th:value="${login_id}">
+   <input type="hidden" name="login_id" th:value="${param.login_id}">
   <p><input type="submit" value="저장하고 다음으로"></p>
   </form>
   </div>

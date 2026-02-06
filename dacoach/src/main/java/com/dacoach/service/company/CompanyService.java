@@ -22,4 +22,6 @@ public interface CompanyService {
 	public int addRegion(CompanyRegionDTO dto) throws Exception;
 	public List<Map<String,Object>> getMinorField(int idx) throws Exception;
 	public int provideOk(CompanyProvideDTO dto) throws Exception;
+	public CompanyDTO getCompanyInfo(int idx) throws Exception;
+	public boolean regionCheck(int idx) throws Exception;
 }

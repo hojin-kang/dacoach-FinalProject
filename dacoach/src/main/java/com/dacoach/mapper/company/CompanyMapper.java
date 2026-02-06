@@ -30,4 +30,8 @@ public interface CompanyMapper {
 	public int getCompanyNum(int idx) throws Exception;
 	
 	public int addRegion(CompanyRegionDTO dto) throws Exception;
+	
+	public CompanyDTO getCompanyInfo(int idx) throws Exception;
+	
+	public CompanyRegionDTO regionCheck(int idx) throws Exception;
  }

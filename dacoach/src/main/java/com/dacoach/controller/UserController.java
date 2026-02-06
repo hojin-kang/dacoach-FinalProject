@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.coach.CoachService;
+import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.kakao.KakaoService;
 import com.dacoach.service.users.UsersService;
 
@@ -28,6 +30,8 @@ public class UserController {
 	private CoachService coachService;
 	@Autowired
 	private KakaoService kakaoService;
+	@Autowired
+	private CompanyService companyService;
 
 	// 1. 카카오 로그인 페이지로 리다이렉트
 	@GetMapping("/auth/kakao")
@@ -126,16 +130,16 @@ public class UserController {
 	}
 
 	@PostMapping("/loginOk")
-	public ModelAndView loginOk(UsersDTO udto, HttpSession session) {
+	public ModelAndView loginOk(UsersDTO udto, HttpSession session,String userType) {
 		ModelAndView mav = new ModelAndView();
-
+		
 		if (udto == null) {
 			mav.addObject("msg", "ID 및 비밀번호를 확인해주세요");
 			mav.addObject("url", "/login");
 			mav.setViewName("alert");
 			return mav;
 		}
-
+		if(userType.equals("coach")) {
 		try {
 			UsersDTO loginUser = usersService.userLogin(udto);
 
@@ -167,7 +171,57 @@ public class UserController {
 			mav.addObject("url", "/login");
 			mav.setViewName("alert");
 		}
+		//기업 로그인 부분임당
+		}else{
+			try {
+				UsersDTO loginUser = usersService.userLogin(udto);
+				
+				if (loginUser == null) {
+					mav.addObject("msg", "ID 및 비밀번호를 확인해주세요");
+					mav.addObject("url", "/login");
+					mav.setViewName("alert");
+					return mav;
+				}
+				CompanyDTO dto=companyService.getCompanyInfo(loginUser.getUser_idx());
+				if(dto==null) {
+					mav.addObject("msg","회원가입이 완료되지 않았습니다 계속 진행하겠습니다");
+					mav.addObject("url","/company/profile/companyInfo?login_id="+loginUser.getLogin_id());
+					mav.setViewName("alert");
+					return mav;
+				}else {
+					if(!companyService.regionCheck(dto.getCompany_idx())) {
+						mav.addObject("msg","회원가입이 완료되지 않았습니다 계속 진행하겠습니다");
+						mav.addObject("url","/company/profile/profileForm?userIdx="+loginUser.getUser_idx());
+						mav.setViewName("alert");
+						return mav;
+					}
+				}
+				session.setAttribute("user_idx", loginUser.getUser_idx());
+				session.setAttribute("user_type", loginUser.getUser_type());
+				session.setAttribute("user_name", loginUser.getUser_name());
+				session.setAttribute("company_idx", dto.getCompany_idx());
+				if(dto.getPhoto() != null ) {
+					session.setAttribute("photo", dto.getPhoto().equals("")? null : dto.getPhoto());
+				}
+				mav.addObject("msg", "로그인 성공!\n메인페이지로 이동합니다");
+				mav.addObject("url", "/");
+				mav.setViewName("alert");
+				
+				
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+				
+				mav.addObject("msg", "ID 및 비밀번호를 확인해주세요");
+				mav.addObject("url", "/login");
+				mav.setViewName("alert");
+			}
+			
+		}
 		return mav;
+	
+		
 	}
+	
 
 }

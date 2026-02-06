@@ -68,4 +68,12 @@ public class CompanyServiceImple implements CompanyService {
 	public int provideOk(CompanyProvideDTO dto) throws Exception{
 		return companyMapper.provideOk(dto);
 	}
+	public CompanyDTO getCompanyInfo(int idx) throws Exception{
+		return companyMapper.getCompanyInfo(idx);
+	}
+	public boolean regionCheck(int idx) throws Exception{
+		CompanyRegionDTO d=companyMapper.regionCheck(idx);
+		boolean check=d==null?false:true;
+		return check;
+	}
 }

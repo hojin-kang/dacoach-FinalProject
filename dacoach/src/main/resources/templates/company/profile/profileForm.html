@@ -67,7 +67,7 @@
 <script>
 var val = '';
 var addRegionCount = 0;
-var addedRegionIds = []; // [추가] 선택된 소분류 ID를 담을 배열
+var addedRegionIds = []; //  선택된 소분류 ID를 담을 배열
 
 var submitBtn = document.querySelector('input[type="submit"]');
 var majorFieldSelect = document.getElementById('majorFieldSelect');
@@ -88,7 +88,7 @@ function checkSubmitVaild() {
 
 checkSubmitVaild();
 
-// 분야 대분류 선택 시 "분야선택" 옵션 삭제
+// 분야 대분류 선택 시 분야선택 옵션 삭제
 majorFieldSelect.addEventListener('change', function() {
     var introOption = document.getElementById('magor_field_intro');
     if (introOption) introOption.remove();
@@ -120,13 +120,13 @@ function addRegionFun() {
     var detail = document.regionForm.region_detail.value;
     var companyIdx = document.regionForm.company_num.value;
 
-    // 1. 유효성 검사
+    //  유효성 검사
     if (majorIdx === "대분류" || minorIdx === "소분류" || !minorIdx) {
         alert("지역을 정확히 선택해주세요.");
         return;
     }
 
-    // [중복 체크] 이미 배열에 존재하는 ID인지 확인
+    // 중복 체크 이미 배열에 존재하는 ID인지 확인
     if (addedRegionIds.includes(minorIdx)) {
         alert("이미 추가된 지역입니다.");
         // 초기화 시켜줌
@@ -152,10 +152,10 @@ function addRegionFun() {
     .then(resultText => {
         var ResultTag = document.getElementById('regionResultTag');
         if (resultText && resultText !== "실패") {
-            // 주소 표시 (상세주소 포함)
+            // 주소 표시 상세주소 포함
             ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail}</span>`;
             
-            // [중복 방지용 저장] 성공하면 배열에 추가
+            // 중복 방지용 저장 성공하면 배열에 추가
             addedRegionIds.push(minorIdx);
             
             // 입력값 초기화
@@ -174,7 +174,7 @@ function addRegionFun() {
 
 document.getElementById('addRegion').onclick = addRegionFun;
 
-// 소분류 불러오기 (기존 유지)
+// 소분류 불러오기
 document.getElementById('majorSelect').addEventListener('change', function() {
     var regionIdx = this.value; 
     var minorRegionSelect = document.getElementById('MinorRegion');
