@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dacoach.mapper.likes.LikesMapper">
+
+	<select id="isLikedClass" resultType="int">
+	  SELECT COUNT(*)
+	  FROM LIKES_CLASS
+	  WHERE LIKER_IDX = #{user_idx}
+	    AND CLASS_IDX = #{class_idx}
+	</select>
+	
+	<insert id="addLikesClass">
+    MERGE INTO LIKES_CLASS lc
+    USING (SELECT #{user_idx} AS LIKER_IDX, #{class_idx} AS CLASS_IDX FROM dual) src
+    ON (lc.LIKER_IDX = src.LIKER_IDX AND lc.CLASS_IDX = src.CLASS_IDX)
+    WHEN NOT MATCHED THEN
+      INSERT (LIKES_CLASS_IDX, LIKER_IDX, CLASS_IDX, CREATED_AT)
+      VALUES (SEQ_LIKES_CLASS.NEXTVAL, src.LIKER_IDX, src.CLASS_IDX, SYSDATE)
+  </insert>
+
+  <delete id="delLikesClass">
+    DELETE FROM LIKES_CLASS
+    WHERE LIKER_IDX = #{user_idx}
+      AND CLASS_IDX = #{class_idx}
+  </delete>
+  
+  <delete id="delLikesUser">
+    DELETE FROM LIKES_USER
+    WHERE LIKER_IDX = #{user_idx}
+      AND LIKED_USER_IDX = #{liked_user_idx}
+  </delete>
+  
+  <select id="getLikedCoaches"
+            resultType="com.dacoach.model.likes.LikesUserDTO">
+
+        SELECT
+            c.COACH_IDX   AS coach_idx,
+            c.USER_IDX    AS user_idx,
+            c.NICKNAME    AS nickname,
+            c.INTRO       AS intro,
+            c.PHOTO       AS photo,
+            lu.CREATED_AT AS created_at
+        FROM LIKES_USER lu
+        JOIN USERS u
+            ON u.USER_IDX = lu.LIKED_USER_IDX
+        JOIN COACH c
+            ON c.USER_IDX = u.USER_IDX
+        WHERE lu.LIKER_IDX = #{user_idx}
+          AND u.USER_TYPE = 'COACH'
+        ORDER BY lu.CREATED_AT DESC
+    </select>
+
+
+    <!-- ============================= -->
+    <!-- 클래스 찜 DTO 반환 -->
+    <!-- ============================= -->
+    <select id="getLikedClasses"
+            resultType="com.dacoach.model.likes.LikesClassDTO">
+
+        SELECT
+            c.CLASS_IDX    AS class_idx,
+            c.TITLE        AS title,
+            c.INTRO        AS intro,
+            c.PHOTO        AS photo,
+            c.PRICE        AS price,
+            c.START_DATE   AS startDate,
+            c.END_DATE     AS endDate,
+            lc.CREATED_AT  AS created_at,
+            u.USER_NAME    AS providerName
+        FROM LIKES_CLASS lc
+        JOIN CLASS c
+            ON c.CLASS_IDX = lc.CLASS_IDX
+        LEFT JOIN USERS u
+            ON u.USER_IDX = c.PROVIDER_IDX
+        WHERE lc.LIKER_IDX = #{user_idx}
+        ORDER BY lc.CREATED_AT DESC
+    </select>
+</mapper>

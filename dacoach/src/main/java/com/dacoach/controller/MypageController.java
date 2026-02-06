@@ -9,7 +9,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 import com.dacoach.service.qna.QnaService;
+import com.dacoach.model.likes.LikesClassDTO;
+import com.dacoach.model.likes.LikesUserDTO;
 import com.dacoach.model.qna.QnaDTO;
+import com.dacoach.service.likes.LikesService;
 import com.dacoach.service.mypage.MypageService;
 
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +25,9 @@ public class MypageController {
 	
 	@Autowired
 	private MypageService mypageService;
+	
+	@Autowired
+	private LikesService likesService;
 
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
@@ -59,9 +65,27 @@ public class MypageController {
 	}
 	
 	@GetMapping("/myHeart")
-	public String myHeartList() {
-		return "/coach/mypage/myHeart";
-	}
+	  public ModelAndView myHeart(HttpSession session) throws Exception {
+	    ModelAndView mav = new ModelAndView();
+
+	    Integer userIdx = (Integer) session.getAttribute("user_idx");
+	    if (userIdx == null) {
+	      mav.setViewName("redirect:/login");
+	      return mav;
+	    }
+
+	    List<LikesUserDTO> likedCoaches = likesService.getLikedCoaches(userIdx);
+	    List<LikesClassDTO> likedClasses = likesService.getLikedClasses(userIdx);
+
+	    mav.addObject("likedCoaches", likedCoaches);
+	    mav.addObject("likedClasses", likedClasses);
+
+	    mav.addObject("likedCoachCount", likedCoaches == null ? 0 : likedCoaches.size());
+	    mav.addObject("likedClassCount", likedClasses == null ? 0 : likedClasses.size());
+
+	    mav.setViewName("coach/mypage/myHeart");
+	    return mav;
+	  }
 	
 	@GetMapping("/myReview")
 	public String myReviewList() {
