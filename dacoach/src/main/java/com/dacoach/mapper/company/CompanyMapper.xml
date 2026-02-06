@@ -114,4 +114,11 @@
   	<select id="getMinorField">
   		select * from minor_field where major_field_idx=#{idx}
   	</select>
+  	
+  	<select id="getCompanyInfo">
+  		select * from company where user_idx=#{idx}
+  	</select>
+  	<select id="regionCheck">
+  		select * from company_region where company_idx=#{idx}
+  	</select>
   </mapper>
