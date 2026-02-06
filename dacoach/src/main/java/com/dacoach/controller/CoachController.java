@@ -65,11 +65,11 @@ public class CoachController {
 			@RequestParam(value = "kakao_key", defaultValue = "") String kakao_key) {
 		ModelAndView mav = new ModelAndView();
 		int result = 0;
-		List<Map<String, Object>> majorList = null;
+		List<Map<String, Object>> majorFields = null;
 		List<Map<String, Object>> majorRegions = null;
 		try {
 			result = coachService.coachProfile(udto);
-			majorList = coachService.getMajorFields();
+			majorFields = coachService.getMajorFields();
 			majorRegions = coachService.getMajorRegions();
 
 		} catch (Exception e) {
@@ -80,7 +80,7 @@ public class CoachController {
 			mav.setViewName("/coach/coachProfile");
 			mav.addObject("login_id", udto.getLogin_id());
 			mav.addObject("mail", mail);
-			mav.addObject("majorList", majorList);
+			mav.addObject("majorFields", majorFields);
 			mav.addObject("majorRegions", majorRegions);
 			mav.addObject("kakao_key", kakao_key);
 		} else {
@@ -164,18 +164,5 @@ public class CoachController {
 		}
 
 		return mav;
-	}
-
-	@GetMapping("/coach/search")
-	public String coachSearch() {
-		return "coach/coachSearch";
-	}
-
-	@PostMapping("/coach/search")
-	public ModelAndView coachSearchResult(@RequestParam(value = "keyword", defaultValue = "") String keyword) {
-		ModelAndView mav = new ModelAndView();
-
-		return mav;
-
 	}
 }

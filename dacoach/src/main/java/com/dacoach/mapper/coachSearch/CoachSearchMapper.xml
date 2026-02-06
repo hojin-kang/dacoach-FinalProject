@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dacoach.mapper.coachSearch.CoachSearchMapper">
+	<select id="coachList" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
+	    SELECT DISTINCT A.* FROM coach A 
+	    LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
+	    LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
+	    LEFT JOIN USER_HASHTAG UH ON A.user_idx = UH.user_idx
+	    LEFT JOIN HASHTAG H ON UH.hashtag_idx = H.hashtag_idx
+	    <where>
+	        (A.nickname LIKE '%' || #{keyword} || '%' OR H.TAGS LIKE '%' || #{keyword} || '%')
+	        <if test="minorField != 0">
+	            AND B.minor_field_idx = #{minorField}
+	        </if>
+	        <if test="majorRegion != 0">
+	            AND C.major_region_idx = #{majorRegion}
+	        </if>
+	        <if test="minorRegion != 0">
+	            AND C.minor_region_idx = #{minorRegion}
+	        </if>
+	    </where>
+	</select>
+</mapper>

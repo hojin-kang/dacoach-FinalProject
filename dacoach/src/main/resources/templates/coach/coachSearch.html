@@ -6,52 +6,22 @@
 
 <link rel="stylesheet" th:href="@{/css/main.css}" />
 <link rel="stylesheet" th:href="@{/css/coach_class.css}" />
-
 <style>
-    .page-header {
-        margin: 30px 0 10px;
-    }
-    
-    .empty-msg {
-        grid-column: span 2;
-        text-align: center;
-        padding: 50px;
-        color: #666;
-    }
+.coach-thumb {
+    width: 100%;          /* 부모 그리드 너비에 맞춤 */
+    aspect-ratio: 1.5 / 1;  /* 정사각형 비율 유지 (최신 브라우저) */
+    overflow: hidden;     /* 넘치는 부분 제거 */
+    border-radius: 8px;   /* 모서리 둥글게 (선택사항) */
+    background-color: #f4f4f4;
+}
 
-    /* 코치 카드 전용 해시태그 스타일 추가 (기존 tag 스타일 활용) */
-    .coach-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        margin-top: 10px;
-    }
-    
-    .coach-tag {
-        display: inline-block;
-        padding: 2px 8px;
-        font-size: 11px;
-        background: #e0e0e0;
-        border-radius: 10px;
-        color: #555;
-    }
-
-    /* 코치 아바타 스타일 (classCard 내부 thumb 대체용) */
-    .coach-thumb {
-        width: 100%;
-        aspect-ratio: 1/1; /* 정사각형 프로필 */
-        background: #f3f5f7;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .coach-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+/* 2. 실제 이미지 태그 설정 */
+.coach-thumb img {
+    width: 100%;
+    height:100%;
+    object-fit: cover;    /* 비율을 유지하면서 컨테이너를 가득 채움 */
+    display: block;
+}
 </style>
 </head>
 <body>
@@ -63,7 +33,7 @@
 			<hr>
 
 			<div class="classPage">
-				<form id="filterForm" class="filterForm" th:action="@{/coach/list}" method="get">
+				<form id="filterForm" class="filterForm" th:action="@{/coach/search}" method="get">
 					<aside class="searchArea">
 						<div class="searchHead">검색 조건</div>
 
@@ -73,9 +43,9 @@
 								<div>
 									<select class="filterSelect majorField" name="majorField" id="majorField">
 										<option value="">대분류</option>
-										<option th:each="m : ${majorList}"
-											th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"
-											th:selected="${m.MAJOR_FIELD_IDX == majorField}"></option>
+										<option th:each="m : ${majorFields}" th:value="${m.MAJOR_FIELD_IDX}">
+                     					[[${m.MAJOR_FIELD_CD}]]
+                     					</option>
 									</select> 
                                     <select class="filterSelect minorField" name="minorField" id="minorField" disabled>
 										<option value="">소분류</option>
@@ -88,11 +58,12 @@
 								<div>
 									<select class="filterSelect majorRegion" name="majorRegion" id="majorRegion">
 										<option value="">대분류</option>
-										<option th:each="r : ${majorRegions}"
-											th:value="${r.MAJOR_REGION_IDX}" th:text="${r.REGION_NM}"
-											th:selected="${r.MAJOR_REGION_IDX == majorRegion}">
+                     					<option th:each="m : ${majorRegions}" th:value="${m.MAJOR_REGION_IDX}">
+										    [[${m.REGION_NM}]]
 										</option>
 									</select> 
+									
+					                  
                                     <select class="filterSelect minorRegion" name="minorRegion" id="minorRegion" disabled>
 										<option value="">소분류</option>
 									</select>
@@ -100,7 +71,7 @@
 							</div>
                             
 							<div class="keywordBox">
-								<input class="keywordInput" type="text" name="q" placeholder="코치명 또는 태그 검색" th:value="${q}" />
+								<input class="keywordInput" type="text" name="keyword" placeholder="코치명 또는 태그 검색"/>
 							</div>
 							<button class="keywordBtn" type="submit">검색</button>
 						</div>
@@ -120,23 +91,24 @@
 						<div class="cardGrid">
 							<div class="empty-msg" th:if="${#lists.isEmpty(coachList)}">일치하는 코치가 없습니다.</div>
 
-							<a class="classCard" th:each="coach : ${coachList}" th:href="@{/coach/detail(id=${coach.coach_idx})}">
-								<div class="coach-thumb">
-									<img th:src="${coach.profile_img != null} ? @{/uploads/profiles/{img}(img=${coach.profile_img})} : @{/images/default_user.png}" alt="coach">
-								</div>
+							<a class="classCard" th:each="dto : ${coachList}" th:href="@{/coach/detail(idx=${dto.coach_idx})}">
+							    <div class="coach-thumb">
+							        <img th:src="${dto.photo != null} ?	@{/uploads/{path}(path=${dto.photo})} : @{/img/profile/defaultProfile.jpg}" alt="coach">
+							    </div>
+							
 
 								<div class="meta">
 									<div class="top">
-										<div class="rating" th:text="|★ ${#numbers.formatDecimal(coach.avg_rating, 1, 1)} (${coach.review_cnt})|">★ 0.0 (0)</div>
-										<div class="provider" th:text="${coach.user_name}">코치이름</div>
+										<div class="rating">★ 0.0 (0)</div>
+										<div class="provider" th:text="${dto.nickname}">코치이름</div>
 									</div>
 
 									<div class="bottom">
-										<div class="title" th:text="${coach.intro_title}">코치 소개 한줄평</div>
+										<div class="title" th:text="${dto.nickname}">코치 소개 한줄평</div>
 									</div>
 
                                     <div class="coach-tags">
-                                        <span class="coach-tag" th:each="tag : ${coach.tags}" th:text="|#${tag}|">#태그</span>
+                                        <span class="coach-tag">#태그</span>
                                     </div>
 								</div>
 							</a>
