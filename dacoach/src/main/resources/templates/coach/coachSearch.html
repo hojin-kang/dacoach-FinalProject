@@ -3,278 +3,190 @@
 <head>
 <meta charset="UTF-8" />
 <title>dacoach - 코치 찾기</title>
+
 <link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/coach_class.css}" />
 
 <style>
-/* 기본 레이아웃 구성 */
-.main-container {
-	display: flex;
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 20px;
-	gap: 30px;
-	font-family: 'Pretendard', sans-serif;
-}
+    /* 인라인 스타일을 스타일 태그로 이동 */
+    .page-header {
+        margin: 30px 0 10px;
+    }
+    
+    .empty-msg {
+        grid-column: span 2;
+        text-align: center;
+        padding: 50px;
+        color: #666;
+    }
 
-/* 좌측 검색 조건 사이드바 */
-.sidebar {
-	width: 280px;
-	flex-shrink: 0;
-}
+    /* 코치 카드 전용 해시태그 스타일 추가 (기존 tag 스타일 활용) */
+    .coach-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 10px;
+    }
+    
+    .coach-tag {
+        display: inline-block;
+        padding: 2px 8px;
+        font-size: 11px;
+        background: #e0e0e0;
+        border-radius: 10px;
+        color: #555;
+    }
 
-.filter-box {
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	overflow: hidden;
-}
-
-.filter-header {
-	background-color: #3d8a86;
-	color: white;
-	padding: 10px;
-	text-align: center;
-	font-weight: bold;
-}
-
-.filter-body {
-	padding: 20px;
-	background-color: #f9f9f9;
-}
-
-.filter-group {
-	margin-bottom: 15px;
-	display: flex;
-	align-items: center;
-}
-
-.filter-group label {
-	width: 60px;
-	font-size: 14px;
-}
-
-.filter-group select, .filter-group input {
-	flex: 1;
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 20px;
-	font-size: 14px;
-}
-
-.search-btn {
-	display: block;
-	width: 100px;
-	margin: 20px auto 0;
-	padding: 10px;
-	background-color: #3d8a86;
-	color: white;
-	border: none;
-	border-radius: 20px;
-	cursor: pointer;
-}
-
-/* 우측 코치 리스트 영역 */
-.content-area {
-	flex: 1;
-}
-
-.content-header {
-	display: flex;
-	justify-content: flex-end;
-	margin-bottom: 20px;
-}
-
-.sort-select {
-	padding: 8px 15px;
-	border-radius: 20px;
-	border: 1px solid #ddd;
-	background-color: #f5f5f5;
-}
-
-.coach-grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 20px;
-}
-
-/* 코치 카드 디자인 */
-.coach-card {
-	background-color: #f4f6f7;
-	border-radius: 12px;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	position: relative;
-}
-
-.card-top {
-	display: flex;
-	gap: 15px;
-	margin-bottom: 15px;
-}
-
-.profile-img {
-	width: 80px;
-	height: 80px;
-	background-color: #ccc;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-}
-
-.profile-img img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.coach-info h3 {
-	margin: 0 0 5px 0;
-	font-size: 18px;
-}
-
-.rating {
-	color: #333;
-	font-weight: bold;
-	font-size: 14px;
-}
-
-.rating-count {
-	color: #666;
-	font-weight: normal;
-}
-
-.tag-section {
-	flex: 1;
-}
-
-.tag-row {
-	margin-bottom: 10px;
-}
-
-.tag-label {
-	font-size: 13px;
-	font-weight: bold;
-	display: block;
-	margin-bottom: 5px;
-}
-
-.tag {
-	display: inline-block;
-	background-color: #d1d1d1;
-	padding: 3px 10px;
-	border-radius: 15px;
-	font-size: 12px;
-	margin-right: 5px;
-}
-
-/* 버튼 영역 */
-.card-buttons {
-	display: flex;
-	gap: 10px;
-	margin-top: 15px;
-}
-
-.btn {
-	flex: 1;
-	padding: 8px;
-	border-radius: 20px;
-	border: 1px solid #3d8a86;
-	font-size: 14px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 5px;
-}
-
-.btn-chat {
-	background-color: white;
-	color: #3d8a86;
-}
-
-.btn-match {
-	background-color: #3d8a86;
-	color: white;
-}
+    /* 코치 아바타 스타일 (classCard 내부 thumb 대체용) */
+    .coach-thumb {
+        width: 100%;
+        aspect-ratio: 1/1; /* 코치는 정사각형 프로필이 보기 좋습니다 */
+        background: #f3f5f7;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .coach-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 </style>
 </head>
 <body>
-	<div th:replace="layout/header :: siteHeader"></div>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
 
 	<main class="main">
-		<div class="container" style="text-align: center; padding: 40px 0;">
-			<h1 style="font-size: 2rem;">코치 찾기</h1>
-		</div>
+		<div class="container">
+			<h2 class="page-header">코치 찾기</h2>
+			<hr>
 
-		<div class="main-container">
-			<aside class="sidebar">
-				<div class="filter-box">
-					<div class="filter-header">검색 조건</div>
-					<form class="filter-body">
-						<div class="filter-group">
-							<label>분야</label> <select><option>대분류</option></select>
-						</div>
-						<div class="filter-group">
-							<label></label> <select><option>소분류</option></select>
-						</div>
-						<div class="filter-group">
-							<label>지역</label> <select><option>대분류</option></select>
-						</div>
-						<div class="filter-group">
-							<label></label> <select><option>소분류</option></select>
-						</div>
-						<div class="filter-group" style="margin-top: 20px;">
-							<input type="text" placeholder="검색어 입력">
-						</div>
-						<button type="submit" class="search-btn">검색</button>
-					</form>
-				</div>
-			</aside>
+			<div class="classPage">
+				<form id="filterForm" class="filterForm" th:action="@{/coach/list}" method="get">
+					<aside class="searchArea">
+						<div class="searchHead">검색 조건</div>
 
-			<section class="content-area">
-				<div class="content-header">
-					<select class="sort-select">
-						<option value="score">평점순</option>
-						<option value="recent">최신순</option>
-					</select>
-				</div>
-
-				<div class="coach-grid">
-					<div class="coach-card" th:each="i : ${#numbers.sequence(1, 4)}">
-						<div class="card-top">
-							<div class="profile-img">
-								<svg width="40" height="40" viewBox="0 0 24 24" fill="#666">
-									<path
-										d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg>
-							</div>
-							<div class="coach-info">
-								<h3>홍길동</h3>
-								<div class="rating">
-									★4.7 <span class="rating-count">(54)</span>
+						<div class="filterRow">
+							<div class="filter">
+								<label class="filterLabel">분야</label>
+								<div>
+									<select class="filterSelect majorField" name="majorField" id="majorField">
+										<option value="">대분류</option>
+										<option th:each="m : ${majorList}"
+											th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"
+											th:selected="${m.MAJOR_FIELD_IDX == majorField}"></option>
+									</select> 
+                                    <select class="filterSelect minorField" name="minorField" id="minorField" disabled>
+										<option value="">소분류</option>
+									</select>
 								</div>
 							</div>
-							<div class="tag-section">
-								<div class="tag-row">
-									<span class="tag-label">제공분야</span> <span class="tag">#축구</span>
-									<span class="tag">#농구</span>
-								</div>
-								<div class="tag-row">
-									<span class="tag-label">관심분야</span> <span class="tag">#야구</span>
+                            
+							<div class="filter">
+								<label class="filterLabel">지역</label>
+								<div>
+									<select class="filterSelect majorRegion" name="majorRegion" id="majorRegion">
+										<option value="">대분류</option>
+										<option th:each="r : ${majorRegions}"
+											th:value="${r.MAJOR_REGION_IDX}" th:text="${r.REGION_NM}"
+											th:selected="${r.MAJOR_REGION_IDX == majorRegion}">
+										</option>
+									</select> 
+                                    <select class="filterSelect minorRegion" name="minorRegion" id="minorRegion" disabled>
+										<option value="">소분류</option>
+									</select>
 								</div>
 							</div>
+                            
+							<div class="keywordBox">
+								<input class="keywordInput" type="text" name="q" placeholder="코치명 또는 태그 검색" th:value="${q}" />
+							</div>
+							<button class="keywordBtn" type="submit">검색</button>
 						</div>
-						<div class="card-buttons">
-							<button class="btn btn-chat">채팅 신청 🍡x1</button>
-							<button class="btn btn-match">매칭 신청 🍡x3</button>
+					</aside>
+
+					<section class="contentArea">
+						<div class="contentTop">
+							<div class="sortBox">
+								<select class="sortSelect" name="sort" id="sortSelect">
+									<option value="latest" th:selected="${sort == 'latest'}">최신순</option>
+									<option value="rating" th:selected="${sort == 'rating'}">평점순</option>
+									<option value="most" th:selected="${sort == 'most'}">리뷰 많은순</option>
+								</select>
+							</div>
 						</div>
-					</div>
-				</div>
-			</section>
+
+						<div class="cardGrid">
+							<div class="empty-msg" th:if="${#lists.isEmpty(coachList)}">일치하는 코치가 없습니다.</div>
+
+							<a class="classCard" th:each="coach : ${coachList}" th:href="@{/coach/detail(id=${coach.coach_idx})}">
+								<div class="coach-thumb">
+									<img th:src="${coach.profile_img != null} ? @{/uploads/profiles/{img}(img=${coach.profile_img})} : @{/images/default_user.png}" alt="coach">
+								</div>
+
+								<div class="meta">
+									<div class="top">
+										<div class="rating" th:text="|★ ${#numbers.formatDecimal(coach.avg_rating, 1, 1)} (${coach.review_cnt})|">★ 0.0 (0)</div>
+										<div class="provider" th:text="${coach.user_name}">코치이름</div>
+									</div>
+
+									<div class="bottom">
+										<div class="title" th:text="${coach.intro_title}">코치 소개 한줄평</div>
+									</div>
+
+                                    <div class="coach-tags">
+                                        <span class="coach-tag" th:each="tag : ${coach.tags}" th:text="|#${tag}|">#태그</span>
+                                    </div>
+								</div>
+							</a>
+						</div>
+					</section>
+				</form>
+			</div>
+			
 		</div>
 	</main>
 
-	<div th:replace="layout/footer :: siteFooter"></div>
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+	<script>
+        // 정렬 자동 제출
+        document.getElementById('sortSelect')?.addEventListener('change', () => {
+            document.getElementById('filterForm')?.submit();
+        });
+
+        // 소분류 로딩 (기존 스크립트 그대로 유지)
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('filterForm');
+            if (!form) return;
+
+            const majorField = form.querySelector('#majorField');
+            const minorField = form.querySelector('#minorField');
+            const majorRegion = form.querySelector('#majorRegion');
+            const minorRegion = form.querySelector('#minorRegion');
+
+            async function loadMinor(majorSelect, minorSelect, apiUrl, idKey, nameKey, placeholder, paramName) {
+                minorSelect.innerHTML = `<option value="">${placeholder}</option>`;
+                minorSelect.disabled = true;
+                const majorIdx = majorSelect.value;
+                if (!majorIdx) return;
+
+                const res = await fetch(`${apiUrl}?${paramName}=${encodeURIComponent(majorIdx)}`);
+                const data = await res.json();
+                data.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item[idKey];
+                    opt.textContent = item[nameKey];
+                    minorSelect.appendChild(opt);
+                });
+                minorSelect.disabled = false;
+            }
+
+            majorField?.addEventListener('change', () => loadMinor(majorField, minorField, '/minorFields', 'MINOR_FIELD_IDX', 'MINOR_FIELD_NM', '소분류', 'majorFieldIdx'));
+            majorRegion?.addEventListener('change', () => loadMinor(majorRegion, minorRegion, '/minorRegions', 'MINOR_REGION_IDX', 'DISTRICT_NM', '소분류', 'majorRegionIdx'));
+        });
+    </script>
+	
 </body>
 </html>
