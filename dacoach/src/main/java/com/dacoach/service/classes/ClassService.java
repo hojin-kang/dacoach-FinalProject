@@ -22,4 +22,7 @@ public interface ClassService {
 
 	Map<String, Object> getClassStats(int class_idx, int provider_idx) throws Exception;
 
+	// ⭐ 클래스 수정
+	int classUpdate(ClassDTO classDTO, String hashtags) throws Exception;
+
 }

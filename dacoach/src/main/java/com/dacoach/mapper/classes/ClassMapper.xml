@@ -205,4 +205,41 @@
 		WHERE c.CLASS_IDX = #{class_idx}
 	</select>
 
+	<!-- ⭐ 클래스 정보 수정 -->
+	<update id="updateClass"
+		parameterType="com.dacoach.model.classes.ClassDTO">
+		UPDATE CLASS
+		SET
+		INTRO = #{intro},
+		MINOR_REGION_IDX = #{minor_region_idx},
+		PHOTO = #{photo},
+		VIDEO = #{video},
+		START_DATE = #{start_date},
+		END_DATE = #{end_date},
+		MAX_USER_CNT = #{max_user_cnt}
+		WHERE CLASS_IDX = #{class_idx}
+	</update>
+
+	<!-- ⭐ 클래스의 기존 해시태그 매핑 모두 삭제 -->
+	<delete id="deleteClassHashtags" parameterType="int">
+		DELETE FROM
+		CLASS_HASHTAG
+		WHERE CLASS_IDX = #{class_idx}
+	</delete>
+
+	<!-- ⭐ 소지역 IDX로 대지역 정보 조회 -->
+	<select id="getRegionInfoByMinorIdx" parameterType="int"
+		resultType="map">
+		SELECT
+		mr.MAJOR_REGION_IDX,
+		mr.REGION_NM AS MAJOR_REGION_NM,
+		mnr.MINOR_REGION_IDX,
+		mnr.DISTRICT_NM AS MINOR_REGION_NM
+		FROM MINOR_REGION mnr
+		INNER JOIN MAJOR_REGION mr ON
+		mnr.MAJOR_REGION_IDX = mr.MAJOR_REGION_IDX
+		WHERE mnr.MINOR_REGION_IDX =
+		#{minorRegionIdx}
+	</select>
+
 </mapper>

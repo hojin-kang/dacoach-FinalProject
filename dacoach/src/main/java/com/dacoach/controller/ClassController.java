@@ -65,8 +65,8 @@ public class ClassController {
 	public ModelAndView classRegisterSubmit(@ModelAttribute ClassDTO classDTO,
 			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
 			@RequestParam(value = "videoFile", required = false) MultipartFile videoFile,
-			@RequestParam(value = "hashtags", required = false) String hashtags, // ⭐ 추가
-			HttpSession session, RedirectAttributes rttr) {
+			@RequestParam(value = "hashtags", required = false) String hashtags, HttpSession session,
+			RedirectAttributes rttr) {
 
 		ModelAndView mav = new ModelAndView("redirect:/class/company/classList");
 
@@ -80,18 +80,18 @@ public class ClassController {
 
 			classDTO.setProvider_idx(userIdx);
 
-			// 파일 저장 처리 (재인 형님꺼 사용하기~)
+			// 파일 저장 처리
 			if (photoFile != null && !photoFile.isEmpty()) {
 				String photoPath = FileUpload.saveFile(photoFile, "classes/photos");
-				classDTO.setPhoto(photoPath); // "classes/photos/uuid.jpg"
+				classDTO.setPhoto(photoPath);
 			}
 
 			if (videoFile != null && !videoFile.isEmpty()) {
 				String videoPath = FileUpload.saveFile(videoFile, "classes/videos");
-				classDTO.setVideo(videoPath); // "classes/videos/uuid.mp4"
+				classDTO.setVideo(videoPath);
 			}
 
-			// ⭐ 클래스 등록 (해시태그 포함)
+			// 클래스 등록 (해시태그 포함)
 			int result = classService.classRegister(classDTO, hashtags);
 
 			if (result > 0) {
@@ -137,11 +137,11 @@ public class ClassController {
 
 		mav.addObject("classDTO", classDTO);
 
-		// ⭐ 해시태그 목록 조회
+		// 해시태그 목록 조회
 		List<String> hashtagList = classMapper.selectHashtagsByClass(id);
 		mav.addObject("hashtagList", hashtagList);
 
-		// ⭐ 분야 정보 조회
+		// 분야 정보 조회
 		Map<String, Object> fieldInfo = classMapper.selectClassFieldInfo(id);
 		mav.addObject("fieldInfo", fieldInfo);
 
@@ -197,6 +197,169 @@ public class ClassController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("통계 데이터를 불러오는데 실패했습니다.");
 		}
 	}
+
+	/************* 클래스 수정 관련 *************/
+
+	/**
+	 * 클래스 수정 폼 페이지
+	 */
+	@GetMapping("/company/update")
+	public ModelAndView classUpdateForm(@RequestParam("classId") int classId, HttpSession session) throws Exception {
+		ModelAndView mav = new ModelAndView("company/classes/classUpdate");
+
+		Integer userIdx = (Integer) session.getAttribute("user_idx");
+		if (userIdx == null) {
+			mav.setViewName("redirect:/login");
+			return mav;
+		}
+
+		// 클래스 정보 조회
+		ClassDTO classDTO = classService.getClassDetail(classId);
+
+		if (classDTO == null) {
+			mav.setViewName("redirect:/class/company/classList");
+			return mav;
+		}
+
+		// 권한 확인 (본인의 클래스인지)
+		if (!classDTO.getProvider_idx().equals(userIdx)) {
+			mav.setViewName("redirect:/class/company/classList");
+			return mav;
+		}
+
+		mav.addObject("classDTO", classDTO);
+
+		// 해시태그 목록 조회
+		List<String> hashtagList = classMapper.selectHashtagsByClass(classId);
+		mav.addObject("hashtagList", hashtagList);
+
+		// 분야 정보 조회
+		Map<String, Object> fieldInfo = classMapper.selectClassFieldInfo(classId);
+		mav.addObject("fieldInfo", fieldInfo);
+
+		return mav;
+	}
+
+	/**
+	 * 클래스 수정 처리
+	 */
+	@PostMapping("/company/update")
+	public ModelAndView classUpdateSubmit(@ModelAttribute ClassDTO classDTO,
+			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
+			@RequestParam(value = "videoFile", required = false) MultipartFile videoFile,
+			@RequestParam(value = "hashtags", required = false) String hashtags,
+			@RequestParam(value = "deletePhoto", defaultValue = "false") boolean deletePhoto,
+			@RequestParam(value = "deleteVideo", defaultValue = "false") boolean deleteVideo, HttpSession session,
+			RedirectAttributes rttr) {
+
+		ModelAndView mav = new ModelAndView("redirect:/class/company/classDetail");
+
+		try {
+			Integer userIdx = (Integer) session.getAttribute("user_idx");
+			if (userIdx == null) {
+				rttr.addFlashAttribute("error", "로그인이 필요합니다.");
+				mav.setViewName("redirect:/login");
+				return mav;
+			}
+
+			// 기존 클래스 정보 조회
+			ClassDTO existingClass = classService.getClassDetail(classDTO.getClass_idx());
+
+			if (existingClass == null) {
+				rttr.addFlashAttribute("error", "존재하지 않는 클래스입니다.");
+				mav.setViewName("redirect:/class/company/classList");
+				return mav;
+			}
+
+			// 권한 확인
+			if (!existingClass.getProvider_idx().equals(userIdx)) {
+				rttr.addFlashAttribute("error", "권한이 없습니다.");
+				mav.setViewName("redirect:/class/company/classList");
+				return mav;
+			}
+
+			// 사진 파일 처리
+			String photoPath = existingClass.getPhoto(); // 기존 경로 유지
+
+			if (deletePhoto) {
+				// 기존 사진 삭제
+				if (photoPath != null && !photoPath.isEmpty()) {
+					FileUpload.deleteFile(photoPath);
+				}
+				photoPath = null; // DB에서 제거
+			}
+
+			if (photoFile != null && !photoFile.isEmpty()) {
+				// 기존 사진이 있으면 삭제
+				if (photoPath != null && !photoPath.isEmpty()) {
+					FileUpload.deleteFile(photoPath);
+				}
+				// 새 사진 저장
+				photoPath = FileUpload.saveFile(photoFile, "classes/photos");
+			}
+
+			classDTO.setPhoto(photoPath);
+
+			// 영상 파일 처리
+			String videoPath = existingClass.getVideo(); // 기존 경로 유지
+
+			if (deleteVideo) {
+				// 기존 영상 삭제
+				if (videoPath != null && !videoPath.isEmpty()) {
+					FileUpload.deleteFile(videoPath);
+				}
+				videoPath = null; // DB에서 제거
+			}
+
+			if (videoFile != null && !videoFile.isEmpty()) {
+				// 기존 영상이 있으면 삭제
+				if (videoPath != null && !videoPath.isEmpty()) {
+					FileUpload.deleteFile(videoPath);
+				}
+				// 새 영상 저장
+				videoPath = FileUpload.saveFile(videoFile, "classes/videos");
+			}
+
+			classDTO.setVideo(videoPath);
+
+			// Provider_idx 설정 (변경 불가)
+			classDTO.setProvider_idx(userIdx);
+
+			// 클래스 수정 (해시태그 포함)
+			int result = classService.classUpdate(classDTO, hashtags);
+
+			if (result > 0) {
+				rttr.addFlashAttribute("msg", "클래스가 수정되었습니다!");
+				mav.addObject("id", classDTO.getClass_idx());
+			} else {
+				rttr.addFlashAttribute("error", "클래스 수정에 실패했습니다.");
+				mav.setViewName("redirect:/class/company/update?classId=" + classDTO.getClass_idx());
+			}
+
+		} catch (Exception e) {
+			rttr.addFlashAttribute("error", "오류 발생: " + e.getMessage());
+			mav.setViewName("redirect:/class/company/update?classId=" + classDTO.getClass_idx());
+			e.printStackTrace();
+		}
+
+		return mav;
+	}
+
+	/**
+	 * 지역 정보 조회 (AJAX용) - 기존 지역 정보를 불러오기 위함
+	 */
+	@GetMapping("/getRegionInfo")
+	@ResponseBody
+	public ResponseEntity<?> getRegionInfo(@RequestParam Integer minorRegionIdx) {
+		try {
+			Map<String, Object> regionInfo = classMapper.getRegionInfoByMinorIdx(minorRegionIdx);
+			return ResponseEntity.ok(regionInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("지역 정보를 불러오는데 실패했습니다.");
+		}
+	}
+
 	/*********************************/
 
 }

@@ -214,4 +214,92 @@ public class ClassServiceImple implements ClassService {
 		return result;
 	}
 
+	@Override
+	@Transactional
+	public int classUpdate(ClassDTO classDTO, String hashtags) throws Exception {
+		try {
+			// 1. 유효성 검증 (수정용)
+			validateClassUpdateDTO(classDTO);
+
+			// 2. 클래스 기본 정보 수정
+			int result = classMapper.updateClass(classDTO);
+
+			if (result <= 0) {
+				throw new RuntimeException("클래스 수정에 실패했습니다.");
+			}
+
+			// 3. 해시태그 처리
+			// 3-1. 기존 해시태그 매핑 모두 삭제
+			classMapper.deleteClassHashtags(classDTO.getClass_idx());
+
+			// 3-2. 새로운 해시태그 등록
+			if (hashtags != null && !hashtags.trim().isEmpty()) {
+				String[] tagArray = hashtags.split(",");
+
+				for (String tag : tagArray) {
+					tag = tag.trim();
+					if (tag.isEmpty())
+						continue;
+
+					// 해시태그가 이미 존재하는지 확인
+					Integer hashtagIdx = classMapper.findHashtagByName(tag);
+
+					// 존재하지 않으면 새로 INSERT
+					if (hashtagIdx == null) {
+						classMapper.insertHashtag(tag);
+						hashtagIdx = classMapper.findHashtagByName(tag);
+					}
+
+					// CLASS_HASHTAG 매핑 테이블에 저장
+					if (hashtagIdx != null) {
+						classMapper.insertClassHashtag(classDTO.getClass_idx(), hashtagIdx);
+					}
+				}
+			}
+
+			return result;
+
+		} catch (IllegalArgumentException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException("클래스 수정 중 오류가 발생했습니다: " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * 클래스 수정 시 유효성 검증 (제목, 분야, 가격은 수정 불가이므로 검증에서 제외)
+	 */
+	private void validateClassUpdateDTO(ClassDTO classDTO) throws Exception {
+		// 필수 입력 확인
+		if (classDTO.getClass_idx() == null) {
+			throw new IllegalArgumentException("클래스 IDX가 필요합니다.");
+		}
+		if (classDTO.getIntro() == null || classDTO.getIntro().trim().isEmpty()) {
+			throw new IllegalArgumentException("내용을 입력해주세요.");
+		}
+		if (classDTO.getMinor_region_idx() == null) {
+			throw new IllegalArgumentException("클래스 장소를 선택해주세요.");
+		}
+		if (classDTO.getStart_date() == null) {
+			throw new IllegalArgumentException("시작일을 입력해주세요.");
+		}
+		if (classDTO.getEnd_date() == null) {
+			throw new IllegalArgumentException("종료일을 입력해주세요.");
+		}
+		if (classDTO.getMax_user_cnt() == null || classDTO.getMax_user_cnt() <= 0) {
+			throw new IllegalArgumentException("수강 인원을 올바르게 입력해주세요.");
+		}
+
+		// 날짜 검증 (과거 날짜도 허용 - 이미 진행 중인 클래스일 수 있음)
+		if (classDTO.getEnd_date().before(classDTO.getStart_date())
+				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
+			throw new IllegalArgumentException("종료일은 시작일보다 이후여야 합니다.");
+		}
+
+		// 내용 길이 검증
+		if (classDTO.getIntro().length() > 3000) {
+			throw new IllegalArgumentException("내용은 3000자 이내로 입력해주세요.");
+		}
+	}
+
 }
