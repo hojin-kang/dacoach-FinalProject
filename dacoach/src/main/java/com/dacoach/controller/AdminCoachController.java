@@ -250,8 +250,26 @@ public class AdminCoachController {
 		}
 		
 		model.addAttribute("noticeList", noticeList);
-		model.addAttribute("contentPage", "admin/support/notice/notice");
+		model.addAttribute("contentPage", "admin/support/notice/noticeList");
 		model.addAttribute("contentFragment", "noticeList");
+		
+		return "admin/dashboard";
+	}
+	
+	@GetMapping("/support/notice/write")
+	public String noticeWrite(Model model) {
+		
+		model.addAttribute("contentPage", "admin/support/notice/noticeWrite");
+		model.addAttribute("contentFragment", "noticeWrite");
+		
+		return "admin/dashboard";
+	}
+	
+	@GetMapping("/support/qna")
+	public String qnaList(Model model) {
+		
+		model.addAttribute("contentPage", "admin/support/qna/qnaList");
+		model.addAttribute("contentFragment", "qnaList");
 		
 		return "admin/dashboard";
 	}

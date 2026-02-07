@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="qnaList">
+    <style>
+        .bg-mint-light { background-color: #f0f8f7; }
+        .bg-mint-dark { background-color: #9dbbb5; }
+        .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
+        
+        /* QnA 전용 카드 스타일 */
+        .qna-card { 
+            background-color: white; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 25px; 
+            padding: 1.5rem; 
+            margin-bottom: 1.2rem; 
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .qna-card:hover { border-color: #9dbbb5; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(157, 187, 181, 0.15); }
+
+        /* 답변 상태 배지 */
+        .status-badge { 
+            padding: 0.4rem 1.2rem; 
+            border-radius: 9999px; 
+            font-weight: bold; 
+            font-size: 0.75rem; 
+            display: inline-block;
+        }
+        .status-waiting { background-color: #fef3f2; color: #f04438; border: 1px solid #fee4e2; } /* 답변대기 */
+        .status-complete { background-color: #f0f8f7; color: #4a7c74; border: 1px solid #9dbbb5; } /* 답변완료 */
+
+        /* 정보 행 설정 */
+        .qna-info-row { display: flex; align-items: center; gap: 1.5rem; margin-top: 10px; }
+        .qna-label { font-weight: bold; color: #9ca3af; font-size: 0.8rem; min-width: 40px; }
+        .qna-value { color: #4b5563; font-weight: 500; }
+
+        /* 문의 유형 태그 */
+        .type-tag { color: #9dbbb5; font-weight: 800; font-size: 0.85rem; margin-right: 8px; }
+        
+        /* 필터 영역 */
+        .filter-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    </style>
+
+    <div class="max-w-[1100px] mx-auto p-8 font-main">
+        
+        <div class="filter-section">
+            <h1 class="text-2xl font-bold text-gray-800">1:1 문의 관리</h1>
+            <div class="flex gap-3">
+                <select class="bg-white border-2 border-gray-200 rounded-xl px-4 py-2 outline-none focus:border-mint-dark">
+                    <option value="">전체 상태</option>
+                    <option value="WAIT">답변 대기</option>
+                    <option value="COMPLETE">답변 완료</option>
+                </select>
+                <div class="flex border-2 border-gray-200 rounded-xl overflow-hidden bg-white focus-within:border-mint-dark">
+                    <input type="text" placeholder="작성자 또는 제목 검색" class="px-4 py-2 outline-none w-64">
+                    <button class="bg-mint-dark text-white px-4 py-2 hover:brightness-90 transition-all">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(qnaList)}" th:each="qna : ${qnaList}" 
+             th:onclick="|location.href='/admin/support/qna/detail?idx=' + ${qna.QNA_IDX}|"
+             class="qna-card">
+            
+            <div class="flex justify-between items-start">
+                <div>
+                    <div class="flex items-center mb-2">
+                        <span th:if="${qna.REPLY_CONTENT == null}" class="status-badge status-waiting mr-3">답변대기</span>
+                        <span th:if="${qna.REPLY_CONTENT != null}" class="status-badge status-complete mr-3">답변완료</span>
+                        <span class="type-tag" th:text="'[' + ${qna.QNA_TYPE} + ']'">[결제문의]</span>
+                        <h3 class="text-lg font-bold text-gray-800 inline-block" th:text="${qna.TITLE}">클래스 환불 관련 문의드립니다.</h3>
+                    </div>
+                    
+                    <div class="qna-info-row">
+                        <div class="flex items-center">
+                            <span class="qna-label">작성자</span>
+                            <span class="qna-value" th:text="${qna.USER_NAME}">김수강</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="qna-label">등록일</span>
+                            <span class="qna-value" th:text="${#strings.substring(qna.CREATED_AT, 0, 10)}">2026-02-07</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-right">
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-xl mt-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(qnaList)}" class="bg-white border-2 border-dashed border-gray-200 rounded-[40px] py-20 text-center">
+            <i class="fa-solid fa-comment-dots text-5xl text-gray-200 mb-4 block"></i>
+            <p class="text-gray-400 font-bold text-lg">새로운 문의 내역이 없습니다.</p>
+        </div>
+
+        <div class="flex justify-center mt-10 gap-2">
+            <button class="w-10 h-10 rounded-lg border-2 border-gray-100 flex items-center justify-center text-gray-400 hover:border-mint-dark hover:text-mint-dark">
+                <i class="fa-solid fa-angle-left"></i>
+            </button>
+            <button class="w-10 h-10 rounded-lg border-2 border-mint-dark bg-mint-dark text-white font-bold">1</button>
+            <button class="w-10 h-10 rounded-lg border-2 border-gray-100 flex items-center justify-center text-gray-400 hover:border-mint-dark hover:text-mint-dark">
+                <i class="fa-solid fa-angle-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+</html>
