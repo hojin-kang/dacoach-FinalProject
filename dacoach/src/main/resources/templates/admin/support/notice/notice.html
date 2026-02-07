@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="noticeList">
+    <style>
+        /* 민트 포인트 컬러 정의 */
+        .bg-mint-main { background-color: #9dbbb5; }
+        .text-mint-dark { color: #7a948f; }
+        .font-main { font-family: 'Pretendard', -apple-system, sans-serif; font-size: 14px; color: #374151; }
+        
+        /* 테이블 디자인 */
+        .notice-table { width: 100%; border-collapse: collapse; margin-top: 1rem; table-layout: fixed; }
+        .notice-thead { background-color: #9dbbb5; color: white; }
+        .notice-thead th { padding: 14px 10px; font-weight: bold; border-right: 1px solid rgba(255,255,255,0.2); }
+        .notice-thead th:last-child { border-right: none; }
+        
+        .notice-tbody tr { border-bottom: 1px solid #e5e7eb; transition: background 0.2s; cursor: pointer; }
+        .notice-tbody tr:hover { background-color: #f9fafb; }
+        .notice-tbody td { padding: 14px 10px; text-align: center; color: #4b5563; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .notice-tbody td.title-cell { text-align: left; padding-left: 30px; }
+        
+        /* 검색 및 버튼 */
+        .search-input { border: 2px solid #e5e7eb; border-radius: 8px; padding: 6px 12px; outline: none; width: 250px; font-size: 13px; }
+        .search-input:focus { border-color: #9dbbb5; }
+        .btn-search { background-color: #9dbbb5; color: white; padding: 6px 24px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 13px; }
+        .btn-write { background-color: #9dbbb5; color: white; padding: 10px 30px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; float: right; margin-top: 15px; }
+        
+        /* 페이지네이션 */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 5px; margin-top: 30px; }
+        .page-item { border: 1px solid #e5e7eb; padding: 5px 12px; border-radius: 6px; color: #6b7280; text-decoration: none; font-size: 13px; }
+        .page-item.active { background-color: white; border-color: #9dbbb5; color: #374151; font-weight: bold; }
+    </style>
+
+    <div class="max-w-[1100px] mx-auto p-4 font-main">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">공지관리</h1>
+            <div class="flex gap-2">
+                <input type="text" class="search-input" placeholder="검색어를 입력하세요">
+                <button type="button" class="btn-search">Search</button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <table class="notice-table">
+                <thead class="notice-thead">
+                    <tr>
+                        <th style="width: 10%;">번호</th>
+                        <th style="width: 55%;">제목</th>
+                        <th style="width: 20%;">작성자</th>
+                        <th style="width: 15%;">등록일</th>
+                    </tr>
+                </thead>
+                <tbody class="notice-tbody">
+                    <tr th:if="${not #lists.isEmpty(noticeList)}" th:each="notice : ${noticeList}" 
+                        th:onclick="|location.href='/admin/notice/detail?idx=' + ${notice.QNA_IDX}|">
+                        <td th:text="${notice.QNA_IDX}">번호</td>
+                        <td class="title-cell" th:text="${notice.TITLE}">공지사항 제목</td>
+                        <td th:text="${notice.USER_NAME}">작성자</td>
+                        <td th:text="${#strings.contains(notice.CREATED_AT, ' ') ? #strings.substring(notice.CREATED_AT, 0, 10) : notice.CREATED_AT}">2026-02-07</td>
+                    </tr>
+                    
+                    <tr th:if="${#lists.isEmpty(noticeList)}">
+                        <td colspan="4" class="py-24 text-gray-400 text-center text-lg">
+                            <i class="fa-regular fa-folder-open mb-3 block text-3xl opacity-50"></i>
+                            등록된 공지사항이 없습니다.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="relative mt-8">
+            <div class="pagination">
+                <a href="#" class="page-item">&lt;&lt;</a>
+                <a href="#" class="page-item active">1</a>
+                <a href="#" class="page-item">&gt;&gt;</a>
+            </div>
+            <button type="button" class="btn-write" onclick="location.href='/admin/notice/write'">글쓰기</button>
+        </div>
+    </div>
+</div>
+</html>
