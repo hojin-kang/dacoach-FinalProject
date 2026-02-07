@@ -92,6 +92,7 @@ public class AdminCompanyController {
         return "admin/dashboard";
     }
     
+    //클래스 상세 페이지
     @GetMapping("/classDetail/{classIdx}")
     public String classDetail(@PathVariable("classIdx") int classIdx, Model model) {
 
