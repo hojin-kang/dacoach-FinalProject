@@ -157,36 +157,33 @@
 
           <tr th:each="row : ${list}">
             <td data-label="클래스관리ID"
-                th:text="${row != null and row.classes != null ? row.classes.class_idx : '-'}">-</td>
+                th:text="${row['CLASS_IDX'] != null ? row['CLASS_IDX'] : '-'}">-</td>
 
             <td data-label="클래스명"
-                th:text="${row != null and row.classes != null ? row.classes.title : '-'}">-</td>
+                th:text="${row['TITLE'] != null ? row['TITLE'] : '-'}">-</td>
 
             <td data-label="작성일자"
-   		 		th:text="${row != null and row.classes != null and row.classes.created_at != null
-              ? #dates.format(row.classes.created_at, 'yyyy-MM-dd')
-              : '-'}">-</td>
-
+                th:text="${row['CREATED_AT'] != null
+                         ? #dates.format(row['CREATED_AT'], 'yyyy-MM-dd')
+                         : '-'}">-</td>
 
             <td data-label="회사명"
-                th:text="${row != null and row.classes != null ? row.classes.user_name : '-'}">-</td>
+                th:text="${row['PROVIDER_NAME'] != null ? row['PROVIDER_NAME'] : '-'}">-</td>
 
-           <td data-label="별점"
-    			th:text="${row != null and row.classes != null ? row.classes.avg_rating : '0'}">0</td>
-
+            <td data-label="별점"
+                th:text="${row['AVG_RATING'] != null ? row['AVG_RATING'] : '0'}">0</td>
 
             <td data-label="사진">
               <img class="thumb"
-                   th:if="${row != null and row.classes != null and row.classes.photo != null and row.classes.photo != ''}"
-                   th:src="@{/uploads/classes/{f}(f=${row.classes.photo})}"
+                   th:if="${row['PHOTO'] != null and row['PHOTO'] != ''}"
+                   th:src="@{/uploads/classes/{f}(f=${row['PHOTO']})}"
                    alt="class photo"/>
 
-              <span th:if="${row == null or row.classes == null or row.classes.photo == null or row.classes.photo == ''}">-</span>
+              <span th:if="${row['PHOTO'] == null or row['PHOTO'] == ''}">-</span>
             </td>
             
             <td data-label="상태"
-    			th:text="${row != null and row.progressStatus != null ? row.progressStatus : '-'}">-</td>
-            	
+                th:text="${row['PROGRESS_STATUS'] != null ? row['PROGRESS_STATUS'] : '-'}">-</td>
           </tr>
         </tbody>
       </table>

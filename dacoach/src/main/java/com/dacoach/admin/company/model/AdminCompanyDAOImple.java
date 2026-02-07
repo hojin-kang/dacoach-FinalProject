@@ -7,8 +7,6 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.dacoach.model.review.ReviewClassSummaryDTO;
-
 @Repository
 public class AdminCompanyDAOImple implements AdminCompanyDAO {
 
@@ -20,14 +18,12 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
     }
 
     @Override
-    public List<AdminCompanyRowDTO> companyList() {
-    	return sqlSession.selectList(NS + "companyList");
+    public List<Map<String, Object>> companyList() {
+        return sqlSession.selectList(NS + "companyList");
     }
-    
 
     @Override
-    public AdminCompanyRowDTO companyDetail(int usersIdx) {
-        // mapper xml에서 #{usersIdx} 쓰면 안전하게 map으로 전달
+    public Map<String, Object> companyDetail(int usersIdx) {
         Map<String, Object> p = new HashMap<>();
         p.put("usersIdx", usersIdx);
         return sqlSession.selectOne(NS + "companyDetail", p);
@@ -45,8 +41,8 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
     public int insertEmbeddedHistory(long userIdx, String startDate, String endDate, String reason) {
         Map<String, Object> p = new HashMap<>();
         p.put("userIdx", userIdx);
-        p.put("startDate", startDate); // yyyy-MM-dd
-        p.put("endDate", endDate);     // yyyy-MM-dd or null/""
+        p.put("startDate", startDate);
+        p.put("endDate", endDate);
         p.put("reason", reason);
         return sqlSession.insert(NS + "insertEmbeddedHistory", p);
     }
@@ -69,7 +65,6 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
 
     @Override
     public int updateCertStatus(long userIdx, String certStatus) {
-        // 너가 준 xml 파라미터명(user_idx, cert_status) 그대로 맞춤
         Map<String, Object> p = new HashMap<>();
         p.put("user_idx", userIdx);
         p.put("cert_status", certStatus);
@@ -84,18 +79,18 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
         return sqlSession.insert(NS + "insertCertStatus", p);
     }
 
-	@Override
-	public List<AdminCompanyRowDTO> selectClassPage(Map<String, Object> param) {
-		return sqlSession.selectList(NS+"selectClassPage",param);
-	}
+    @Override
+    public List<Map<String, Object>> selectClassPage(Map<String, Object> param) {
+        return sqlSession.selectList(NS + "selectClassPage", param);
+    }
 
-	@Override
-	public List<ReviewClassSummaryDTO> selectReviewSummaryByClassIds(List<Integer> classIds) {
-		return sqlSession.selectList(NS+"selectReviewSummaryByClassIds",classIds);
-	}
+    @Override
+    public List<Map<String, Object>> selectReviewSummaryByClassIds(List<Integer> classIds) {
+        return sqlSession.selectList(NS + "selectReviewSummaryByClassIds", classIds);
+    }
 
-	@Override
-	public int countClassTotal() {
-		return sqlSession.selectOne(NS+"countClassTotal");
-	}
+    @Override
+    public int countClassTotal() {
+        return sqlSession.selectOne(NS + "countClassTotal");
+    }
 }

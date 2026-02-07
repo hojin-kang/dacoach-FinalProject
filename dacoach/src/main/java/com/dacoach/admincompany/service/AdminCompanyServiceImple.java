@@ -1,12 +1,7 @@
-// ================================
-// 2) AdminCompanyServiceImple
-// ================================
 package com.dacoach.admincompany.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dacoach.admin.company.model.AdminCompanyDAO;
-import com.dacoach.admin.company.model.AdminCompanyRowDTO;
-import com.dacoach.model.review.ReviewClassSummaryDTO;
 
 @Service
 public class AdminCompanyServiceImple implements AdminCompanyService {
@@ -27,12 +20,12 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     }
 
     @Override
-    public List<AdminCompanyRowDTO> companyList() {
+    public List<Map<String, Object>> companyList() {
         return dao.companyList();
     }
 
     @Override
-    public AdminCompanyRowDTO companyDetail(int usersIdx) {
+    public Map<String, Object> companyDetail(int usersIdx) {
         return dao.companyDetail(usersIdx);
     }
 
@@ -52,7 +45,6 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
             if (suspendFrom == null || suspendFrom.isBlank()) {
                 suspendFrom = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
             }
-            // 사유/종료일은 그대로 저장(종료일 비우면 NULL)
             dao.insertEmbeddedHistory(userIdx, suspendFrom, suspendUntil, reason);
             return;
         }
@@ -80,18 +72,17 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
         // 2) 계정 상태(USERS)를 'ACTIVE'로 변경
         dao.updateUserStatus(userIdx, "ACTIVE");
 
-        // 3) 만약 정지 중인 이력이 있다면 종료 처리 (END_DATE를 오늘로)
-        // 기존 saveAccountAndSuspend 로직과 동일하게 처리
+        // 3) 만약 정지 중인 이력이 있다면 종료 처리
         dao.closeLatestEmbeddedHistory(userIdx);
     }
 
     @Override
-    public List<AdminCompanyRowDTO> getClassPage(Map<String, Object> param) {
+    public List<Map<String, Object>> getClassPage(Map<String, Object> param) {
         return dao.selectClassPage(param);
     }
-	@Override
-	public int getClassTotalCnt() {
-		return dao.countClassTotal();
-	}
-	
+
+    @Override
+    public int getClassTotalCnt() {
+        return dao.countClassTotal();
+    }
 }

@@ -3,15 +3,11 @@ package com.dacoach.admin.company.model;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
-import com.dacoach.model.review.ReviewClassSummaryDTO;
-
 public interface AdminCompanyDAO {
 
     // 목록/상세
-    List<AdminCompanyRowDTO> companyList();
-    AdminCompanyRowDTO companyDetail(int usersIdx);
+    List<Map<String, Object>> companyList();
+    Map<String, Object> companyDetail(int usersIdx);
 
     // USERS 상태 저장
     int updateUserStatus(long userIdx, String status);
@@ -25,8 +21,8 @@ public interface AdminCompanyDAO {
     int updateCertStatus(long userIdx, String certStatus);
     int insertCertStatus(long userIdx, String certStatus);
     
-    //classes review 리스트,평점
-    List<AdminCompanyRowDTO> selectClassPage(Map<String, Object> param);
-    List<ReviewClassSummaryDTO> selectReviewSummaryByClassIds(List<Integer> classIds);
+    // 클래스 리스트, 평점
+    List<Map<String, Object>> selectClassPage(Map<String, Object> param);
+    List<Map<String, Object>> selectReviewSummaryByClassIds(List<Integer> classIds);
     int countClassTotal();
 }
