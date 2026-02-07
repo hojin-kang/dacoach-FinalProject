@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="noticeWrite">
+    <style>
+        .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
+        .bg-mint-main { background-color: #9dbbb5; }
+        .border-mint { border-color: #9dbbb5; }
+        
+        /* 메인 컨테이너 박스 */
+        .write-container {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 입력줄 행(Row) */
+        .form-row {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        /* 레이블(작성자, 제목, 분류) */
+        .form-label {
+            width: 120px;
+            background-color: #ffffff;
+            padding: 12px 20px;
+            font-weight: 600;
+            color: #4b5563;
+            border-right: 1px solid #d1d5db;
+            text-align: center;
+        }
+
+        /* 입력창 스타일 */
+        .form-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* 셀렉트 박스 커스텀 */
+        .form-select {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            cursor: pointer;
+            color: #374151;
+        }
+
+        /* 본문 텍스트 영역 */
+        .form-textarea {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 10px;
+            resize: none;
+            outline: none;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .form-textarea:focus { border-color: #9dbbb5; }
+
+        /* 등록 버튼 */
+        .btn-submit {
+            background-color: #9dbbb5;
+            color: white;
+            padding: 10px 40px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            float: right;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background-color: #89a7a1; }
+    </style>
+
+    <div class="max-w-[1000px] mx-auto p-8 font-main">
+        <h1 class="text-2xl font-bold text-gray-800 mb-8">공지사항 작성</h1>
+
+        <form th:action="@{/admin/support/notice/insert}" method="post">
+            <div class="write-container">
+                <div class="form-row">
+                    <div class="form-label">작성자</div>
+					<input type="text" name="userName" class="form-input"
+						th:value="${session.loginUser != null ? session.loginUser.USER_NAME : '관리자'}"
+						readonly>
+				</div>
+
+                <div class="form-row">
+                    <div class="form-label">제목</div>
+                    <input type="text" name="title" class="form-input" placeholder="제목을 입력해주세요." required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-label">분류</div>
+                    <select name="qna_type" class="form-select" required>
+                        <option value="" disabled selected>분류를 선택해주세요</option>
+                        <option value="서비스">서비스</option>
+                        <option value="이벤트">이벤트</option>
+                        <option value="안내">안내</option>
+                        <option value="점검">점검</option>
+                    </select>
+                </div>
+
+                <textarea name="content" class="form-textarea" placeholder="내용을 작성해주세요."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">등록</button>
+        </form>
+    </div>
+</div>
+</html>
