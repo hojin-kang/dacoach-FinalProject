@@ -25,4 +25,13 @@ public interface ClassService {
 	// ⭐ 클래스 수정
 	int classUpdate(ClassDTO classDTO, String hashtags) throws Exception;
 
+	// ⭐ 해시태그 목록 조회
+	List<String> getHashtagsByClass(int class_idx) throws Exception;
+
+	// ⭐ 분야 정보 조회
+	Map<String, Object> getClassFieldInfo(int class_idx) throws Exception;
+
+	// ⭐ 지역 정보 조회
+	Map<String, Object> getRegionInfoByMinorIdx(Integer minorRegionIdx) throws Exception;
+
 }
