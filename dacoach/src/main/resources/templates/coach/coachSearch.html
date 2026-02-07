@@ -63,7 +63,7 @@
                             <div class="empty-msg" th:if="${#lists.isEmpty(coachList)}">일치하는 코치가 없습니다.</div>
                             
                             <article class="classCard" th:each="dto : ${coachList}">
-                                <a th:href="@{/coach/detail(idx=${dto.coach_idx})}" class="card-link">
+                                <a th:href="@{/coach/detail(user_idx=${dto.user_idx})}" class="card-link">
                                     <div class="card-body">
                                         <div class="profile-section">
                                             <div class="coach-thumb">

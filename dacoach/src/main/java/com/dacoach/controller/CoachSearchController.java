@@ -15,6 +15,8 @@ import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.coachSearch.CoachSearchService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class CoachSearchController {
 		@Autowired
@@ -68,4 +70,28 @@ public class CoachSearchController {
 		mav.setViewName("coach/coachSearch");
 		return mav;
 	}
+	@GetMapping("/coach/detail")
+	public ModelAndView coachDetail(@RequestParam(value="user_idx", defaultValue = "0") int user_idx,
+			HttpSession session
+			) {
+		ModelAndView mav = new ModelAndView();
+		//로그인 중이 아닐경우
+		if(session.getAttribute("user_idx") == null) {
+			mav.addObject("msg", "코치 상세정보는 로그인 후 이용 가능합니다.");
+			mav.addObject("url", "/login");
+			mav.setViewName("alert");
+			return mav;
+		}
+		//코치상세정보담기
+		try {
+			CoachDTO cdto = coachService.getCoachInfo(user_idx);
+			mav.addObject("dto", cdto);
+			mav.setViewName("coach/detail");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mav;
+	}
+	 	
 }
