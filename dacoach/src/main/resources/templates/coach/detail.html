@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8" />
+   <title>dacoach - 코치 상세정보</title>
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+   <style>
+      /* 상세 페이지 전용 스타일 */
+      :root {
+         --accent: #328889;
+         --accent-dark: #286d6e;
+         --line: #e5e7eb;
+         --bg-light: #F8F9FA;
+         --tag-bg: #e9e9e9;
+         --ink: #111827;
+      }
+
+      /* 헤더 프로필 영역 */
+      .profile-header {
+         display: flex;
+         align-items: center;
+         padding: 40px 0;
+         gap: 30px;
+         position: relative;
+      }
+
+      .detail-thumb {
+         width: 120px;
+         height: 120px;
+         border-radius: 50%;
+         object-fit: cover;
+         background: #eee;
+      }
+
+      .profile-main-info {
+         flex: 1;
+      }
+
+      .coach-title {
+         font-size: 16px;
+         color: var(--ink);
+         margin-bottom: 5px;
+      }
+
+      .coach-name-row {
+         display: flex;
+         align-items: center;
+         gap: 15px;
+      }
+
+      .coach-name-row h1 {
+         font-size: 32px;
+         margin: 0;
+         font-weight: 800;
+      }
+
+      .action-icons {
+         display: flex;
+         gap: 15px;
+         font-size: 24px;
+         cursor: pointer;
+      }
+
+      .header-buttons {
+         display: flex;
+         flex-direction: column;
+         gap: 10px;
+      }
+
+      .btn-header {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         padding: 8px 16px;
+         border-radius: 20px;
+         font-size: 14px;
+         font-weight: 600;
+         cursor: pointer;
+         border: 1px solid var(--accent);
+         min-width: 120px;
+      }
+
+      .btn-chat-outline { background: #fff; color: #333; }
+      .btn-match-solid { background: var(--accent); color: #fff; border: none; }
+      .btn-icon-sm { width: 16px; margin: 0 4px 0 8px; }
+
+      /* 탭 메뉴 */
+      .detail-tabs {
+         display: flex;
+         border-bottom: 2px solid var(--line);
+         margin-bottom: 40px;
+      }
+
+      .tab-item {
+         padding: 15px 30px;
+         font-weight: 700;
+         cursor: pointer;
+         color: #666;
+      }
+
+      .tab-item.active {
+         color: var(--ink);
+         border-bottom: 4px solid var(--ink);
+         margin-bottom: -2px;
+      }
+
+      /* 섹션 공통 */
+      .detail-section { margin-bottom: 50px; }
+      .section-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
+      .section-content { line-height: 1.6; color: #333; }
+
+      /* 가로 배치 그룹 (분야, 동영상/자격증) */
+      .info-grid {
+         display: grid;
+         grid-template-columns: 1fr 1fr;
+         gap: 40px;
+      }
+
+      .tag-list { display: flex; gap: 10px; flex-wrap: wrap; }
+      .detail-tag {
+         background: var(--tag-bg);
+         padding: 6px 16px;
+         border-radius: 20px;
+         font-size: 14px;
+         font-weight: 500;
+      }
+
+      /* 동영상 플레이어 */
+      .video-placeholder {
+         width: 100%;
+         aspect-ratio: 16 / 9;
+         background: #000;
+         border-radius: 8px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         overflow: hidden;
+      }
+
+      .video-placeholder video { width: 100%; height: 100%; }
+
+      /* 후기 카드 */
+      .review-summary { margin-bottom: 20px; font-weight: 600; }
+      .review-summary span { color: var(--accent); }
+
+      .review-container {
+         display: flex;
+         gap: 20px;
+         overflow-x: auto;
+         padding-bottom: 20px;
+      }
+
+      .review-card {
+         min-width: 320px;
+         background: #fff;
+         border: 1px solid var(--line);
+         border-radius: 12px;
+         padding: 20px;
+      }
+
+      .review-user { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+      .review-user-img { width: 45px; height: 45px; border-radius: 50%; background: #eee; }
+      .review-user-info .role { font-size: 12px; color: #888; }
+      .review-user-info .name { font-weight: 700; }
+
+      .review-rating { color: #f1c40f; margin-bottom: 10px; }
+      .review-text { font-size: 14px; margin-bottom: 12px; height: 40px; overflow: hidden; }
+      .review-tags { display: flex; gap: 5px; }
+      .review-hash { font-size: 12px; color: #888; }
+
+   </style>
+</head>
+<body>
+   <div th:replace="~{layout/header :: siteHeader}"></div>
+
+   <main class="main">
+   <div class="container">
+      
+      <section class="profile-header">
+         <img th:src="${dto.photo != null} ? @{/uploads/{path}(path=${dto.photo})} : @{/img/profile/defaultProfile.jpg}" class="detail-thumb" alt="코치 프로필">
+         
+         <div class="profile-main-info">
+            <p class="coach-title">베테랑 코치</p>
+            <div class="coach-name-row">
+               <h1 th:text="${dto.nickname}">홍길동</h1>
+               <div class="action-icons">
+                  <span>♡</span> <span>🔔</span> </div>
+            </div>
+         </div>
+
+         <div class="header-buttons">
+            <button class="btn-header btn-chat-outline">
+               채팅 신청 <img src="/img/icon/dakcoach.png" class="btn-icon-sm"> x1
+            </button>
+            <button class="btn-header btn-match-solid">
+               매칭 신청 <img src="/img/icon/dakcoach.png" class="btn-icon-sm"> x3
+            </button>
+         </div>
+      </section>
+
+      <nav class="detail-tabs">
+         <div class="tab-item active">상세정보</div>
+         <div class="tab-item">매칭후기</div>
+      </nav>
+
+      <section class="detail-section">
+         <h3 class="section-title">자기소개</h3>
+         <div class="section-content">
+            <p th:text="${dto.intro}">아직 소개글 작성 전입니다.</p>
+         </div>
+      </section>
+
+      <div class="info-grid detail-section">
+         <div class="info-item">
+            <h3 class="section-title">제공분야</h3>
+            <div class="tag-list">
+               <span class="detail-tag">#축구</span>
+               <span class="detail-tag">#농구</span>
+            </div>
+         </div>
+         <div class="info-item">
+            <h3 class="section-title">관심분야</h3>
+            <div class="tag-list">
+               <span class="detail-tag">#야구</span>
+            </div>
+         </div>
+      </div>
+
+      <div class="info-grid detail-section">
+         <div class="info-item">
+            <h3 class="section-title">동영상</h3>
+            <div class="video-placeholder">
+               <video controls>
+                  <source src="" type="video/mp4">
+               </video>
+            </div>
+         </div>
+         <div class="info-item">
+            <h3 class="section-title">자격증</h3>
+            <ul class="section-content">
+               <li>- 스포츠 지도사 2급</li>
+            </ul>
+         </div>
+      </div>
+
+      <section class="detail-section">
+         <h3 class="section-title">매칭 후기</h3>
+         <div class="review-summary">
+            54 명의 코치가 홍길동 님을 <span>긍정적(★4.7/5.0)</span>으로 평가했습니다.
+         </div>
+
+         <div class="review-container">
+            <article class="review-card" th:each="i : ${#numbers.sequence(1, 3)}">
+               <div class="review-user">
+                  <div class="review-user-img"></div>
+                  <div class="review-user-info">
+                     <div class="role">일반 코치</div>
+                     <div class="name">김코치</div>
+                  </div>
+               </div>
+               <div class="review-rating">★★★★☆ 4.0</div>
+               <p class="review-text">덕분에 운동을 잘 할 수 있게 되었어요. 감사합니다!!</p>
+               <div class="review-tags">
+                  <span class="review-hash">#친절해요</span>
+                  <span class="review-hash">#약속을 잘 지켜요</span>
+               </div>
+            </article>
+         </div>
+      </section>
+
+   </div>
+   </main>
+  
+   <div th:replace="~{layout/footer :: siteFooter}"></div>
+
+</body>
+</html>
