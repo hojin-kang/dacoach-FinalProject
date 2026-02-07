@@ -24,4 +24,9 @@ public interface AdminService {
 	public int insertKeyword(Map<String, String> params) throws Exception;
 	public int deleteKeyword(String keyword_name) throws Exception;
 	public int selectCoachidx(int user_idx) throws Exception;
+	public int deleteReviewCoach(int review_idx) throws Exception;
+	public int deleteReviewClass(int review_idx) throws Exception;
+	
+	//공지 관리(QnA 테이블 사용)
+	List<Map<String, Object>> getNoticeList() throws Exception;
 }

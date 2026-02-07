@@ -103,9 +103,9 @@
 		max(r.created_at) as created_at,	
 		listagg(k.keyword_name,',') within group (order by k.keyword_name) as keywords
 	from (
-		select review_coach_idx as review_idx,reviewer_idx,content,created_at,'coach' as role from review_coach
+		select review_coach_idx as review_idx,reviewer_idx,content,created_at,'COACH' as role from review_coach
 		union all
-		select review_class_idx as review_idx,reviewer_idx,content,created_at,'class' as role from review_class
+		select review_class_idx as review_idx,reviewer_idx,content,created_at,'CLASS' as role from review_class
 	) r
 	join users u on r.reviewer_idx = u.user_idx
 	join (
@@ -133,4 +133,20 @@
 	select coach_idx from coach where user_idx=#{user_idx}
 	</select>
 	
+	<delete id="deleteReviewCoach" parameterType="int">
+	delete from review_coach where review_coach_idx=#{review_idx}
+	</delete>
+	
+	<delete id="deleteReviewClass" parameterType="int">
+	delete from review_class where review_class_idx=#{review_idx}
+	</delete>
+	
+	<select id="getNoticeList" resultType="map">
+	select q.qna_idx,q.title,u.user_name,q.created_at
+	from qna q
+	join users u
+	on q.user_idx=u.user_idx
+	where u.user_type='ADMIN'
+	order by q.created_at desc
+	</select>
 </mapper>

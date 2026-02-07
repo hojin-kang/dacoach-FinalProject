@@ -93,5 +93,20 @@ public class AdminServiceImple implements AdminService {
 	public int selectCoachidx(int user_idx) throws Exception {
 		return adminMapper.selectCoachidx(user_idx);
 	}
+	
+	@Override
+	public int deleteReviewCoach(int review_idx) throws Exception {
+		return adminMapper.deleteReviewCoach(review_idx);
+	}
+	
+	@Override
+	public int deleteReviewClass(int review_idx) throws Exception {
+		return adminMapper.deleteReviewClass(review_idx);
+	}
+	
+	@Override
+	public List<Map<String, Object>> getNoticeList() throws Exception {
+		return adminMapper.getNoticeList();
+	}
 
 }
