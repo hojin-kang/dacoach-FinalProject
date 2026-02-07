@@ -47,4 +47,13 @@ public interface AdminCompanyMapper {
 
     // 8. 클래스 전체 개수
     int countClassTotal();
+    
+    // 9. 클래스 상세
+    Map<String, Object> classDetail(@Param("classIdx") int classIdx);
+    
+    // 10. 클래스 리뷰 목록
+    List<Map<String, Object>> selectClassReviews(@Param("classIdx") int classIdx);
+    
+    // 11. 리뷰 삭제
+    int deleteReview(@Param("reviewIdx") int reviewIdx);
 }

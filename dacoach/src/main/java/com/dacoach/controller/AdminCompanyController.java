@@ -91,4 +91,31 @@ public class AdminCompanyController {
 
         return "admin/dashboard";
     }
+    
+    //클래스 상세 페이지
+    @GetMapping("/classDetail/{classIdx}")
+    public String classDetail(@PathVariable("classIdx") int classIdx, Model model) {
+
+        Map<String, Object> classInfo = service.getClassDetail(classIdx);
+        List<Map<String, Object>> reviews = service.getClassReviews(classIdx);
+
+        model.addAttribute("classInfo", classInfo);
+        model.addAttribute("reviews", reviews);
+
+        model.addAttribute("contentPage", "admin/company/classDetail");
+        model.addAttribute("contentFragment", "contentPage");
+
+        return "admin/dashboard";
+    }
+
+    //리뷰 삭제
+    @PostMapping("/classDetail/{classIdx}/deleteReview/{reviewIdx}")
+    @ResponseBody
+    public String deleteReview(@PathVariable int classIdx,@PathVariable int reviewIdx) {
+    	service.deleteReview(reviewIdx);
+		return "ok";
+    }
+    
+
+
 }

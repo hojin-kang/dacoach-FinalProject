@@ -85,12 +85,26 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
     }
 
     @Override
-    public List<Map<String, Object>> selectReviewSummaryByClassIds(List<Integer> classIds) {
-        return sqlSession.selectList(NS + "selectReviewSummaryByClassIds", classIds);
-    }
-
-    @Override
     public int countClassTotal() {
         return sqlSession.selectOne(NS + "countClassTotal");
     }
+
+	@Override
+	public Map<String, Object> classDetail(int classIdx) {
+		Map<String,Object> p = new HashMap<>();
+		p.put("classIdx", classIdx);
+		return sqlSession.selectOne(NS+"classDetail",p);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectClassReviews(int classIdx) {
+		return sqlSession.selectList(NS+"selectClassReviews",classIdx);
+	}
+
+	@Override
+	public int deleteReview(int reviewIdx) {
+		return sqlSession.delete(NS+"deleteReview",reviewIdx);
+	}
+
+	
 }
