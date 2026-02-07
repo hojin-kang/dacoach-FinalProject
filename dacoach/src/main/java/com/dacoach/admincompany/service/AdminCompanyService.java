@@ -3,23 +3,20 @@ package com.dacoach.admincompany.service;
 import java.util.List;
 import java.util.Map;
 
-import com.dacoach.admin.company.model.AdminCompanyRowDTO;
-
 public interface AdminCompanyService {
 
     // 목록/상세
-    List<AdminCompanyRowDTO> companyList();
-    AdminCompanyRowDTO companyDetail(int usersIdx);
+    List<Map<String, Object>> companyList();
+    Map<String, Object> companyDetail(int usersIdx);
 
-    // 저장 버튼: 계정상태 + 정지이력 저장(정지는 누적, 사용으로 바꾸면 최신 이력 enddate=sysdate)
+    // 저장 버튼: 계정상태 + 정지이력 저장
     void saveAccountAndSuspend(long userIdx, String status,
                                String suspendFrom, String suspendUntil, String reason);
 
-    // 승인 버튼: 승인여부(CERT)만 확인 처리(USERS 상태는 변경하지 않음)
+    // 승인 버튼: 승인여부(CERT)만 확인 처리
     void approveCompany(long userIdx);
     
-    //클래스 리리스트,평점
-    List<AdminCompanyRowDTO> getClassPage(Map<String, Object> param);
+    // 클래스 리스트, 평점
+    List<Map<String, Object>> getClassPage(Map<String, Object> param);
     int getClassTotalCnt();
-    
 }

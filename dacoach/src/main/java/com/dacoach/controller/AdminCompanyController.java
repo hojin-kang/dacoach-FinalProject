@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.dacoach.admin.company.model.AdminCompanyRowDTO;
 import com.dacoach.admincompany.service.AdminCompanyService;
 import com.dacoach.page.PageModule;
 
@@ -16,80 +15,80 @@ import com.dacoach.page.PageModule;
 @RequestMapping("/admin")
 public class AdminCompanyController {
 
-  private final AdminCompanyService service;
+    private final AdminCompanyService service;
 
-  public AdminCompanyController(AdminCompanyService service) {
-    this.service = service;
-  }
-  
-  @GetMapping("/companyList")
-  public String companyList(Model model) {
-    model.addAttribute("list", service.companyList());
-    model.addAttribute("contentPage", "admin/company/companyList");
-    model.addAttribute("contentFragment", "contentPage");
-    return "admin/dashboard";	
-  }
+    public AdminCompanyController(AdminCompanyService service) {
+        this.service = service;
+    }
 
-  @GetMapping("/companyDetail/{usersIdx}")
-  public String companyDetail(@PathVariable int usersIdx, Model model) {
-    model.addAttribute("row", service.companyDetail(usersIdx));
-    model.addAttribute("contentPage", "admin/company/companyDetail");
-    model.addAttribute("contentFragment", "contentPage");
-    return "admin/dashboard";
-  }
+    // 1. 기업 목록
+    @GetMapping("/companyList")
+    public String companyList(Model model) {
+        model.addAttribute("list", service.companyList());
+        model.addAttribute("contentPage", "admin/company/companyList");
+        model.addAttribute("contentFragment", "contentPage");
+        return "admin/dashboard";
+    }
 
-  // 저장 버튼
-  @PostMapping("/companyDetail/save")
-  public String saveCompanyDetail(
-      @RequestParam("usersIdx") long usersIdx,
-      @RequestParam("status") String status,
-      @RequestParam(value="suspendFrom", required=false) String suspendFrom,
-      @RequestParam(value="suspendUntil", required=false) String suspendUntil,
-      @RequestParam(value="reason", required=false) String reason
-  ) {
-    service.saveAccountAndSuspend(usersIdx, status, suspendFrom, suspendUntil, reason);
-    return "redirect:/admin/companyDetail/" + usersIdx;
-  }
+    // 2. 기업 상세
+    @GetMapping("/companyDetail/{usersIdx}")
+    public String companyDetail(@PathVariable int usersIdx, Model model) {
+        model.addAttribute("row", service.companyDetail(usersIdx));
+        model.addAttribute("contentPage", "admin/company/companyDetail");
+        model.addAttribute("contentFragment", "contentPage");
+        return "admin/dashboard";
+    }
 
-  // 승인 버튼(승인여부만)
-  @PostMapping("/companyDetail/{usersIdx}/approve")
-  @ResponseBody
-  public String approve(@PathVariable long usersIdx) {
-    service.approveCompany(usersIdx);
-    return "OK";
-  }
-  
-  @GetMapping("/companyClassList")
-  public String companyClassList(
-          @RequestParam(value="cp", required=false, defaultValue="1") int cp,
-          Model model
-  ) {
-      int listSize = 10;
-      int pageSize = 5;
+    // 3. 저장 버튼
+    @PostMapping("/companyDetail/save")
+    public String saveCompanyDetail(
+            @RequestParam("usersIdx") long usersIdx,
+            @RequestParam("status") String status,
+            @RequestParam(value="suspendFrom", required=false) String suspendFrom,
+            @RequestParam(value="suspendUntil", required=false) String suspendUntil,
+            @RequestParam(value="reason", required=false) String reason
+    ) {
+        service.saveAccountAndSuspend(usersIdx, status, suspendFrom, suspendUntil, reason);
+        return "redirect:/admin/companyDetail/" + usersIdx;
+    }
 
-      int totalCnt = service.getClassTotalCnt();
+    // 4. 승인 버튼
+    @PostMapping("/companyDetail/{usersIdx}/approve")
+    @ResponseBody
+    public String approve(@PathVariable long usersIdx) {
+        service.approveCompany(usersIdx);
+        return "OK";
+    }
 
-      int startRow = (cp - 1) * listSize + 1;
-      int endRow   = cp * listSize;
+    // 5. 클래스 목록
+    @GetMapping("/companyClassList")
+    public String companyClassList(
+            @RequestParam(value="cp", required=false, defaultValue="1") int cp,
+            Model model
+    ) {
+        int listSize = 10;
+        int pageSize = 5;
 
-      Map<String, Object> map = new HashMap<>();
-      map.put("startRow", startRow);
-      map.put("endRow", endRow);
+        int totalCnt = service.getClassTotalCnt();
 
-      List<AdminCompanyRowDTO> list = service.getClassPage(map);
+        int startRow = (cp - 1) * listSize + 1;
+        int endRow   = cp * listSize;
 
-      String pageStr = PageModule.makePage("/admin/companyClassList", totalCnt, listSize, pageSize, cp);
+        Map<String, Object> map = new HashMap<>();
+        map.put("startRow", startRow);
+        map.put("endRow", endRow);
 
-      model.addAttribute("list", list);
-      model.addAttribute("pageStr", pageStr);
-      model.addAttribute("cp", cp);
+        List<Map<String, Object>> list = service.getClassPage(map);
 
-      // dashboard에 끼우기
-      model.addAttribute("contentPage", "admin/company/companyClassList");
-      model.addAttribute("contentFragment", "contentPage");
+        String pageStr = PageModule.makePage("/admin/companyClassList", totalCnt, listSize, pageSize, cp);
 
-      return "admin/dashboard";
-  }
+        model.addAttribute("list", list);
+        model.addAttribute("pageStr", pageStr);
+        model.addAttribute("cp", cp);
 
-  	
+        model.addAttribute("contentPage", "admin/company/companyClassList");
+        model.addAttribute("contentFragment", "contentPage");
+
+        return "admin/dashboard";
+    }
 }

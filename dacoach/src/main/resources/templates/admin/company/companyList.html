@@ -40,14 +40,12 @@
       font-size: 1rem;
     }
 
-    /* table wrapper */
     .table-wrap {
       overflow: hidden;
       border-radius: 16px;
       border: 1px solid #e5e7eb;
     }
 
-    /* table */
     .list-table {
       width: 100%;
       border-collapse: collapse;
@@ -124,7 +122,6 @@
       filter: brightness(90%);
     }
 
-    /* empty row */
     .empty-row {
       padding: 28px 10px;
       color: #9ca3af;
@@ -144,9 +141,7 @@
             <th>이름</th>
             <th>사업자번호</th>
             <th>계정상태</th>
-            <th> <a th:href="@{/admin/companyList(sort='status')}" class="th-sort">
-    관리
-  </a></th>
+            <th>관리</th>
           </tr>
         </thead>
 
@@ -154,22 +149,22 @@
           <tr th:each="row, stat : ${list}">
             <td th:text="${stat.count}">1</td>
 
-            <td th:text="${row.users != null ? row.users.user_name : '-'}">-</td>
+            <td th:text="${row['USER_NAME'] != null ? row['USER_NAME'] : '-'}">-</td>
 
-            <td th:text="${row.company != null ? row.company.company_num : '-'}">-</td>
+            <td th:text="${row['COMPANY_NUM'] != null ? row['COMPANY_NUM'] : '-'}">-</td>
 
             <td>
               <span class="status-badge status-active"
-                    th:if="${row.users != null and row.users.status == 'ACTIVE'}">사용</span>
+                    th:if="${row['STATUS'] == 'ACTIVE'}">사용</span>
               <span class="status-badge status-suspended"
-                    th:if="${row.users != null and row.users.status == 'SUSPENDED'}">정지</span>
+                    th:if="${row['STATUS'] == 'SUSPENDED'}">정지</span>
               <span class="status-badge status-inactive"
-                    th:if="${row.users == null or (row.users.status != 'ACTIVE' and row.users.status != 'SUSPENDED')}">비활성화</span>
+                    th:if="${row['STATUS'] != 'ACTIVE' and row['STATUS'] != 'SUSPENDED'}">비활성화</span>
             </td>
 
             <td>
               <a class="link-detail"
-                 th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row.users_idx})}">상세</a>
+                 th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row['USER_IDX']})}">상세</a>
             </td>
           </tr>
 

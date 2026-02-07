@@ -3,26 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper
-	namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
-	<resultMap id="AdminCompanyClassRowMap" type="com.dacoach.admin.company.model.AdminCompanyRowDTO">
-  <!-- 최상위 Row 식별용 (중첩경로 쓰지말고 RowDTO 필드로) -->
-  <id column="CLASS_IDX" property="class_idx"/>
+<mapper namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 
-  <!-- association 앞에 result 먼저 -->
-  <result column="PROGRESS_STATUS" property="progressStatus"/>
-
-  <association property="classes" javaType="com.dacoach.model.classes.ClassDTO">
-    <id column="CLASS_IDX" property="class_idx"/>
-    <result column="TITLE" property="title"/>
-    <result column="CREATED_AT" property="created_at"/>
-    <result column="PHOTO" property="photo"/>
-    <result column="PROVIDER_NAME" property="user_name"/>
-    <result column="AVG_RATING" property="avg_rating"/>
-  </association>
-</resultMap>
-
-  <select id="selectClassPage" parameterType="map" resultMap="AdminCompanyClassRowMap">
+  <!-- 1. 클래스 목록 (페이징) -->
+  <select id="selectClassPage" parameterType="map" resultType="map">
   <![CDATA[
   SELECT *
   FROM (
@@ -33,22 +17,17 @@
       c.PHOTO,
       c.START_DATE,
       c.END_DATE,
-
       u.USER_NAME AS PROVIDER_NAME,
-
       NVL(r.AVG_RATING, 0) AS AVG_RATING,
       NVL(r.REVIEW_COUNT, 0) AS REVIEW_COUNT,
-
       CASE
         WHEN c.START_DATE IS NOT NULL AND SYSDATE < c.START_DATE THEN '예정'
         WHEN c.END_DATE IS NOT NULL AND SYSDATE > c.END_DATE THEN '종료'
         ELSE '진행중'
       END AS PROGRESS_STATUS,
-
       ROW_NUMBER() OVER (ORDER BY c.CLASS_IDX DESC) AS RN
     FROM CLASS c
-    LEFT JOIN USERS u
-      ON u.USER_IDX = c.PROVIDER_IDX
+    LEFT JOIN USERS u ON u.USER_IDX = c.PROVIDER_IDX
     LEFT JOIN (
       SELECT
         CLASS_IDX,
@@ -56,171 +35,158 @@
         COUNT(*) AS REVIEW_COUNT
       FROM REVIEW_CLASS
       GROUP BY CLASS_IDX
-    ) r
-      ON r.CLASS_IDX = c.CLASS_IDX
+    ) r ON r.CLASS_IDX = c.CLASS_IDX
   ) t
   WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}]]>
-</select>
-
-
-
-
-
-  <select id="selectClassCount" parameterType="map" resultType="int">
-    SELECT COUNT(*)
-    FROM CLASS c
   </select>
 
-  <select id="selectReviewSummaryByClassIds"
-          parameterType="java.util.List"
-          resultType="com.dacoach.model.review.ReviewClassSummaryDTO">
-    select
-      rc.class_idx as class_idx,
-      nvl(round(avg(rc.rating), 1), 0) as avg_rating,
-      nvl(count(*), 0) as review_count
-    from review_class rc
-    where rc.class_idx in
+  <!-- 2. 클래스 전체 개수 -->
+  <select id="countClassTotal" resultType="int">
+    SELECT COUNT(*)
+    FROM CLASS
+  </select>
+
+  <!-- 3. 클래스별 리뷰 요약 (사용 안 함 - 위 쿼리에 포함됨) -->
+  <select id="selectReviewSummaryByClassIds" 
+          parameterType="java.util.List" 
+          resultType="map">
+    SELECT
+      rc.CLASS_IDX,
+      NVL(ROUND(AVG(rc.RATING), 1), 0) AS AVG_RATING,
+      NVL(COUNT(*), 0) AS REVIEW_COUNT
+    FROM REVIEW_CLASS rc
+    WHERE rc.CLASS_IDX IN
     <foreach collection="list" item="id" open="(" separator="," close=")">
       #{id}
     </foreach>
-    group by rc.class_idx
+    GROUP BY rc.CLASS_IDX
   </select>
 
-  <select id="countClassTotal" resultType="int">
-    select count(*)
-    from class
+  <!-- 4. 기업 회원 목록 -->
+  <select id="companyList" resultType="map">
+    SELECT
+      u.USER_IDX,
+      u.USER_NAME,
+      u.STATUS,
+      c.COMPANY_IDX,
+      c.COMPANY_NUM,
+      NVL(ct.CERT_STATUS, 'INACTIVE') AS CERT_STATUS
+    FROM USERS u
+    JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
+    LEFT JOIN CERT ct ON u.USER_IDX = ct.USER_IDX AND ct.CERT_TYPE = '사업증'
+    WHERE u.USER_TYPE = 'COMPANY'
+    ORDER BY c.COMPANY_IDX DESC
   </select>
-	
-    <!-- 2-1) 전체 회사 회원 리스트 -->
-	<select id="companyList"
-		resultType="com.dacoach.admin.company.model.AdminCompanyRowDTO">
-		SELECT
-		u.USER_IDX AS "users_idx", u.USER_NAME AS "users.user_name", u.STATUS AS
-		"users.status", c.COMPANY_IDX AS "company.company_idx", c.COMPANY_NUM
-		AS "company.company_num", nvl(ct.CERT_STATUS, 'INACTIVE') AS
-		"cert_status" FROM USERS u
-		JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
-		LEFT JOIN CERT ct ON u.USER_IDX = ct.USER_IDX AND ct.CERT_TYPE = '사업증'
-		WHERE u.USER_TYPE = 'COMPANY'
-		ORDER BY c.COMPANY_IDX DESC
-	</select>
 
-	<select id="companyDetail"
-		resultType="com.dacoach.admin.company.model.AdminCompanyRowDTO">
-		SELECT
-		u.USER_IDX AS users_idx,
-		u.USER_NAME AS "users.user_name",
-		u.LOGIN_ID AS "users.login_id",
-		u.STATUS AS "users.status",
-		c.COMPANY_NUM AS "company.company_num",
-		c.PHONE AS "company.phone",
-		c.ADDRESS AS "company.address",
-		c.EMAIL AS "company.email",
-		cert.CERT_STATUS AS cert_status,
-		e.START_DATE AS "embedded.start_date",
-		e.END_DATE AS "embedded.end_date",
-		e.REASON AS "embedded.reason"
-		FROM USERS u
-		JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
-		LEFT JOIN CERT cert ON cert.USER_IDX = u.USER_IDX AND cert.CERT_TYPE =
-		'사업증'
-		LEFT JOIN (
-		SELECT e1.*
-		FROM EMBEDDED_USER e1
-		WHERE e1.EMBED_USER_IDX IN (
-		SELECT MAX(e2.EMBED_USER_IDX)
-		FROM EMBEDDED_USER e2
-		GROUP BY e2.USER_IDX
-		)
-		) e ON e.USER_IDX = u.USER_IDX
-		WHERE u.USER_IDX = #{usersIdx}
-	</select>
+  <!-- 5. 기업 회원 상세 -->
+  <select id="companyDetail" parameterType="map" resultType="map">
+    SELECT
+      u.USER_IDX,
+      u.USER_NAME,
+      u.LOGIN_ID,
+      u.STATUS,
+      c.COMPANY_NUM,
+      c.PHONE,
+      c.ADDRESS,
+      c.EMAIL,
+      cert.CERT_STATUS,
+      e.START_DATE,
+      e.END_DATE,
+      e.REASON
+    FROM USERS u
+    JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
+    LEFT JOIN CERT cert ON cert.USER_IDX = u.USER_IDX AND cert.CERT_TYPE = '사업증'
+    LEFT JOIN (
+      SELECT e1.*
+      FROM EMBEDDED_USER e1
+      WHERE e1.EMBED_USER_IDX IN (
+        SELECT MAX(e2.EMBED_USER_IDX)
+        FROM EMBEDDED_USER e2
+        GROUP BY e2.USER_IDX
+      )
+    ) e ON e.USER_IDX = u.USER_IDX
+    WHERE u.USER_IDX = #{usersIdx}
+  </select>
 
-	<!-- 2-2) 최신 정지 1건만 따로 가져오기(필요시) -->
-	<select id="selectLatestEmbeddedByUser" parameterType="long"
-		resultType="com.dacoach.model.admin.EmbeddedUserDTO">
-		SELECT
-		e.EMBED_USER_IDX AS embed_user_idx,
-		e.USER_IDX AS user_idx,
-		e.START_DATE AS start_date,
-		e.END_DATE AS end_date,
-		e.REASON AS reason
-		FROM EMBEDDED_USER e
-		WHERE e.EMBED_USER_IDX = (
-		SELECT MAX(e2.EMBED_USER_IDX)
-		FROM EMBEDDED_USER e2
-		WHERE e2.USER_IDX = #{userIdx}
-		)
-	</select>
+  <!-- 6. 최신 정지 이력 조회 -->
+  <select id="selectLatestEmbeddedByUser" parameterType="long" resultType="map">
+    SELECT
+      e.EMBED_USER_IDX,
+      e.USER_IDX,
+      e.START_DATE,
+      e.END_DATE,
+      e.REASON
+    FROM EMBEDDED_USER e
+    WHERE e.EMBED_USER_IDX = (
+      SELECT MAX(e2.EMBED_USER_IDX)
+      FROM EMBEDDED_USER e2
+      WHERE e2.USER_IDX = #{userIdx}
+    )
+  </select>
 
+  <!-- 7. USERS 상태 업데이트 -->
+  <update id="updateUserStatus" parameterType="map">
+    UPDATE USERS
+    SET STATUS = #{status}
+    WHERE USER_IDX = #{userIdx}
+  </update>
 
-	<!-- 2-3) USERS 상태 저장 -->
-	<update id="updateUserStatus" parameterType="map">
-		UPDATE USERS
-		SET STATUS = #{status}
-		WHERE USER_IDX = #{userIdx}
-	</update>
+  <!-- 8. 정지 이력 추가 -->
+  <insert id="insertEmbeddedHistory" parameterType="map">
+    INSERT INTO EMBEDDED_USER (
+      EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON
+    ) VALUES (
+      SEQ_EMBED_USER.NEXTVAL,
+      #{userIdx},
+      TO_DATE(#{startDate}, 'YYYY-MM-DD'),
+      CASE
+        WHEN #{endDate} IS NULL OR #{endDate} = '' THEN NULL
+        ELSE TO_DATE(#{endDate}, 'YYYY-MM-DD')
+      END,
+      #{reason}
+    )
+  </insert>
 
+  <!-- 9. 최신 정지 이력 종료 처리 -->
+  <update id="closeLatestEmbeddedHistory" parameterType="map">
+    UPDATE EMBEDDED_USER
+    SET END_DATE = SYSDATE
+    WHERE EMBED_USER_IDX = (
+      SELECT MAX(e2.EMBED_USER_IDX)
+      FROM EMBEDDED_USER e2
+      WHERE e2.USER_IDX = #{userIdx}
+    )
+  </update>
 
-	<!-- 2-4) 정지 이력 누적 INSERT -->
-	<insert id="insertEmbeddedHistory" parameterType="map">
-		INSERT INTO EMBEDDED_USER (
-		EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON
-		) VALUES (
-		SEQ_EMBED_USER.NEXTVAL,
-		#{userIdx},
-		TO_DATE(#{startDate}, 'YYYY-MM-DD'),
-		CASE
-		WHEN #{endDate} IS NULL OR #{endDate} = '' THEN NULL
-		ELSE TO_DATE(#{endDate}, 'YYYY-MM-DD')
-		END,
-		#{reason}
-		)
-	</insert>
+  <!-- 10. CERT 존재 여부 확인 -->
+  <select id="countCertByUserAndType" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM CERT
+    WHERE USER_IDX = #{userIdx}
+    AND CERT_TYPE = #{certType}
+  </select>
 
+  <!-- 11. CERT 상태 업데이트 -->
+  <update id="updateCertStatus" parameterType="map">
+    UPDATE CERT
+    SET CERT_STATUS = #{cert_status},
+        GET_DATE = SYSDATE
+    WHERE USER_IDX = #{user_idx}
+    AND CERT_TYPE = '사업증'
+  </update>
 
-	<!-- 2-5) 사용(ACTIVE)으로 바꿀 때: 가장 최근 정지 이력 END_DATE = SYSDATE -->
-	<update id="closeLatestEmbeddedHistory" parameterType="map">
-		UPDATE EMBEDDED_USER
-		SET END_DATE = SYSDATE
-		WHERE EMBED_USER_IDX = (
-		SELECT MAX(e2.EMBED_USER_IDX)
-		FROM EMBEDDED_USER e2
-		WHERE e2.USER_IDX = #{userIdx}
-		)
-	</update>
-
-
-	<!-- 2-6) CERT 존재 여부 -->
-	<select id="countCertByUserAndType" parameterType="map" resultType="int">
-		SELECT COUNT(*)
-		FROM CERT
-		WHERE USER_IDX = #{userIdx}
-		AND CERT_TYPE = #{certType}
-	</select>
-
-	<!-- 2-7) CERT 승인 업데이트 -->
-	<update id="updateCertStatus" parameterType="map">
-		UPDATE CERT
-		SET CERT_STATUS = #{cert_status},
-		GET_DATE = SYSDATE
-		WHERE USER_IDX = #{user_idx}
-		AND CERT_TYPE = '사업증'
-	</update>
-
-	<!-- 2-8) CERT 승인 인서트 -->
-	<insert id="insertCertStatus" parameterType="map">
-		INSERT INTO CERT (
-		CERT_IDX, USER_IDX, CERT_NAME, CERT_TYPE, CERT_STATUS, GET_DATE
-		) VALUES (
-		SEQ_CERT.NEXTVAL,
-		#{user_idx},
-		'사업자등록증',
-		'사업증',
-		#{cert_status},
-		SYSDATE
-		)
-	</insert>
+  <!-- 12. CERT 추가 -->
+  <insert id="insertCertStatus" parameterType="map">
+    INSERT INTO CERT (
+      CERT_IDX, USER_IDX, CERT_NAME, CERT_TYPE, CERT_STATUS, GET_DATE
+    ) VALUES (
+      SEQ_CERT.NEXTVAL,
+      #{user_idx},
+      '사업자등록증',
+      '사업증',
+      #{cert_status},
+      SYSDATE
+    )
+  </insert>
 
 </mapper>
-

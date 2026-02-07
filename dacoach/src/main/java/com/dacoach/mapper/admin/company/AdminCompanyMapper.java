@@ -6,20 +6,16 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.dacoach.admin.company.model.AdminCompanyRowDTO;
-import com.dacoach.model.company.CompanyDTO;
-import com.dacoach.model.review.ReviewClassSummaryDTO;
-import com.dacoach.model.admin.EmbeddedUserDTO;
-
 @Mapper
 public interface AdminCompanyMapper {
 
-	
-    List<CompanyDTO> companyList(); 
+    // 1. 기업 목록
+    List<Map<String, Object>> companyList();
 
-    AdminCompanyRowDTO companyDetail(@Param("usersIdx") int usersIdx);
+    // 2. 기업 상세
+    Map<String, Object> companyDetail(@Param("usersIdx") int usersIdx);
 
-    // CERT
+    // 3. CERT 관련
     int countCertByUserAndType(@Param("userIdx") long userIdx,
                                @Param("certType") String certType);
 
@@ -29,22 +25,26 @@ public interface AdminCompanyMapper {
     int insertCertStatus(@Param("user_idx") long userIdx,
                          @Param("cert_status") String certStatus);
 
-    // USERS
+    // 4. USERS 상태 업데이트
     int updateUserStatus(@Param("userIdx") long userIdx,
                          @Param("status") String status);
 
-    // EMBEDDED_USER (정지 이력 누적)
+    // 5. EMBEDDED_USER (정지 이력)
     int insertEmbeddedHistory(@Param("userIdx") long userIdx,
-                              @Param("startDate") String startDate, // yyyy-MM-dd
-                              @Param("endDate") String endDate,     // yyyy-MM-dd or null/""
+                              @Param("startDate") String startDate,
+                              @Param("endDate") String endDate,
                               @Param("reason") String reason);
 
     int closeLatestEmbeddedHistory(@Param("userIdx") long userIdx);
 
-    EmbeddedUserDTO selectLatestEmbeddedByUser(@Param("userIdx") long userIdx);
-    
-    //class review xml id
-    List<AdminCompanyRowDTO> selectClassPage(Map<String, Object> param);
-    List<ReviewClassSummaryDTO> selectReviewSummaryByClassIds(List<Integer> classIds);
+    Map<String, Object> selectLatestEmbeddedByUser(@Param("userIdx") long userIdx);
+
+    // 6. 클래스 목록 (페이징)
+    List<Map<String, Object>> selectClassPage(Map<String, Object> param);
+
+    // 7. 리뷰 요약 (필요시)
+    List<Map<String, Object>> selectReviewSummaryByClassIds(List<Integer> classIds);
+
+    // 8. 클래스 전체 개수
     int countClassTotal();
 }
