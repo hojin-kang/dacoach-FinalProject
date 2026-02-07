@@ -159,8 +159,11 @@
             <td data-label="클래스관리ID"
                 th:text="${row['CLASS_IDX'] != null ? row['CLASS_IDX'] : '-'}">-</td>
 
-            <td data-label="클래스명"
-                th:text="${row['TITLE'] != null ? row['TITLE'] : '-'}">-</td>
+            <td data-label="클래스명">
+              <a th:href="@{/admin/classDetail/{idx}(idx=${row['CLASS_IDX']})}" 
+                 style="color:#2563eb; text-decoration:underline; cursor:pointer;"
+                 th:text="${row['TITLE'] != null ? row['TITLE'] : '-'}">-</a>
+            </td>
 
             <td data-label="작성일자"
                 th:text="${row['CREATED_AT'] != null

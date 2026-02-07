@@ -85,4 +85,19 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     public int getClassTotalCnt() {
         return dao.countClassTotal();
     }
+
+	@Override
+	public Map<String, Object> getClassDetail(int classIdx) {
+		return dao.classDetail(classIdx);
+	}
+
+	@Override
+	public List<Map<String, Object>> getClassReviews(int classIdx) {
+		return dao.selectClassReviews(classIdx);
+	}
+
+	@Override
+	public void deleteReview(int reviewIdx) {
+		dao.deleteReview(reviewIdx);
+	}
 }

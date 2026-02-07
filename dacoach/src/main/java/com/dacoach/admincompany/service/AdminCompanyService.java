@@ -19,4 +19,9 @@ public interface AdminCompanyService {
     // 클래스 리스트, 평점
     List<Map<String, Object>> getClassPage(Map<String, Object> param);
     int getClassTotalCnt();
+    
+    //클래스 상세
+    Map<String,Object> getClassDetail(int classIdx);
+    List<Map<String, Object>> getClassReviews(int classIdx);
+    void deleteReview(int reviewIdx);
 }

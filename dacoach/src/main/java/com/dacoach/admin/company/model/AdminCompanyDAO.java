@@ -23,6 +23,10 @@ public interface AdminCompanyDAO {
     
     // 클래스 리스트, 평점
     List<Map<String, Object>> selectClassPage(Map<String, Object> param);
-    List<Map<String, Object>> selectReviewSummaryByClassIds(List<Integer> classIds);
     int countClassTotal();
+    
+    // 클래스 상세
+    Map<String, Object> classDetail(int classIdx);
+    List<Map<String, Object>> selectClassReviews(int classIdx);
+    int deleteReview(int reviewIdx);
 }
