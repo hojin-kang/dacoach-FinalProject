@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dacoach.model.classes.ClassDTO;
 import com.dacoach.service.classes.ClassService;
 import com.dacoach.service.file.FileUpload;
-import com.dacoach.mapper.classes.ClassMapper;
 
 @Controller
 @RequestMapping("/class")
@@ -27,11 +26,33 @@ public class ClassController {
 	@Autowired
 	private ClassService classService;
 
-	@Autowired
-	private ClassMapper classMapper;
+	/**
+	 * 기업 회원 권한 체크 메서드
+	 */
+	private boolean isCompanyUser(HttpSession session) {
+		String userType = (String) session.getAttribute("user_type");
+		return userType != null && userType.equalsIgnoreCase("company");
+	}
+
+	/**
+	 * 기업 회원 권한 체크 및 리다이렉트 처리
+	 * 
+	 * @return null이면 권한 있음, ModelAndView 반환 시 권한 없음
+	 */
+	private ModelAndView checkCompanyAuth(HttpSession session) {
+		if (!isCompanyUser(session)) {
+			return new ModelAndView("redirect:/");
+		}
+		return null;
+	}
 
 	@GetMapping("/company/register")
-	public ModelAndView classRegisterForm() {
+	public ModelAndView classRegisterForm(HttpSession session, RedirectAttributes rttr) {
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck;
+
 		ModelAndView mav = new ModelAndView("company/classes/classRegister");
 		mav.addObject("classDTO", new ClassDTO());
 		return mav;
@@ -67,6 +88,11 @@ public class ClassController {
 			@RequestParam(value = "videoFile", required = false) MultipartFile videoFile,
 			@RequestParam(value = "hashtags", required = false) String hashtags, HttpSession session,
 			RedirectAttributes rttr) {
+
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck;
 
 		ModelAndView mav = new ModelAndView("redirect:/class/company/classList");
 
@@ -111,7 +137,12 @@ public class ClassController {
 
 	/************* company *************/
 	@GetMapping("/company/classList")
-	public ModelAndView classList(HttpSession session) throws Exception {
+	public ModelAndView classList(HttpSession session, RedirectAttributes rttr) throws Exception {
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck;
+
 		ModelAndView mav = new ModelAndView("company/classes/classList");
 
 		Integer providerIdx = (Integer) session.getAttribute("user_idx");
@@ -126,23 +157,29 @@ public class ClassController {
 	}
 
 	@GetMapping("/company/classDetail")
-	public ModelAndView companyClassDetail(@RequestParam("id") int id) throws Exception {
+	public ModelAndView companyClassDetail(@RequestParam("id") int id, HttpSession session, RedirectAttributes rttr)
+			throws Exception {
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck;
+
 		ModelAndView mav = new ModelAndView();
 		ClassDTO classDTO = classService.getClassDetail(id);
 
 		if (classDTO == null) {
-			mav.setViewName("redirect:/class/coach/classList");
+			mav.setViewName("redirect:/class/company/classList");
 			return mav;
 		}
 
 		mav.addObject("classDTO", classDTO);
 
-		// 해시태그 목록 조회
-		List<String> hashtagList = classMapper.selectHashtagsByClass(id);
+		// 해시태그 목록 조회 (Service를 통해)
+		List<String> hashtagList = classService.getHashtagsByClass(id);
 		mav.addObject("hashtagList", hashtagList);
 
-		// 분야 정보 조회
-		Map<String, Object> fieldInfo = classMapper.selectClassFieldInfo(id);
+		// 분야 정보 조회 (Service를 통해)
+		Map<String, Object> fieldInfo = classService.getClassFieldInfo(id);
 		mav.addObject("fieldInfo", fieldInfo);
 
 		// 일단 화면 안 터지게 최소값도 같이
@@ -158,7 +195,12 @@ public class ClassController {
 
 	// 클래스 통계 페이지
 	@GetMapping("/company/status")
-	public String classStatus() {
+	public String classStatus(HttpSession session, RedirectAttributes rttr) {
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck.getViewName();
+
 		return "company/classes/classStatus";
 	}
 
@@ -167,6 +209,11 @@ public class ClassController {
 	@ResponseBody
 	public ResponseEntity<?> getClassListForStats(HttpSession session) {
 		try {
+			// 기업 회원 체크
+			if (!isCompanyUser(session)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("기업 회원만 접근 가능합니다.");
+			}
+
 			Integer providerIdx = (Integer) session.getAttribute("user_idx");
 			if (providerIdx == null) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -185,6 +232,11 @@ public class ClassController {
 	@ResponseBody
 	public ResponseEntity<?> getClassStats(@RequestParam("classIdx") int classIdx, HttpSession session) {
 		try {
+			// 기업 회원 체크
+			if (!isCompanyUser(session)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("기업 회원만 접근 가능합니다.");
+			}
+
 			Integer providerIdx = (Integer) session.getAttribute("user_idx");
 			if (providerIdx == null) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -204,7 +256,13 @@ public class ClassController {
 	 * 클래스 수정 폼 페이지
 	 */
 	@GetMapping("/company/update")
-	public ModelAndView classUpdateForm(@RequestParam("classId") int classId, HttpSession session) throws Exception {
+	public ModelAndView classUpdateForm(@RequestParam("classId") int classId, HttpSession session,
+			RedirectAttributes rttr) throws Exception {
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck;
+
 		ModelAndView mav = new ModelAndView("company/classes/classUpdate");
 
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
@@ -229,12 +287,12 @@ public class ClassController {
 
 		mav.addObject("classDTO", classDTO);
 
-		// 해시태그 목록 조회
-		List<String> hashtagList = classMapper.selectHashtagsByClass(classId);
+		// 해시태그 목록 조회 (Service를 통해)
+		List<String> hashtagList = classService.getHashtagsByClass(classId);
 		mav.addObject("hashtagList", hashtagList);
 
-		// 분야 정보 조회
-		Map<String, Object> fieldInfo = classMapper.selectClassFieldInfo(classId);
+		// 분야 정보 조회 (Service를 통해)
+		Map<String, Object> fieldInfo = classService.getClassFieldInfo(classId);
 		mav.addObject("fieldInfo", fieldInfo);
 
 		return mav;
@@ -251,6 +309,11 @@ public class ClassController {
 			@RequestParam(value = "deletePhoto", defaultValue = "false") boolean deletePhoto,
 			@RequestParam(value = "deleteVideo", defaultValue = "false") boolean deleteVideo, HttpSession session,
 			RedirectAttributes rttr) {
+
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck;
 
 		ModelAndView mav = new ModelAndView("redirect:/class/company/classDetail");
 
@@ -352,7 +415,7 @@ public class ClassController {
 	@ResponseBody
 	public ResponseEntity<?> getRegionInfo(@RequestParam Integer minorRegionIdx) {
 		try {
-			Map<String, Object> regionInfo = classMapper.getRegionInfoByMinorIdx(minorRegionIdx);
+			Map<String, Object> regionInfo = classService.getRegionInfoByMinorIdx(minorRegionIdx);
 			return ResponseEntity.ok(regionInfo);
 		} catch (Exception e) {
 			e.printStackTrace();

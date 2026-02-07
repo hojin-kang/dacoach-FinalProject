@@ -33,7 +33,7 @@ public class ClassServiceImple implements ClassService {
 				throw new RuntimeException("클래스 등록에 실패했습니다.");
 			}
 
-			// ⭐ 3. 해시태그 처리
+			// 3. 해시태그 처리
 			if (hashtags != null && !hashtags.trim().isEmpty()) {
 				// 콤마로 구분된 해시태그 분리
 				String[] tagArray = hashtags.split(",");
@@ -198,7 +198,7 @@ public class ClassServiceImple implements ClassService {
 
 		result.put("enrollmentByDate", enrollmentByDate);
 
-		// 수입 통계 (누적)
+		// 수익 통계 (누적)
 		List<Map<String, Object>> revenueByDate = new ArrayList<>();
 		int cumulativeRevenue = 0;
 		for (Map<String, Object> dateData : enrollmentByDate) {
@@ -300,6 +300,24 @@ public class ClassServiceImple implements ClassService {
 		if (classDTO.getIntro().length() > 3000) {
 			throw new IllegalArgumentException("내용은 3000자 이내로 입력해주세요.");
 		}
+	}
+
+	@Override
+	public List<String> getHashtagsByClass(int class_idx) throws Exception {
+		return classMapper.selectHashtagsByClass(class_idx);
+	}
+
+	@Override
+	public Map<String, Object> getClassFieldInfo(int class_idx) throws Exception {
+		return classMapper.selectClassFieldInfo(class_idx);
+	}
+
+	@Override
+	public Map<String, Object> getRegionInfoByMinorIdx(Integer minorRegionIdx) throws Exception {
+		if (minorRegionIdx == null) {
+			throw new IllegalArgumentException("지역 IDX가 필요합니다.");
+		}
+		return classMapper.getRegionInfoByMinorIdx(minorRegionIdx);
 	}
 
 }
