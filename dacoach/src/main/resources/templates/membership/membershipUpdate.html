@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+   <meta charset="UTF-8" />
+   <title>dacoach</title>
+<script src="/js/kakaopayModule.js"></script>
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+   <div class="container">
+      <div th:if="${dto.member_detail_idx==1}">
+      	<input type="button" value="프리미엄 회원 가입하기" id="membershipUpBtn"> 
+      	
+      </div>
+      <div th:if="${dto.member_detail_idx==2}">
+      	<form name="downform" action="/membership/membershipDownGrade">
+      	 <input type="submit" value="멤버십 해지하기"> 
+      	</form>
+      </div>
+   </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+
+<script th:inline="javascript">
+	var upBtn=document.getElementById('membershipUpBtn');
+	
+	upBtn.onclick=function(){
+		
+			kakaopayModule([[${detail.member_detail_idx}]],
+					[[${session.user_idx}]],
+					[[${detail.member_type}]],
+					'1',
+					[[${detail.cost}]],
+					'0',
+					'0',
+					'/membershipApi');	
+		
+	}
+</script>
+</body>
+</html>

@@ -1,16 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<script src="/js/kakaopayModule.js"></script>
-<script>
-	function test(){
-		kakaopayModule('13','id','담배','2','300','0','0','/test');	
-	}
-</script>
+
+   <meta charset="UTF-8" />
+   <title>dacoach</title>
+	
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
-<input type="button" value="test" onclick="test()">
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+   <div class="container">
+   <div class="category">
+   	<a href="/membership/membershipForm">멤버십 관리</a><a href="/membership/membershipUpForm">멤버십 변경하기</a><
+   </div>
+     <div th:if="${dto.member_detail_idx==1}" class="regularMemberDiv">
+     	[[${session.user_name}]]님은 일반 멤버십입니다.
+     	지금 멤버십을 변경하시고 해택을 누리세요!<a href="/membership/membershipUpForm">멤버십 변경하기</a>
+     </div>
+     <div th:if="${dto.member_detail_idx==2}" class="premiumMemberDiv">
+     	[[${session.user_name}]]님은 프리미엄 회원입니다.
+     	멤버십 혜택 기한:[[${dto.member_start_date}]]~[[${dto.member_end_date}]까지 입니다
+     </div>
+   </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+
 </body>
 </html>

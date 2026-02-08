@@ -51,8 +51,8 @@ public class KakaoPayService {
 		
 		PayStatusDTO dto=new PayStatusDTO();
 		dto.setTid(kakaoReady.getTid());
-		dto.setPartner_order_id((String)parameters.get("partner_order_id"));
-		dto.setPartner_user_id((String)parameters.get("partner_user_id"));
+		dto.setPartner_order_id(String.valueOf(parameters.get("partner_order_id")));
+		dto.setPartner_user_id(String.valueOf(parameters.get("partner_user_id")));
 		dto.setStatus("요청");
 		
 		try {

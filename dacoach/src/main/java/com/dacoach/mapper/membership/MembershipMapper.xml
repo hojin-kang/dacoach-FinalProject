@@ -8,4 +8,19 @@
   	seq_membership.nextval,#{idx},1,sysdate,null,null
   	)
   	</insert>
+  	<select id="userMembershipInfo">
+  		select * from membership where user_idx=#{idx}
+  	</select>
+  	
+  	<select id="detailInfo">
+  		select * from membership_detail where member_detail_idx != #{idx}
+  	</select>
+  	
+  	<update id="membershipUpdate">
+  		update membership set 
+  		member_detail_idx=#{member_detail_idx},
+  		start_date=sysdate,
+  		end_date=add_months(sysdate,1)
+  		where user_idx=#{user_idx}
+  	</update>
   </mapper>
