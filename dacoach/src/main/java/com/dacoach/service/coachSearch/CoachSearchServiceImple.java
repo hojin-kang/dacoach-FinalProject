@@ -21,4 +21,10 @@ public class CoachSearchServiceImple implements CoachSearchService {
 		return coachList;
 	}
 
+	@Override
+	public List getCoachHashtags(int user_idx) throws Exception {
+		List myHashtags = coachSearchMapper.getCoachHashtags(user_idx);
+		return myHashtags;
+	}
+
 }
