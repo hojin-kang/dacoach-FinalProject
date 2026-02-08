@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coach.CoachDTO;
@@ -31,7 +32,8 @@ public class CoachSearchController {
 			@RequestParam(value="majorField", defaultValue = "0") int majorField,
 			@RequestParam(value="minorField", defaultValue = "0") int minorField,
 			@RequestParam(value="majorRegion", defaultValue = "0") int majorRegion,
-			@RequestParam(value="minorRegion", defaultValue = "0") int minorRegion
+			@RequestParam(value="minorRegion", defaultValue = "0") int minorRegion,
+			HttpSession session
 			) {
 		ModelAndView mav = new ModelAndView();
 		//대분류(분야, 지역) 리스트 담기
@@ -58,7 +60,16 @@ public class CoachSearchController {
 			map.put("minorRegion", minorRegion);
 			map.put("keyword", keyword);
 			map.put("sort", sort);
+			int loginIdx = session.getAttribute("user_idx") == null ? 0 : (int) session.getAttribute("user_idx");
+		    map.put("login_idx", loginIdx);
 			coachList = coachSearchService.coachList(cp, map);
+			if (coachList != null) {
+			    for (CoachDTO coach : coachList) {
+			        // DB에서 해당 코치의 태그를 가져와서 DTO에 바로 세팅
+			        List<String> tags = coachSearchService.getCoachHashtags(coach.getUser_idx());
+			        coach.setHashtags(tags);
+			    }
+			}
 			mav.addObject("coachList", coachList);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -70,28 +81,69 @@ public class CoachSearchController {
 		mav.setViewName("coach/coachSearch");
 		return mav;
 	}
-	@GetMapping("/coach/detail")
-	public ModelAndView coachDetail(@RequestParam(value="user_idx", defaultValue = "0") int user_idx,
-			HttpSession session
-			) {
-		ModelAndView mav = new ModelAndView();
-		//로그인 중이 아닐경우
-		if(session.getAttribute("user_idx") == null) {
-			mav.addObject("msg", "코치 상세정보는 로그인 후 이용 가능합니다.");
-			mav.addObject("url", "/login");
-			mav.setViewName("alert");
-			return mav;
-		}
-		//코치상세정보담기
-		try {
-			CoachDTO cdto = coachService.getCoachInfo(user_idx);
-			mav.addObject("dto", cdto);
-			mav.setViewName("coach/detail");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return mav;
-	}
+	 	@GetMapping("/coach/detail")
+	 	public ModelAndView coachDetail(@RequestParam(value="user_idx") int target_idx, HttpSession session) {
+	 	    ModelAndView mav = new ModelAndView();
+	 	    Integer login_idx = (Integer) session.getAttribute("user_idx");
+	 	    
+	 	    if(login_idx == null) {
+	 	        mav.addObject("msg", "로그인 후 이용 가능합니다.").addObject("url", "/login").setViewName("alert");
+	 	        return mav;
+	 	    }
+
+	 	    try {
+	 	        // 상세 정보와 '내' 기준의 상태값을 함께 가져옴
+	 	        // (팁: coachList 쿼리에 user_idx 필터를 걸어 1개만 가져오도록 재활용 가능)
+	 	        Map<String, Object> map = new HashMap<>();
+	 	        map.put("start", 1); map.put("end", 1);
+	 	        map.put("keyword", ""); map.put("login_idx", login_idx);
+	 	        
+	 	        // 현재 상세페이지 코치의 정보를 가져오는 로직 (상태값 포함)
+	 	        CoachDTO cdto = coachSearchService.getCoachDetailStatus(target_idx, login_idx);
+	 	        
+	 	        List<String> myHashtags = coachSearchService.getCoachHashtags(target_idx);
+	 	        mav.addObject("myHashtags", myHashtags);
+	 	        mav.addObject("dto", cdto);
+	 	        mav.setViewName("coach/detail");
+	 	    } catch (Exception e) { e.printStackTrace(); }
+	 	    return mav;
+	 	}
+	 	@PostMapping("/match/apply")
+	 	@ResponseBody
+	 	public Map<String, Object> applyMatch(@RequestParam String type, @RequestParam int target_idx, HttpSession session) {
+	 	    Map<String, Object> result = new HashMap<>();
+	 	    Integer me = (Integer) session.getAttribute("user_idx");
+	 	    
+	 	    // 1. 로그인 체크
+	 	    if (me == null) {
+	 	        result.put("status", "login_required");
+	 	        return result;
+	 	    }
+
+	 	    try {
+	 	        // 2. 토큰 체크
+	 	        var coachInfo = coachService.getCoachInfo(me);
+	 	        int mytoken = (coachInfo != null) ? coachInfo.getToken_balance() : 0;
+
+	 	        if (type.equals("CHAT") && mytoken < 1) {
+	 	            result.put("status", "no_token");
+	 	            return result;
+	 	        } else if (!type.equals("CHAT") && mytoken < 3) {
+	 	            result.put("status", "no_token");
+	 	            return result;
+	 	        }
+
+	 	        // 3. 신청 로직 실행 (토큰 검증 통과 시에만 실행됨)
+	 	        coachSearchService.applyMatchOrChat(me, target_idx, type);
+	 	        coachSearchService.useTokens(me, type.equals("CHAT") ? 1 : 3);
+	 	        result.put("status", "success");
+
+	 	    } catch (Exception e) {
+	 	        e.printStackTrace();
+	 	        result.put("status", "error"); // 예외 발생 시 사용자에게 에러 알림
+	 	    }
+	 	    
+	 	    return result;
+	 	}
 	 	
 }

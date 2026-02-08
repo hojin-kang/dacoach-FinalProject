@@ -2,30 +2,121 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dacoach.mapper.coachSearch.CoachSearchMapper">
-	<select id="coachList" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
-    SELECT * FROM (
-        SELECT rownum AS rnum, R.* FROM (
-            SELECT DISTINCT A.* FROM coach A 
-            LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
-            LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
-            LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
-            LEFT JOIN hashtag H ON UH.hashtag_idx = H.hashtag_idx
-            <where>
-                (A.nickname LIKE '%' || #{keyword} || '%' OR H.TAGS LIKE '%' || #{keyword} || '%')
-                <if test="minorField != 0">
-                    AND B.minor_field_idx = #{minorField}
-                </if>
-                <if test="majorRegion != 0">
-                    AND C.major_region_idx = #{majorRegion}
-                </if>
-                <if test="minorRegion != 0">
-                    AND C.minor_region_idx = #{minorRegion}
-                </if>
-            </where>
-            ORDER BY A.coach_idx DESC
-        ) R
-    )
-    WHERE rnum BETWEEN #{start} AND #{end}
-    ORDER BY rnum ASC
-</select>
+
+    <select id="coachList" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
+        SELECT * FROM (
+            SELECT rownum AS rnum, R.* FROM (
+                SELECT 
+                    A.user_idx, A.coach_idx, A.nickname, A.photo,
+                    ROUND(NVL(AVG(rt.rating), 0), 1) AS rating,
+                    COUNT(rt.content) AS review_count,
+                    <choose>
+                        <when test="login_idx != null and login_idx != 0">
+                            (SELECT CASE 
+                                WHEN IS_CHAT = 'Y' THEN 'ACCEPTED'
+                                WHEN CHAT_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'APPLIED'
+                                WHEN CHAT_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'RECEIVED'
+                                ELSE 'NONE' END FROM MATCH 
+                             WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
+                                OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as chatStatus,
+                            (SELECT CASE 
+                                WHEN IS_MATCH = 'Y' THEN 'ACCEPTED'
+                                WHEN MATCH_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'APPLIED'
+                                WHEN MATCH_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'RECEIVED'
+                                ELSE 'NONE' END FROM MATCH 
+                             WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
+                                OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as matchStatus
+                        </when>
+                        <otherwise>
+                            'NONE' as chatStatus, 'NONE' as matchStatus
+                        </otherwise>
+                    </choose>
+                FROM coach A
+                LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
+                LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
+                LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
+                LEFT JOIN hashtag H ON UH.hashtag_idx = H.hashtag_idx
+                LEFT JOIN review_coach rt ON A.user_idx = rt.reviewee_idx
+                <where>
+                    (A.nickname LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%' 
+                     OR NVL(H.TAGS, ' ') LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%')
+                    <if test="minorField != null and minorField != 0">AND B.minor_field_idx = #{minorField}</if>
+                    <if test="majorRegion != null and majorRegion != 0">AND C.major_region_idx = #{majorRegion}</if>
+                    <if test="minorRegion != null and minorRegion != 0">AND C.minor_region_idx = #{minorRegion}</if>
+                    <if test="login_idx != null and login_idx != 0">
+                        AND A.user_idx != #{login_idx, jdbcType=INTEGER}
+                    </if>
+                </where>
+                GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo
+                ORDER BY A.coach_idx DESC
+            ) R
+            WHERE rownum &lt;= #{end}
+        )
+        WHERE rnum &gt;= #{start}
+    </select>
+
+    <select id="getCoachHashtags" parameterType="int" resultType="string">
+        SELECT H.TAGS FROM hashtag H
+        JOIN user_hashtag UH ON H.hashtag_idx = UH.hashtag_idx
+        WHERE UH.user_idx = #{user_idx, jdbcType=INTEGER}
+    </select>
+
+	<update id="upsertMatchRequest" parameterType="map">
+	    MERGE INTO MATCH M
+	    USING (SELECT 
+	            LEAST(#{me, jdbcType=INTEGER}, #{target, jdbcType=INTEGER}) as u1,
+	            GREATEST(#{me, jdbcType=INTEGER}, #{target, jdbcType=INTEGER}) as u2
+	           FROM DUAL) TMP
+	    ON (M.USER1_IDX = TMP.u1 AND M.USER2_IDX = TMP.u2)
+	    WHEN MATCHED THEN
+	        UPDATE SET 
+	            <choose>
+	                <when test='type == "CHAT"'>CHAT_APPLICANT = #{me, jdbcType=INTEGER}, IS_CHAT = 'N'</when>
+	                <otherwise>MATCH_APPLICANT = #{me, jdbcType=INTEGER}, IS_MATCH = 'N'</otherwise>
+	            </choose>
+	    WHEN NOT MATCHED THEN
+	        INSERT (MATCH_IDX, USER1_IDX, USER2_IDX, CHAT_APPLICANT, IS_CHAT, MATCH_APPLICANT, IS_MATCH)
+	        VALUES (SEQ_MATCH.NEXTVAL, TMP.u1, TMP.u2,
+	            <choose>
+	                <when test='type == "CHAT"'>#{me, jdbcType=INTEGER}, 'N', NULL, 'N'</when>
+	                <otherwise>NULL, 'N', #{me, jdbcType=INTEGER}, 'N'</otherwise>
+	            </choose>)
+	</update>
+
+    <insert id="insertNotification" parameterType="map">
+        INSERT INTO NOTIFICATION (NOTI_IDX, RECEIVER_IDX, PROVIDER_IDX, NOTI_TYPE, CONTENT, IS_READ, CREATED_AT)
+        VALUES (SEQ_NOTIFICATION.NEXTVAL, #{target, jdbcType=INTEGER}, #{me, jdbcType=INTEGER}, 
+                #{notiType, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, 'N', SYSDATE)
+    </insert>
+
+    <select id="getCoachDetailStatus" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
+        SELECT 
+            A.user_idx, A.coach_idx, A.nickname, A.photo, A.intro, A.video,
+            ROUND(NVL(AVG(rt.rating), 0), 1) AS rating,
+            COUNT(rt.content) AS review_count,
+            (SELECT CASE 
+                WHEN IS_CHAT = 'Y' THEN 'ACCEPTED'
+                WHEN CHAT_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'APPLIED'
+                WHEN CHAT_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'RECEIVED'
+                ELSE 'NONE' END FROM MATCH 
+             WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
+                OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as chatStatus,
+            (SELECT CASE 
+                WHEN IS_MATCH = 'Y' THEN 'ACCEPTED'
+                WHEN MATCH_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'APPLIED'
+                WHEN MATCH_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'RECEIVED'
+                ELSE 'NONE' END FROM MATCH 
+             WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
+                OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as matchStatus
+        FROM coach A
+        LEFT JOIN review_coach rt ON A.user_idx = rt.reviewee_idx
+        WHERE A.user_idx = #{target_idx, jdbcType=INTEGER}
+        GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo, A.intro, A.video
+    </select>
+    <update id="useTokens" parameterType="map">
+        UPDATE coach
+        SET TOKEN_BALANCE = TOKEN_BALANCE - #{amount, jdbcType=INTEGER}
+        WHERE USER_IDX = #{user_idx, jdbcType=INTEGER}
+    </update>
+
 </mapper>

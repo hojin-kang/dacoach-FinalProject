@@ -5,28 +5,28 @@ import java.util.Map;
 
 public interface AdminCompanyDAO {
 
-    // 목록/상세
+    // 기업 회원 관리
     List<Map<String, Object>> companyList();
-    Map<String, Object> companyDetail(int usersIdx);
-
-    // users 상태 저장
+    Map<String, Object> companyDetail(long usersIdx);
+    
     int updateUserStatus(long userIdx, String status);
-
-    //정지 이력 누적 / 최신 종료
-    int insertEmbeddedHistory(long userIdx, String startDate, String endDate, String reason);
+    int insertEmbeddedHistory(Map<String, Object> param);
     int closeLatestEmbeddedHistory(long userIdx);
-
-    // 사업증 승인여부
+    
     int countCertByUserAndType(long userIdx, String certType);
     int updateCertStatus(long userIdx, String certStatus);
     int insertCertStatus(long userIdx, String certStatus);
     
-    // 클래스 리스트, 평점
+    // 클래스 목록
     List<Map<String, Object>> selectClassPage(Map<String, Object> param);
     int countClassTotal();
     
-    // 클래스 상세
+    // 클래스 상세 (간소화 버전)
     Map<String, Object> classDetail(int classIdx);
+    Map<String, Object> selectClassRatingSummary(int classIdx);
+    int selectClassEnrollCount(int classIdx);
+    
+    // 클래스 리뷰 관리
     List<Map<String, Object>> selectClassReviews(int classIdx);
     int deleteReview(int reviewIdx);
 }

@@ -184,19 +184,27 @@
             <p class="coach-title">베테랑 코치</p>
             <div class="coach-name-row">
                <h1 th:text="${dto.nickname}">홍길동</h1>
-               <div class="action-icons">
-                  <span>♡</span> <span>🔔</span> </div>
+               
             </div>
          </div>
-
-         <div class="header-buttons">
-            <button class="btn-header btn-chat-outline">
-               채팅 신청 <img src="/img/icon/dakcoach.png" class="btn-icon-sm"> x1
-            </button>
-            <button class="btn-header btn-match-solid">
-               매칭 신청 <img src="/img/icon/dakcoach.png" class="btn-icon-sm"> x3
-            </button>
-         </div>
+		<div class="action-icons">
+             <span>♡</span> <span>🚨</span> 
+        </div>
+			<div class="header-buttons">
+			    <th:block th:switch="${dto.chatStatus}">
+			        <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 수락하기</button>
+			        <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled style="background:#eee;">채팅 신청됨</button>
+			        <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" onclick="location.href='/chat'">채팅방 이동</button>
+			        <button th:case="*" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 신청</button>
+			    </th:block>
+			
+			    <th:block th:switch="${dto.matchStatus}">
+			        <button th:case="'RECEIVED'" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 수락하기</button>
+			        <button th:case="'APPLIED'" class="btn-header btn-match-solid" disabled style="background:#666;">매칭 신청됨</button>
+			        <button th:case="'ACCEPTED'" class="btn-header btn-match-solid" disabled>매칭 완료</button>
+			        <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
+			    </th:block>
+			</div>
       </section>
 
       <nav class="detail-tabs">
@@ -215,8 +223,14 @@
          <div class="info-item">
             <h3 class="section-title">제공분야</h3>
             <div class="tag-list">
-               <span class="detail-tag">#축구</span>
-               <span class="detail-tag">#농구</span>
+		<a th:each="tag : ${myHashtags}" 
+		   th:href="@{/coach/search(keyword=${tag})}" 
+		   class="detail-tag" 
+		   style="text-decoration: none; color: inherit;">
+		   <span th:text="'#' + ${tag}">#태그명</span>
+		</a>
+				
+				<span th:if="${#lists.isEmpty(myHashtags)}">아직 등록된 태그가 없습니다.</span>
             </div>
          </div>
          <div class="info-item">
@@ -231,10 +245,15 @@
          <div class="info-item">
             <h3 class="section-title">동영상</h3>
             <div class="video-placeholder">
-               <video controls>
-                  <source src="" type="video/mp4">
-               </video>
-            </div>
+			   <video controls th:if="${dto?.video != null}">
+			      <source th:src="@{/uploads/{path}(path=${dto.video})}" type="video/mp4">
+			      브라우저가 비디오 태그를 지원하지 않습니다.
+			   </video>
+			   
+			   <div th:unless="${dto?.video != null}" class="no-video">
+			      <p>등록된 소개 영상이 없습니다.</p>
+			   </div>
+			</div>
          </div>
          <div class="info-item">
             <h3 class="section-title">자격증</h3>
@@ -247,7 +266,7 @@
       <section class="detail-section">
          <h3 class="section-title">매칭 후기</h3>
          <div class="review-summary">
-            54 명의 코치가 홍길동 님을 <span>긍정적(★4.7/5.0)</span>으로 평가했습니다.
+            [[${dto.review_count}]] 명의 코치가 [[${dto.nickname}]]님을 긍정적(★[[${dto.rating}]]/5.0)</span>으로 평가했습니다.
          </div>
 
          <div class="review-container">
@@ -273,6 +292,50 @@
    </main>
   
    <div th:replace="~{layout/footer :: siteFooter}"></div>
+   
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script th:inline="javascript">
+		function applyAction(type, targetIdx) {
+		    const msg = type === 'CHAT' ? "채팅을 신청하시겠습니까?" : "매칭을 신청하시겠습니까?";
+		    if (!confirm(msg)) return;
+		
+		    // @RequestParam을 처리하기 위해 URLSearchParams 사용
+		    const params = new URLSearchParams();
+		    params.append('type', type);
+		    params.append('target_idx', targetIdx);
+		
+		    fetch('/match/apply', {
+		        method: 'POST',
+		        headers: {
+		            // 서버가 @RequestParam으로 인식할 수 있도록 Content-Type 설정
+		            'Content-Type': 'application/x-www-form-urlencoded'
+		        },
+		        body: params
+		    })
+		    .then(response => {
+		        if (!response.ok) throw new Error('Network response was not ok');
+		        return response.json();
+		    })
+		    .then(res => {
+		        if (res.status === 'success') {
+		            alert("신청이 성공적으로 완료되었습니다.");
+		            location.reload();
+		        } else if (res.status === 'login_required') {
+		            alert("로그인이 필요합니다.");
+		            location.href = '/login';
+		        } else if (res.status === 'no_token') {
+		            alert("토큰이 부족합니다.");
+		            location.href = '/tokenHistory';
+		        } else {
+		            alert("오류가 발생했습니다. 다시 시도해주세요.");
+		        }
+		    })
+		    .catch(error => {
+		        console.error('Fetch error:', error);
+		        alert("통신 중 오류가 발생했습니다.");
+		    });
+		}
+		</script>
 
 </body>
 </html>
