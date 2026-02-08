@@ -5,228 +5,235 @@
 
 <mapper namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 
+  <!-- 1. 클래스 목록 (페이징) -->
   <select id="selectClassPage" parameterType="map" resultType="map">
   <![CDATA[
-  select *
-  from (
-    select
-      c.class_idx,
-      c.title,
-      c.created_at,
-      c.photo,
-      c.start_date,
-      c.end_date,
-      u.user_name as provider_name,
-      nvl(r.avg_rating, 0) as avg_rating,
-      nvl(r.review_count, 0) as review_count,
-      case
-        when c.start_date is not null and sysdate < c.start_date then '예정'
-        when c.end_date is not null and sysdate > c.end_date then '종료'
-        else '진행중'
-      end as progress_status,
-      row_number() over (order by c.class_idx desc) as rn
-    from class c
-    left join users u on u.user_idx = c.provider_idx
-    left join (
-      select
-        class_idx,
-        round(avg(rating), 1) as avg_rating,
-        count(*) as review_count
-      from review_class
-      group by class_idx
-    ) r on r.class_idx = c.class_idx
+  SELECT *
+  FROM (
+    SELECT
+      c.CLASS_IDX,
+      c.TITLE,
+      c.CREATED_AT,
+      c.PHOTO,
+      c.START_DATE,
+      c.END_DATE,
+      u.USER_NAME AS PROVIDER_NAME,
+      NVL(r.AVG_RATING, 0) AS AVG_RATING,
+      NVL(r.REVIEW_COUNT, 0) AS REVIEW_COUNT,
+      CASE
+        WHEN c.START_DATE IS NOT NULL AND SYSDATE < c.START_DATE THEN '예정'
+        WHEN c.END_DATE IS NOT NULL AND SYSDATE > c.END_DATE THEN '종료'
+        ELSE '진행중'
+      END AS PROGRESS_STATUS,
+      ROW_NUMBER() OVER (ORDER BY c.CLASS_IDX DESC) AS RN
+    FROM CLASS c
+    LEFT JOIN USERS u ON u.USER_IDX = c.PROVIDER_IDX
+    LEFT JOIN (
+      SELECT
+        CLASS_IDX,
+        ROUND(AVG(RATING), 1) AS AVG_RATING,
+        COUNT(*) AS REVIEW_COUNT
+      FROM REVIEW_CLASS
+      GROUP BY CLASS_IDX
+    ) r ON r.CLASS_IDX = c.CLASS_IDX
   ) t
-  where t.rn between #{startRow, jdbcType=NUMERIC} and #{endRow, jdbcType=NUMERIC}]]>
+  WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}]]>
   </select>
 
+  <!-- 2. 클래스 전체 개수 -->
   <select id="countClassTotal" resultType="int">
-    select count(*)
-    from class
+    SELECT COUNT(*)
+    FROM CLASS
   </select>
 
+  <!-- 3. 클래스 상세 (간소화 버전 - 기본 정보만) -->
   <select id="classDetail" parameterType="map" resultType="map">
   <![CDATA[
-    select
-      c.class_idx,
-      c.title,
-      c.intro,
-      c.price,
-      c.photo,
-      c.video,
-      c.start_date,
-      c.end_date,
-      c.created_at,
-      c.max_user_cnt,
-      c.provider_idx,
-
-      u.user_name as provider_name,
-      u.user_type as provider_type,
-      u.status as provider_status,
-
-      maf.major_field_cd,
-      mif.minor_field_nm,
-
-      mar.region_nm,
-      mir.district_nm,
-
-      nvl(r.avg_rating, 0) as avg_rating,
-      nvl(r.review_count, 0) as review_count,
-
-      nvl(e.enroll_count, 0) as enroll_count,
-
-      case
-        when c.start_date is not null and sysdate < c.start_date then '예정'
-        when c.end_date is not null and sysdate > c.end_date then '종료'
-        else '진행중'
-      end as progress_status
-
-    from class c
-    left join users u on u.user_idx = c.provider_idx
-    left join minor_field mif on mif.minor_field_idx = c.minor_field_idx
-    left join major_field maf on maf.major_field_idx = mif.major_field_idx
-    left join minor_region mir on mir.minor_region_idx = c.minor_region_idx
-    left join major_region mar on mar.major_region_idx = mir.major_region_idx
-    left join (
-      select
-        class_idx,
-        round(avg(rating), 1) as avg_rating,
-        count(*) as review_count
-      from review_class
-      group by class_idx
-    ) r on r.class_idx = c.class_idx
-    left join (
-      select
-        class_idx,
-        count(*) as enroll_count
-      from class_enrollment
-      group by class_idx
-    ) e on e.class_idx = c.class_idx
-
-    where c.class_idx = #{classIdx}
+    SELECT
+      c.CLASS_IDX,
+      c.TITLE,
+      c.INTRO,
+      c.PRICE,
+      c.PHOTO,
+      c.VIDEO,
+      c.START_DATE,
+      c.END_DATE,
+      c.CREATED_AT,
+      c.MAX_USER_CNT,
+      c.PROVIDER_IDX,
+      
+      u.USER_NAME AS PROVIDER_NAME,
+      
+      maf.MAJOR_FIELD_CD,
+      mif.MINOR_FIELD_NM,
+      
+      mar.REGION_NM,
+      mir.DISTRICT_NM,
+      
+      CASE
+        WHEN c.START_DATE IS NOT NULL AND SYSDATE < c.START_DATE THEN '예정'
+        WHEN c.END_DATE IS NOT NULL AND SYSDATE > c.END_DATE THEN '종료'
+        ELSE '진행중'
+      END AS PROGRESS_STATUS
+      
+    FROM CLASS c
+    LEFT JOIN USERS u ON u.USER_IDX = c.PROVIDER_IDX
+    LEFT JOIN MINOR_FIELD mif ON mif.MINOR_FIELD_IDX = c.MINOR_FIELD_IDX
+    LEFT JOIN MAJOR_FIELD maf ON maf.MAJOR_FIELD_IDX = mif.MAJOR_FIELD_IDX
+    LEFT JOIN MINOR_REGION mir ON mir.MINOR_REGION_IDX = c.MINOR_REGION_IDX
+    LEFT JOIN MAJOR_REGION mar ON mar.MAJOR_REGION_IDX = mir.MAJOR_REGION_IDX
+    
+    WHERE c.CLASS_IDX = #{classIdx}
   ]]>
   </select>
 
+  <!-- 4. 클래스 평점 및 리뷰 수 조회 -->
+  <select id="selectClassRatingSummary" parameterType="int" resultType="map">
+    SELECT
+      NVL(ROUND(AVG(RATING), 1), 0) AS AVG_RATING,
+      NVL(COUNT(*), 0) AS REVIEW_COUNT
+    FROM REVIEW_CLASS
+    WHERE CLASS_IDX = #{classIdx}
+  </select>
+
+  <!-- 5. 클래스 수강생 수 조회 -->
+  <select id="selectClassEnrollCount" parameterType="int" resultType="int">
+    SELECT NVL(COUNT(*), 0)
+    FROM CLASS_ENROLLMENT
+    WHERE CLASS_IDX = #{classIdx}
+  </select>
+
+  <!-- 6. 클래스별 리뷰 목록 -->
   <select id="selectClassReviews" parameterType="int" resultType="map">
-    select
-      rc.review_class_idx,
-      rc.rating,
-      rc.tag,
-      rc.content,
-      rc.created_at,
-      u.user_name as reviewer_name,
-      u.user_type as reviewer_type
-    from review_class rc
-    left join users u on u.user_idx = rc.reviewer_idx
-    where rc.class_idx = #{classIdx}
-    order by rc.created_at desc
+    SELECT
+      rc.REVIEW_CLASS_IDX,
+      rc.RATING,
+      rc.TAG,
+      rc.CONTENT,
+      rc.CREATED_AT,
+      u.USER_NAME AS REVIEWER_NAME,
+      u.USER_TYPE AS REVIEWER_TYPE
+    FROM REVIEW_CLASS rc
+    LEFT JOIN USERS u ON u.USER_IDX = rc.REVIEWER_IDX
+    WHERE rc.CLASS_IDX = #{classIdx}
+    ORDER BY rc.CREATED_AT DESC
   </select>
 
+  <!-- 7. 리뷰 삭제 -->
+  <delete id="deleteReview" parameterType="int">
+    DELETE FROM REVIEW_CLASS
+    WHERE REVIEW_CLASS_IDX = #{reviewIdx}
+  </delete>
+
+  <!-- 8. 기업 회원 목록 -->
   <select id="companyList" resultType="map">
-    select
-      u.user_idx,
-      u.user_name,
-      u.status,
-      c.company_idx,
-      c.company_num,
-      nvl(ct.cert_status, 'inactive') as cert_status
-    from users u
-    join company c on c.user_idx = u.user_idx
-    left join cert ct on u.user_idx = ct.user_idx and ct.cert_type = '사업증'
-    where u.user_type = 'company'
-    order by c.company_idx desc
+    SELECT
+      u.USER_IDX,
+      u.USER_NAME,
+      u.STATUS,
+      c.COMPANY_IDX,
+      c.COMPANY_NUM,
+      NVL(ct.CERT_STATUS, 'INACTIVE') AS CERT_STATUS
+    FROM USERS u
+    JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
+    LEFT JOIN CERT ct ON u.USER_IDX = ct.USER_IDX AND ct.CERT_TYPE = '사업증'
+    WHERE u.USER_TYPE = 'COMPANY'
+    ORDER BY c.COMPANY_IDX DESC
   </select>
 
+  <!-- 9. 기업 회원 상세 -->
   <select id="companyDetail" parameterType="map" resultType="map">
-    select
-      u.user_idx,
-      u.user_name,
-      u.login_id,
-      u.status,
-      c.company_num,
-      c.phone,
-      c.address,
-      c.email,
-      cert.cert_status,
-      e.start_date,
-      e.end_date,
-      e.reason
-    from users u
-    join company c on c.user_idx = u.user_idx
-    left join cert cert on cert.user_idx = u.user_idx and cert.cert_type = '사업증'
-    left join (
-      select e1.*
-      from embedded_user e1
-      where e1.embed_user_idx in (
-        select max(e2.embed_user_idx)
-        from embedded_user e2
-        group by e2.user_idx
+    SELECT
+      u.USER_IDX,
+      u.USER_NAME,
+      u.LOGIN_ID,
+      u.STATUS,
+      c.COMPANY_NUM,
+      c.PHONE,
+      c.ADDRESS,
+      c.EMAIL,
+      cert.CERT_STATUS,
+      e.START_DATE,
+      e.END_DATE,
+      e.REASON
+    FROM USERS u
+    JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
+    LEFT JOIN CERT cert ON cert.USER_IDX = u.USER_IDX AND cert.CERT_TYPE = '사업증'
+    LEFT JOIN (
+      SELECT e1.*
+      FROM EMBEDDED_USER e1
+      WHERE e1.EMBED_USER_IDX IN (
+        SELECT MAX(e2.EMBED_USER_IDX)
+        FROM EMBEDDED_USER e2
+        GROUP BY e2.USER_IDX
       )
-    ) e on e.user_idx = u.user_idx
-    where u.user_idx = #{usersIdx}
+    ) e ON e.USER_IDX = u.USER_IDX
+    WHERE u.USER_IDX = #{usersIdx}
   </select>
 
+  <!-- 10. USERS 상태 업데이트 -->
   <update id="updateUserStatus" parameterType="map">
-    update users
-    set status = #{status}
-    where user_idx = #{userIdx}
+    UPDATE USERS
+    SET STATUS = #{status}
+    WHERE USER_IDX = #{userIdx}
   </update>
 
+  <!-- 11. 정지 이력 추가 -->
   <insert id="insertEmbeddedHistory" parameterType="map">
-    insert into embedded_user (
-      embed_user_idx, user_idx, start_date, end_date, reason
-    ) values (
-      seq_embed_user.nextval,
+    INSERT INTO EMBEDDED_USER (
+      EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON
+    ) VALUES (
+      SEQ_EMBED_USER.NEXTVAL,
       #{userIdx},
-      to_date(#{startDate}, 'yyyy-mm-dd'),
-      case
-        when #{endDate} is null or #{endDate} = '' then null
-        else to_date(#{endDate}, 'yyyy-mm-dd')
-      end,
+      TO_DATE(#{startDate}, 'YYYY-MM-DD'),
+      CASE
+        WHEN #{endDate} IS NULL OR #{endDate} = '' THEN NULL
+        ELSE TO_DATE(#{endDate}, 'YYYY-MM-DD')
+      END,
       #{reason}
     )
   </insert>
 
+  <!-- 12. 최신 정지 이력 종료 처리 -->
   <update id="closeLatestEmbeddedHistory" parameterType="map">
-    update embedded_user
-    set end_date = sysdate
-    where embed_user_idx = (
-      select max(e2.embed_user_idx)
-      from embedded_user e2
-      where e2.user_idx = #{userIdx}
+    UPDATE EMBEDDED_USER
+    SET END_DATE = SYSDATE
+    WHERE EMBED_USER_IDX = (
+      SELECT MAX(e2.EMBED_USER_IDX)
+      FROM EMBEDDED_USER e2
+      WHERE e2.USER_IDX = #{userIdx}
     )
   </update>
 
+  <!-- 13. CERT 존재 여부 확인 -->
   <select id="countCertByUserAndType" parameterType="map" resultType="int">
-    select count(*)
-    from cert
-    where user_idx = #{userIdx}
-      and cert_type = #{certType}
+    SELECT COUNT(*)
+    FROM CERT
+    WHERE USER_IDX = #{userIdx}
+    AND CERT_TYPE = #{certType}
   </select>
 
+  <!-- 14. CERT 상태 업데이트 -->
   <update id="updateCertStatus" parameterType="map">
-    update cert
-    set cert_status = #{cert_status},
-        get_date = sysdate
-    where user_idx = #{user_idx}
-      and cert_type = '사업증'
+    UPDATE CERT
+    SET CERT_STATUS = #{cert_status},
+        GET_DATE = SYSDATE
+    WHERE USER_IDX = #{user_idx}
+    AND CERT_TYPE = '사업증'
   </update>
 
+  <!-- 15. CERT 추가 -->
   <insert id="insertCertStatus" parameterType="map">
-    insert into cert (
-      cert_idx, user_idx, cert_name, cert_type, cert_status, get_date
-    ) values (
-      seq_cert.nextval,
+    INSERT INTO CERT (
+      CERT_IDX, USER_IDX, CERT_NAME, CERT_TYPE, CERT_STATUS, GET_DATE
+    ) VALUES (
+      SEQ_CERT.NEXTVAL,
       #{user_idx},
       '사업자등록증',
       '사업증',
       #{cert_status},
-      sysdate
+      SYSDATE
     )
   </insert>
-
-  <delete id="deleteReview" parameterType="int">
-    delete from review_class
-    where review_class_idx = #{reviewIdx}
-  </delete>
 
 </mapper>

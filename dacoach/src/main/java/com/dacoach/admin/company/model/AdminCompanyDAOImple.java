@@ -5,17 +5,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class AdminCompanyDAOImple implements AdminCompanyDAO {
 
-    private final SqlSessionTemplate sqlSession;
+    @Autowired
+    private SqlSessionTemplate sqlSession;
+    
     private static final String NS = "com.dacoach.mapper.admin.company.AdminCompanyMapper.";
-
-    public AdminCompanyDAOImple(SqlSessionTemplate sqlSession) {
-        this.sqlSession = sqlSession;
-    }
 
     @Override
     public List<Map<String, Object>> companyList() {
@@ -23,7 +22,7 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
     }
 
     @Override
-    public Map<String, Object> companyDetail(int usersIdx) {
+    public Map<String, Object> companyDetail(long usersIdx) {
         Map<String, Object> p = new HashMap<>();
         p.put("usersIdx", usersIdx);
         return sqlSession.selectOne(NS + "companyDetail", p);
@@ -38,13 +37,8 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
     }
 
     @Override
-    public int insertEmbeddedHistory(long userIdx, String startDate, String endDate, String reason) {
-        Map<String, Object> p = new HashMap<>();
-        p.put("userIdx", userIdx);
-        p.put("startDate", startDate);
-        p.put("endDate", endDate);
-        p.put("reason", reason);
-        return sqlSession.insert(NS + "insertEmbeddedHistory", p);
+    public int insertEmbeddedHistory(Map<String, Object> param) {
+        return sqlSession.insert(NS + "insertEmbeddedHistory", param);
     }
 
     @Override
@@ -59,8 +53,7 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
         Map<String, Object> p = new HashMap<>();
         p.put("userIdx", userIdx);
         p.put("certType", certType);
-        Integer n = sqlSession.selectOne(NS + "countCertByUserAndType", p);
-        return (n == null) ? 0 : n;
+        return sqlSession.selectOne(NS + "countCertByUserAndType", p);
     }
 
     @Override
@@ -88,23 +81,32 @@ public class AdminCompanyDAOImple implements AdminCompanyDAO {
     public int countClassTotal() {
         return sqlSession.selectOne(NS + "countClassTotal");
     }
+    
+    @Override
+    public Map<String, Object> classDetail(int classIdx) {
+        Map<String, Object> p = new HashMap<>();
+        p.put("classIdx", classIdx);
+        return sqlSession.selectOne(NS + "classDetail", p);
+    }
 
-	@Override
-	public Map<String, Object> classDetail(int classIdx) {
-		Map<String,Object> p = new HashMap<>();
-		p.put("classIdx", classIdx);
-		return sqlSession.selectOne(NS+"classDetail",p);
-	}
+    @Override
+    public Map<String, Object> selectClassRatingSummary(int classIdx) {
+        return sqlSession.selectOne(NS + "selectClassRatingSummary", classIdx);
+    }
 
-	@Override
-	public List<Map<String, Object>> selectClassReviews(int classIdx) {
-		return sqlSession.selectList(NS+"selectClassReviews",classIdx);
-	}
+    @Override
+    public int selectClassEnrollCount(int classIdx) {
+        Integer count = sqlSession.selectOne(NS + "selectClassEnrollCount", classIdx);
+        return count != null ? count : 0;
+    }
+   
+    @Override
+    public List<Map<String, Object>> selectClassReviews(int classIdx) {
+        return sqlSession.selectList(NS + "selectClassReviews", classIdx);
+    }
 
-	@Override
-	public int deleteReview(int reviewIdx) {
-		return sqlSession.delete(NS+"deleteReview",reviewIdx);
-	}
-
-	
+    @Override
+    public int deleteReview(int reviewIdx) {
+        return sqlSession.delete(NS + "deleteReview", reviewIdx);
+    }
 }

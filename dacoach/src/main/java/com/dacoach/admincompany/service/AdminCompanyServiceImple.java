@@ -1,10 +1,9 @@
 package com.dacoach.admincompany.service;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,67 +12,58 @@ import com.dacoach.admin.company.model.AdminCompanyDAO;
 @Service
 public class AdminCompanyServiceImple implements AdminCompanyService {
 
-    private final AdminCompanyDAO dao;
-
-    public AdminCompanyServiceImple(AdminCompanyDAO dao) {
-        this.dao = dao;
-    }
+    @Autowired
+    private AdminCompanyDAO dao;
 
     @Override
-    public List<Map<String, Object>> companyList() {
+    public List<Map<String, Object>> getCompanyList() {
         return dao.companyList();
     }
 
     @Override
-    public Map<String, Object> companyDetail(int usersIdx) {
+    public Map<String, Object> getCompanyDetail(long usersIdx) {
         return dao.companyDetail(usersIdx);
     }
 
     @Override
     @Transactional
-    public void saveAccountAndSuspend(long userIdx, String status,
-                                      String suspendFrom, String suspendUntil, String reason) {
-
-        // 1) 계정상태 저장
-        if (status != null && !status.isBlank()) {
-            dao.updateUserStatus(userIdx, status);
-        }
-
-        // 2) 정지면: 정지이력 누적 INSERT
+    public void updateCompanyStatus(long usersIdx, String status, String startDate, String endDate, String reason) {
+        //상태 업데이트
+        dao.updateUserStatus(usersIdx, status);
+        
+        //정지 상태인 경우 정지 이력 추가
         if ("SUSPENDED".equals(status)) {
-            // 시작일이 비어있으면 오늘로
-            if (suspendFrom == null || suspendFrom.isBlank()) {
-                suspendFrom = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
-            }
-            dao.insertEmbeddedHistory(userIdx, suspendFrom, suspendUntil, reason);
-            return;
+            Map<String, Object> param = new java.util.HashMap<>();
+            param.put("userIdx", usersIdx);
+            param.put("startDate", startDate);
+            param.put("endDate", endDate);
+            param.put("reason", reason);
+            dao.insertEmbeddedHistory(param);
         }
-
-        // 3) 사용으로 바꾸면: 최신 정지이력 1건 END_DATE = SYSDATE로 종료
-        if ("ACTIVE".equals(status)) {
-            dao.closeLatestEmbeddedHistory(userIdx);
+        //사용 상태로 복귀 시 최신 정지 이력 종료
+        else if ("ACTIVE".equals(status)) {
+            dao.closeLatestEmbeddedHistory(usersIdx);
         }
     }
 
     @Override
     @Transactional
-    public void approveCompany(long userIdx) {
-        // 1) 승인 여부(CERT) 처리
+    public void approveCert(long usersIdx) {
         String certType = "사업증";
         String certStatus = "확인";
-
-        int cnt = dao.countCertByUserAndType(userIdx, certType);
+        
+        //기존 CERT 존재 여부 확인
+        int cnt = dao.countCertByUserAndType(usersIdx, certType);
+        
+        //존재하면 업데이트, 없으면 새로 추가
         if (cnt > 0) {
-            dao.updateCertStatus(userIdx, certStatus);
+            dao.updateCertStatus(usersIdx, certStatus);
         } else {
-            dao.insertCertStatus(userIdx, certStatus);
+            dao.insertCertStatus(usersIdx, certStatus);
         }
-
-        // 2) 계정 상태(USERS)를 'ACTIVE'로 변경
-        dao.updateUserStatus(userIdx, "ACTIVE");
-
-        // 3) 만약 정지 중인 이력이 있다면 종료 처리
-        dao.closeLatestEmbeddedHistory(userIdx);
+        
+        //계정 상태를 ACTIVE로 변경
+        dao.updateUserStatus(usersIdx, "ACTIVE");
     }
 
     @Override
@@ -86,18 +76,36 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
         return dao.countClassTotal();
     }
 
-	@Override
-	public Map<String, Object> getClassDetail(int classIdx) {
-		return dao.classDetail(classIdx);
-	}
+    @Override
+    public Map<String, Object> getClassDetail(int classIdx) {
+        //기본 정보 조회
+        Map<String, Object> classInfo = dao.classDetail(classIdx);
+        
+        //평점 정보 추가
+        Map<String, Object> rating = dao.selectClassRatingSummary(classIdx);
+        if (rating != null) {
+            classInfo.put("AVG_RATING", rating.get("AVG_RATING"));
+            classInfo.put("REVIEW_COUNT", rating.get("REVIEW_COUNT"));
+        } else {
+            classInfo.put("AVG_RATING", 0);
+            classInfo.put("REVIEW_COUNT", 0);
+        }
+        
+        //수강생 수 추가
+        int enrollCount = dao.selectClassEnrollCount(classIdx);
+        classInfo.put("ENROLL_COUNT", enrollCount);
+        
+        return classInfo;
+    }
 
-	@Override
-	public List<Map<String, Object>> getClassReviews(int classIdx) {
-		return dao.selectClassReviews(classIdx);
-	}
+    @Override
+    public List<Map<String, Object>> getClassReviews(int classIdx) {
+        return dao.selectClassReviews(classIdx);
+    }
 
-	@Override
-	public void deleteReview(int reviewIdx) {
-		dao.deleteReview(reviewIdx);
-	}
+    @Override
+    @Transactional
+    public void deleteReview(int reviewIdx) {
+        dao.deleteReview(reviewIdx);
+    }
 }
