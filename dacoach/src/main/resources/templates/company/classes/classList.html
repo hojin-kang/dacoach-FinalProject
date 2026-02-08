@@ -15,22 +15,7 @@
 
 			<div class="classPage">
 				<!-- LEFT: 버튼 패널 -->
-				<aside class="menuArea">
-					<div class="menuHead">관리 메뉴</div>
-					<div class="menuButtons">
-						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/class/company/classList}'|">클래스 리스트</button>
-						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/class/company/register}'|">클래스
-							등록</button>
-						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/class/company/status}'|">클래스
-							통계</button>
-						<button type="button" class="menuBtn"
-							th:onclick="|window.location='@{/class/company/register}'|">후기
-							관리</button>
-					</div>
-				</aside>
+				<div th:replace="~{company/classes/classAside :: classMenu('list')}"></div>
 
 				<!-- RIGHT: 컨텐츠 -->
 				<section class="contentArea">

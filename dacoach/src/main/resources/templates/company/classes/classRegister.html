@@ -16,20 +16,8 @@
 
 			<div class="classPage">
 				<!-- LEFT: 메뉴 패널 -->
-				<aside class="menuArea">
-					<div class="menuHead">관리 메뉴</div>
-					<div class="menuButtons">
-						<button type="button" class="menuBtn"
-							onclick="location.href='/class/company/classList'">컴퍼니</button>
-						<button type="button" class="menuBtn"
-							style="background: #328889; color: #fff;"
-							onclick="location.href='/class/company/register'">클래스 등록</button>
-						<button type="button" class="menuBtn"
-							onclick="location.href='/class/company/status'">클래스 통계</button>
-						<button type="button" class="menuBtn"
-							onclick="location.href='/class/company/reviews'">후기 관리</button>
-					</div>
-				</aside>
+				<div
+					th:replace="~{company/classes/classAside :: classMenu('register')}"></div>
 
 				<!-- RIGHT: 등록 폼 -->
 				<section class="contentArea">
@@ -52,7 +40,6 @@
 								<input type="text" id="classTitle" name="title"
 									th:value="${classDTO?.title}"
 									placeholder="클래스 제목을 입력하세요 (최대 200자)" maxlength="200" required>
-								<div id="titleError" class="error-message"></div>
 							</div>
 
 							<div class="form-group">
@@ -61,7 +48,6 @@
 									th:text="${classDTO?.intro}"
 									placeholder="클래스 내용을 자세히 작성해주세요 (최대 3000자)" maxlength="3000"
 									required></textarea>
-								<div id="contentError" class="error-message"></div>
 							</div>
 
 							<div class="form-group">
@@ -73,7 +59,6 @@
 										<option value="">소분류 선택</option>
 									</select>
 								</div>
-								<div id="fieldError" class="error-message"></div>
 							</div>
 
 							<div class="form-group">
@@ -85,7 +70,6 @@
 										<option value="">구/군 선택</option>
 									</select>
 								</div>
-								<div id="regionError" class="error-message"></div>
 							</div>
 
 							<div class="form-group">
@@ -93,10 +77,9 @@
 								<input type="number" id="classCost" name="price"
 									th:value="${classDTO?.price}" placeholder="클래스 가격을 입력하세요 (원)"
 									min="0" max="10000000" required>
-								<div id="priceError" class="error-message"></div>
 							</div>
 
-							<!-- ⭐ 해시태그 입력 폼 추가 ⭐ -->
+							<!-- 해시태그 입력 폼 -->
 							<div class="form-group">
 								<h3>해시태그</h3>
 								<div class="hashtag-input-area" id="hashtagArea">
@@ -150,7 +133,6 @@
 											id="endDate" name="end_date" required>
 									</div>
 								</div>
-								<div id="dateError" class="error-message"></div>
 							</div>
 
 							<div class="form-group">
@@ -178,7 +160,7 @@
 		// 전역 변수
 		let selectedPhoto = null;
 		let selectedVideo = null;
-		let hashtags = []; // ⭐ 해시태그 배열
+		let hashtags = [];
 
 		// 페이지 로드 시 초기화
 		document.addEventListener('DOMContentLoaded', function() {
@@ -191,17 +173,53 @@
 			document.getElementById('participantLimit').addEventListener('input', onParticipantChange);
 			document.getElementById('photoUpload').addEventListener('change', onPhotoUpload);
 			document.getElementById('videoUpload').addEventListener('change', onVideoUpload);
-			
-			// ⭐ 해시태그 입력 이벤트
 			document.getElementById('hashtagInput').addEventListener('keydown', onHashtagKeydown);
 			
-			// ⭐ 폼 제출 시 해시태그 데이터 설정
+			// 폼 제출 시 유효성 검사
 			document.getElementById('classInsert').addEventListener('submit', function(e) {
+				// 날짜 유효성 검사
+				if (!validateDates()) {
+					e.preventDefault();
+					return false;
+				}
+				
+				// 해시태그 데이터 설정
 				document.getElementById('hashtagsData').value = hashtags.join(',');
 			});
 		});
 
-		// ⭐ 해시태그 입력 처리
+		// 날짜 유효성 검사
+		function validateDates() {
+			const startDate = document.getElementById('startDate').value;
+			const endDate = document.getElementById('endDate').value;
+			
+			if (!startDate || !endDate) {
+				alert('시작일과 종료일을 모두 입력해주세요.');
+				return false;
+			}
+			
+			const start = new Date(startDate);
+			const end = new Date(endDate);
+			const now = new Date();
+			
+			// 시작일이 현재 시간보다 이전인지 체크
+			if (start < now) {
+				alert('시작일은 현재 시간 이후여야 합니다.');
+				document.getElementById('startDate').focus();
+				return false;
+			}
+			
+			// 종료일이 시작일보다 이전인지 체크
+			if (end <= start) {
+				alert('종료일은 시작일 이후여야 합니다.');
+				document.getElementById('endDate').focus();
+				return false;
+			}
+			
+			return true;
+		}
+
+		// 해시태그 입력 처리
 		function onHashtagKeydown(e) {
 			if (e.key === 'Enter') {
 				e.preventDefault();
@@ -209,35 +227,29 @@
 				let input = e.target.value.trim();
 				if (!input) return;
 				
-				// 띄어쓰기 제거
 				input = input.replace(/\s+/g, '');
-				
-				// # 자동 추가
 				if (!input.startsWith('#')) {
 					input = '#' + input;
 				}
 				
-				// 중복 체크
 				if (hashtags.includes(input)) {
 					alert('이미 추가된 해시태그입니다.');
 					e.target.value = '';
 					return;
 				}
 				
-				// 최대 개수 체크
 				if (hashtags.length >= 3) {
 					alert('해시태그는 최대 3개까지 추가할 수 있습니다.');
 					e.target.value = '';
 					return;
 				}
 				
-				// 해시태그 추가
 				addHashtag(input);
 				e.target.value = '';
 			}
 		}
 
-		// ⭐ 해시태그 추가 (화면에 표시)
+		// 해시태그 추가
 		function addHashtag(tag) {
 			hashtags.push(tag);
 			
@@ -252,7 +264,7 @@
 			input.parentElement.insertBefore(chip, input);
 		}
 
-		// ⭐ 해시태그 제거
+		// 해시태그 제거
 		function removeHashtag(tag, btn) {
 			hashtags = hashtags.filter(t => t !== tag);
 			btn.parentElement.remove();
@@ -271,10 +283,7 @@
 						select.appendChild(option);
 					});
 				})
-				.catch(error => {
-					console.error('대분류 로드 실패:', error);
-					alert('대분류 데이터를 불러오는데 실패했습니다.');
-				});
+				.catch(error => console.error('대분류 로드 실패:', error));
 		}
 
 		// 대지역 로드
@@ -290,10 +299,7 @@
 						select.appendChild(option);
 					});
 				})
-				.catch(error => {
-					console.error('대지역 로드 실패:', error);
-					alert('대지역 데이터를 불러오는데 실패했습니다.');
-				});
+				.catch(error => console.error('대지역 로드 실패:', error));
 		}
 
 		// 대분류 변경 이벤트
@@ -301,7 +307,6 @@
 			const majorIdx = e.target.value;
 			const subSelect = document.getElementById('subCategory');
 			
-			// 소분류 초기화
 			subSelect.innerHTML = '<option value="">소분류 선택</option>';
 			
 			if (majorIdx) {
@@ -315,10 +320,7 @@
 							subSelect.appendChild(option);
 						});
 					})
-					.catch(error => {
-						console.error('소분류 로드 실패:', error);
-						alert('소분류 데이터를 불러오는데 실패했습니다.');
-					});
+					.catch(error => console.error('소분류 로드 실패:', error));
 			}
 		}
 
@@ -327,7 +329,6 @@
 			const majorRegionIdx = e.target.value;
 			const minorSelect = document.getElementById('minorRegion');
 			
-			// 소지역 초기화
 			minorSelect.innerHTML = '<option value="">구/군 선택</option>';
 			
 			if (majorRegionIdx) {
@@ -341,10 +342,7 @@
 							minorSelect.appendChild(option);
 						});
 					})
-					.catch(error => {
-						console.error('소지역 로드 실패:', error);
-						alert('소지역 데이터를 불러오는데 실패했습니다.');
-					});
+					.catch(error => console.error('소지역 로드 실패:', error));
 			}
 		}
 
@@ -358,14 +356,12 @@
 			const file = e.target.files[0];
 			if (!file) return;
 
-			// 이미지 파일 검증
 			if (!file.type.startsWith('image/')) {
 				alert('이미지 파일만 업로드 가능합니다.');
 				e.target.value = '';
 				return;
 			}
 
-			// 파일 크기 검증 (50MB)
 			if (file.size > 50 * 1024 * 1024) {
 				alert('파일 크기는 50MB 이하여야 합니다.');
 				e.target.value = '';
@@ -374,7 +370,6 @@
 
 			selectedPhoto = file;
 
-			// 미리보기 생성
 			const reader = new FileReader();
 			reader.onload = function(event) {
 				const container = document.getElementById('photoPreviewContainer');
@@ -408,14 +403,12 @@
 			const file = e.target.files[0];
 			if (!file) return;
 
-			// 비디오 파일 검증
 			if (!file.type.startsWith('video/')) {
 				alert('비디오 파일만 업로드 가능합니다.');
 				e.target.value = '';
 				return;
 			}
 
-			// 파일 크기 검증 (50MB)
 			if (file.size > 50 * 1024 * 1024) {
 				alert('파일 크기는 50MB 이하여야 합니다.');
 				e.target.value = '';
@@ -424,7 +417,6 @@
 
 			selectedVideo = file;
 
-			// 미리보기 생성
 			const reader = new FileReader();
 			reader.onload = function(event) {
 				const container = document.getElementById('videoPreviewContainer');
