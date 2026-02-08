@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 클래스 관리 사이드바 메뉴 -->
+<aside th:fragment="classMenu(currentPage)" class="menuArea">
+	<div class="menuHead">관리 메뉴</div>
+	<div class="menuButtons">
+		<button type="button" class="menuBtn"
+			th:classappend="${currentPage == 'list'} ? 'active' : ''"
+			onclick="location.href='/class/company/classList'">클래스 리스트</button>
+		
+		<button type="button" class="menuBtn"
+			th:classappend="${currentPage == 'register'} ? 'active' : ''"
+			onclick="location.href='/class/company/register'">클래스 등록</button>
+		
+		<button type="button" class="menuBtn"
+			th:classappend="${currentPage == 'status'} ? 'active' : ''"
+			onclick="location.href='/class/company/status'">클래스 통계</button>
+		
+		<button type="button" class="menuBtn"
+			th:classappend="${currentPage == 'reviews'} ? 'active' : ''"
+			onclick="location.href='/class/company/reviews'">후기 관리</button>
+	</div>
+</aside>
+
+</html>

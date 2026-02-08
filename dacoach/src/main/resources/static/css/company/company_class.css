@@ -54,6 +54,12 @@
 	color: #fff;
 }
 
+.menuBtn.active {
+	background: #328889;
+	color: #fff;
+	font-weight: 700;
+}
+
 /* ============ RIGHT CONTENT ============ */
 .contentArea {
 	min-width: 0;
@@ -1178,4 +1184,165 @@
 #hashtagInput::placeholder {
 	color: #999;
 	font-size: 13px;
+}
+
+/* ============================================================
+   클래스 통계 페이지 스타일
+   ============================================================ */
+.statsPage {
+	display: flex;
+	gap: 30px;
+	margin-top: 20px;
+}
+
+.statsContent {
+	flex: 1;
+}
+
+.classSelector {
+	margin-bottom: 30px;
+}
+
+.classSelector select {
+	width: 100%;
+	padding: 12px;
+	font-size: 16px;
+	border: 2px solid #ddd;
+	border-radius: 8px;
+	background: white;
+}
+
+.statsSection {
+	background: white;
+	border-radius: 12px;
+	padding: 25px;
+	margin-bottom: 25px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 20px;
+	color: #333;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.sectionTitle::before {
+	content: '';
+	width: 4px;
+	height: 24px;
+	background: #4CAF50;
+	display: block;
+}
+
+/* 수강생 테이블 */
+.studentTable {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.studentTable thead {
+	background: #f8f9fa;
+}
+
+.studentTable th, .studentTable td {
+	padding: 12px;
+	text-align: left;
+	border-bottom: 1px solid #eee;
+}
+
+.studentTable th {
+	font-weight: 600;
+	color: #666;
+	font-size: 14px;
+}
+
+.studentTable tbody tr:hover {
+	background: #f8f9fa;
+}
+
+.statusBadge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.statusBadge.enrolled {
+	background: #e3f2fd;
+	color: #1976d2;
+}
+
+.statusBadge.completed {
+	background: #e8f5e9;
+	color: #388e3c;
+}
+
+.statusBadge.cancelled {
+	background: #ffebee;
+	color: #d32f2f;
+}
+
+/* 차트 컨테이너 */
+.chartContainer {
+	position: relative;
+	height: 300px;
+	margin-top: 20px;
+}
+
+/* 통계 요약 카드 */
+.summaryCards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.summaryCard {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	padding: 20px;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.summaryCard.green {
+	background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+}
+
+.summaryCard.blue {
+	background: linear-gradient(135deg, #2196F3 0%, #1976d2 100%);
+}
+
+.summaryCard.orange {
+	background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+}
+
+.cardLabel {
+	font-size: 14px;
+	opacity: 0.9;
+	margin-bottom: 8px;
+}
+
+.cardValue {
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.loadingSpinner {
+	text-align: center;
+	padding: 40px;
+	color: #666;
+}
+
+.errorMessage {
+	background: #ffebee;
+	color: #c62828;
+	padding: 15px;
+	border-radius: 8px;
+	text-align: center;
 }
