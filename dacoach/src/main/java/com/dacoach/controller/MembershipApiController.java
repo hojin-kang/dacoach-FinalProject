@@ -20,11 +20,14 @@ import com.dacoach.kakaopay.KakaoPayService;
 import com.dacoach.kakaopay.KakaoReadyResponse;
 import com.dacoach.kakaopay.PayStatusDTO;
 import com.dacoach.mapper.kakaopay.KakaopayMapper;
+import com.dacoach.mapper.membership.MembershipMapper;
+import com.dacoach.model.membership.MembershipDTO;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/membershipApi")
 @RequiredArgsConstructor
 public class MembershipApiController {
 	
@@ -34,12 +37,19 @@ public class MembershipApiController {
 	@Autowired
 	private KakaopayMapper kakaopayMapper;
 	private final KakaoPayService kakaoPayService;
+	private HttpSession session;
+	@Autowired
+	private MembershipMapper membershipMapper;
+	
+	
+		
 	
 	/**결제요청*/
 	@PostMapping("/ready")
-	public KakaoReadyResponse readyToKakaoPay(@RequestBody Map<String,Object> parameters,String path) {
+	public KakaoReadyResponse readyToKakaoPay(@RequestBody Map<String,Object> parameters,String path,HttpSession se) {
 		 this.kakaoReady=kakaoPayService.kakaoPayReady(parameters);
 		 userPath=path;
+		 session=se;
 		 return kakaoReady;
 	}
 	
@@ -58,6 +68,11 @@ public class MembershipApiController {
 			kakaopayMapper.upPayStatus(map);
 			kakaopayMapper.insertPay(kakaoApprove);
 			
+			MembershipDTO dto=membershipMapper.userMembershipInfo((Integer)session.getAttribute("user_idx"));
+			if(dto.getMember_detail_idx()==1) {
+				dto.setMember_detail_idx(2);
+				membershipMapper.membershipUpdate(dto);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
