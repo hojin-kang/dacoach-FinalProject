@@ -20,7 +20,15 @@
   		update membership set 
   		member_detail_idx=#{member_detail_idx},
   		start_date=sysdate,
-  		end_date=add_months(sysdate,1)
+  		end_date=add_months(sysdate,1),
+  		status=null
+  		where user_idx=#{user_idx}
+  	</update>
+  	
+  	<update id="membershipDown">
+  		update membership set
+  		member_detail_idx=#{member_detail_idx},
+  		status='취소'
   		where user_idx=#{user_idx}
   	</update>
   </mapper>

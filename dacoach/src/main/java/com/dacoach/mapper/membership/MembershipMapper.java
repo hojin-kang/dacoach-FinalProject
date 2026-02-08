@@ -13,4 +13,6 @@ public interface MembershipMapper {
 	public MembershipDetailDTO detailInfo(int detailIdx)throws Exception;
 	
 	public int membershipUpdate(MembershipDTO dto) throws Exception;
+	
+	public int membershipDown(MembershipDTO dto) throws Exception;
 }

@@ -60,4 +60,23 @@ public class MembershipController {
 		return mav;
 		
 	}
+	@GetMapping("/membershipDown")
+	public ModelAndView membershipDown(MembershipDTO dto)	{
+		ModelAndView mav=new ModelAndView();
+					
+		try {
+			dto.setMember_detail_idx(1);
+			dto.setUser_idx((Integer)session.getAttribute("user_idx"));
+			membershipService.membershipDown(dto);
+			mav.addObject("msg","멤버십 해지가 완료되었습니다");
+			mav.addObject("url","/membership/membershipForm");
+			mav.setViewName("/alert");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return mav;
+	}
 }
