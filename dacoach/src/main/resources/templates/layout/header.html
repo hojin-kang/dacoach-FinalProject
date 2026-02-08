@@ -11,7 +11,7 @@
 	          
 	          <!-- 컴퍼니 회원일 때만 메뉴 양진유 추가 -->
 	          <th:block th:if="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
-	            <a th:href="@{/membership}">멤버십</a>
+	            <a href="membership/membershipForm">멤버십</a>
 	            <a th:href="@{/class/company/classList}">클래스</a>
 	          </th:block>
 	          
