@@ -8,8 +8,18 @@
 	
 	        <nav class="gnb">
 	          <a th:href="@{/}">홈</a>
-	          <a th:href="@{/coach/search}">코치찾기</a>
-	          <a th:href="@{/coach/classList}">클래스</a>
+	          
+	          <!-- 컴퍼니 회원일 때만 메뉴 양진유 추가 -->
+	          <th:block th:if="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+	            <a href="membership/membershipForm">멤버십</a>
+	            <a th:href="@{/class/company/classList}">클래스</a>
+	          </th:block>
+	          
+	          <!-- 컴퍼니 회원이 아닐 때는 기본 메뉴 -->
+	          <th:block th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+	            <a th:href="@{/coach/search}">코치찾기</a>
+	            <a th:href="@{/coach/classList}">클래스</a>
+	          </th:block>
 	        </nav>
 	
 	

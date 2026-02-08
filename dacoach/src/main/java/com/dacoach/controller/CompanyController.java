@@ -25,13 +25,14 @@ import com.dacoach.model.company.CompanyProvideDTO;
 import com.dacoach.model.company.CompanyRegionDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.company.CompanyService;
+import com.dacoach.service.membership.MembershipService;
 
 @Controller
 public class CompanyController {
 
 	@Autowired
 	private CompanyService companyService;
-
+	@Autowired MembershipService membershipService;
 	private HashMap<String, Object> m;
 
 	public CompanyController() {
@@ -48,6 +49,7 @@ public class CompanyController {
 	public ModelAndView LoginInfoOk(UsersDTO dto) {
 		try {
 			int idx = companyService.joinOk(dto);
+			int midx=membershipService.defaultMembership(companyService.getUserIdx(dto.getLogin_id()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

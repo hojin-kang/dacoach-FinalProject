@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dacoach.mapper.kakaopay.KakaopayMapper;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

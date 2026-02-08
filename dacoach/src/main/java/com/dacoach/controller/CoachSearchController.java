@@ -59,6 +59,13 @@ public class CoachSearchController {
 			map.put("keyword", keyword);
 			map.put("sort", sort);
 			coachList = coachSearchService.coachList(cp, map);
+			if (coachList != null) {
+			    for (CoachDTO coach : coachList) {
+			        // DB에서 해당 코치의 태그를 가져와서 DTO에 바로 세팅
+			        List<String> tags = coachSearchService.getCoachHashtags(coach.getUser_idx());
+			        coach.setHashtags(tags);
+			    }
+			}
 			mav.addObject("coachList", coachList);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -85,6 +92,8 @@ public class CoachSearchController {
 		//코치상세정보담기
 		try {
 			CoachDTO cdto = coachService.getCoachInfo(user_idx);
+			List<String> myHashtags = coachSearchService.getCoachHashtags(user_idx);
+			mav.addObject("myHashtags", myHashtags);
 			mav.addObject("dto", cdto);
 			mav.setViewName("coach/detail");
 		} catch (Exception e) {
