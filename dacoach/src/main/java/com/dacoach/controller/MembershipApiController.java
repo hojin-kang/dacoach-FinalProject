@@ -78,7 +78,7 @@ public class MembershipApiController {
 			e.printStackTrace();
 		}
 		mav.addObject("msg","결제가 완료되었습니다");
-		mav.addObject("url",userPath);
+		mav.addObject("url","/membership/membershipForm");
 		System.out.println(userPath);
 		mav.setViewName("alert");
 		return mav;

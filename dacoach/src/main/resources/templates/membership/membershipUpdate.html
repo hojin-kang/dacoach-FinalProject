@@ -17,9 +17,9 @@
       	
       </div>
       <div th:if="${dto.member_detail_idx==2}">
-      	<form name="downform" action="/membership/membershipDownGrade">
-      	 <input type="submit" value="멤버십 해지하기"> 
-      	</form>
+      	
+      	 <input type="button" value="멤버십 해지하기" id="membershipDownBtn"> 
+      
       </div>
    </div>
    </main>
@@ -28,8 +28,19 @@
 
 <script th:inline="javascript">
 	var upBtn=document.getElementById('membershipUpBtn');
-	
+	var downBtn=document.getElementById('membershipDownBtn');
+	if(upBtn){
 	upBtn.onclick=function(){
+		membership();
+	}
+	}
+	if(downBtn){
+	downBtn.onclick=function(){
+		location.href='/membership/membershipDown';
+	}
+	}
+	
+	function membership(){
 		
 			kakaopayModule([[${detail.member_detail_idx}]],
 					[[${session.user_idx}]],
