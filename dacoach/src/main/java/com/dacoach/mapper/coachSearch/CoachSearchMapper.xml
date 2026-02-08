@@ -27,5 +27,10 @@
     )
     WHERE rnum BETWEEN #{start} AND #{end}
     ORDER BY rnum ASC
-</select>
+	</select>
+	<select id="getCoachHashtags" parameterType="int" resultType="string">
+    SELECT H.TAGS FROM hashtag H
+    JOIN user_hashtag UH ON H.hashtag_idx = UH.hashtag_idx
+    WHERE UH.user_idx = #{user_idx}
+    </select>
 </mapper>

@@ -184,11 +184,12 @@
             <p class="coach-title">베테랑 코치</p>
             <div class="coach-name-row">
                <h1 th:text="${dto.nickname}">홍길동</h1>
-               <div class="action-icons">
-                  <span>♡</span> <span>🔔</span> </div>
+               
             </div>
          </div>
-
+		<div class="action-icons">
+             <span>♡</span> <span>🚨</span> 
+        </div>
          <div class="header-buttons">
             <button class="btn-header btn-chat-outline">
                채팅 신청 <img src="/img/icon/dakcoach.png" class="btn-icon-sm"> x1
@@ -215,8 +216,14 @@
          <div class="info-item">
             <h3 class="section-title">제공분야</h3>
             <div class="tag-list">
-               <span class="detail-tag">#축구</span>
-               <span class="detail-tag">#농구</span>
+			<a th:each="tag : ${myHashtags}" 
+			   th:href="@{/coach/search(keyword=${tag})}" 
+			   class="detail-tag" 
+			   style="text-decoration: none; color: inherit;">
+			   <span th:text="'#' + ${tag}">#태그명</span>
+			</a>
+				
+				<span th:if="${#lists.isEmpty(myHashtags)}">아직 등록된 태그가 없습니다.</span>
             </div>
          </div>
          <div class="info-item">
@@ -231,10 +238,15 @@
          <div class="info-item">
             <h3 class="section-title">동영상</h3>
             <div class="video-placeholder">
-               <video controls>
-                  <source src="" type="video/mp4">
-               </video>
-            </div>
+			   <video controls th:if="${dto?.video != null}">
+			      <source th:src="@{/uploads/{path}(path=${dto.video})}" type="video/mp4">
+			      브라우저가 비디오 태그를 지원하지 않습니다.
+			   </video>
+			   
+			   <div th:unless="${dto?.video != null}" class="no-video">
+			      <p>등록된 소개 영상이 없습니다.</p>
+			   </div>
+			</div>
          </div>
          <div class="info-item">
             <h3 class="section-title">자격증</h3>

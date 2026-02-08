@@ -1,6 +1,7 @@
 package com.dacoach.model.coach;
 
 import java.sql.Date;
+import java.util.List;
 
 import com.dacoach.model.users.UsersDTO;
 
@@ -28,5 +29,6 @@ public class CoachDTO {
 	private String kakao_key;
 
 	private UsersDTO usersDto;
+	private List<String> hashtags;
 
 }
