@@ -71,7 +71,7 @@
                                             </div>
                                             <div class="name-rating">
                                                 <div class="coach-name" th:text="${dto.nickname}">닉네임</div>
-                                                <div class="coach-rating">★ 4.7(54)</div>
+                                                <div class="coach-rating">★[[${dto.rating}]]([[${dto.review_count}]])</div>
                                             </div>
                                         </div>
                                         
@@ -97,14 +97,41 @@
                                     </div>
                                 </a>
 
-                                <div class="card-footer">
-                                    <button type="button" class="btn-chat">
-                                        채팅 신청 <img src="/img/icon/dakcoach.png" class="btn-icon"> x1
-                                    </button>
-                                    <button type="button" class="btn-match">
-                                        매칭 신청 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
-                                    </button>
-                                </div>
+								<div class="card-footer">
+								    <th:block th:switch="${dto.chatStatus}">
+								        <button type="button" th:case="'RECEIVED'" class="btn-chat" 
+								                th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">
+								            채팅 수락 <img src="/img/icon/dakcoach.png" class="btn-icon"> x1
+								        </button>
+								        <button type="button" th:case="'APPLIED'" class="btn-chat" disabled style="background:#eee; color:#999;">
+								            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon" style="filter: grayscale(1);"> x1
+								        </button>
+								        <button type="button" th:case="'ACCEPTED'" class="btn-chat" onclick="location.href='/chat'">
+								            채팅방 이동 <img src="/img/icon/dakcoach.png" class="btn-icon">
+								        </button>
+								        <button type="button" th:case="*" class="btn-chat" 
+								                th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">
+								            채팅 신청 <img src="/img/icon/dakcoach.png" class="btn-icon"> x1
+								        </button>
+								    </th:block>
+								
+								    <th:block th:switch="${dto.matchStatus}">
+								        <button type="button" th:case="'RECEIVED'" class="btn-match" 
+								                th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">
+								            매칭 수락 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
+								        </button>
+								        <button type="button" th:case="'APPLIED'" class="btn-match" disabled style="background:#666; color:#fff;">
+								            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
+								        </button>
+								        <button type="button" th:case="'ACCEPTED'" class="btn-match" disabled>
+								            매칭 완료 <img src="/img/icon/dakcoach.png" class="btn-icon">
+								        </button>
+								        <button type="button" th:case="*" class="btn-match" 
+								                th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">
+								            매칭 신청 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
+								        </button>
+								    </th:block>
+								</div>
                             </article>
                         </div> </section>
                 </form>
@@ -155,6 +182,47 @@
             handleMinorLoading('majorField', 'minorField', '/minorFields', 'MINOR_FIELD_IDX', 'MINOR_FIELD_NM', 'majorFieldIdx');
             handleMinorLoading('majorRegion', 'minorRegion', '/minorRegions', 'MINOR_REGION_IDX', 'DISTRICT_NM', 'majorRegionIdx');
         });
-    </script>
+
+        function applyAction(type, targetIdx) {
+            const msg = type === 'CHAT' ? "채팅을 신청하시겠습니까?" : "매칭을 신청하시겠습니까?";
+            if (!confirm(msg)) return;
+
+            // @RequestParam을 처리하기 위해 URLSearchParams 사용
+            const params = new URLSearchParams();
+            params.append('type', type);
+            params.append('target_idx', targetIdx);
+
+            fetch('/match/apply', {
+                method: 'POST',
+                headers: {
+                    // 서버가 @RequestParam으로 인식할 수 있도록 Content-Type 설정
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(res => {
+                if (res.status === 'success') {
+                    alert("신청이 성공적으로 완료되었습니다.");
+                    location.reload();
+                } else if (res.status === 'login_required') {
+                    alert("로그인이 필요합니다.");
+                    location.href = '/login';
+                } else if (res.status === 'no_token') {
+                    alert("토큰이 부족합니다.");
+                    location.href = '/tokenHistory';
+                } else {
+                    alert("오류가 발생했습니다. 다시 시도해주세요.");
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert("통신 중 오류가 발생했습니다.");
+            });
+        }
+        </script>
 </body>
 </html>
