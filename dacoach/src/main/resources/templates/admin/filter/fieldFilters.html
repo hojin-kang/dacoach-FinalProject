@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="fieldContent">
+    <style>
+        /* [컬러 아이덴티티 유지] */
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+        }
+
+        .field-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; min-height: 800px; }
+
+        /* [상단 헤더 영역] */
+        .admin-top-bar { 
+            display: flex; align-items: flex-end; gap: 15px; 
+            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
+        }
+        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
+
+        /* [메인 레이아웃: 2컬럼] */
+        .content-layout { display: grid; grid-template-columns: 200px 1fr; gap: 30px; }
+
+        /* [왼쪽: 플로팅 사이드바] */
+        .sidebar-menu { 
+            background-color: var(--mint-bg); border-radius: 25px; padding: 20px 12px;
+            position: sticky; top: 20px; height: fit-content;
+        }
+        .menu-label { font-size: 11px; font-weight: 800; color: var(--mint-main); padding-left: 10px; margin-bottom: 10px; opacity: 0.8; }
+        .major-link {
+            display: block; padding: 12px 18px; border-radius: 15px; margin-bottom: 6px;
+            font-weight: 700; font-size: 14px; color: #6b7280; text-decoration: none; transition: 0.2s;
+        }
+        .major-link:hover { background-color: rgba(157, 187, 181, 0.1); color: var(--mint-main); }
+        .major-link.active { background-color: var(--mint-main); color: white; box-shadow: 0 4px 10px rgba(157, 187, 181, 0.2); }
+
+        /* [오른쪽: 메인 컨트롤러 공간] */
+        .control-panel { background-color: white; }
+
+        /* 등록 폼: 상단 바 스타일 */
+        .registration-box {
+            display: flex; gap: 10px; padding: 15px 20px; background-color: var(--mint-bg); 
+            border-radius: 20px; margin-bottom: 25px; align-items: center;
+        }
+        .reg-input { 
+            flex: 1; border: none; background: white; padding: 12px 20px; 
+            border-radius: 12px; font-size: 14px; outline-color: var(--mint-main);
+        }
+        .reg-btn { 
+            background-color: var(--mint-main); color: white; border: none; 
+            padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer;
+        }
+
+        /* 소분류 리스트: 깔끔한 테이블-카드 혼합형 */
+        .minor-list-header { display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; }
+        .minor-item-card {
+            display: flex; align-items: center; padding: 15px 20px;
+            background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
+            margin-bottom: 10px; transition: 0.2s;
+        }
+        .minor-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        
+        .idx-tag { width: 50px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
+        .name-area { flex: 1; font-weight: 700; font-size: 15px; }
+        .btn-group { display: flex; gap: 8px; }
+
+        /* 버튼 커스텀 */
+        .pill-btn {
+            border: none; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-m-edit { background-color: #eee; color: #666; }
+        .btn-m-save { background-color: var(--mint-main); color: white; display: none; }
+        
+        .inline-edit-input { 
+            width: 80%; padding: 5px 10px; border: 2px solid var(--mint-main); 
+            border-radius: 8px; font-weight: 700; display: none; 
+        }
+    </style>
+
+    <div class="max-w-[1000px] mx-auto p-10 field-admin-container">
+        <div class="admin-top-bar">
+            <h1>Field Management</h1>
+            <span class="current-path" th:text="'Category / ' + ${selectedMajorName}">Category / IT/전자</span>
+        </div>
+
+        <div class="content-layout">
+            <nav class="sidebar-menu">
+                <div class="menu-label">MAJOR CATEGORIES</div>
+				<a th:each="major : ${majorField}"
+					th:href="@{/admin/filter/field(major_field_idx=${major.MAJOR_FIELD_IDX})}"
+					th:classappend="${selectedMajorIdx == major.MAJOR_FIELD_IDX} ? 'active' : ''"
+					class="major-link"> <span th:text="${major.MAJOR_FIELD_CD}">IT/전자</span>
+				</a>
+			</nav>
+
+            <section class="control-panel">
+                <div class="registration-box">
+                    <span style="font-size: 20px;">✨</span>
+                    <form th:action="@{/admin/category/insertMinor}" method="post" class="flex flex-1 gap-2" style="display: flex; width: 100%;">
+                        <input type="hidden" name="major_field_idx" th:value="${selectedMajorIdx}">
+                        <input type="text" name="minor_field_nm" placeholder="새로운 소분류 명칭을 입력하세요" class="reg-input" required>
+                        <button type="submit" class="reg-btn">ADD</button>
+                    </form>
+                </div>
+
+                <div class="minor-list-header">
+                    <div style="width: 50px;">IDX</div>
+                    <div style="flex: 1;">SUB-CATEGORY NAME</div>
+                    <div>ACTIONS</div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(minorField)}" class="text-center py-20 text-gray-300 italic">
+                    등록된 데이터가 없습니다.
+                </div>
+
+                <div th:each="minor : ${minorField}" class="minor-item-card" th:id="'minor-' + ${minor.MINOR_FIELD_IDX}">
+                    <div class="idx-tag" th:text="${minor.MINOR_FIELD_IDX}">01</div>
+                    <div class="name-area">
+                        <span class="m-name-text" th:text="${minor.MINOR_FIELD_NM}">자바</span>
+                        <input type="text" class="inline-edit-input" th:value="${minor.MINOR_FIELD_NM}">
+                    </div>
+                    <div class="btn-group">
+                        <button class="pill-btn btn-m-edit" th:onclick="toggleFieldEdit([[${minor.MINOR_FIELD_IDX}]])">수정</button>
+                        <button class="pill-btn btn-m-save" th:onclick="saveFieldEdit([[${minor.MINOR_FIELD_IDX}]])">저장</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function toggleFieldEdit(idx) {
+            const row = document.getElementById('minor-' + idx);
+            const text = row.querySelector('.m-name-text');
+            const input = row.querySelector('.inline-edit-input');
+            const btnEdit = row.querySelector('.btn-m-edit');
+            const btnSave = row.querySelector('.btn-m-save');
+
+            if(input.style.display === 'none' || input.style.display === '') {
+                text.style.display = 'none';
+                input.style.display = 'inline-block';
+                btnEdit.innerText = '취소';
+                btnSave.style.display = 'inline-block';
+                input.focus();
+            } else {
+                text.style.display = 'inline-block';
+                input.style.display = 'none';
+                btnEdit.innerText = '수정';
+                btnSave.style.display = 'none';
+            }
+        }
+
+        function saveFieldEdit(idx) {
+            const row = document.getElementById('minor-' + idx);
+            const val = row.querySelector('.inline-edit-input').value;
+            if(!val.trim()) return;
+
+            fetch('/admin/category/updateMinor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ minor_field_idx: idx, minor_field_nm: val })
+            }).then(res => res.text()).then(data => {
+                if(data === "success") location.reload();
+            });
+        }
+    </script>
+</div>
+</html>

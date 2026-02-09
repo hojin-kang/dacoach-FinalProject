@@ -316,5 +316,39 @@ public class AdminCoachController {
 		return "admin/dashboard";
 	}
 	
+	@GetMapping("/filter/field")
+	public String fieldContent(Model model,
+			@RequestParam(required = false, defaultValue = "1") Integer major_field_idx) {
+
+		List<Map<String, Object>> majorField = new ArrayList<>();
+		List<Map<String, Object>> minorField = new ArrayList<>();
+		String selectedMajorName = "";
+
+		try {
+			majorField = adminService.getMajorField();
+			minorField = adminService.getMinorField(major_field_idx);
+
+			for (Map<String, Object> map : majorField) {
+				if (map.get("MAJOR_FIELD_IDX").toString().equals(major_field_idx.toString())) {
+					selectedMajorName = (String) map.get("MAJOR_FIELD_CD");
+					break;
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		model.addAttribute("majorField", majorField);
+		model.addAttribute("minorField", minorField);
+
+		model.addAttribute("selectedMajorIdx", major_field_idx);
+		model.addAttribute("selectedMajorName", selectedMajorName);
+
+		model.addAttribute("contentPage", "admin/filter/fieldFilters");
+		model.addAttribute("contentFragment", "fieldContent");
+
+		return "admin/dashboard";
+	}
 	
 }

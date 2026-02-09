@@ -165,4 +165,12 @@
 	join users u on q.user_idx=u.user_idx
 	where q.qna_idx=#{qna_idx}
 	</select>
+	
+	<select id="getMajorField" resultType="map">
+	select * from major_field
+	</select>
+	
+	<select id="getMinorField" parameterType="int" resultType="map">
+	select * from minor_field where major_field_idx=#{major_field_idx}
+	</select>
 </mapper>

@@ -36,4 +36,8 @@ public interface AdminService {
 	List<Map<String, Object>> getNoticeList() throws Exception;
 	public int insertNotice(QnaDTO dto) throws Exception;
 	public QnaDTO getNoticeContent(int qna_idx) throws Exception;
+	
+	//분야 카테고리 관리
+	List<Map<String, Object>> getMajorField() throws Exception;
+	List<Map<String, Object>> getMinorField(int major_field_idx) throws Exception;
 }
