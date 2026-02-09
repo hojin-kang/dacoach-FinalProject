@@ -36,7 +36,7 @@ public class CoachServiceImple implements CoachService {
 
 	@Override
 	public boolean checkNick(String nickname) throws Exception {
-		boolean result=coachMapper.idCheck(nickname)>0?true:false;
+		boolean result=coachMapper.checkNick(nickname)>0?true:false;
 		return result;
 	}
 
