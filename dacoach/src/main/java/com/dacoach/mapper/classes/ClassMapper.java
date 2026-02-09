@@ -55,4 +55,17 @@ public interface ClassMapper {
 
 	// 소지역 IDX로 대지역 정보 조회 (수정 폼 초기화용)
 	Map<String, Object> getRegionInfoByMinorIdx(Integer minorRegionIdx) throws Exception;
+
+	// ⭐ 리뷰 관련 메서드
+	// 특정 클래스의 리뷰 목록 조회
+	List<Map<String, Object>> selectReviewsByClass(int class_idx) throws Exception;
+
+	// 클래스의 평균 평점 조회
+	Double selectAvgRatingByClass(int class_idx) throws Exception;
+
+	// 클래스의 리뷰 개수 조회
+	Integer selectReviewCountByClass(int class_idx) throws Exception;
+
+	// 제공자의 모든 클래스 IDX 조회
+	List<Integer> selectClassIdxByProvider(int provider_idx) throws Exception;
 }

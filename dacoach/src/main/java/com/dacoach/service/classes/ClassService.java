@@ -35,4 +35,17 @@ public interface ClassService {
 	// ⭐ 지역 정보 조회
 	Map<String, Object> getRegionInfoByMinorIdx(Integer minorRegionIdx) throws Exception;
 
+	// ⭐ 리뷰 관련 메서드
+	// 특정 클래스의 리뷰 목록 조회
+	List<Map<String, Object>> getReviewsByClass(int class_idx) throws Exception;
+
+	// 클래스의 평균 평점 조회
+	Double getAvgRatingByClass(int class_idx) throws Exception;
+
+	// 클래스의 리뷰 개수 조회
+	Integer getReviewCountByClass(int class_idx) throws Exception;
+
+	// 제공자의 모든 클래스의 리뷰 목록 조회
+	List<Map<String, Object>> getAllReviewsByProvider(int provider_idx) throws Exception;
+
 }
