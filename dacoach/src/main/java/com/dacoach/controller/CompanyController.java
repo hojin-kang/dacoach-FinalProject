@@ -17,26 +17,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
+import com.dacoach.config.WebSocketConfig;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.company.CompanyProvideDTO;
 import com.dacoach.model.company.CompanyRegionDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.company.CompanyService;
+import com.dacoach.service.file.FileUpload;
 import com.dacoach.service.membership.MembershipService;
 
 @Controller
 public class CompanyController {
+
+    private final WebSocketConfig webSocketConfig;
 
 	@Autowired
 	private CompanyService companyService;
 	@Autowired MembershipService membershipService;
 	private HashMap<String, Object> m;
 
-	public CompanyController() {
+	public CompanyController(WebSocketConfig webSocketConfig) {
 		m = new HashMap<String, Object>();
+		this.webSocketConfig = webSocketConfig;
 	}
 
 	@GetMapping("/companyJoin")
@@ -70,17 +75,34 @@ public class CompanyController {
 	}
 
 	@PostMapping("/company/profile/companyInfoOk")
-	public ModelAndView companyInfoOk(CompanyDTO companyDto, CertDTO certDto, String login_id) {
+	public ModelAndView companyInfoOk(CompanyDTO companyDto,
+										CertDTO certDto,
+										String login_id,
+							@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
+							@RequestParam(value = "certFile", required = false) MultipartFile certFile) {
 		ModelAndView mav = new ModelAndView();
 
 		try {
 			int userIdx=companyService.getUserIdx(login_id);
-			companyDto.setUser_idx(companyService.getUserIdx(login_id));
+			if (photoFile != null && !photoFile.isEmpty()) {
+				String photoPath = FileUpload.saveFile(photoFile, "company/photo");			
+				companyDto.setPhoto(photoPath);				
+				companyDto.setUser_idx(companyService.getUserIdx(login_id));
+			}
+			if (certFile != null && !certFile.isEmpty()) {
+			String certPath = FileUpload.saveFile(certFile, "company/cert");
+			certDto.setCert_file(certPath);
 			certDto.setUser_idx(companyService.getUserIdx(login_id));
-
+			}
 			int infoResult = companyService.companyInfo(companyDto);
 			int certResurt = companyService.insertcert(certDto);
-			
+			if(infoResult<=0||certResurt<=0) {
+				mav.addObject("msg","오류가 발생했습니다 다시 시도해주세요");
+				mav.addObject("url","/");
+				mav.setViewName("alert");
+				return mav;
+			}
+						
 			mav.setViewName("redirect:/company/profile/profileForm?userIdx="+userIdx);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -168,6 +190,13 @@ public class CompanyController {
 		return re;
 	}
 	
+	@PostMapping("/company/profile/companyProfileForm")
+	public ModelAndView companyProfileForm(String idx){
+		ModelAndView mav=new ModelAndView();
+		
+		mav.setViewName("/company/profile/companyProfileForm");
+		return mav;
+	}
 	
 
 }

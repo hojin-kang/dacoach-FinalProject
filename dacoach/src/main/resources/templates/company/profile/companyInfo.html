@@ -13,11 +13,11 @@
    <main class="main">
    
    <div class="container">  
-   <form name="companyJoinOk" action="/company/profile/companyInfoOk" method="post">
+   <form name="companyJoinOk" action="/company/profile/companyInfoOk" method="post" enctype="multipart/form-data">
 	  
       <div class="picUpload">
       	<p class="profilePic">업로드한 사진 올릴영역</p>
-      	<p class="picUpBtn"><input type="file" name="photo" id="profilePicFileId"></p>
+      	<p class="picUpBtn"><input type="file" name="photoFile" id="profilePicFileId"></p>
       </div>
       <div class="profileInfoArea">
       	<textarea rows="4" cols="8" name="intro" placeholder="프로필 설명을 입력해주세요"></textarea>
@@ -34,7 +34,7 @@
    		<p id="companyNumMsg" style="font-size: 0.8rem; margin-top: 5px;"></p>
    		<input type="hidden" name="cert_name" value="사업자등록증">
    		<input type="hidden" name="cert_status" value="대기">
-   		<p class="certFile"><input type="file" name="cert_file"></p>
+   		<p class="certFile"><input type="file" name="certFile"></p>
    	</div>
    <input type="hidden" name="login_id" th:value="${param.login_id}">
   <p><input type="submit" value="저장하고 다음으로"></p>
