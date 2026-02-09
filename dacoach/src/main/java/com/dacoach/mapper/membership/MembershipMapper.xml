@@ -51,7 +51,10 @@
   			sysdate
   		)
   	</insert>
-  	
+  	<update id="bannerUp">
+  		update ad set photo=#{photo}
+  			where member_idx=#{member_idx}
+  	</update>
   	<select id="bannerSelect">
   		select * from ad 
   		<where>

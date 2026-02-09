@@ -23,5 +23,7 @@ public interface MembershipService {
 	
 	public int bannerAdd(AdDTO dto) throws Exception;
 	
+	public int bannerUp(AdDTO dto) throws Exception;
+	
 	public List<AdDTO> bannerSelect(Integer member_idx) throws Exception;
 }
