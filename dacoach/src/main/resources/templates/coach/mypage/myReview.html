@@ -1,10 +1,240 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>나의 리뷰</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/mypage.css}" />
 </head>
 <body>
+	<div th:replace="layout/header :: siteHeader"></div>
 
+	<main class="main">
+		<div class="container">
+			<div class="breadcrumb">
+				<a th:href="@{/mypage}">마이페이지</a>
+				<span class="sep">&gt;</span>
+				<span>나의 리뷰</span>
+			</div>
+
+			<h2 class="pageTitle">나의 리뷰</h2>
+
+			
+			<nav class="detailTabs">
+				
+				<a class="tab active"
+				   th:if="${canWriteReview}"
+				   href="#written">내가 쓴 리뷰</a>
+
+				<a class="tab"
+				   th:classappend="${!canWriteReview} ? 'active' : ''"
+				   th:href="${canWriteReview} ? '#received' : '#received'">내가 받은 리뷰</a>
+			</nav>
+
+			<hr class="divider" />
+
+			<section id="written" class="tabContent active" th:if="${canWriteReview}">
+				<div class="reviewArea">
+				<!-- (내부 분리) 코치에게 쓴 리뷰 -->
+				<h3 class="sectionTitle"><b class="coachB">코치</b>에게 쓴 리뷰</h3>
+
+				<div th:if="${#lists.isEmpty(writtenCoachReviews)}" class="emptyBox">
+					작성한 리뷰가 없습니다.
+				</div>
+
+				<div th:each="r : ${writtenCoachReviews}" class="reviewCard">
+					<div class="reviewRow">
+
+						<div class="reviewLeft">
+							<div class="reviewTitle">
+								<img class="avatarImg"
+									 th:src="${(r.reviewee_photo != null and r.reviewee_photo != '') ? r.reviewee_photo : '/img/default_profile.png'}"
+									 alt="profile" /><span th:text="${r.reviewee_name}">홍길동</span>
+							</div>
+
+							<div class="reviewBody">
+								
+
+								<div class="reviewTextArea">
+									<div class="ratingLine">
+										<div class="stars" th:attr="data-rating=${r.rating}"></div>
+										<span class="ratingNum" th:text="${r.rating}">4.0</span>
+									</div>
+
+									<div class="reviewContent" th:text="${r.content}"></div>
+
+									<div class="tagLine" th:if="${r.tag != null and r.tag != ''}">
+										<span class="tagChip"
+											  th:each="t : ${#strings.arraySplit(r.tag,' ')}"
+											  th:text="${t}">#친절해요</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						
+						<div class="reviewRight" th:if="${userType == 'coach'}">
+							<form th:action="@{/review/coach/delete}" method="post">
+								<input type="hidden" name="review_coach_idx" th:value="${r.review_coach_idx}">
+								<button type="submit" class="btnDelete">삭제</button>
+							</form>
+						</div>
+
+					</div>
+					<div class="cardDivider"></div>
+				</div>
+				
+				</div>
+				<div class="reviewArea">
+
+				<h3 class="sectionTitle" style="margin-top:24px;"><b class="classB">클래스</b>에 쓴 리뷰</h3>
+
+				<div th:if="${#lists.isEmpty(writtenClassReviews)}" class="emptyBox">
+					작성한 리뷰가 없습니다.
+				</div>
+
+				<div th:each="r : ${writtenClassReviews}" class="reviewCard">
+					<div class="reviewRow">
+
+						<div class="reviewLeft">
+							<div class="reviewTitle">
+								<img class="avatarImg"
+									 th:src="${(r.provider_photo != null and r.provider_photo != '') ? r.provider_photo : '/img/default_profile.png'}"
+									 alt="profile" /><span style="color:#777; font-weight:500; margin-right: 4px;"
+									  th:text="'[' + ${r.provider_name} + ']'"> (제공자)</span>
+									  <span th:text="${r.class_title}">클래스명</span>
+								
+							</div>
+
+							<div class="reviewBody">
+								
+
+								<div class="reviewTextArea">
+									<div class="ratingLine">
+										<div class="stars" th:attr="data-rating=${r.rating}"></div>
+										<span class="ratingNum" th:text="${r.rating}">4.0</span>
+									</div>
+
+									<div class="reviewContent" th:text="${r.content}"></div>
+
+									<div class="tagLine" th:if="${r.tag != null and r.tag != ''}">
+										<span class="tagChip"
+											  th:each="t : ${#strings.arraySplit(r.tag,' ')}"
+											  th:text="${t}">#친절해요</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="reviewRight" th:if="${userType == 'coach'}">
+							<form th:action="@{/review/class/delete}" method="post">
+								<input type="hidden" name="review_class_idx" th:value="${r.review_class_idx}">
+								<button type="submit" class="btnDelete">삭제</button>
+							</form>
+						</div>
+
+					</div>
+					<div class="cardDivider"></div>
+				</div></div>
+
+			</section>
+			
+			<section id="received" class="tabContent"
+			         th:classappend="${!canWriteReview} ? ' active' : ''">
+
+				<div th:if="${#lists.isEmpty(receivedCoachReviews)}" class="emptyBox">
+					받은 리뷰가 없습니다.
+				</div>
+
+				<div th:each="r : ${receivedCoachReviews}" class="reviewCard">
+					<div class="reviewRow">
+
+
+							<div class="reviewedBody">
+								<div class="reviewProfileArea">
+								<img class="avatarImg"
+									 th:src="${(r.reviewer_photo != null and r.reviewer_photo != '') ? r.reviewer_photo : '/img/default_profile.png'}"
+									 alt="profile" />
+								<div class="reviewMeta">
+										<span class="userType" th:text="${r.reviewer_label}">일반 코치</span>
+										<span class="writerName" th:text="${r.reviewer_name}">홍길동</span>
+									</div>
+								</div>
+								
+
+								<div class="reviewTextArea">
+									<div class="ratingLine">
+										<div class="stars" th:attr="data-rating=${r.rating}"></div>
+										<span class="ratingNum" th:text="${r.rating}">4.0</span>
+									</div>
+
+									<div class="reviewContent" th:text="${r.content}"></div>
+
+									
+
+									<div class="tagLine" th:if="${r.tag != null and r.tag != ''}">
+										<span class="tagChip"
+											  th:each="t : ${#strings.arraySplit(r.tag,' ')}"
+											  th:text="${t}">#친절해요</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+
+			</section>
+
+		</div>
+	</main>
+
+	<div th:replace="layout/footer :: siteFooter"></div>
+
+	<script>
+	(function () {
+		const tabs = document.querySelectorAll(".detailTabs .tab");
+		const panels = document.querySelectorAll(".tabContent");
+
+		if (!tabs.length) return;
+
+		function activate(hash) {
+			// 탭 active
+			tabs.forEach(t => {
+				const target = t.getAttribute("href");
+				t.classList.toggle("active", target === hash);
+			});
+
+			// 패널 active
+			panels.forEach(p => p.classList.toggle("active", "#" + p.id === hash));
+		}
+
+		// 클릭 이벤트
+		tabs.forEach(tab => {
+			tab.addEventListener("click", (e) => {
+				e.preventDefault();
+				const hash = tab.getAttribute("href");
+				history.replaceState(null, "", hash);
+				activate(hash);
+			});
+		});
+
+		// 처음 로딩: URL hash 있으면 그걸로, 없으면 현재 active tab 기준
+		const initHash = location.hash && document.querySelector(location.hash)
+			? location.hash
+			: (document.querySelector(".detailTabs .tab.active")?.getAttribute("href") || "#received");
+
+		activate(initHash);
+
+		// 별점 렌더
+		document.querySelectorAll(".stars").forEach(el => {
+			const rating = parseFloat(el.dataset.rating || "0");
+			const full = Math.floor(rating);
+			const half = (rating - full) >= 0.5 ? 1 : 0; // 표현은 그냥 ★/☆로 둘거면 half는 무시 가능
+			const empty = 5 - full; // 단순 처리
+			el.textContent = "★".repeat(full) + "☆".repeat(empty);
+		});
+	})();
+	</script>
 </body>
 </html>

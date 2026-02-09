@@ -9,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 import com.dacoach.service.qna.QnaService;
+import com.dacoach.service.review.ReviewService;
 import com.dacoach.model.likes.LikesClassDTO;
 import com.dacoach.model.likes.LikesUserDTO;
 import com.dacoach.model.qna.QnaDTO;
@@ -28,6 +29,9 @@ public class MypageController {
 	
 	@Autowired
 	private LikesService likesService;
+	
+	@Autowired
+	private ReviewService reviewService;
 
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
@@ -85,9 +89,36 @@ public class MypageController {
 	  }
 	
 	@GetMapping("/myReview")
-	public String myReviewList() {
-		return "/coach/mypage/myReview";
+	public ModelAndView myReviewList(HttpSession session) {
+	    ModelAndView mav = new ModelAndView();
+	    if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+	        mav.setViewName("/needLogin");
+	        return mav;
+	    }
+
+	    int user_idx = (Integer) session.getAttribute("user_idx");
+
+	    String userType = reviewService.getUserType(user_idx);
+	    mav.addObject("userType", userType);
+
+	    if ("coach".equals(userType)) {
+	        mav.addObject("writtenCoachReviews", reviewService.getWrittenCoachReviews(user_idx));
+	        mav.addObject("writtenClassReviews", reviewService.getWrittenClassReviews(user_idx));
+	        mav.addObject("canWriteReview", true);
+	    } else {
+	        mav.addObject("writtenCoachReviews", Collections.emptyList());
+	        mav.addObject("writtenClassReviews", Collections.emptyList());
+	        mav.addObject("canWriteReview", false);
+	    }
+
+	    mav.addObject("receivedCoachReviews", reviewService.getReceivedCoachReviews(user_idx));
+
+	    mav.addObject("receivedClassReviews", Collections.emptyList());
+
+	    mav.setViewName("/coach/mypage/myReview");
+	    return mav;
 	}
+
 	
 	
 	

@@ -375,9 +375,20 @@
 }
 
 .sectionTitle{
-  font-size:18px;
-  font-weight:800;
+  font-size:20px;
+  font-weight:600;
   color:#111;
+  margin-bottom: 0px;
+}
+
+.sectionTitle .coachB {
+	color: #328889 !important;
+	font-weight: 700;
+}
+
+.sectionTitle .classB {
+	color: #DC731D !important;
+	font-weight: 700;
 }
 
 .count{
@@ -386,6 +397,11 @@
   font-weight:500;
 }
 
+.reviewArea {
+	border-bottom: 1px solid #e5e7eb;
+	
+	padding: 0 20px 20px;
+}
 /* 카드 그리드 */
 .likesGrid{
   display:grid;
@@ -504,3 +520,186 @@
   .likeCard img{ width:64px; height:64px; }
 }
 
+
+
+/********************* myReview (나의 리뷰) **********************/
+/* =========================
+   탭
+   ========================= */
+.detailTabs{
+  position: sticky;
+  top: 73px;            /* ← 헤더 높이에 맞춰 조절 (ex 70~100px) */
+  z-index: 50;
+  background: #fff;     /* 뒤에 내용 비치지 않게 */
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab{
+  position: relative;
+  padding: 13px 10px;
+  font-weight: 400;
+  font-size: 15px;
+  text-decoration:none;
+  color: #6b7280;
+}
+.tab.active{
+	font-weight: 700;
+  color: #111827;
+}
+.tab.active::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom: 0px;
+  height: 2px;
+  border-radius: 999px;
+  background: #111827;
+}
+
+.divider{
+  display:none; /* 또는 margin 0으로 최소화 */
+}
+
+/* ======================
+   myReview 카드(스크샷 느낌)
+   ====================== */
+.emptyBox{
+  padding: 30px;
+  color: #777;
+  text-align: center;
+}
+
+.reviewCard{
+	padding: 20px 20px 0px; 
+	}
+.reviewRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap: 18px;
+}
+
+.reviewLeft{ flex: 1; }
+
+.reviewTitle{
+display: flex;
+align-items: center;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.reviewBody{
+  display:flex;
+  gap: 14px;
+  background: #F7F8F7;
+  padding: 20px 20px; 
+  border-radius: 18px;
+}
+
+.reviewedBody {
+	display:flex;
+  gap: 14px;
+  background: #F7F8F7;
+  padding: 20px 20px; 
+  border-radius: 18px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.reviewTextArea{ flex: 1; }
+
+.reviewProfileArea {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+.reviewProfileArea img {
+	width: 45px;
+	height: 45px;
+	margin: 0px 0px 5px;
+}
+.reviewMeta {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.userType {
+	font-size: 14px;
+}
+.writerName {
+	font-size: 17px;
+	font-weight: 700;
+}
+.ratingLine{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stars{
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.ratingNum{
+  font-weight: 800;
+  color: #444;
+}
+
+.reviewContent{
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.tagLine{
+  display:flex;
+  gap: 10px;
+}
+
+.tagChip {
+	font-size: 14px;
+	background: #D5D5D5;
+	padding: 5px 9px;
+	border-radius: 999px;
+}
+
+.avatarImg{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eef2f7;
+  margin-right: 10px;
+}
+
+/* 탭 내용 기본은 숨김 */
+.tabContent { display: none; }
+
+/* active만 보여주기 */
+.tabContent.active { display: block; }
+
+/* 탭 버튼 active 표시(선택) */
+.detailTabs .tab.active {
+  font-weight: 700;
+  border-bottom: 2px solid currentColor;
+}
+
+.btnDelete {
+	border: none;
+	outline: none;
+	text-decoration: underline;
+	background: white;
+	cursor: pointer;
+}
