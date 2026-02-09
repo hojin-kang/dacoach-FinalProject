@@ -1,5 +1,8 @@
 package com.dacoach.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,17 +50,23 @@ public class MailController {
 	}
     @PostMapping("/getId")
     @ResponseBody
-    public String getId(@RequestParam String code, @RequestParam String email, HttpSession session) {
-		String sessionCode = (String) session.getAttribute("authCode");
-		if (sessionCode != null && sessionCode.equals(code)) {
-			session.removeAttribute("authCode");
-			String userId = mailService.getId(email);
-			System.out.println(userId);
-			if(userId==null) {
-				return "none";
-			}
-			return userId;
-		}
-		return "false";
-	}
+    public Map<String, Object> getId(@RequestParam String code, @RequestParam String email, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        String sessionCode = (String) session.getAttribute("authCode");
+
+        if (sessionCode != null && sessionCode.equals(code)) {
+            session.removeAttribute("authCode");
+            String userId = mailService.getId(email);
+            
+            if (userId == null) {
+                response.put("status", "none");
+            } else {
+                response.put("status", "success");
+                response.put("userId", userId);
+            }
+        } else {
+            response.put("status", "fail");
+        }
+        return response;
+    }
 }
