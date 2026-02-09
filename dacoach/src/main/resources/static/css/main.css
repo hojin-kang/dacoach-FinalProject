@@ -276,8 +276,8 @@ hr {
 }
 
 .iconBtn {
-  width: 27px;
-  height: 27px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -403,12 +403,7 @@ hr {
 /* ======================
    Notification
 ====================== */
-.iconBtn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 .notiIcon .notiDot {
   position: absolute;

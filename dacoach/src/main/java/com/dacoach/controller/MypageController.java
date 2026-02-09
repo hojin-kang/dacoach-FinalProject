@@ -10,9 +10,11 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 import com.dacoach.service.qna.QnaService;
 import com.dacoach.service.review.ReviewService;
+import com.dacoach.service.token.TokenService;
 import com.dacoach.model.likes.LikesClassDTO;
 import com.dacoach.model.likes.LikesUserDTO;
 import com.dacoach.model.qna.QnaDTO;
+import com.dacoach.model.token.TokenHistoryDTO;
 import com.dacoach.service.likes.LikesService;
 import com.dacoach.service.mypage.MypageService;
 
@@ -32,6 +34,9 @@ public class MypageController {
 	
 	@Autowired
 	private ReviewService reviewService;
+	
+	@Autowired
+	private TokenService tokenService;
 
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
@@ -123,8 +128,28 @@ public class MypageController {
 	
 	
 	@GetMapping("/myPayment")
-	public String myPaymentList() {
-		return "/coach/mypage/myPayment";
+	public ModelAndView myPaymentList(HttpSession session) {
+ModelAndView mav = new ModelAndView();
+		
+		Integer user_idx = (Integer) session.getAttribute("user_idx");
+        if (user_idx == null || user_idx == 0) {
+        	mav.setViewName("redirect:/needLogin");
+        	return mav;
+        }
+        
+        Integer token_balance = 0;
+        List<TokenHistoryDTO> thdtos = null;
+        
+        try {
+        	thdtos = tokenService.getChargeHistory(user_idx);
+        	mav.addObject("thdto", thdtos);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		mav.setViewName("/coach/mypage/myPayment");
+		
+		return mav;
 	}
 	
 	@GetMapping("/notice")

@@ -44,4 +44,20 @@ public class TokenController {
 		
 		return mav;
 	}
+	
+	@GetMapping("/tokenChargeForm")
+	public ModelAndView tokenChargeForm(HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		
+		Integer user_idx = (Integer) session.getAttribute("user_idx");
+        if (user_idx == null || user_idx == 0) {
+        	mav.setViewName("redirect:/needLogin");
+        	return mav;
+        }
+        
+        mav.setViewName("/coach/token/tokenChargeForm");
+		
+		return mav;
+	}
+	
 }
