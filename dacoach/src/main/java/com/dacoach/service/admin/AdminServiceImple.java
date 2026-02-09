@@ -125,5 +125,15 @@ public class AdminServiceImple implements AdminService {
 	public QnaDTO getNoticeContent(int qna_idx) throws Exception {
 		return adminMapper.getNoticeContent(qna_idx);
 	}
+	
+	@Override
+	public List<Map<String, Object>> getMajorField() throws Exception {
+		return adminMapper.getMajorField();
+	}
+	
+	@Override
+	public List<Map<String, Object>> getMinorField(int major_field_idx) throws Exception {
+		return adminMapper.getMinorField(major_field_idx);
+	}
 
 }
