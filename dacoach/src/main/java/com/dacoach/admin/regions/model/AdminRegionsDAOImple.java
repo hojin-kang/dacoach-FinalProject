@@ -7,6 +7,9 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.dacoach.majorregion.model.MajorRegionDTO;
+import com.dacoach.minorregion.model.MinorRegionDTO;
+
 @Repository
 public class AdminRegionsDAOImple implements AdminRegionsDAO {
 	
@@ -14,8 +17,12 @@ public class AdminRegionsDAOImple implements AdminRegionsDAO {
 	private SqlSessionTemplate sqlSession;
 	private static final String Re = "com.dacoach.mapper.adminregions.AdminRegionsMapper.";
 	@Override
-	public List<Map<String, Object>> selectMajorRegions() {
+	public List<MajorRegionDTO> selectMajorRegions() {
 		return sqlSession.selectList(Re+"selectMajorRegions");
+	}
+	@Override
+	public List<MinorRegionDTO> selectMinorRegions(int majorIdx) {
+		return sqlSession.selectList(Re+"selectMinorRegions", majorIdx);
 	}
 
 }
