@@ -40,20 +40,20 @@
 
             <div class="footerCol">
               <div class="footerColTitle">고객센터</div>
-              <a href="#">공지사항</a>
+              <a th:href="@{/admin/noticepolicy}">공지사항</a>
               <a href="#">1:1 문의</a>
-              <a href="#">운영정책</a>
-            </div>
+              <a th:href="@{/admin/notice}">운영정책</a>
+            </div>	
           </div>
         </div>
 
         <!-- 약관 라인 -->
         <div class="footerPolicy">
-          <a href="#">이용약관</a>
-          <a href="#" class="strong">개인정보 처리방침</a>
-          <a href="#">광고/마케팅</a>
-          <a href="#">사업자정보확인</a>
-          <a href="#">운영정책</a>
+          <a th:href="@{/admin/termsofuse}">이용약관</a>
+          <a th:href="@{/admin/privacypolicy}" class="strong">개인정보 처리방침</a>
+          <a th:href="@{/admin/adMarketing}">광고/마케팅</a>
+          <a th:href="@{/admin/businessInformation}">사업자정보확인</a>
+          <a th:href="@{/admin/notice}">운영정책</a>
         </div>
 
         <!-- 회사 정보 -->
