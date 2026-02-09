@@ -40,5 +40,9 @@ public class MembershipServiceImple implements MembershipService {
 		// TODO Auto-generated method stub
 		return membership.membershipDown(dto);
 	}
-
+	
+	public int autoUpdate(MembershipDTO dto) throws Exception{
+		
+	return membership.autoUpdate(dto);
+	}
 }

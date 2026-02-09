@@ -34,6 +34,7 @@ public class MembershipController {
 		
 		try {
 			dto=membershipService.userMembershipInfo((Integer)session.getAttribute("user_idx"));
+			mav.addObject("detail",membershipService.detailInfo(dto.getMember_detail_idx()));
 			mav.addObject("session",session);
 			mav.addObject("dto",dto);
 			mav.setViewName("/membership/membershipForm");
@@ -65,7 +66,6 @@ public class MembershipController {
 		ModelAndView mav=new ModelAndView();
 					
 		try {
-			dto.setMember_detail_idx(1);
 			dto.setUser_idx((Integer)session.getAttribute("user_idx"));
 			membershipService.membershipDown(dto);
 			mav.addObject("msg","멤버십 해지가 완료되었습니다");
