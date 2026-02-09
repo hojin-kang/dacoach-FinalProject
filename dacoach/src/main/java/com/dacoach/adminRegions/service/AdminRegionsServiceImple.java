@@ -26,6 +26,15 @@ public class AdminRegionsServiceImple implements AdminRegionsService {
 		return dao.selectMinorRegions(majorIdx);
 	}
 
+	@Override
+	public void saveMinorRegion(MinorRegionDTO dto) {
+		if(dto.getMinor_region_idx() > 0) {
+			dao.updateMinorRegions(dto);
+		} else {
+			
+		}
+	}
+
 	
 	
 

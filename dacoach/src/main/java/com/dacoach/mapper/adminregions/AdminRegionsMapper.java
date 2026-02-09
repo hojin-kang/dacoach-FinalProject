@@ -12,4 +12,5 @@ import com.dacoach.minorregion.model.MinorRegionDTO;
 public interface AdminRegionsMapper {
 	List<MajorRegionDTO> selectMajorRegions();
 	List<MinorRegionDTO> selectMinorRegions(int majorIdx);
+	int updateMinorRegions (MajorRegionDTO majorRegion);
 }

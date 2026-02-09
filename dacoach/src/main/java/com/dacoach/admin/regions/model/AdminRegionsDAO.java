@@ -10,5 +10,6 @@ public interface AdminRegionsDAO {
 
 	List<MajorRegionDTO> selectMajorRegions();
 	List<MinorRegionDTO> selectMinorRegions(int majorIdx);
+	int updateMinorRegions (MinorRegionDTO dto);
 
 }

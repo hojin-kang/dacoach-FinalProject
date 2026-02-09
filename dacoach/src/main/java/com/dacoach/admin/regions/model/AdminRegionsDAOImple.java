@@ -24,5 +24,9 @@ public class AdminRegionsDAOImple implements AdminRegionsDAO {
 	public List<MinorRegionDTO> selectMinorRegions(int majorIdx) {
 		return sqlSession.selectList(Re+"selectMinorRegions", majorIdx);
 	}
+	@Override
+	public int updateMinorRegions(MinorRegionDTO dto) {
+		return sqlSession.update(Re+"updateMinorRegions", dto);
+	}
 
 }

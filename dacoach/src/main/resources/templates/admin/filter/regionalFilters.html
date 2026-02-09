@@ -61,18 +61,11 @@
           </div>
 
           <div th:each="s : ${subRegions}" class="region-item">
-            <span th:text="${s.district_nm}">강남구</span>
+            <span th:text="${s.district_nm}"></span>
             
             <div class="actions">
               <button type="button" class="btn-icon" 
                       th:onclick="openSubModal([[${s.minor_region_idx}]], [[${s.district_nm}]])">수정</button>
-              
-              <form th:action="@{/admin/regions/sub/delete}" method="post" 
-                    th:onsubmit="return confirm('정말 삭제하시겠습니까?');" style="display:inline;">
-                <input type="hidden" name="minor_region_idx" th:value="${s.minor_region_idx}">
-                <input type="hidden" name="major_region_idx" th:value="${selectedMajorIdx}">
-                <button type="submit" class="btn-icon">삭제</button>
-              </form>
             </div>
           </div>
         </div>
