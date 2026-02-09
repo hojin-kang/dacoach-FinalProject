@@ -3,9 +3,14 @@ package com.dacoach.service.admin;
 import java.util.*;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.qna.QnaDTO;
+import com.dacoach.model.users.UsersDTO;
 
 
 public interface AdminService {
+	
+	//로그인 관리
+	public UsersDTO adminLogin(Map<String, String> params) throws Exception;
 	
 	// 코치 프로필 및 상태 관리
 	List<Map<String,Object>> getCoachList() throws Exception;
@@ -29,4 +34,6 @@ public interface AdminService {
 	
 	//공지 관리(QnA 테이블 사용)
 	List<Map<String, Object>> getNoticeList() throws Exception;
+	public int insertNotice(QnaDTO dto) throws Exception;
+	public QnaDTO getNoticeContent(int qna_idx) throws Exception;
 }

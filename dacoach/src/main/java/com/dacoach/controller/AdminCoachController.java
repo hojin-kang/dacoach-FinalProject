@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.service.admin.AdminService;
 
 @Controller
@@ -265,6 +266,47 @@ public class AdminCoachController {
 		return "admin/dashboard";
 	}
 	
+	@PostMapping("/support/notice/insert")
+	public String noticeInsert(QnaDTO dto,
+			RedirectAttributes rttr) {
+		
+		try {
+			int result = adminService.insertNotice(dto);
+			
+			if(result > 0) {
+				rttr.addFlashAttribute("msg", "공지사항이 등록되었습니다.");
+			}else {
+				rttr.addFlashAttribute("msg", "공지사항 등록에 실패했습니다.");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+		}
+		
+		return "redirect:/admin/support/notice";
+	}
+	
+	@GetMapping("/support/notice/content")
+	public String noticeContent(Model model, @RequestParam int qna_idx) {
+		
+		QnaDTO dto = new QnaDTO();
+		
+		try {
+			dto = adminService.getNoticeContent(qna_idx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("content", dto);
+		model.addAttribute("contentPage", "admin/support/notice/noticeContent");
+		model.addAttribute("contentFragment", "noticeContent");
+		return "admin/dashboard";
+	}
+	
+	
 	@GetMapping("/support/qna")
 	public String qnaList(Model model) {
 		
@@ -273,4 +315,6 @@ public class AdminCoachController {
 		
 		return "admin/dashboard";
 	}
+	
+	
 }
