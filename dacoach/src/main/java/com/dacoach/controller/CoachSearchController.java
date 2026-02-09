@@ -67,7 +67,9 @@ public class CoachSearchController {
 			    for (CoachDTO coach : coachList) {
 			        // DB에서 해당 코치의 태그를 가져와서 DTO에 바로 세팅
 			        List<String> tags = coachSearchService.getCoachHashtags(coach.getUser_idx());
+			        List<String> interTags = coachSearchService.getInterHashtags(coach.getUser_idx());
 			        coach.setHashtags(tags);
+			        coach.setInterhashtags(interTags);
 			    }
 			}
 			mav.addObject("coachList", coachList);

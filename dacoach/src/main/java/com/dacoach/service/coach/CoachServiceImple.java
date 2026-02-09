@@ -120,7 +120,7 @@ public class CoachServiceImple implements CoachService {
 		HashSet<String> mytags = new HashSet<>();
 		for (String s : myHashtags.split("#")) {
 		    String t = s.trim();
-		    if (!t.isEmpty()) mytags.add(t); // 빈 값과 공백 제거 후 추가
+		    if (!t.isEmpty()) mytags.add("#"+t); // 빈 값과 공백 제거 후 추가
 		}
 		
 		HashSet<String> mytags_original = new HashSet<>(mytags); // 원본 복사본 생성
@@ -135,7 +135,7 @@ public class CoachServiceImple implements CoachService {
 		HashSet<String> intertags = new HashSet<>();
 		for (String s : interHashtags.split("#")) {
 		    String t = s.trim();
-		    if (!t.isEmpty()) intertags.add(t);
+		    if (!t.isEmpty()) intertags.add("#"+t);
 		}
 		HashSet<String> intertags_original = new HashSet<>(intertags); // 원본 복사본 생성
 		intertags.removeAll(allHashtags);

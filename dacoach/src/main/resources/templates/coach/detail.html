@@ -222,12 +222,13 @@
       <div class="info-grid detail-section">
          <div class="info-item">
             <h3 class="section-title">제공분야</h3>
+            [[${dto.major_field_name}]] - [[${dto.minor_field_name}]]
             <div class="tag-list">
 		<a th:each="tag : ${myHashtags}" 
 		   th:href="@{/coach/search(keyword=${tag})}" 
 		   class="detail-tag" 
 		   style="text-decoration: none; color: inherit;">
-		   <span th:text="'#' + ${tag}">#태그명</span>
+		   <span th:text="${tag}">#태그명</span>
 		</a>
 				
 				<span th:if="${#lists.isEmpty(myHashtags)}">아직 등록된 태그가 없습니다.</span>
@@ -235,12 +236,13 @@
          </div>
          <div class="info-item">
             <h3 class="section-title">관심분야</h3>
+            [[${dto.major_field_name}]] - [[${dto.minor_field_name}]]
             <div class="tag-list">
 		<a th:each="tag : ${interHashtags}" 
 		   th:href="@{/coach/search(keyword=${tag})}" 
 		   class="detail-tag" 
 		   style="text-decoration: none; color: inherit;">
-		   <span th:text="'#' + ${tag}">#태그명</span>
+		   <span th:text="${tag}">#태그명</span>
 		</a>
             </div>
          </div>

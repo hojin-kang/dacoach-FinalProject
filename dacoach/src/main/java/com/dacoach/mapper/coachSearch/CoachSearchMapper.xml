@@ -96,29 +96,58 @@
                 #{notiType, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, 'N', SYSDATE)
     </insert>
 
-    <select id="getCoachDetailStatus" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
+	<select id="getCoachDetailStatus" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
         SELECT 
-            A.user_idx, A.coach_idx, A.nickname, A.photo, A.intro, A.video,
+            A.user_idx, 
+            A.coach_idx, 
+            A.nickname, 
+            A.photo, 
+            A.intro, 
+            A.video,
             ROUND(NVL(AVG(rt.rating), 0), 1) AS rating,
             COUNT(rt.content) AS review_count,
+            
+            (SELECT LISTAGG(MF.MINOR_FIELD_NM, ', ') WITHIN GROUP (ORDER BY MF.MINOR_FIELD_NM)
+             FROM COACH_PROVIDE CP
+             JOIN MINOR_FIELD MF ON CP.MINOR_FIELD_IDX = MF.MINOR_FIELD_IDX
+             WHERE CP.COACH_IDX = A.coach_idx) AS minor_field_name,
+
+            (SELECT LISTAGG(MAJOR_FIELD_CD, ', ') WITHIN GROUP (ORDER BY MAJOR_FIELD_CD)
+             FROM (
+                SELECT DISTINCT MAF.MAJOR_FIELD_CD, CP2.COACH_IDX
+                FROM COACH_PROVIDE CP2
+                JOIN MINOR_FIELD MF2 ON CP2.MINOR_FIELD_IDX = MF2.MINOR_FIELD_IDX
+                JOIN MAJOR_FIELD MAF ON MF2.MAJOR_FIELD_IDX = MAF.MAJOR_FIELD_IDX
+             ) DIS_MAF
+             WHERE DIS_MAF.COACH_IDX = A.coach_idx) AS major_field_name,
+
             (SELECT CASE 
                 WHEN IS_CHAT = 'Y' THEN 'ACCEPTED'
                 WHEN CHAT_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'APPLIED'
                 WHEN CHAT_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'RECEIVED'
-                ELSE 'NONE' END FROM MATCH 
+                ELSE 'NONE' END 
+             FROM MATCH 
              WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
                 OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as chatStatus,
+            
             (SELECT CASE 
                 WHEN IS_MATCH = 'Y' THEN 'ACCEPTED'
                 WHEN MATCH_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'APPLIED'
                 WHEN MATCH_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'RECEIVED'
-                ELSE 'NONE' END FROM MATCH 
+                ELSE 'NONE' END 
+             FROM MATCH 
              WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
                 OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as matchStatus
         FROM coach A
         LEFT JOIN review_coach rt ON A.user_idx = rt.reviewee_idx
         WHERE A.user_idx = #{target_idx, jdbcType=INTEGER}
-        GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo, A.intro, A.video
+        GROUP BY 
+            A.user_idx, 
+            A.coach_idx, 
+            A.nickname, 
+            A.photo, 
+            A.intro, 
+            A.video
     </select>
     <update id="useTokens" parameterType="map">
         UPDATE coach
