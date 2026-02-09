@@ -12,4 +12,6 @@ public interface CoachSearchMapper {
     public int insertNotification(Map<String, Object> map);
     public CoachDTO getCoachDetailStatus(Map<String, Object> params);
     public Integer useTokens(Map<String, Object> map);
+    
+    public Integer addTokenHistory(Map thmap);
 }

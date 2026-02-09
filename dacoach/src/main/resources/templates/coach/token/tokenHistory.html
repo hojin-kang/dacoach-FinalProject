@@ -9,7 +9,7 @@
 	<link rel="stylesheet" th:href="@{/css/token.css}" />
 </head>
 <body>
-  <div th:replace="layout/header :: siteHeader"></div>
+  <div th:replace="~{layout/header :: siteHeader}"></div>
 
   <main class="main">
     <div class="container">
@@ -24,7 +24,7 @@
           <div class="tokenInfo">
             <div class="tokenLabel">보유 수량</div>
             <div class="tokenCount">
-              <span class="num" th:text="${tokenBalance}">10</span>개
+              <span class="num" th:text="${token_balance}">10</span>개
             </div>
           </div>
         </div>
@@ -53,15 +53,15 @@
 
           <tbody>
             <!-- 예시: th:each로 반복 -->
-            <tr th:each="h : ${historyList}">
-              <td th:text="${#dates.format(h.createdAt,'yyyy-MM-dd HH:mm')}">2026-01-23 13:19</td>
-              <td th:text="${h.content}">채팅 신청</td>
-              <td th:text="${h.amount}">1</td>
-              <td th:text="${h.balanceAfter}">9</td>
+            <tr th:each="h : ${thdto}">
+              <td th:text="${#dates.format(h.created_at,'yyyy-MM-dd HH:mm:ss')}">시간</td>
+              <td th:text="${h.hist_type}">타입</td>
+              <td th:text="${h.amount}">사용 개수</td>
+              <td th:text="${h.balance_after}">남은 개수</td>
             </tr>
 
             <!-- 데이터 없을 때 -->
-            <tr th:if="${historyList == null or #lists.isEmpty(historyList)}">
+            <tr th:if="${thdto == null or #lists.isEmpty(thdto)}">
               <td class="emptyRow" colspan="4">사용 내역이 없습니다.</td>
             </tr>
           </tbody>
@@ -71,6 +71,6 @@
     </div>
   </main>
 
-  <div th:replace="layout/footer :: siteFooter"></div>
+  <div th:replace="~{layout/footer :: siteFooter}"></div>
 </body>
 </html>

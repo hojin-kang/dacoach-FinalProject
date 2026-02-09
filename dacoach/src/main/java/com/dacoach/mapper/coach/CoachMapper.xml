@@ -79,7 +79,7 @@
 		#{photo, jdbcType=VARCHAR},
 		#{video, jdbcType=VARCHAR},
 		0,
-		0,
+		5,
 		#{kakao_key}
 		)
 	</insert>
