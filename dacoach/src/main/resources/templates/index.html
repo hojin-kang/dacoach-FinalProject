@@ -77,9 +77,12 @@
       </section>
       
       <section class="adBanner">
+      <form name="bannerForm" id="bannerForm" action="/company/profile/companyProfileForm" method="post">
       <div id="banner">
       	<img src="/img/banner/banner.png">
+      	
       </div>	
+      </form>
       </section>
       
       <section class="mainSection">
@@ -101,12 +104,17 @@
 		
 		if(list&&list.length>0){
 		
-		banner.innerHTML='<a href="forward:/company/companyprofile?member_idx='+list[num].member_idx+'"><img src="/uploads/' + list[num].photo +'"></a>';
+		banner.innerHTML='<img src="/uploads/' + list[num].photo +'" onclick="sendForm()"><input type="hidden" name="idx" value="'+list[num].member_idx+'"><input type="hidden" name="fromName" value="banner">';
 		}
 	}
 	
 	window.onload=function(){		
 		window.setInterval('showBanner()',3000);
+	}
+	
+	function sendForm(){
+		var bannerForm=document.getElementById('bannerForm');
+		bannerForm.submit();
 	}
 </script>
 </body>

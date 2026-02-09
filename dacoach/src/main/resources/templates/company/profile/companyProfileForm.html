@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+   <meta charset="UTF-8" />
+   <title>dacoach</title>
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+   <div th:replace="~{layout/header :: siteHeader}"></div>
+
+   <main class="main">
+   <div class="container">
+      준비중입니다
+      프사	이름	소개글	전화번호	문의하기	별점/리뷰	클래스 지역??및 분야?
+      
+      select *
+from users,company,membership,
+(select user_idx 
+from membership 
+where member_idx=4) a
+where users.user_idx=a.user_idx and company.user_idx=a.user_idx and membership.user_idx=a.user_idx
+   </div>
+   </main>
+  
+   <div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
