@@ -91,18 +91,37 @@ public class CoachSearchServiceImple implements CoachSearchService {
 	@Override
 	public Integer acceptChat(int user_idx, int target_idx) throws Exception {
 		HashMap<String, Object> map = new HashMap<>();
-		map.put("user_idx", user_idx);
-		map.put("target_idx", target_idx);
+		map.put("me", user_idx);
+		map.put("target", target_idx);
 		Integer result=coachSearchMapper.acceptChat(map);
+		if(result>0) {
+			CoachDTO coach=coachMapper.getCoachInfo(user_idx);
+	        // 2. 알림 내용 설정
+	        map.put("notiType", "CHAT_ACCEPT");
+	        map.put("content", coach.getNickname()+"님이 채팅을 수락했습니다.");
+
+	        // 3. NOTIFICATION 테이블 삽입
+	        coachSearchMapper.insertNotification(map);
+		}
+		
 		return result;
 	}
 
 	@Override
 	public Integer acceptMatch(int user_idx, int target_idx) throws Exception {
 		HashMap<String, Object> map = new HashMap<>();
-		map.put("user_idx", user_idx);
-		map.put("target_idx", target_idx);
+		map.put("me", user_idx);
+		map.put("target", target_idx);
 		Integer result=coachSearchMapper.acceptMatch(map);
+		if(result>0) {
+			CoachDTO coach=coachMapper.getCoachInfo(user_idx);
+	        // 2. 알림 내용 설정
+	        map.put("notiType", "MATCH_ACCEPT");
+	        map.put("content", coach.getNickname()+"님이 매칭을 수락했습니다.");
+
+	        // 3. NOTIFICATION 테이블 삽입
+	        coachSearchMapper.insertNotification(map);
+		}
 		return result;
 	}
 
