@@ -39,11 +39,11 @@
 
 							<div class="thumb">
 								<!-- 동료 방식: /uploads/ + 전체 경로 -->
-								<img
-									th:src="${classItem.photo != null and classItem.photo != ''} 
-									? '/uploads/' + ${classItem.photo} 
-									: '/images/default_class.png'"
-									onerror="this.src='/images/default_class.png'"
+								<span
+									th:if="${classItem.photo == null or classItem.photo == ''}"
+									class="no-media-message">📷 이미지가 없습니다</span> <img
+									th:if="${classItem.photo != null and classItem.photo != ''}"
+									th:src="'/uploads/' + ${classItem.photo}"
 									th:alt="${classItem.title}" />
 
 								<!-- 상태 배지 -->

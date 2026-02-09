@@ -67,9 +67,9 @@
 								<h3 class="required">클래스 제공 장소</h3>
 								<div class="select-group">
 									<select id="majorRegion" required>
-										
+
 									</select> <select id="minorRegion" name="minor_region_idx" required>
-										
+
 									</select>
 								</div>
 							</div>
@@ -183,9 +183,7 @@
 									<input type="range" id="participantLimit" name="max_user_cnt"
 										min="1" max="99" th:value="${classDTO.max_user_cnt}">
 									<output id="participantOutput"
-										th:text="${classDTO.max_user_cnt} + '명'">
-										10명
-										</o>
+										th:text="${classDTO.max_user_cnt} + '명'"> 10명 </output>
 								</div>
 							</div>
 

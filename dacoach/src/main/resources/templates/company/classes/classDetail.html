@@ -17,11 +17,11 @@
 				<div class="topLeft">
 					<!-- 프로필 이미지 (provider) -->
 					<div class="providerAvatar">
-						<img
-							th:src="${providerPhoto != null and providerPhoto != ''} 
-								? '/uploads/' + ${providerPhoto} 
-								: '/images/default_profile.png'"
-							alt="provider" />
+						<span th:if="${providerPhoto == null or providerPhoto == ''}"
+							class="no-media-message"
+							style="width: 64px; height: 64px; border-radius: 50%; font-size: 11px;">👤</span>
+						<img th:if="${providerPhoto != null and providerPhoto != ''}"
+							th:src="'/uploads/' + ${providerPhoto}" alt="provider" />
 					</div>
 
 					<div class="topInfo">
@@ -31,17 +31,6 @@
 						</div>
 
 						<div class="classTitle" th:text="${classDTO.title}"></div>
-					</div>
-				</div>
-
-				<div class="topRight">
-					<div class="topIcons">
-						<button type="button" class="iconBtn" aria-label="찜">
-							<span class="icon">♡</span>
-						</button>
-						<button type="button" class="iconBtn" aria-label="알림">
-							<span class="icon">🔔</span>
-						</button>
 					</div>
 				</div>
 			</section>
@@ -96,25 +85,22 @@
 						<div class="mediaRow">
 							<!-- 동영상(있으면) -->
 							<div class="mediaBox">
+								<span th:if="${classDTO.video == null or classDTO.video == ''}"
+									class="no-media-message">🎥 영상이 없습니다</span>
 								<video class="mediaVideo" controls
 									th:if="${classDTO.video != null and classDTO.video != ''}">
 									<source th:src="'/uploads/' + ${classDTO.video}"
 										type="video/mp4">
 								</video>
-
-								<!-- 동영상 없으면 이미지 -->
-								<img class="mediaImg"
-									th:if="${classDTO.video == null or classDTO.video == ''}"
-									th:src="@{/images/default_video.png}" alt="video placeholder" />
 							</div>
 
 							<!-- 사진(대표 1장) -->
 							<div class="mediaBox">
-								<img class="mediaImg"
-									th:src="${classDTO.photo != null and classDTO.photo != ''} 
-										? '/uploads/' + ${classDTO.photo} 
-										: '/images/default_class.png'"
-									alt="class photo" />
+								<span th:if="${classDTO.photo == null or classDTO.photo == ''}"
+									class="no-media-message">📷 이미지가 없습니다</span> <img
+									class="mediaImg"
+									th:if="${classDTO.photo != null and classDTO.photo != ''}"
+									th:src="'/uploads/' + ${classDTO.photo}" alt="class photo" />
 							</div>
 
 							<!-- (선택) 슬라이드 화살표 UI만 -->
@@ -147,11 +133,13 @@
 								<div class="reviewCard" th:each="r : ${reviewList}">
 									<div class="reviewTop">
 										<div class="reviewAvatar">
+											<span
+												th:if="${r.reviewerPhoto == null or r.reviewerPhoto == ''}"
+												class="no-media-message"
+												style="width: 48px; height: 48px; border-radius: 50%; font-size: 11px;">👤</span>
 											<img
-												th:src="${r.reviewerPhoto != null and r.reviewerPhoto != ''} 
-													? '/uploads/' + ${r.reviewerPhoto} 
-													: '/images/default_profile.png'"
-												alt="reviewer" />
+												th:if="${r.reviewerPhoto != null and r.reviewerPhoto != ''}"
+												th:src="'/uploads/' + ${r.reviewerPhoto}" alt="reviewer" />
 										</div>
 
 										<div class="reviewMeta">
