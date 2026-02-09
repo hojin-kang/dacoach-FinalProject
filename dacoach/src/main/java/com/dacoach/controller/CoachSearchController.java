@@ -123,10 +123,27 @@ public class CoachSearchController {
 	 	        result.put("status", "login_required");
 	 	        return result;
 	 	    }
-
+	 	    //채팅 및 매칭 수락
+	 	    try {
+				CoachDTO coach=coachService.getCoachInfo(me);
+	 	        if (type.equals("A_CHAT")) {
+	 	        	coachSearchService.acceptChat(me, target_idx);
+	 	            result.put("status", "chat_accepted");
+	 	            return result;
+	 	        }
+	 	        if (type.equals("A_MATCH")) {
+	 	        	coachSearchService.acceptMatch(me, target_idx);
+	 	            result.put("status", "match_accepted");
+	 	            return result;
+	 	        }				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	 	    
 	 	    try {
 	 	        // 2. 토큰 체크
-	 	        var coachInfo = coachService.getCoachInfo(me);
+	 	        CoachDTO coachInfo = coachService.getCoachInfo(me);
 	 	        int mytoken = (coachInfo != null) ? coachInfo.getToken_balance() : 0;
 
 	 	        if (type.equals("CHAT") && mytoken < 1) {
@@ -149,6 +166,10 @@ public class CoachSearchController {
 	 	        e.printStackTrace();
 	 	        result.put("status", "error"); // 예외 발생 시 사용자에게 에러 알림
 	 	    }
+	 	    
+
+	 	    
+	 	    
 	 	    
 	 	    return result;
 	 	}
