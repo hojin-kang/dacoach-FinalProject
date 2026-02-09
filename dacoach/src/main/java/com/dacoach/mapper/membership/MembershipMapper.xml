@@ -27,8 +27,15 @@
   	
   	<update id="membershipDown">
   		update membership set
-  		member_detail_idx=#{member_detail_idx},
   		status='취소'
   		where user_idx=#{user_idx}
+  	</update>
+  	
+  	<update id="autoUpdate">
+  		update membership set
+  		member_detail_idx=1,
+  		start_date=#{end_date}+1,
+  		end_date=null,
+  		status=null
   	</update>
   </mapper>

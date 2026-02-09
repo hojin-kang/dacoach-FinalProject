@@ -15,4 +15,7 @@ public interface MembershipMapper {
 	public int membershipUpdate(MembershipDTO dto) throws Exception;
 	
 	public int membershipDown(MembershipDTO dto) throws Exception;
+	
+	public int autoUpdate(MembershipDTO dto) throws Exception;
+	
 }

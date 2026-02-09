@@ -1,5 +1,9 @@
 package com.dacoach.controller;
 
+import java.sql.*;
+import java.sql.Date;
+import java.util.*;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +18,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CompanyDTO;
+import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.kakao.KakaoService;
+import com.dacoach.service.membership.MembershipService;
 import com.dacoach.service.users.UsersService;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,6 +38,8 @@ public class UserController {
 	private KakaoService kakaoService;
 	@Autowired
 	private CompanyService companyService;
+	@Autowired
+	private MembershipService membershipService;
 
 	// 1. 카카오 로그인 페이지로 리다이렉트
 	@GetMapping("/auth/kakao")
@@ -202,6 +210,19 @@ public class UserController {
 				session.setAttribute("company_idx", dto.getCompany_idx());
 				if(dto.getPhoto() != null ) {
 					session.setAttribute("photo", dto.getPhoto().equals("")? null : dto.getPhoto());
+				}
+				MembershipDTO membershipDto=membershipService.userMembershipInfo(loginUser.getUser_idx());
+				Calendar now=Calendar.getInstance();
+				int year=now.get(Calendar.YEAR);
+				int month=now.get(Calendar.MONTH)+1;
+				int day=now.get(Calendar.DATE);
+				String strDate=""+year+"-"+month+"-"+day;
+				Date nowDay=Date.valueOf(strDate);
+				
+				if(membershipDto.getEnd_date()!=null&&membershipDto.getMember_detail_idx()==2
+						&&membershipDto.getEnd_date().after(nowDay)&&membershipDto.getStatus().equals("취소")) {
+					membershipService.autoUpdate(membershipDto);
+					
 				}
 				mav.addObject("msg", "로그인 성공!\n메인페이지로 이동합니다");
 				mav.addObject("url", "/");
