@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>지역 필터 관리 - 다코치 관리자</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background: #f8f9fa;
+        }
+
+        .region-container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .region-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .region-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .region-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+        }
+
+        /* 대분류 섹션 */
+        .major-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .btn-add {
+            background: #9dbbb5;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            background: #88a9a3;
+            transform: translateY(-1px);
+        }
+
+        /* 대분류 목록 */
+        .major-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .major-item {
+            padding: 14px 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+
+        .major-item:hover {
+            background: #e9ecef;
+        }
+
+        .major-item.active {
+            background: #9dbbb5;
+            color: white;
+            border-color: #88a9a3;
+        }
+
+        .major-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .major-name {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .major-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-icon:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .major-item.active .btn-icon:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* 소분류 섹션 */
+        .minor-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .minor-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+
+        .minor-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        /* 소분류 테이블 */
+        .minor-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .minor-table th {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .minor-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .minor-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge-code {
+            background: #e9ecef;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: monospace;
+            color: #495057;
+        }
+
+        /* 모달 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #95a5a6;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .btn-close:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-label.required::after {
+            content: '*';
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #9dbbb5;
+            box-shadow: 0 0 0 3px rgba(157, 187, 181, 0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #9dbbb5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #88a9a3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* 통계 카드 */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #9dbbb5 0%, #88a9a3 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(157, 187, 181, 0.3);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* 로딩 상태 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e9ecef;
+            border-top-color: #9dbbb5;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="region-container">
+        <!-- 헤더 -->
+        <div class="region-header">
+            <h2>🗺️ 지역 필터 관리</h2>
+        </div>
+
+        <!-- 통계 -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">전체 대분류</div>
+                <div class="stat-value" id="majorCount">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">전체 소분류</div>
+                <div class="stat-value" id="minorCount">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">평균 소분류/대분류</div>
+                <div class="stat-value" id="avgCount">-</div>
+            </div>
+        </div>
+
+        <!-- 메인 레이아웃 -->
+        <div class="region-layout">
+            <!-- 대분류 -->
+            <div class="major-section">
+                <div class="section-header">
+                    <div class="section-title">대분류 지역</div>
+                    <button class="btn-add" onclick="openMajorModal()">+ 추가</button>
+                </div>
+                <div class="major-list" id="majorList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        불러오는 중...
+                    </div>
+                </div>
+            </div>
+
+            <!-- 소분류 -->
+            <div class="minor-section">
+                <div class="section-header">
+                    <div class="section-title" id="minorTitle">소분류 지역</div>
+                    <button class="btn-add" id="btnAddMinor" onclick="openMinorModal()" style="display: none;">+ 추가</button>
+                </div>
+                <div id="minorContent">
+                    <div class="minor-empty">
+                        <div class="minor-empty-icon">📍</div>
+                        <div>대분류를 선택하면 소분류가 표시됩니다</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 대분류 추가/수정 모달 -->
+    <div class="modal" id="majorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="majorModalTitle">대분류 추가</div>
+                <button class="btn-close" onclick="closeMajorModal()">×</button>
+            </div>
+            <form id="majorForm" onsubmit="saveMajor(event)">
+                <input type="hidden" id="majorIdx" name="majorIdx">
+                <div class="form-group">
+                    <label class="form-label required">지역명</label>
+                    <input type="text" class="form-input" id="majorName" name="regionNm" placeholder="예: 서울특별시" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeMajorModal()">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 소분류 추가/수정 모달 -->
+    <div class="modal" id="minorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="minorModalTitle">소분류 추가</div>
+                <button class="btn-close" onclick="closeMinorModal()">×</button>
+            </div>
+            <form id="minorForm" onsubmit="saveMinor(event)">
+                <input type="hidden" id="minorIdx" name="minorIdx">
+                <input type="hidden" id="minorMajorIdx" name="majorIdx">
+                <div class="form-group">
+                    <label class="form-label">대분류</label>
+                    <input type="text" class="form-input" id="minorMajorName" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">지역명</label>
+                    <input type="text" class="form-input" id="minorName" name="districtName" placeholder="예: 강남구" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeMinorModal()">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let selectedMajorIdx = null;
+        let majorData = [];
+        let minorData = [];
+
+        // 초기 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMajorRegions();
+        });
+
+        // 대분류 목록 로드
+        function loadMajorRegions() {
+            fetch('/admin/regions/major')
+                .then(res => res.json())
+                .then(data => {
+                    majorData = data;
+                    renderMajorList();
+                    updateStats();
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('majorList').innerHTML = 
+                        '<div class="loading" style="color: #e74c3c;">불러오기 실패</div>';
+                });
+        }
+
+        // 대분류 목록 렌더링
+        function renderMajorList() {
+            const html = majorData.map(item => `
+                <div class="major-item ${selectedMajorIdx === item.majorRegionIdx ? 'active' : ''}" 
+                     onclick="selectMajor(${item.majorRegionIdx})">
+                    <div class="major-item-left">
+                        <span class="major-name">${item.regionNm}</span>
+                    </div>
+                    <div class="major-item-actions">
+                        <button class="btn-icon" onclick="editMajor(event, ${item.majorRegionIdx})" title="수정">✏️</button>
+                        <button class="btn-icon" onclick="deleteMajor(event, ${item.majorRegionIdx})" title="삭제">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('majorList').innerHTML = html || '<div class="loading">등록된 대분류가 없습니다</div>';
+        }
+
+        // 대분류 선택
+        function selectMajor(majorIdx) {
+            selectedMajorIdx = majorIdx;
+            renderMajorList();
+            loadMinorRegions(majorIdx);
+            
+            const major = majorData.find(m => m.majorRegionIdx === majorIdx);
+            document.getElementById('minorTitle').textContent = `소분류 지역 - ${major.regionNm}`;
+            document.getElementById('btnAddMinor').style.display = 'block';
+        }
+
+        // 소분류 목록 로드
+        function loadMinorRegions(majorIdx) {
+            document.getElementById('minorContent').innerHTML = '<div class="loading"><div class="spinner"></div>불러오는 중...</div>';
+            
+            fetch(`/admin/regions/minor/${majorIdx}`)
+                .then(res => res.json())
+                .then(data => {
+                    minorData = data;
+                    renderMinorList();
+                    updateStats();
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('minorContent').innerHTML = 
+                        '<div class="loading" style="color: #e74c3c;">불러오기 실패</div>';
+                });
+        }
+
+        // 소분류 목록 렌더링
+        function renderMinorList() {
+            if (minorData.length === 0) {
+                document.getElementById('minorContent').innerHTML = 
+                    '<div class="minor-empty"><div class="minor-empty-icon">📍</div><div>등록된 소분류가 없습니다</div></div>';
+                return;
+            }
+
+            const html = `
+                <table class="minor-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">번호</th>
+                            <th>지역명</th>
+                            <th style="width: 150px; text-align: center;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${minorData.map((item, index) => `
+                            <tr>
+                                <td><span class="badge-code">${index + 1}</span></td>
+                                <td>${item.districtNm}</td>
+                                <td style="text-align: center;">
+                                    <button class="btn-icon" onclick="editMinor(${item.minorRegionIdx})" title="수정">✏️</button>
+                                    <button class="btn-icon" onclick="deleteMinor(${item.minorRegionIdx})" title="삭제">🗑️</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('minorContent').innerHTML = html;
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('majorCount').textContent = majorData.length;
+            
+            fetch('/admin/regions/minor/count')
+                .then(res => res.json())
+                .then(count => {
+                    document.getElementById('minorCount').textContent = count;
+                    const avg = majorData.length > 0 ? (count / majorData.length).toFixed(1) : 0;
+                    document.getElementById('avgCount').textContent = avg;
+                });
+        }
+
+        // 대분류 모달 열기
+        function openMajorModal(idx = null) {
+            if (idx) {
+                const major = majorData.find(m => m.majorRegionIdx === idx);
+                document.getElementById('majorModalTitle').textContent = '대분류 수정';
+                document.getElementById('majorIdx').value = major.majorRegionIdx;
+                document.getElementById('majorName').value = major.regionNm;
+            } else {
+                document.getElementById('majorModalTitle').textContent = '대분류 추가';
+                document.getElementById('majorForm').reset();
+            }
+            document.getElementById('majorModal').classList.add('show');
+        }
+
+        function closeMajorModal() {
+            document.getElementById('majorModal').classList.remove('show');
+        }
+
+        // 소분류 모달 열기
+        function openMinorModal(idx = null) {
+            if (!selectedMajorIdx) {
+                alert('대분류를 먼저 선택해주세요');
+                return;
+            }
+
+            const major = majorData.find(m => m.majorRegionIdx === selectedMajorIdx);
+            document.getElementById('minorMajorIdx').value = selectedMajorIdx;
+            document.getElementById('minorMajorName').value = major.regionNm;
+
+            if (idx) {
+                const minor = minorData.find(m => m.minorRegionIdx === idx);
+                document.getElementById('minorModalTitle').textContent = '소분류 수정';
+                document.getElementById('minorIdx').value = minor.minorRegionIdx;
+                document.getElementById('minorName').value = minor.districtNm;
+            } else {
+                document.getElementById('minorModalTitle').textContent = '소분류 추가';
+                document.getElementById('minorForm').reset();
+                document.getElementById('minorMajorIdx').value = selectedMajorIdx;
+                document.getElementById('minorMajorName').value = major.regionNm;
+            }
+            document.getElementById('minorModal').classList.add('show');
+        }
+
+        function closeMinorModal() {
+            document.getElementById('minorModal').classList.remove('show');
+        }
+
+        // 대분류 저장
+        function saveMajor(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            const url = data.majorIdx ? '/admin/regions/major/update' : '/admin/regions/major/add';
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    alert('저장되었습니다');
+                    closeMajorModal();
+                    loadMajorRegions();
+                } else {
+                    alert('저장 실패: ' + result.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('저장 중 오류가 발생했습니다');
+            });
+        }
+
+        // 소분류 저장
+        function saveMinor(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            const url = data.minorIdx ? '/admin/regions/minor/update' : '/admin/regions/minor/add';
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    alert('저장되었습니다');
+                    closeMinorModal();
+                    loadMinorRegions(selectedMajorIdx);
+                } else {
+                    alert('저장 실패: ' + result.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('저장 중 오류가 발생했습니다');
+            });
+        }
+
+        // 수정
+        function editMajor(event, idx) {
+            event.stopPropagation();
+            openMajorModal(idx);
+        }
+
+        function editMinor(idx) {
+            openMinorModal(idx);
+        }
+
+        // 삭제
+        function deleteMajor(event, idx) {
+            event.stopPropagation();
+            if (!confirm('정말 삭제하시겠습니까?\n연결된 소분류도 함께 삭제됩니다.')) return;
+            
+            fetch(`/admin/regions/major/delete/${idx}`, {method: 'POST'})
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('삭제되었습니다');
+                        if (selectedMajorIdx === idx) {
+                            selectedMajorIdx = null;
+                            document.getElementById('minorContent').innerHTML = 
+                                '<div class="minor-empty"><div class="minor-empty-icon">📍</div><div>대분류를 선택하면 소분류가 표시됩니다</div></div>';
+                            document.getElementById('btnAddMinor').style.display = 'none';
+                        }
+                        loadMajorRegions();
+                    } else {
+                        alert('삭제 실패: ' + result.message);
+                    }
+                });
+        }
+
+        function deleteMinor(idx) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+            
+            fetch(`/admin/regions/minor/delete/${idx}`, {method: 'POST'})
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('삭제되었습니다');
+                        loadMinorRegions(selectedMajorIdx);
+                    } else {
+                        alert('삭제 실패: ' + result.message);
+                    }
+                });
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
