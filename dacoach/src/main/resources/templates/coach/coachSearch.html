@@ -105,7 +105,7 @@
 								<div class="card-footer">
 								    <th:block th:switch="${dto.chatStatus}">
 								        <button type="button" th:case="'RECEIVED'" class="btn-chat" 
-								                th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">
+								                th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">
 								            채팅 수락 <img src="/img/icon/dakcoach.png" class="btn-icon"> x1
 								        </button>
 								        <button type="button" th:case="'APPLIED'" class="btn-chat" disabled style="background:#eee; color:#999;">
@@ -122,7 +122,7 @@
 								
 								    <th:block th:switch="${dto.matchStatus}">
 								        <button type="button" th:case="'RECEIVED'" class="btn-match" 
-								                th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">
+								                th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">
 								            매칭 수락 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
 								        </button>
 								        <button type="button" th:case="'APPLIED'" class="btn-match" disabled style="background:#666; color:#fff;">
@@ -189,7 +189,16 @@
         });
 
         function applyAction(type, targetIdx) {
-            const msg = type === 'CHAT' ? "채팅을 신청하시겠습니까?" : "매칭을 신청하시겠습니까?";
+            let msg =null;
+            if(type === 'CHAT') {
+                msg = "채팅 신청을 하시겠습니까? 토큰 1개가 차감됩니다.";
+            } else if(type === 'MATCH') {
+                msg = "매칭 신청을 하시겠습니까? 토큰 3개가 차감됩니다.";
+            } else if(type === 'A_CHAT') {
+                msg = "채팅 신청을 수락하시겠습니까?";
+            } else if(type === 'A_MATCH') {
+                msg = "매칭 신청을 수락하시겠습니까?";
+            }
             if (!confirm(msg)) return;
 
             // @RequestParam을 처리하기 위해 URLSearchParams 사용
@@ -219,7 +228,14 @@
                 } else if (res.status === 'no_token') {
                     alert("토큰이 부족합니다.");
                     location.href = '/tokenHistory';
-                } else {
+                } else if(res.status === 'chat_accepted') {
+                    alert("채팅이 수락되었습니다.");
+                    location.reload();
+                } else if(res.status === 'match_accepted') {
+                    alert("매칭이 수락되었습니다.");
+                    location.reload();
+                }
+                else {
                     alert("오류가 발생했습니다. 다시 시도해주세요.");
                 }
             })

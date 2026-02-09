@@ -192,14 +192,14 @@
         </div>
 			<div class="header-buttons">
 			    <th:block th:switch="${dto.chatStatus}">
-			        <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 수락하기</button>
+			        <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">채팅 수락</button>
 			        <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled style="background:#eee;">채팅 신청됨</button>
 			        <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" onclick="location.href='/chat'">채팅방 이동</button>
 			        <button th:case="*" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 신청</button>
 			    </th:block>
 			
 			    <th:block th:switch="${dto.matchStatus}">
-			        <button th:case="'RECEIVED'" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 수락하기</button>
+			        <button th:case="'RECEIVED'" class="btn-header btn-match-solid" th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">매칭 수락</button>
 			        <button th:case="'APPLIED'" class="btn-header btn-match-solid" disabled style="background:#666;">매칭 신청됨</button>
 			        <button th:case="'ACCEPTED'" class="btn-header btn-match-solid" disabled>매칭 완료</button>
 			        <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
@@ -236,7 +236,7 @@
          </div>
          <div class="info-item">
             <h3 class="section-title">관심분야</h3>
-            [[${dto.major_field_name}]] - [[${dto.minor_field_name}]]
+            [[${dto.major_field_name2}]] - [[${dto.minor_field_name2}]]
             <div class="tag-list">
 		<a th:each="tag : ${interHashtags}" 
 		   th:href="@{/coach/search(keyword=${tag})}" 
@@ -303,7 +303,19 @@
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 		<script th:inline="javascript">
 		function applyAction(type, targetIdx) {
-		    const msg = type === 'CHAT' ? "채팅을 신청하시겠습니까?" : "매칭을 신청하시겠습니까?";
+		    let msg = null;
+		    if(type === 'CHAT') {
+                msg = "채팅 신청을 하시겠습니까? 채팅 토큰 1개가 소모됩니다.";
+            } else if(type === 'MATCH') {
+                msg = "매칭 신청을 하시겠습니까? 매칭 토큰 3개가 소모됩니다.";
+            } else if(type === 'A_CHAT') {
+                msg = "채팅 신청을 수락하시겠습니까?";
+            } else if(type === 'A_MATCH') {
+                msg = "매칭 신청을 수락하시겠습니까?";
+            } else {
+                alert("알 수 없는 요청입니다.");
+                return;
+            }
 		    if (!confirm(msg)) return;
 		
 		    // @RequestParam을 처리하기 위해 URLSearchParams 사용
@@ -333,7 +345,13 @@
 		        } else if (res.status === 'no_token') {
 		            alert("토큰이 부족합니다.");
 		            location.href = '/tokenHistory';
-		        } else {
+		        } else if(res.status === 'chat_accepted') {
+                    alert("채팅 신청을 수락하였습니다.");
+                    location.reload();
+                } else if(res.status === 'match_accepted') {
+                    alert("매칭 신청을 수락하였습니다.");
+                    location.reload();
+                }else {
 		            alert("오류가 발생했습니다. 다시 시도해주세요.");
 		        }
 		    })

@@ -88,4 +88,22 @@ public class CoachSearchServiceImple implements CoachSearchService {
 		return null;
 	}
 
+	@Override
+	public Integer acceptChat(int user_idx, int target_idx) throws Exception {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("user_idx", user_idx);
+		map.put("target_idx", target_idx);
+		Integer result=coachSearchMapper.acceptChat(map);
+		return result;
+	}
+
+	@Override
+	public Integer acceptMatch(int user_idx, int target_idx) throws Exception {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("user_idx", user_idx);
+		map.put("target_idx", target_idx);
+		Integer result=coachSearchMapper.acceptMatch(map);
+		return result;
+	}
+
 }
