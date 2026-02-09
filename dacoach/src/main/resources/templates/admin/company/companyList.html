@@ -1,178 +1,101 @@
-<div th:fragment="contentPage" class="page-wrap font-main">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="contentPage">
+    <style>
+        /* [코치 관리 페이지 디자인 시스템 1:1 적용] */
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+        }
 
-  <style>
+        .company-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; min-height: 800px; }
 
-    .font-main {
-      font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
-      color: #374151;
-    }
+        /* [상단 헤더 영역] */
+        .admin-top-bar { 
+            display: flex; align-items: flex-end; gap: 15px; 
+            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
+        }
+        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
 
-    .page-wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 32px;
-    }
+        /* [메인 레이아웃] */
+        .control-panel { background-color: white; }
 
-    .info-card {
-      background-color: white;
-      border: 2px solid #e5e7eb;
-      border-radius: 40px;
-      padding: 2rem;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      position: relative;
-    }
+        /* 리스트 헤더 스타일 */
+        .list-header { 
+            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
+            margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; 
+            text-align: center;
+        }
 
-    .page-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
+        /* 기업 리스트 카드형 스타일 (coach-item-card와 동일) */
+        .item-card {
+            display: flex; align-items: center; padding: 15px 20px;
+            background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
+            margin-bottom: 10px; transition: 0.2s; text-align: center;
+        }
+        .item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        
+        /* 테이블 열 너비 고정 (기업 데이터에 맞게 조정) */
+        .col-idx { width: 80px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
+        .col-name { flex: 1; font-weight: 700; text-align: left; padding-left: 10px; }
+        .col-biz-num { width: 250px; }
+        .col-status { width: 120px; }
+        .col-action { width: 100px; }
 
-    .section-badge {
-      display: inline-block;
-      background-color: #9dbbb5;
-      color: white;
-      padding: 0.5rem 2rem;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 1rem;
-    }
+        /* 상태 배지 */
+        .pill-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+        }
+    </style>
 
-    .table-wrap {
-      overflow: hidden;
-      border-radius: 16px;
-      border: 1px solid #e5e7eb;
-    }
+    <div class="max-w-[1100px] mx-auto p-10 company-admin-container">
+        <div class="admin-top-bar">
+            <h1>Company Management</h1>
+            <span class="current-path">Customer / Company List</span>
+        </div>
 
-    .list-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: center;
-      font-size: 12px;
-    }
+        <section class="control-panel">
+            <div class="list-header">
+                <div class="col-idx">NO</div>
+                <div class="col-name">COMPANY NAME</div>
+                <div class="col-biz-num">BUSINESS NUMBER</div>
+                <div class="col-status">STATUS</div>
+                <div class="col-action">ACTION</div>
+            </div>
 
-    .list-thead {
-      background-color: #9dbbb5;
-      color: white;
-      height: 2.5rem;
-    }
+            <div th:if="${#lists.isEmpty(list)}" class="text-center py-20 text-gray-300 italic">
+                등록된 데이터가 없습니다.
+            </div>
 
-    .list-thead th {
-      padding: 10px 8px;
-      border-right: 1px solid rgba(255,255,255,0.25);
-      font-weight: 700;
-    }
+            <div th:each="row, stat : ${list}" class="item-card">
+                <div class="col-idx" th:text="${stat.count}"></div>
+                
+                <div class="col-name">
+                    <span th:text="${row['USER_NAME'] != null ? row['USER_NAME'] : '-'}"></span>
+                </div>
 
-    .list-thead th:last-child {
-      border-right: none;
-    }
+                <div class="col-biz-num" th:text="${row['COMPANY_NUM'] != null ? row['COMPANY_NUM'] : '-'}"></div>
 
-    .list-tbody {
-      background-color: #f0f8f7;
-    }
+                <div class="col-status">
+                    <span class="pill-badge"
+                          th:classappend="${row['STATUS'] == 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 
+                                          (row['STATUS'] == 'SUSPENDED' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600')}"
+                          th:text="${row['STATUS'] == 'ACTIVE' ? '사용' : 
+                                   (row['STATUS'] == 'SUSPENDED' ? '정지' : '비활성')}">
+                    </span>
+                </div>
 
-    .list-tbody td {
-      padding: 12px 8px;
-      border-top: 1px solid rgba(255,255,255,0.8);
-      color: #374151;
-    }
-
-    .list-tbody tr:hover td {
-      filter: brightness(98%);
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 12px;
-      line-height: 1;
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .status-active {
-      background-color: rgba(16,185,129,0.15);
-      color: #047857;
-    }
-
-    .status-suspended {
-      background-color: rgba(239,68,68,0.12);
-      color: #b91c1c;
-    }
-
-    .status-inactive {
-      background-color: rgba(107,114,128,0.12);
-      color: #4b5563;
-    }
-
-    .link-detail {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 12px;
-      background-color: #9dbbb5;
-      color: white;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .link-detail:hover {
-      filter: brightness(90%);
-    }
-
-    .empty-row {
-      padding: 28px 10px;
-      color: #9ca3af;
-    }
-  </style>
-
-  <div class="info-card">
-    <div class="page-head">
-      <h2 class="section-badge">기업고객관리</h2>
+                <div class="col-action">
+                    <a class="text-xs font-bold text-white bg-[#9dbbb5] px-3 py-1.5 rounded-lg hover:bg-[#7a9a94] transition-colors"
+                       th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row['USER_IDX']})}">
+                       상세보기
+                    </a>
+                </div>
+            </div>
+        </section>
     </div>
-
-    <div class="table-wrap">
-      <table class="list-table">
-        <thead class="list-thead">
-          <tr>
-            <th>번호</th>
-            <th>이름</th>
-            <th>사업자번호</th>
-            <th>계정상태</th>
-            <th>관리</th>
-          </tr>
-        </thead>
-
-        <tbody class="list-tbody">
-          <tr th:each="row, stat : ${list}">
-            <td th:text="${stat.count}">1</td>
-
-            <td th:text="${row['USER_NAME'] != null ? row['USER_NAME'] : '-'}">-</td>
-
-            <td th:text="${row['COMPANY_NUM'] != null ? row['COMPANY_NUM'] : '-'}">-</td>
-
-            <td>
-              <span class="status-badge status-active"
-                    th:if="${row['STATUS'] == 'ACTIVE'}">사용</span>
-              <span class="status-badge status-suspended"
-                    th:if="${row['STATUS'] == 'SUSPENDED'}">정지</span>
-              <span class="status-badge status-inactive"
-                    th:if="${row['STATUS'] != 'ACTIVE' and row['STATUS'] != 'SUSPENDED'}">비활성화</span>
-            </td>
-
-            <td>
-              <a class="link-detail"
-                 th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row['USER_IDX']})}">상세</a>
-            </td>
-          </tr>
-
-          <tr th:if="${#lists.isEmpty(list)}">
-            <td class="empty-row" colspan="5">조회된 데이터가 없습니다.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div>
+</html>
