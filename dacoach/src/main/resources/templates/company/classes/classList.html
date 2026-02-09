@@ -19,6 +19,18 @@
 
 				<!-- RIGHT: 컨텐츠 -->
 				<section class="contentArea">
+					<div class="contentTop">
+
+						<div class="sortBox">
+							<select class="sortSelect" name="sort" id="sortSelect">
+								<option value="latest" th:selected="${sort == 'all'}">전체</option>
+								<option value="rating" th:selected="${sort == 'will'}">예정된</option>
+								<option value="most" th:selected="${sort == 'ongoing'}">진행중</option>
+								<option value="priceAsc" th:selected="${sort == 'done'}">종료된</option>
+							</select>
+
+						</div>
+					</div>
 					<div class="cardGrid">
 						<!-- 데이터 반복 출력 -->
 						<a th:each="classItem : ${classList}" class="classCard"
