@@ -24,15 +24,17 @@
             />
           </div>
 
-          <div class="topInfo">
-            <div class="providerLine">
-              <div class="providerName" th:text="${providerName}">도자기빛다</div>
-              <div class="providerBadge" title="인증">👑</div>
-            </div>
+					<div class="topInfo">
+						<div class="providerLine">
+							<img src="/img/icon/crown.png" class="providerBadge" alt="프리미엄"
+								th:if="${classDTO.is_premium == 1}" />
+							<div class="providerName" th:text="|[${classDTO.provider_name}]|">컴퍼니명</div>
 
-            <div class="classTitle" th:text="${classDTO.title}">[연인 추천] 도자기 공예 원데이 클래스</div>
-          </div>
-        </div>
+						</div>
+
+						<div class="classTitle" th:text="${classDTO.title}">클래스명</div>
+					</div>
+				</div>
 
         <div class="topRight">
           <div class="topIcons">

@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.dacoach.mapper.coachClasses.CoachClassMapper">
+<mapper
+	namespace="com.dacoach.mapper.coachClasses.CoachClassMapper">
 
-<!-- 대분류 조회 -->
+	<!-- 대분류 조회 -->
 	<select id="selectMajorFields" resultType="map">
 		SELECT
 		MAJOR_FIELD_IDX,
@@ -46,7 +47,7 @@
 		ORDER BY DISTRICT_NM
 	</select>
 
-<!-- 코치 - 클래스 검색 -->
+	<!-- 코치 - 클래스 검색 -->
 	<select id="classSearch" parameterType="map"
 		resultType="com.dacoach.model.coachClasses.CoachClassDTO">
 		SELECT
@@ -65,20 +66,25 @@
 		c.CREATED_AT,
 		c.MAX_USER_CNT,
 
-		NVL(r.AVG_RATING, 0) AS AVG_RATING,
+		NVL(r.AVG_RATING,
+		0) AS AVG_RATING,
 		NVL(r.REVIEW_CNT, 0) AS REVIEW_CNT
 
 		FROM CLASS c
-		LEFT JOIN MINOR_FIELD mf ON mf.MINOR_FIELD_IDX = c.MINOR_FIELD_IDX
-		LEFT JOIN MINOR_REGION mr ON mr.MINOR_REGION_IDX = c.MINOR_REGION_IDX
-		LEFT JOIN USERS u
+		LEFT
+		JOIN MINOR_FIELD mf ON mf.MINOR_FIELD_IDX = c.MINOR_FIELD_IDX
+		LEFT JOIN
+		MINOR_REGION mr ON mr.MINOR_REGION_IDX = c.MINOR_REGION_IDX
+		LEFT JOIN
+		USERS u
 		ON u.USER_IDX = c.PROVIDER_IDX
 		LEFT JOIN (
 		SELECT
 		CLASS_IDX,
 		ROUND(AVG(RATING), 1) AS AVG_RATING,
 		COUNT(*) AS REVIEW_CNT
-		FROM REVIEW_CLASS
+		FROM
+		REVIEW_CLASS
 		GROUP BY CLASS_IDX
 		) r ON r.CLASS_IDX = c.CLASS_IDX
 
@@ -99,14 +105,16 @@
 
 			<if test="q != null and q != ''">
 				AND (c.TITLE LIKE '%' || #{q} || '%'
-				OR c.INTRO LIKE '%' || #{q} || '%')
+				OR c.INTRO LIKE '%'
+				|| #{q} || '%')
 			</if>
 		</where>
 
 		<choose>
 			<when test="sort == 'rating'">
 				ORDER BY r.AVG_RATING DESC NULLS LAST,
-				r.REVIEW_CNT DESC,
+				r.REVIEW_CNT
+				DESC,
 				c.CREATED_AT DESC
 			</when>
 
@@ -128,23 +136,47 @@
 			</otherwise>
 		</choose>
 	</select>
-	
-	<select id="getClassDetail" parameterType="int" resultType="com.dacoach.model.coachClasses.CoachClassDTO">
+
+	<select id="getClassDetail" parameterType="int"
+		resultType="com.dacoach.model.coachClasses.CoachClassDTO">
+<![CDATA[
 		SELECT
-		CLASS_IDX,
-		PROVIDER_IDX,
-		TITLE,
-		INTRO,
-		MINOR_FIELD_IDX,
-		MINOR_REGION_IDX,
-		PRICE,
-		PHOTO,
-		VIDEO,
-		START_DATE,
-		END_DATE,
-		CREATED_AT,
-		MAX_USER_CNT
-		FROM CLASS
-		WHERE CLASS_IDX = #{class_idx}
+		cl.CLASS_IDX,
+		cl.PROVIDER_IDX,
+		cl.TITLE,
+		cl.INTRO,
+		cl.MINOR_FIELD_IDX,
+		cl.MINOR_REGION_IDX,
+		cl.PRICE,
+		cl.PHOTO,
+		cl.VIDEO,
+		cl.START_DATE,
+		cl.END_DATE,
+		cl.CREATED_AT,
+		cl.MAX_USER_CNT,
+
+		u.USER_NAME AS provider_name,
+
+		CASE
+		WHEN md.MEMBER_TYPE = '프리미엄'
+		AND m.STATUS = 'BEING'
+		AND SYSDATE >= m.START_DATE
+		AND (m.END_DATE IS NULL OR SYSDATE <= m.END_DATE)
+		THEN 1
+		ELSE 0
+		END AS is_premium
+
+		FROM CLASS cl
+		JOIN USERS u ON u.USER_IDX = cl.PROVIDER_IDX
+
+		LEFT JOIN MEMBERSHIP m
+		ON m.USER_IDX = cl.PROVIDER_IDX
+
+		LEFT JOIN MEMBERSHIP_DETAIL md
+		ON md.MEMBER_DETAIL_IDX = m.MEMBER_DETAIL_IDX
+
+		WHERE cl.CLASS_IDX = #{class_idx}
+]]>
 	</select>
-	</mapper>
+
+</mapper>

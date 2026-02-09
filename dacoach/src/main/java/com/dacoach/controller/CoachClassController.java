@@ -104,7 +104,6 @@ public class CoachClassController {
 		mav.addObject("isLiked", isLiked);
 
 		// 화면 최소값
-		mav.addObject("providerName", "");
 		mav.addObject("providerPhoto", "");
 		mav.addObject("avgRating", 0);
 		mav.addObject("reviewCount", 0);
