@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,9 +25,12 @@ public class AdminRegionsController {
 	}
 	
 	@GetMapping("/major")
-	@ResponseBody
-	public List<Map<String, Object>> getMajorRegions() {
-		return service.getMajorRegions();
+	public String getMajorRegions(Model model) {	
+		List<Map<String, Object>> majorRegions = service.getMajorRegions();
+		model.addAttribute("majorRegions", majorRegions);
+		model.addAttribute("contentPage", "admin/filter/regionalFilters");
+		model.addAttribute("contentFragment", "contentPage");
+		return "admin/dashboard";
 	}
 	
 }
