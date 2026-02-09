@@ -100,7 +100,7 @@ public class MembershipController {
 		try {
 			adDTO=membershipService.bannerSelect(dto.getMember_idx());
 			mav.addObject("dto",adDTO);
-			String action=adDTO==null?"/membership/bannerAdd":"/membership/bannerUp";
+			String action=adDTO==null||adDTO.size()==0?"add":"update";
 			mav.addObject("action",action);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -112,13 +112,18 @@ public class MembershipController {
 	
 	@PostMapping("/bannerAdd")
 	public ModelAndView bannerAdd(AdDTO adDto,
-			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile) {
+			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
+			String action) {
 		ModelAndView mav=new ModelAndView();
-		
+		System.out.println(action);
 		if (photoFile != null && !photoFile.isEmpty()) {
-			String photoPath = FileUpload.saveFile(photoFile, "membership/banner");
+			
 			try {
 				dto=membershipService.userMembershipInfo((Integer)session.getAttribute("user_idx"));
+			switch(action) {
+			case "add":	
+				String photoPath = FileUpload.saveFile(photoFile, "membership/banner");
+				
 				adDto.setPhoto(photoPath);
 				adDto.setMember_idx(dto.getMember_idx());
 				int result=membershipService.bannerAdd(adDto);
@@ -128,9 +133,29 @@ public class MembershipController {
 				}else {
 					mav.addObject("msg","베너 등록 실패하였습니다 잠시후 다시 시도해주세요");
 					mav.addObject("url","/membership/membershipForm");
-				}
+				}break;
+			case "update":
+					List<AdDTO> list=membershipService.bannerSelect(dto.getMember_idx());
+					if(list!=null) {
+					String upPhotoPath=list.get(0).getPhoto();
+					FileUpload.deleteFile(upPhotoPath);
+					upPhotoPath = FileUpload.saveFile(photoFile, "membership/banner");
+					
+					adDto.setPhoto(upPhotoPath);
+					adDto.setMember_idx(dto.getMember_idx());
+					int resultUp=membershipService.bannerUp(adDto);
+					if(resultUp>0) {
+						mav.addObject("msg","베너 등록 성공하였습니다");
+						mav.addObject("url","/membership/membershipForm");					
+					}else {
+						mav.addObject("msg","베너 등록 실패하였습니다 잠시후 다시 시도해주세요");
+						mav.addObject("url","/membership/membershipForm");
+					}
+				}break;
+			}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				mav.addObject("msg","베너 등록 실패하였습니다 잠시후 다시 시도해주세요");
+				mav.addObject("url","/membership/membershipForm");
 				e.printStackTrace();
 			}
 			

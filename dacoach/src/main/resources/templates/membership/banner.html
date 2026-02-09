@@ -16,10 +16,11 @@
    <div th:unless="${#lists.isEmpty(dto)}">
    	현재 베너:<img th:src="'/uploads/' + ${dto[0].photo}" style="max-width: 868px; max-height: 120px; border-radius: 0px;">
    </div>
-   <form name="bannerForm" th:action="${action}" method="post" enctype="multipart/form-data">
+   <form name="bannerForm" action="/membership/bannerAdd" method="post" enctype="multipart/form-data">
    	  <div class="fileArea" id="fileArea"></div>
       <input type="file" name="photoFile" id="fileInput">
       <div class="fileInfo">가로: 868px, 세로: 120px</div>
+      <input type="hidden" name="action" th:value="${action}">
       <input type="submit" value="베너등록">
    </form>
    </div>

@@ -55,6 +55,9 @@ public class MembershipServiceImple implements MembershipService {
 		return membership.bannerAdd(dto);
 	}
 	
+	public int bannerUp(AdDTO dto) throws Exception{
+		return membership.bannerUp(dto);
+	}
 	public List<AdDTO> bannerSelect(Integer member_idx) throws Exception{
 		return membership.bannerSelect(member_idx);
 	}
