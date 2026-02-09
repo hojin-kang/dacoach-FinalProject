@@ -86,7 +86,8 @@
 		ORDER BY DISTRICT_NM
 	</select>
 
-	<select id="selectClassesByProvider" parameterType="int"
+	<!-- 클래스 조회 (상태별 정렬 기능 추가) -->
+	<select id="selectClassesByProvider" parameterType="map"
 		resultType="com.dacoach.model.classes.ClassDTO">
 		SELECT
 		CLASS_IDX,
@@ -104,8 +105,28 @@
 		MAX_USER_CNT
 		FROM CLASS
 		WHERE PROVIDER_IDX = #{provider_idx}
-		ORDER BY
-		CREATED_AT DESC
+		<choose>
+			<!-- 종료된 클래스 -->
+			<when test="sort == 'done'">
+				AND END_DATE &lt; SYSDATE
+				ORDER BY END_DATE DESC
+			</when>
+			<!-- 진행중 클래스 -->
+			<when test="sort == 'ongoing'">
+				AND START_DATE &lt;= SYSDATE AND END_DATE &gt;=
+				SYSDATE
+				ORDER BY START_DATE DESC
+			</when>
+			<!-- 예정된 클래스 -->
+			<when test="sort == 'will'">
+				AND START_DATE &gt; SYSDATE
+				ORDER BY START_DATE ASC
+			</when>
+			<!-- 전체 -->
+			<otherwise>
+				ORDER BY CREATED_AT DESC
+			</otherwise>
+		</choose>
 	</select>
 
 	<select id="getClassDetail" parameterType="int"
@@ -211,10 +232,12 @@
 		UPDATE CLASS
 		SET
 		INTRO = #{intro},
-		MINOR_REGION_IDX = #{minor_region_idx},
+		MINOR_REGION_IDX =
+		#{minor_region_idx},
 		PHOTO = #{photo},
 		VIDEO = #{video},
-		START_DATE = #{start_date},
+		START_DATE =
+		#{start_date},
 		END_DATE = #{end_date},
 		MAX_USER_CNT = #{max_user_cnt}
 		WHERE CLASS_IDX = #{class_idx}
@@ -235,9 +258,11 @@
 		mr.REGION_NM AS MAJOR_REGION_NM,
 		mnr.MINOR_REGION_IDX,
 		mnr.DISTRICT_NM AS MINOR_REGION_NM
-		FROM MINOR_REGION mnr
+		FROM
+		MINOR_REGION mnr
 		INNER JOIN MAJOR_REGION mr ON
-		mnr.MAJOR_REGION_IDX = mr.MAJOR_REGION_IDX
+		mnr.MAJOR_REGION_IDX =
+		mr.MAJOR_REGION_IDX
 		WHERE mnr.MINOR_REGION_IDX =
 		#{minorRegionIdx}
 	</select>

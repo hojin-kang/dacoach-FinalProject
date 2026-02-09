@@ -137,7 +137,8 @@ public class ClassController {
 
 	/************* company *************/
 	@GetMapping("/company/classList")
-	public ModelAndView classList(HttpSession session, RedirectAttributes rttr) throws Exception {
+	public ModelAndView classList(@RequestParam(value = "sort", required = false, defaultValue = "all") String sort,
+			HttpSession session, RedirectAttributes rttr) throws Exception {
 		// 기업 회원 체크
 		ModelAndView authCheck = checkCompanyAuth(session);
 		if (authCheck != null)
@@ -151,8 +152,10 @@ public class ClassController {
 			return mav;
 		}
 
-		List<ClassDTO> classList = classService.getClassesByProvider(providerIdx);
+		List<ClassDTO> classList = classService.getClassesByProvider(providerIdx, sort);
 		mav.addObject("classList", classList);
+		mav.addObject("sort", sort);
+		mav.addObject("now", new java.util.Date()); // 현재 날짜 추가
 		return mav;
 	}
 
@@ -219,7 +222,7 @@ public class ClassController {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 			}
 
-			List<ClassDTO> classList = classService.getClassesByProvider(providerIdx);
+			List<ClassDTO> classList = classService.getClassesByProvider(providerIdx, "all");
 			return ResponseEntity.ok(classList);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -140,11 +140,21 @@ public class ClassServiceImple implements ClassService {
 	}
 
 	@Override
-	public List<ClassDTO> getClassesByProvider(Integer providerIdx) throws Exception {
+	public List<ClassDTO> getClassesByProvider(Integer providerIdx, String sort) throws Exception {
 		if (providerIdx == null) {
 			throw new IllegalArgumentException("provider_idx가 필요합니다.");
 		}
-		return classMapper.selectClassesByProvider(providerIdx);
+
+		// sort 파라미터 검증
+		if (sort == null || sort.isEmpty()) {
+			sort = "all";
+		}
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("provider_idx", providerIdx);
+		params.put("sort", sort);
+
+		return classMapper.selectClassesByProvider(params);
 	}
 
 	@Override
