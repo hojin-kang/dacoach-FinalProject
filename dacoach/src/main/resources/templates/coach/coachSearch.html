@@ -90,7 +90,12 @@
                                             <div class="tag-group">
                                                 <div class="group-label">관심분야</div>
                                                 <div class="tags">
-                                                    <span class="tag">#야구</span>
+													<a th:each="tag : ${dto.interhashtags}" 
+											           th:href="@{/coach/search(keyword=${tag})}" 
+											           class="detail-tag" 
+											           style="text-decoration: none; color: inherit;">
+											           <span th:text="'#' + ${tag}">#태그명</span>
+											        </a>
                                                 </div>
                                             </div>
                                         </div>

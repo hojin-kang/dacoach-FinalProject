@@ -102,7 +102,9 @@ public class CoachSearchController {
 	 	        CoachDTO cdto = coachSearchService.getCoachDetailStatus(target_idx, login_idx);
 	 	        
 	 	        List<String> myHashtags = coachSearchService.getCoachHashtags(target_idx);
+	 	        List<String> interHashtags = coachSearchService.getInterHashtags(target_idx);
 	 	        mav.addObject("myHashtags", myHashtags);
+	 	        mav.addObject("interHashtags", interHashtags);
 	 	        mav.addObject("dto", cdto);
 	 	        mav.setViewName("coach/detail");
 	 	    } catch (Exception e) { e.printStackTrace(); }

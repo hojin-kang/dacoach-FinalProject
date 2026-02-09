@@ -35,7 +35,9 @@
                 LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
                 LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
                 LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
+                LEFT JOIN user_hashtag_like UHL ON A.user_idx = UHL.user_idx
                 LEFT JOIN hashtag H ON UH.hashtag_idx = H.hashtag_idx
+                LEFT JOIN hashtag H ON UHL.hashtag_idx = H.hashtag_idx
                 LEFT JOIN review_coach rt ON A.user_idx = rt.reviewee_idx
                 <where>
                     (A.nickname LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%' 
@@ -60,6 +62,11 @@
         JOIN user_hashtag UH ON H.hashtag_idx = UH.hashtag_idx
         WHERE UH.user_idx = #{user_idx, jdbcType=INTEGER}
     </select>
+    <select id="getInterHashtags" parameterType="int" resultType="string">
+        SELECT H.TAGS FROM hashtag H
+        JOIN user_hashtag_like UHL ON H.hashtag_idx = UHL.hashtag_idx
+        WHERE UHL.user_idx = #{user_idx, jdbcType=INTEGER}
+    </select>   
 
 	<update id="upsertMatchRequest" parameterType="map">
 	    MERGE INTO MATCH M

@@ -49,4 +49,6 @@ public interface CoachMapper {
 	public List<Integer> getHashtagIdxs(HashSet set) throws Exception;
 	
 	public void myHashtagMapping(@Param("user_idx")int user_idx,@Param("list")List<Integer> list) throws Exception;
+	
+	public void interHashtagMapping(@Param("user_idx")int user_idx,@Param("list")List<Integer> list) throws Exception;
 }

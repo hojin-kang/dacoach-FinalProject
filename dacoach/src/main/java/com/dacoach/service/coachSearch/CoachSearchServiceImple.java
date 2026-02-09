@@ -32,6 +32,10 @@ public class CoachSearchServiceImple implements CoachSearchService {
     public List getCoachHashtags(int user_idx) throws Exception {
         return coachSearchMapper.getCoachHashtags(user_idx);
     }
+	@Override
+	public List getInterHashtags(int user_idx) throws Exception {
+		return coachSearchMapper.getInterHashtags(user_idx);
+	}
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -74,4 +78,6 @@ public class CoachSearchServiceImple implements CoachSearchService {
 		map.put("amount", amount);
 		return coachSearchMapper.useTokens(map);
 	}
+
+
 }
