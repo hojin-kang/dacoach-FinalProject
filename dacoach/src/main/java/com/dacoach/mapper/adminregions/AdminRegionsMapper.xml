@@ -21,4 +21,15 @@
         where major_region_idx = #{majorRegionIdx}
         order by minor_region_idx
 	</select>
+	
+	<update id="updateMinorRegions" parameterType="com.dacoach.minorregion.model.MinorRegionDTO">
+        update minor_region
+        set district_nm = #{districtNm}
+        where minor_region_idx = #{minorRegionIdx}
+	</update>
+	
+	<insert id="insertMinorRegions" parameterType="com.dacoach.minorregion.model.MinorRegionDTO">
+        insert into minor_region (major_region_idx, district_nm)
+        values (#{majorRegionIdx}, #{districtNm})
+    </insert>
 </mapper>

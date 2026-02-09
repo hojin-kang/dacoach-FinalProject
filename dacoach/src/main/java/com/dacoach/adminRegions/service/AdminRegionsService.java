@@ -10,4 +10,5 @@ public interface AdminRegionsService {
 
 	 List<MajorRegionDTO> getMajorRegions();
 	 List<MinorRegionDTO> getMinorRegions(int majorIdx);
+	 void saveMinorRegion(MinorRegionDTO dto);
 }
