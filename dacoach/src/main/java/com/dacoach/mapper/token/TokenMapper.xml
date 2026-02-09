@@ -1,15 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dacoach.mapper.token.TokenMapper">
-<select id="getMyToken">
-	SELECT token_balance
-	FROM coach
-	WHERE user_idx = #{user_idx}
-</select>
-	
-	<select id="getTokenHistory" resultType="com.dacoach.model.token.TokenHistoryDTO">
-	select * from token_history
-	where user_idx=#{user_idx} order by created_at desc
-	</select>
+
+  <select id="getMyToken" resultType="int">
+    SELECT token_balance
+    FROM coach
+    WHERE user_idx = #{user_idx}
+  </select>
+
+  <select id="getTokenHistory" resultType="com.dacoach.model.token.TokenHistoryDTO">
+    SELECT
+      token_hist_idx,
+      user_idx,
+      hist_type,
+      amount,
+      balance_after,
+      created_at
+    FROM token_history
+    WHERE user_idx = #{user_idx} and hist_type='채팅 신청' or hist_type='매칭 신청'
+    ORDER BY created_at DESC
+  </select>
+  
+  <select id="getChargeHistory" resultType="com.dacoach.model.token.TokenHistoryDTO">
+    SELECT
+      token_hist_idx,
+      user_idx,
+      hist_type,
+      amount,
+      balance_after,
+      created_at
+    FROM token_history
+    WHERE user_idx = #{user_idx} and hist_type='충전'
+    ORDER BY created_at DESC
+  </select>
+
+  <update id="updateTokenBalance">
+    UPDATE coach
+    SET token_balance = #{token_balance}
+    WHERE user_idx = #{user_idx}
+  </update>
+
+  <insert id="insertTokenHistory">
+    INSERT INTO token_history (
+      token_hist_idx,
+      user_idx,
+      hist_type,
+      amount,
+      balance_after,
+      created_at
+    ) VALUES (
+      SEQ_TOKEN_HISTORY.NEXTVAL,
+      #{user_idx},
+      #{hist_type},
+      #{amount},
+      #{balance_after},
+      SYSDATE
+    )
+  </insert>
+
 </mapper>

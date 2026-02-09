@@ -1,11 +1,14 @@
 package com.dacoach.service.token;
 
+import java.util.List;
 import com.dacoach.model.token.TokenHistoryDTO;
-import java.util.*;
 
 public interface TokenService {
-
-	public Integer getMyToken(Integer user_idx) throws Exception;
 	
-	public List<TokenHistoryDTO> getTokenHistory(Integer user_idx) throws Exception;
+    Integer getMyToken(Integer user_idx) throws Exception;
+    List<TokenHistoryDTO> getTokenHistory(Integer user_idx) throws Exception;
+
+    void chargeTokenAfterPay(Integer user_idx, Integer qty) throws Exception;
+    
+    List<TokenHistoryDTO> getChargeHistory(Integer user_idx) throws Exception;
 }
