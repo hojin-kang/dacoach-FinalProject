@@ -138,6 +138,9 @@ public class CoachSearchController {
 	 	        // 3. 신청 로직 실행 (토큰 검증 통과 시에만 실행됨)
 	 	        coachSearchService.applyMatchOrChat(me, target_idx, type);
 	 	        coachSearchService.useTokens(me, type.equals("CHAT") ? 1 : 3);
+	 	        
+	 	        // 4. token_history 데이터 삽입
+	 	        coachSearchService.addTokenHistory(me, type.equals("CHAT")?"채팅 신청":"매칭 신청", type.equals("CHAT")?1:3, type.equals("CHAT")?mytoken-1:mytoken-3);
 	 	        result.put("status", "success");
 
 	 	    } catch (Exception e) {

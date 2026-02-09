@@ -125,5 +125,10 @@
         SET TOKEN_BALANCE = TOKEN_BALANCE - #{amount, jdbcType=INTEGER}
         WHERE USER_IDX = #{user_idx, jdbcType=INTEGER}
     </update>
+    
+    <insert id="addTokenHistory">
+    	insert into token_history
+    	values (SEQ_TOKEN_HISTORY.nextval, #{user_idx}, #{hist_type}, #{amount}, #{balance_after}, sysdate)
+    </insert>
 
 </mapper>

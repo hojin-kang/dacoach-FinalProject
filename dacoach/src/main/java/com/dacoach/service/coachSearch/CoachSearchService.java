@@ -11,4 +11,6 @@ public interface CoachSearchService {
 	public void applyMatchOrChat(int me, int target, String type) throws Exception;
 	CoachDTO getCoachDetailStatus(int target_idx, int login_idx) throws Exception;
 	public Integer useTokens(int user_idx, int amount) throws Exception;
+	
+	public Integer addTokenHistory(Integer user_idx, String hist_type, Integer amount, Integer balance_after) throws Exception;
 }

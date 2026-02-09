@@ -1,8 +1,6 @@
 package com.dacoach.service.coachSearch;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,5 +77,15 @@ public class CoachSearchServiceImple implements CoachSearchService {
 		return coachSearchMapper.useTokens(map);
 	}
 
+	@Override
+	public Integer addTokenHistory(Integer user_idx, String hist_type, Integer amount, Integer balance_after) throws Exception {
+		Map<String, Object> thmap = new HashMap<>();
+	    thmap.put("user_idx", user_idx);
+	    thmap.put("hist_type", hist_type);
+	    thmap.put("amount", amount);
+	    thmap.put("balance_after", balance_after);
+		coachSearchMapper.addTokenHistory(thmap);
+		return null;
+	}
 
 }
