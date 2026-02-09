@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.InternetAddress;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,9 +15,13 @@ import org.thymeleaf.TemplateEngine;
 import lombok.RequiredArgsConstructor;
 import java.io.UnsupportedEncodingException;
 
+import com.dacoach.mapper.coach.CoachMapper;
+
 @Service
 @RequiredArgsConstructor
 public class MailService {
+	@Autowired
+	private CoachMapper coachMapper;
 
 	private final JavaMailSender mailSender;
 	private final TemplateEngine templateEngine;
@@ -46,5 +51,15 @@ public class MailService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public String getId(String email) {
+		String id=null;
+		try {
+			id = coachMapper.getId(email);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return id;
 	}
 }

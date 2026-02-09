@@ -128,8 +128,16 @@ public class UserController {
 	}
 
 	@GetMapping("/login")
-	public String login() {
-		return "users/login";
+	public ModelAndView login(HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		if (session.getAttribute("user_idx") != null) {
+			mav.addObject("msg", "이미 로그인 중입니다.");
+			mav.addObject("url", "/");
+			mav.setViewName("alert");
+		}else {
+			mav.setViewName("users/login");
+		}
+		return mav;
 	}
 
 	@GetMapping("/userType")
@@ -242,6 +250,34 @@ public class UserController {
 		return mav;
 	
 		
+	}
+	//id 찾기 페이지 이동
+	@GetMapping("/idFind")
+	public ModelAndView idFindForm(HttpSession session) {
+		ModelAndView mav=new ModelAndView();
+		if(session.getAttribute("user_idx")!=null) {
+			mav.addObject("msg", "이미 로그인 중입니다.");
+			mav.addObject("url", "/");
+			mav.setViewName("alert");
+		}else {
+			mav.setViewName("users/idFind");
+		}
+		
+		return mav;
+	}
+	//비밀번호 찾기 페이지 이동
+	@GetMapping("/pwdFind")
+	public ModelAndView pwFindForm(HttpSession session) {
+		ModelAndView mav=new ModelAndView();
+		if(session.getAttribute("user_idx")!=null) {
+			mav.addObject("msg", "이미 로그인 중입니다.");
+			mav.addObject("url", "/");
+			mav.setViewName("alert");
+		}else {
+			mav.setViewName("users/pwdFind");
+		}
+		
+		return mav;
 	}
 	
 

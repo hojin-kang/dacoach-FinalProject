@@ -51,4 +51,6 @@ public interface CoachMapper {
 	public void myHashtagMapping(@Param("user_idx")int user_idx,@Param("list")List<Integer> list) throws Exception;
 	
 	public void interHashtagMapping(@Param("user_idx")int user_idx,@Param("list")List<Integer> list) throws Exception;
+	
+	public String getId(String email) throws Exception;
 }

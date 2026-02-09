@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>코치 회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/coach/coachJoin.css}" />
+    <style>
+        /* 추가적인 스타일 가이드 (필요 시 CSS 파일에 이동) */
+        .error-msg { color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none; }
+        .success-msg { color: #2ecc71; font-size: 12px; margin-top: 5px; display: none; }
+        .mt-40 { margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{layout/header :: siteHeader}"></div>
+
+    <main>
+        <div class="signup-container">
+            <h4 class="signup-title">ID찾기</h4>
+
+            
+   
+
+
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
+                        <button type="button" id="sendEmailBtn" class="btn-sub">인증번호 받기</button>
+                    </div>
+                    <span id="emailFormatError" class="error-msg">올바른 형식이 아닙니다.</span>
+                    <span id="emailDupError" class="error-msg">가입되지 않은 이메일입니다.</span>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="authCode" class="form-control" placeholder="인증번호" disabled>
+                        <button type="button" id="verifyCodeBtn" class="btn-sub btn-auth-confirm" disabled>인증</button>
+                    </div>
+                    <span id="authSuccess" class="success-msg"></span>
+                    <span id="authError" class="error-msg">인증번호가 일치하지 않습니다.</span>
+                </div>
+
+                <a href="login"><button type="submit" id="submitBtn" class="btn-submit" disabled>로그인 하러 가기</button></a>
+        </div>
+    </main>
+
+    <div th:replace="~{layout/footer :: siteFooter}"></div>
+    
+    <script th:inline="javascript">
+
+        // 요소 선택 헬퍼
+        const el = (id) => document.getElementById(id);
+        
+        const nodes = {
+            user: el('username'), pass: el('password'), name: el('name'),
+            email: el('email'), auth: el('authCode'),
+            dupBtn: el('checkDuplicate'), sendBtn: el('sendEmailBtn'), verifyBtn: el('verifyCodeBtn'),
+            submitBtn: el('submitBtn'),
+            uSuccess: el('usernameSuccess'), uError: el('usernameError'), pError: el('passwordError'),
+            aSuccess: el('authSuccess'), aError: el('authError'),
+            eFormatError: el('emailFormatError'), eDupError: el('emailDupError')
+        };
+
+        let isIdVerified = false;
+        let isEmailVerified = false;
+
+        // 전체 유효성 검사
+        function checkAllValid() {
+            const isPassOk = nodes.pError.style.display === 'none' && nodes.pass.value !== "";
+            const isNameOk = nodes.name.value.trim() !== "";
+            nodes.submitBtn.disabled = !(isIdVerified && isEmailVerified && isPassOk && isNameOk);
+        }
+
+        // 3. 이메일 형식 검증 + 중복 체크 + 인증번호 발송
+        nodes.sendBtn.addEventListener('click', async () => {
+            const emailValue = nodes.email.value.trim();
+            
+            // 초기화
+            nodes.eFormatError.style.display = 'none';
+            nodes.eDupError.style.display = 'none';
+
+            // [Step 1] 형식 검증
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(emailValue)) {
+                nodes.eFormatError.style.display = 'block';
+                return;
+            }
+
+            try {
+                // [Step 2] 이메일 중복 검사 (Rest API 호출)
+                const checkRes = await fetch(`/api/member/emailCheck?email=${emailValue}`);
+                const isAvailable = await checkRes.json();
+
+                if (isAvailable) {
+                    nodes.eDupError.style.display = 'block';
+                    return;
+                }
+
+                // [Step 3] 인증 메일 발송
+                const sendRes = await fetch(`/api/mail/send?email=${emailValue}`, { method: 'POST' });
+                const result = await sendRes.text();
+
+                if (result === "success") {
+                    alert("인증번호가 발송되었습니다.");
+                    nodes.auth.disabled = false;
+                    nodes.verifyBtn.disabled = false;
+                } else {
+                    alert("메일 발송 중 오류가 발생했습니다.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("서버 통신 중 오류가 발생했습니다.");
+            }
+        });
+
+        // 4. 인증번호 확인
+        nodes.verifyBtn.addEventListener('click', () => {
+            fetch(`/api/mail/getId?code=${nodes.auth.value}&email=${nodes.email.value}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(result => {
+                    if(result == 'false'){
+                    	nodes.aSuccess.style.display = 'none';
+                    	nodes.aError.style.display = 'block';
+                    }else{
+                    	nodes.aSuccess.style.display = 'block';
+                    	nodes.aSuccess.innerHTML = "인증되었습니다. 회원님의 ID는 '" + result + "' 입니다.";
+                    	nodes.aError.style.display = 'none';
+                    	nodes.auth.disabled = nodes.verifyBtn.disabled = true;
+                        nodes.sendBtn.disabled = true;
+                        isEmailVerified = true;
+                        
+                    }
+                    checkAllValid();
+                });
+        });
+
+        // 기타 입력 시 유효성 재체크
+        [nodes.name, nodes.email, nodes.auth].forEach(v => {
+            v.addEventListener('input', () => {
+                if(v === nodes.email) {
+                    nodes.eFormatError.style.display = 'none';
+                    nodes.eDupError.style.display = 'none';
+                }
+                checkAllValid();
+            });
+        });
+    </script>
+</body>
+</html>
