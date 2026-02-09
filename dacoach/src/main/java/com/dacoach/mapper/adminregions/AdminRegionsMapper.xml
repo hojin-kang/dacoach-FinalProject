@@ -23,13 +23,20 @@
 	</select>
 	
 	<update id="updateMinorRegions" parameterType="com.dacoach.minorregion.model.MinorRegionDTO">
-        update minor_region
-        set district_nm = #{districtNm}
-        where minor_region_idx = #{minorRegionIdx}
-	</update>
+        UPDATE MINOR_REGION
+        SET DISTRICT_NM = #{district_nm}
+        WHERE MINOR_REGION_IDX = #{minor_region_idx}
+    </update>
 	
 	<insert id="insertMinorRegions" parameterType="com.dacoach.minorregion.model.MinorRegionDTO">
-        insert into minor_region (major_region_idx, district_nm)
-        values (#{majorRegionIdx}, #{districtNm})
+        INSERT INTO MINOR_REGION (
+            MINOR_REGION_IDX,
+            MAJOR_REGION_IDX,
+            DISTRICT_NM
+        ) VALUES (
+            SEQ_MINOR_REGION.NEXTVAL,
+            #{major_region_idx},
+            #{district_nm}
+        )
     </insert>
 </mapper>
