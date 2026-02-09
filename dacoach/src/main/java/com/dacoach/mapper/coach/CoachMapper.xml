@@ -154,5 +154,9 @@
 	        SELECT #{user_idx}, #{hIdx} FROM DUAL
 	    </foreach>
 	</insert>
-    
+	<select id="getId" parameterType="String" resultType="String">
+        select U.login_id from users U
+        join coach C on U.user_idx = C.user_idx
+        where C.mail = #{email}
+    </select>
 </mapper>

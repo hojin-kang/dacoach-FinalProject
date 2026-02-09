@@ -45,4 +45,19 @@ public class MailController {
 	    }
 	    return false;
 	}
+    @PostMapping("/getId")
+    @ResponseBody
+    public String getId(@RequestParam String code, @RequestParam String email, HttpSession session) {
+		String sessionCode = (String) session.getAttribute("authCode");
+		if (sessionCode != null && sessionCode.equals(code)) {
+			session.removeAttribute("authCode");
+			String userId = mailService.getId(email);
+			System.out.println(userId);
+			if(userId==null) {
+				return "none";
+			}
+			return userId;
+		}
+		return "false";
+	}
 }
