@@ -286,6 +286,8 @@ hr {
 
 .iconBtn img {
 	width: 30px;
+	height: 30px;
+	object-fit: cover;
 }
 
 .iconBtn:last-child img {
