@@ -1,103 +1,150 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="coachContent">
-    <div class="flex justify-between items-center mb-6">
-        <div class="flex items-center gap-3">
-            <h2 class="text-xl font-bold text-gray-800">개인고객관리</h2>
-            <div class="flex items-center bg-pink-100 px-3 py-1 rounded-full border border-pink-200">
-                <span class="text-xs font-semibold text-pink-600">자격증 승인 대기</span>
-                <span class="ml-2 text-sm font-bold text-pink-700" th:text="${certCount}">0</span>
-                <span class="ml-0.5 text-xs text-pink-600">건</span>
-            </div>
+    <style>
+        /* [분야 필터 관리 레이아웃과 동일한 아이덴티티] */
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+        }
+
+        .coach-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; min-height: 800px; }
+
+        /* [상단 헤더 영역] */
+        .admin-top-bar { 
+            display: flex; align-items: flex-end; gap: 15px; 
+            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
+        }
+        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
+
+        /* [메인 레이아웃: 단일 컬럼 혹은 확장 가능 구조] */
+        .control-panel { background-color: white; }
+
+        /* 자격증 대기 요약 박스 (기존 registration-box 스타일 활용) */
+        .summary-box {
+            display: flex; gap: 15px; padding: 15px 25px; background-color: var(--mint-bg); 
+            border-radius: 20px; margin-bottom: 25px; align-items: center;
+        }
+        .summary-label { font-weight: 800; color: var(--mint-dark); font-size: 14px; }
+        .summary-count { background: white; padding: 4px 12px; border-radius: 10px; color: var(--mint-main); font-weight: 900; }
+
+        /* 테이블 헤더 스타일 */
+        .list-header { 
+            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
+            margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; 
+            text-align: center;
+        }
+
+        /* 코치 리스트 카드형 스타일 */
+        .coach-item-card {
+            display: flex; align-items: center; padding: 15px 20px;
+            background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
+            margin-bottom: 10px; transition: 0.2s; text-align: center;
+        }
+        .coach-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        
+        /* 테이블 열 너비 고정 */
+        .col-idx { width: 80px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
+        .col-name { width: 120px; font-weight: 700; }
+        .col-nick { flex: 1; }
+        .col-phone { width: 150px; }
+        .col-date { width: 120px; color: #9ca3af; }
+        .col-status { width: 100px; }
+        .col-cert { width: 150px; cursor: pointer; color: var(--mint-dark); font-weight: 800; }
+
+        /* 상태 배지 */
+        .pill-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+        }
+    </style>
+
+    <div class="max-w-[1100px] mx-auto p-10 coach-admin-container">
+        <div class="admin-top-bar">
+            <h1>Coach Management</h1>
+            <span class="current-path">Customer / Coach List</span>
         </div>
+
+        <section class="control-panel">
+            <div class="summary-box">
+                <span style="font-size: 20px;">🎖️</span>
+                <span class="summary-label">자격증 승인 대기 현황</span>
+                <div class="summary-count">
+                    <span th:text="${certCount}">0</span>건
+                </div>
+            </div>
+
+            <div class="list-header">
+                <div class="col-idx">IDX</div>
+                <div class="col-name">NAME</div>
+                <div class="col-nick">NICKNAME</div>
+                <div class="col-phone">PHONE</div>
+                <div class="col-date">CREATED</div>
+                <div class="col-status">STATUS</div>
+                <div class="col-cert" onclick="sortCertCount()">CERT <span id="sortIcon">↕️</span></div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(coachList)}" class="text-center py-20 text-gray-300 italic">
+                등록된 데이터가 없습니다.
+            </div>
+
+            <div th:each="coach : ${coachList}" class="coach-item-card">
+                <div class="col-idx" th:text="${coach.COACH_IDX}"></div>
+                <div class="col-name">
+                    <a th:text="${coach.USER_NAME}" 
+                       th:href="@{/admin/coach/coachDetail(coach_idx=${coach.COACH_IDX},user_idx=${coach.USER_IDX})}"
+                       class="hover:text-[#9dbbb5] transition-colors"></a>
+                </div>
+                <div class="col-nick" th:text="${coach.NICKNAME}"></div>
+                <div class="col-phone" th:text="${coach.PHONE}"></div>
+                <div class="col-date" th:text="${coach.CREATED_AT != null ? #dates.format(coach.CREATED_AT, 'yyyy-MM-dd') : '-'}"></div>
+                <div class="col-status">
+                    <span class="pill-badge"
+                          th:classappend="${coach.STATUS == 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 
+                                          (coach.STATUS == 'WARNING' ? 'bg-orange-100 text-orange-600' : 
+                                          (coach.STATUS == 'DANGER' ? 'bg-red-100 text-red-600' : 
+                                          (coach.STATUS == 'SUSPENDED' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600')))}"
+                          th:text="${coach.STATUS == 'ACTIVE' ? '사용' : 
+                                   (coach.STATUS == 'WARNING' ? '주의' : 
+                                   (coach.STATUS == 'DANGER' ? '위험' : 
+                                   (coach.STATUS == 'SUSPENDED' ? '정지' : '휴면')))}">
+                    </span>
+                </div>
+                <div class="col-cert">
+                    <div th:if="${coach.CERT_WAIT_COUNT > 0}">
+                        <span class="text-orange-600 text-xs font-extrabold">
+                            확인필요 <span th:text="${coach.CERT_WAIT_COUNT}"></span>건
+                        </span>
+                    </div>
+                    <div th:unless="${coach.CERT_WAIT_COUNT > 0}">
+                        <span class="text-gray-300 text-xs italic">완료</span>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <div class="card !p-0 overflow-hidden">
-        <table class="w-full text-center border-collapse">
-            <thead class="table-thead">
-                <tr>
-                    <th class="py-3 px-4 border-b border-gray-200">코치고유번호</th>
-                    <th class="py-3 px-4 border-b border-gray-200">이름</th>
-                    <th class="py-3 px-4 border-b border-gray-200">닉네임</th>
-                    <th class="py-3 px-4 border-b border-gray-200">연락처</th>
-                    <th class="py-3 px-4 border-b border-gray-200">등록일자</th>
-                    <th class="py-3 px-4 border-b border-gray-200">계정상태</th>
-					<th
-						class="py-3 px-4 border-b border-gray-200 text-pink-600 cursor-pointer hover:bg-pink-50 transition-colors"
-						onclick="sortCertCount()">자격증 확인 <span id="sortIcon">↕️</span>
-					</th>
-				</tr>
-            </thead>
-            <tbody class="bg-white">
-                <tr th:if="${#lists.isEmpty(coachList)}">
-                    <td colspan="7" class="py-10 text-gray-500">등록된 코치가 없습니다.</td>
-                </tr>
+    <script th:inline="javascript">
+        let isAsc = false;
+        function sortCertCount() {
+            const container = document.querySelector('section.control-panel');
+            const rows = Array.from(container.querySelectorAll('.coach-item-card'));
+            const icon = document.getElementById('sortIcon');
 
-                <tr th:unless="${#lists.isEmpty(coachList)}"
-                    th:each="coach : ${coachList}"
-                    class="border-b border-gray-100 hover:bg-gray-50">
+            if (rows.length === 0) return;
 
-                    <td class="py-4" th:text="${coach.COACH_IDX}"></td>
-                    <td class="py-4 font-bold">
-                    	<a th:text="${coach.USER_NAME}" th:href="@{/admin/coach/coachDetail(coach_idx=${coach.COACH_IDX},user_idx=${coach.USER_IDX})}"></a>
-                    </td>
-                    <td class="py-4" th:text="${coach.NICKNAME}"></td>
-                    <td class="py-4" th:text="${coach.PHONE}"></td>
-                    <td class="py-4" th:text="${coach.CREATED_AT != null ? #dates.format(coach.CREATED_AT, 'yyyy-MM-dd') : '-'}"></td>
-                    
-                    <td class="py-4">
-                        <span
-						class="px-3 py-1 rounded-full text-xs font-bold"
-						th:classappend="${coach.STATUS == 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 
-                        (coach.STATUS == 'WARNING' ? 'bg-orange-100 text-orange-600' : 
-                        (coach.STATUS == 'DANGER' ? 'bg-red-100 text-red-600' : 
-                        (coach.STATUS == 'SUSPENDED' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600')))}"
-						th:text="${coach.STATUS == 'ACTIVE' ? '사용' : 
-            		    (coach.STATUS == 'WARNING' ? '주의' : 
-             		    (coach.STATUS == 'DANGER' ? '위험' : 
-             		    (coach.STATUS == 'SUSPENDED' ? '정지' : '휴면')))}">
-						</span>
-					</td>
-					<td class="py-4">
-						<div th:if="${coach.CERT_WAIT_COUNT > 0}">
-							<span
-								class="px-2 py-1 rounded bg-orange-100 text-orange-600 text-xs font-bold border border-orange-200">
-								확인필요 <span th:text="${coach.CERT_WAIT_COUNT}"></span>건
-							</span>
-						</div>
-						<div th:unless="${coach.CERT_WAIT_COUNT > 0}">
-							<span class="text-gray-300 text-xs italic text-center">확인완료</span>
-						</div>
-					</td>
-				</tr>
-            </tbody>
-        </table>
-    </div>
-	<script th:inline="javascript">
-    let isAsc = false; // 정렬 상태 추적 (내림차순/오름차순)
+            rows.sort((a, b) => {
+                const valA = parseInt(a.querySelector('.col-cert span span')?.innerText || 0);
+                const valB = parseInt(b.querySelector('.col-cert span span')?.innerText || 0);
+                return isAsc ? valA - valB : valB - valA;
+            });
 
-    function sortCertCount() {
-        const tbody = document.querySelector('tbody.bg-white');
-        const rows = Array.from(tbody.querySelectorAll('tr:not(.text-gray-500)')); // 데이터가 없는 행 제외
-        const icon = document.getElementById('sortIcon');
-
-        if (rows.length === 0) return;
-
-        // 정렬 로직
-        rows.sort((a, b) => {
-            // "확인필요 3건" 문자열에서 숫자만 추출, 없으면 0
-            const valA = parseInt(a.querySelector('td:nth-child(7) span span')?.innerText || 0);
-            const valB = parseInt(b.querySelector('td:nth-child(7) span span')?.innerText || 0);
-
-            return isAsc ? valA - valB : valB - valA;
-        });
-
-        // 정렬된 행을 다시 삽입
-        rows.forEach(row => tbody.appendChild(row));
-
-        // 상태 및 아이콘 변경
-        isAsc = !isAsc;
-        icon.innerText = isAsc ? '🔺' : '🔻';
-    }
-</script>
+            rows.forEach(row => container.appendChild(row));
+            isAsc = !isAsc;
+            icon.innerText = isAsc ? '🔺' : '🔻';
+        }
+    </script>
 </div>
+</html>
