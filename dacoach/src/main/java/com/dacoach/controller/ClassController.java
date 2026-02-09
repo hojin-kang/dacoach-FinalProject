@@ -26,19 +26,15 @@ public class ClassController {
 	@Autowired
 	private ClassService classService;
 
-	/**
-	 * 기업 회원 권한 체크 메서드
-	 */
+	
+	// 기업 회원 권한 체크 메서드
 	private boolean isCompanyUser(HttpSession session) {
 		String userType = (String) session.getAttribute("user_type");
 		return userType != null && userType.equalsIgnoreCase("company");
 	}
 
-	/**
-	 * 기업 회원 권한 체크 및 리다이렉트 처리
-	 * 
-	 * @return null이면 권한 있음, ModelAndView 반환 시 권한 없음
-	 */
+	
+	// 기업 회원 권한 체크 및 리다이렉트 처리
 	private ModelAndView checkCompanyAuth(HttpSession session) {
 		if (!isCompanyUser(session)) {
 			return new ModelAndView("redirect:/");
@@ -186,12 +182,18 @@ public class ClassController {
 		Map<String, Object> fieldInfo = classService.getClassFieldInfo(id);
 		mav.addObject("fieldInfo", fieldInfo);
 
-		// 일단 화면 안 터지게 최소값도 같이
+		// ⭐ 리뷰 정보 조회
+		List<Map<String, Object>> reviewList = classService.getReviewsByClass(id);
+		Double avgRating = classService.getAvgRatingByClass(id);
+		Integer reviewCount = classService.getReviewCountByClass(id);
+
+		mav.addObject("reviewList", reviewList);
+		mav.addObject("avgRating", avgRating);
+		mav.addObject("reviewCount", reviewCount);
+
+		// 제공자 정보 (일단 빈 값으로)
 		mav.addObject("providerName", "");
 		mav.addObject("providerPhoto", "");
-		mav.addObject("avgRating", 0);
-		mav.addObject("reviewCount", 0);
-		mav.addObject("reviewList", Collections.emptyList());
 
 		mav.setViewName("company/classes/classDetail");
 		return mav;
@@ -424,6 +426,65 @@ public class ClassController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("지역 정보를 불러오는데 실패했습니다.");
+		}
+	}
+
+	/************* 후기 관리 관련 *************/
+
+	/**
+	 * 후기 관리 페이지
+	 */
+	@GetMapping("/company/reviews")
+	public String classReviews(HttpSession session) {
+		// 기업 회원 체크
+		ModelAndView authCheck = checkCompanyAuth(session);
+		if (authCheck != null)
+			return authCheck.getViewName();
+
+		return "company/classes/classReviews";
+	}
+
+	/**
+	 * 특정 클래스의 후기 목록 조회 API
+	 */
+	@GetMapping("/company/reviews/api")
+	@ResponseBody
+	public ResponseEntity<?> getClassReviews(@RequestParam("classIdx") int classIdx, HttpSession session) {
+		try {
+			// 기업 회원 체크
+			if (!isCompanyUser(session)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("기업 회원만 접근 가능합니다.");
+			}
+
+			Integer providerIdx = (Integer) session.getAttribute("user_idx");
+			if (providerIdx == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			}
+
+			// 클래스 소유자 확인
+			ClassDTO classDTO = classService.getClassDetail(classIdx);
+			if (classDTO == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("존재하지 않는 클래스입니다.");
+			}
+			if (!classDTO.getProvider_idx().equals(providerIdx)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
+			}
+
+			// 리뷰 데이터 조회
+			List<Map<String, Object>> reviews = classService.getReviewsByClass(classIdx);
+			Double avgRating = classService.getAvgRatingByClass(classIdx);
+			Integer reviewCount = classService.getReviewCountByClass(classIdx);
+
+			Map<String, Object> result = new HashMap<>();
+			result.put("reviews", reviews);
+			result.put("avgRating", avgRating);
+			result.put("reviewCount", reviewCount);
+			result.put("classTitle", classDTO.getTitle());
+
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 데이터를 불러오는데 실패했습니다.");
 		}
 	}
 

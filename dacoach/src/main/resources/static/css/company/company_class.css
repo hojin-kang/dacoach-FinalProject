@@ -1421,3 +1421,117 @@
 	border-radius: 8px;
 	text-align: center;
 }
+/* ============================================================
+   클래스 후기 관리 페이지 스타일
+   ============================================================ */
+.reviewList {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+/* 후기 카드 - 리스트형 (관리 페이지용) */
+.reviewList .reviewCard {
+	background: white;
+	border: 1px solid #e0e0e0;
+	border-radius: 12px;
+	padding: 1.5rem;
+	transition: all 0.2s;
+	min-width: auto;
+	max-width: none;
+}
+
+.reviewList .reviewCard:hover {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	transform: translateY(-2px);
+}
+
+.reviewCardHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.reviewerInfo {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.reviewerAvatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid #f0f0f0;
+}
+
+.reviewerMeta {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.reviewerName {
+	font-weight: 600;
+	font-size: 1rem;
+	color: #333;
+}
+
+.reviewDate {
+	font-size: 0.875rem;
+	color: #666;
+}
+
+.reviewRating {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.reviewRating .stars {
+	font-size: 1.125rem;
+	color: #ffa500;
+	font-weight: 700;
+}
+
+.reviewCardBody {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.reviewList .reviewTag {
+	display: inline-block;
+	background: #eef2ff;
+	border: 1px solid #c7d2fe;
+	color: #4338ca;
+	padding: 0.375rem 0.875rem;
+	border-radius: 16px;
+	font-size: 0.875rem;
+	font-weight: 600;
+	width: fit-content;
+}
+
+.reviewContent {
+	line-height: 1.6;
+	color: #333;
+	font-size: 0.9375rem;
+}
+
+/* 반응형 - 후기 페이지 */
+@media ( max-width : 768px) {
+	.reviewList .reviewCard {
+		padding: 1rem;
+	}
+	.reviewCardHeader {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.75rem;
+	}
+	.reviewerAvatar {
+		width: 40px;
+		height: 40px;
+	}
+}

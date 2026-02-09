@@ -30,10 +30,4 @@ public class ClassDTO {
 	
 	private Date created_at;
 	private Integer max_user_cnt;
-	
-	
-	// 리뷰용
-	private String user_name;   // 회사명
-	private Double avg_rating;  // 별점
-	private Integer review_cnt;  // 리뷰 수
 }

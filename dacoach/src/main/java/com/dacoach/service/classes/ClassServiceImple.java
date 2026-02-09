@@ -330,4 +330,51 @@ public class ClassServiceImple implements ClassService {
 		return classMapper.getRegionInfoByMinorIdx(minorRegionIdx);
 	}
 
+	// ⭐ 리뷰 관련 메서드 구현
+	@Override
+	public List<Map<String, Object>> getReviewsByClass(int class_idx) throws Exception {
+		return classMapper.selectReviewsByClass(class_idx);
+	}
+
+	@Override
+	public Double getAvgRatingByClass(int class_idx) throws Exception {
+		Double avgRating = classMapper.selectAvgRatingByClass(class_idx);
+		return avgRating != null ? avgRating : 0.0;
+	}
+
+	@Override
+	public Integer getReviewCountByClass(int class_idx) throws Exception {
+		Integer count = classMapper.selectReviewCountByClass(class_idx);
+		return count != null ? count : 0;
+	}
+
+	@Override
+	public List<Map<String, Object>> getAllReviewsByProvider(int provider_idx) throws Exception {
+		// 1. 제공자의 모든 클래스 IDX 조회
+		List<Integer> classIdxList = classMapper.selectClassIdxByProvider(provider_idx);
+
+		// 2. 모든 클래스의 리뷰를 모아서 반환
+		List<Map<String, Object>> allReviews = new ArrayList<>();
+
+		for (Integer classIdx : classIdxList) {
+			List<Map<String, Object>> reviews = classMapper.selectReviewsByClass(classIdx);
+
+			// 각 리뷰에 클래스 정보 추가
+			for (Map<String, Object> review : reviews) {
+				ClassDTO classDTO = classMapper.getClassDetail(classIdx);
+				review.put("CLASS_TITLE", classDTO.getTitle());
+				allReviews.add(review);
+			}
+		}
+
+		// 최신순 정렬 (CREATED_AT 기준)
+		allReviews.sort((a, b) -> {
+			Date dateA = (Date) a.get("CREATED_AT");
+			Date dateB = (Date) b.get("CREATED_AT");
+			return dateB.compareTo(dateA); // 내림차순
+		});
+
+		return allReviews;
+	}
+
 }

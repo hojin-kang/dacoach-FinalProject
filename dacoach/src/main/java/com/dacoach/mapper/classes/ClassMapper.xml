@@ -267,4 +267,61 @@
 		#{minorRegionIdx}
 	</select>
 
+	<!-- ⭐ 특정 클래스의 리뷰 목록 조회 -->
+	<select id="selectReviewsByClass" parameterType="int"
+		resultType="map">
+		SELECT
+		rc.REVIEW_CLASS_IDX,
+		rc.REVIEWER_IDX,
+		rc.CLASS_IDX,
+		rc.RATING,
+		rc.TAG,
+		rc.CONTENT,
+		rc.CREATED_AT,
+		u.USER_NAME AS
+		REVIEWER_NAME,
+		CASE
+		WHEN coach.COACH_IDX IS NOT NULL THEN coach.PHOTO
+		WHEN comp.COMPANY_IDX IS NOT NULL THEN comp.PHOTO
+		ELSE NULL
+		END AS
+		REVIEWER_PHOTO
+		FROM REVIEW_CLASS rc
+		INNER JOIN USERS u ON
+		rc.REVIEWER_IDX = u.USER_IDX
+		LEFT JOIN COACH coach ON u.USER_IDX =
+		coach.USER_IDX
+		LEFT JOIN COMPANY comp ON u.USER_IDX = comp.USER_IDX
+		WHERE rc.CLASS_IDX = #{class_idx}
+		ORDER BY rc.CREATED_AT DESC
+	</select>
+
+	<!-- ⭐ 클래스의 평균 평점 조회 -->
+	<select id="selectAvgRatingByClass" parameterType="int"
+		resultType="double">
+		SELECT NVL(ROUND(AVG(RATING), 1), 0)
+		FROM REVIEW_CLASS
+		WHERE
+		CLASS_IDX = #{class_idx}
+	</select>
+
+	<!-- ⭐ 클래스의 리뷰 개수 조회 -->
+	<select id="selectReviewCountByClass" parameterType="int"
+		resultType="int">
+		SELECT NVL(COUNT(*), 0)
+		FROM REVIEW_CLASS
+		WHERE CLASS_IDX =
+		#{class_idx}
+	</select>
+
+	<!-- ⭐ 제공자의 모든 클래스 IDX 조회 -->
+	<select id="selectClassIdxByProvider" parameterType="int"
+		resultType="int">
+		SELECT CLASS_IDX
+		FROM CLASS
+		WHERE PROVIDER_IDX =
+		#{provider_idx}
+		ORDER BY CREATED_AT DESC
+	</select>
+
 </mapper>
