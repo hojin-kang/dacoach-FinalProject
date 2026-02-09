@@ -150,9 +150,9 @@ public class CoachServiceImple implements CoachService {
 		if(!mytags_idx.isEmpty()) {
 			coachMapper.myHashtagMapping(user_idx, mytags_idx);
 		}
-//		if(!intertags_idx.isEmpty()) {
-//			coachMapper.interHashtagMapping(user_idx, intertags_idx);
-//		}
+		if(!intertags_idx.isEmpty()) {
+			coachMapper.interHashtagMapping(user_idx, intertags_idx);
+		}
 		
 	}
 

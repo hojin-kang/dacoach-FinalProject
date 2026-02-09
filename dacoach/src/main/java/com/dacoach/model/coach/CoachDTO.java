@@ -37,5 +37,6 @@ public class CoachDTO {
 
 	private UsersDTO usersDto;
 	private List<String> hashtags;
+	private List<String> interhashtags;
 
 }

@@ -236,7 +236,12 @@
          <div class="info-item">
             <h3 class="section-title">관심분야</h3>
             <div class="tag-list">
-               <span class="detail-tag">#야구</span>
+		<a th:each="tag : ${interHashtags}" 
+		   th:href="@{/coach/search(keyword=${tag})}" 
+		   class="detail-tag" 
+		   style="text-decoration: none; color: inherit;">
+		   <span th:text="'#' + ${tag}">#태그명</span>
+		</a>
             </div>
          </div>
       </div>

@@ -149,5 +149,11 @@
 	        SELECT #{user_idx}, #{hIdx} FROM DUAL
 	    </foreach>
 	</insert>
+		<insert id="interHashtagMapping">
+	    INSERT INTO user_hashtag_like (user_idx, hashtag_idx)
+	    <foreach collection="list" item="hIdx" separator="UNION ALL">
+	        SELECT #{user_idx}, #{hIdx} FROM DUAL
+	    </foreach>
+	</insert>
     
 </mapper>
