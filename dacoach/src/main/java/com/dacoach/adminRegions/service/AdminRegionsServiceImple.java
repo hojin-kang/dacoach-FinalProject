@@ -1,41 +1,40 @@
 package com.dacoach.adminRegions.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.dacoach.admin.regions.model.AdminRegionsDAO;
 import com.dacoach.majorregion.model.MajorRegionDTO;
+import com.dacoach.mapper.adminregions.AdminRegionsMapper;
 import com.dacoach.minorregion.model.MinorRegionDTO;
 
 @Service
 public class AdminRegionsServiceImple implements AdminRegionsService {
 
-	@Autowired
-	private AdminRegionsDAO dao;
+    @Autowired
+    private AdminRegionsMapper mapper;
 
 	@Override
 	public List<MajorRegionDTO> getMajorRegions() {
-		return dao.selectMajorRegions();
+		return mapper.selectMajorRegions();
 	}
 
 	@Override
 	public List<MinorRegionDTO> getMinorRegions(int majorIdx) {
-		return dao.selectMinorRegions(majorIdx);
+		return mapper.selectMinorRegions(majorIdx);
 	}
 
 	@Override
-	public void saveMinorRegion(MinorRegionDTO dto) {
-		if(dto.getMinor_region_idx() > 0) {
-			dao.updateMinorRegions(dto);
-		} else {
-			
-		}
+	public int updateMinorRegions(MinorRegionDTO dto) {
+		return mapper.updateMinorRegions(dto);
 	}
 
-	
-	
+	@Override
+	public int addMinorRegion(MinorRegionDTO dto) {
+		return mapper.insertMinorRegions(dto);
+	}
+
 
 }

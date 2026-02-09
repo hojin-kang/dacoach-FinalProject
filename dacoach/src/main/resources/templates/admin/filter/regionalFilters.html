@@ -1,6 +1,5 @@
 <div th:fragment="contentPage" class="page-wrap font-main">
   <style>
-    /* 기존 스타일 유지 */
     .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
     .page-wrap { max-width: 1200px; margin: 0 auto; padding: 32px; }
     .info-card { background: #fff; border: 2px solid #e5e7eb; border-radius: 40px; padding: 2rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -43,7 +42,8 @@
           <div th:each="m : ${majorRegions}" 
                class="region-item selectable" 
                th:classappend="${selectedMajorIdx != null and selectedMajorIdx == m.major_region_idx} ? 'active' : ''"
-               th:onclick="'location.href=\'/admin/filter/major?majorIdx=' + ${m.major_region_idx} + '\''">
+               th:data-major-idx="${m.major_region_idx}"
+               onclick="location.href='/admin/filter/major?majorIdx=' + this.getAttribute('data-major-idx')">
             <span th:text="${m.region_nm}">서울특별시</span>
             <i class="fas fa-chevron-right" style="color:#d1d5db; font-size:12px;"></i>
           </div>
@@ -65,7 +65,9 @@
             
             <div class="actions">
               <button type="button" class="btn-icon" 
-                      th:onclick="openSubModal([[${s.minor_region_idx}]], [[${s.district_nm}]])">수정</button>
+                      th:data-idx="${s.minor_region_idx}"
+                      th:data-name="${s.district_nm}"
+                      onclick="openSubModal(this.getAttribute('data-idx'), this.getAttribute('data-name'))">수정</button>
             </div>
           </div>
         </div>
@@ -80,7 +82,7 @@
         <button type="button" onclick="closeSubModal()" style="border:none; background:none; cursor:pointer; font-size:20px;">&times;</button>
       </div>
 
-      <form th:action="@{/admin/regions/sub/save}" method="post">
+      <form th:action="@{/admin/filter/regions/sub/save}" method="post">
         <input type="hidden" name="major_region_idx" th:value="${selectedMajorIdx}">
         <input type="hidden" id="subIdx" name="minor_region_idx">
 
