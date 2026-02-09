@@ -38,5 +38,11 @@ public class CoachDTO {
 	private UsersDTO usersDto;
 	private List<String> hashtags;
 	private List<String> interhashtags;
+	
+	private String major_field_name;
+	private String minor_field_name;
+	
+	private String major_field_name2;
+	private String minor_field_name2;
 
 }
