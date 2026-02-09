@@ -20,7 +20,8 @@ public class CoachClassDTO {
 	private Integer minor_region_idx;
 	private Integer price;
 	private String photo;              
-	private String video;              
+	private String video;      
+	private String provider_name;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date start_date;
@@ -39,4 +40,7 @@ public class CoachClassDTO {
 	private String user_name;   // 회사명
 	private Double avg_rating;  // 별점
 	private Integer review_cnt;  // 리뷰 수
+	
+	// 프리미엄인지 아닌지
+	private Integer is_premium;  // 1 = 프리미엄, 0 = 일반
 }

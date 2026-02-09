@@ -274,11 +274,11 @@
 .providerLine{
   display:flex;
   align-items:center;
-  gap: 8px;
+  gap: 4px;
 }
 .providerName{
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 500;
+  color: #555555;
   font-size: 15px;
   white-space: nowrap;
   overflow: hidden;
@@ -286,18 +286,14 @@
   max-width: 340px;
 }
 .providerBadge{
-  font-size: 14px;
-  line-height: 1;
-  padding: 3px 6px;
-  border-radius: 999px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+	width: 15px;
+	height: 15px;
 }
 
 .classTitle{
   font-weight: 800;
   color: var(--ink);
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
