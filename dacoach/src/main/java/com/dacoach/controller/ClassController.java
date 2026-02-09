@@ -176,6 +176,7 @@ public class ClassController {
 		}
 
 		mav.addObject("classDTO", classDTO);
+		mav.addObject("now", new java.util.Date()); // 현재 날짜 추가
 
 		// 해시태그 목록 조회 (Service를 통해)
 		List<String> hashtagList = classService.getHashtagsByClass(id);
