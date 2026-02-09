@@ -90,11 +90,7 @@
 	            </choose>)
 	</update>
 
-    <insert id="insertNotification" parameterType="map">
-        INSERT INTO NOTIFICATION (NOTI_IDX, RECEIVER_IDX, PROVIDER_IDX, NOTI_TYPE, CONTENT, IS_READ, CREATED_AT)
-        VALUES (SEQ_NOTIFICATION.NEXTVAL, #{target, jdbcType=INTEGER}, #{me, jdbcType=INTEGER}, 
-                #{notiType, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, 'N', SYSDATE)
-    </insert>
+
 
 <select id="getCoachDetailStatus" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
     SELECT 
@@ -176,13 +172,18 @@
     <update id="acceptChat" parameterType="map">
      	update match
     	set is_chat = 'Y'
-    	where (chat_applicant = #{target_idx} and user1_idx = #{user_idx})
-    	or (chat_applicant = #{target_idx} and user2_idx = #{user_idx})   
+    	where (chat_applicant = #{target} and user1_idx = #{me})
+    	or (chat_applicant = #{target} and user2_idx = #{me})   
     </update>
     <update id="acceptMatch" parameterType="map">
     	update match
     	set is_match = 'Y'
-    	where (chat_applicant = #{target_idx} and user1_idx = #{user_idx})
-    	or (chat_applicant = #{target_idx} and user2_idx = #{user_idx})
+    	where (match_applicant = #{target} and user1_idx = #{me})
+    	or (match_applicant = #{target} and user2_idx = #{me})
     </update>
+    <insert id="insertNotification" parameterType="map">
+        INSERT INTO NOTIFICATION (NOTI_IDX, RECEIVER_IDX, PROVIDER_IDX, NOTI_TYPE, CONTENT, IS_READ, CREATED_AT)
+        VALUES (SEQ_NOTIFICATION.NEXTVAL, #{target, jdbcType=INTEGER}, #{me, jdbcType=INTEGER}, 
+                #{notiType, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, 'N', SYSDATE)
+    </insert>
 </mapper>
