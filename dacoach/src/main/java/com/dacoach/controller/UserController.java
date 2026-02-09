@@ -219,8 +219,8 @@ public class UserController {
 				String strDate=""+year+"-"+month+"-"+day;
 				Date nowDay=Date.valueOf(strDate);
 				
-				if(membershipDto.getEnd_date()!=null&&membershipDto.getMember_detail_idx()==2
-						&&membershipDto.getEnd_date().after(nowDay)&&membershipDto.getStatus().equals("취소")) {
+				if(membershipDto.getEnd_date()!=null
+						&&membershipDto.getEnd_date().before(nowDay)&&membershipDto.getStatus().equals("취소")) {
 					membershipService.autoUpdate(membershipDto);
 					
 				}

@@ -16,6 +16,10 @@
   		select * from membership_detail where member_detail_idx != #{idx}
   	</select>
   	
+  	<select id="detail">
+  		select * from membership_detail where member_detail_idx = #{idx}
+  	</select>
+  	
   	<update id="membershipUpdate">
   		update membership set 
   		member_detail_idx=#{member_detail_idx},
@@ -38,4 +42,22 @@
   		end_date=null,
   		status=null
   	</update>
+  	
+  	<insert id="bannerAdd">
+  		insert into ad values(
+  			seq_ad.nextval,
+  			#{member_idx},
+  			#{photo},
+  			sysdate
+  		)
+  	</insert>
+  	
+  	<select id="bannerSelect">
+  		select * from ad 
+  		<where>
+  			<if test="#{member_idx!=null}">
+  				member_idx=#{member_idx}
+  			</if>
+  		</where>
+  	</select>
   </mapper>

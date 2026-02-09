@@ -14,7 +14,9 @@
    <main class="main">
    <div class="container">
    <div class="category">
-   	<a href="/membership/membershipForm">멤버십 관리</a><a href="/membership/membershipUpForm">멤버십 변경하기</a>
+   	<a href="/membership/membershipForm">멤버십 관리</a>
+   	<a href="/membership/membershipUpForm">멤버십 변경하기</a>
+   	<a th:if="${dto.member_detail_idx==2}" href="/membership/banner">배너광고</a>
    </div>
      <div th:if="${dto.member_detail_idx==1}" class="regularMemberDiv">
      	[[${session.user_name}]]님은 [[${detail.member_type}]] 멤버십입니다.
@@ -23,8 +25,12 @@
      </div>
      <div th:if="${dto.member_detail_idx==2}" class="premiumMemberDiv">
      	[[${session.user_name}]]님은 [[${detail.member_type}]] 회원입니다.
+     	<span th:if="${dto.status=='취소'}">
+     		멤버십 해지 예정입니다
+     	</span>
      	혜택: [[${detail.benefit}]]
      	멤버십 혜택 기한:[[${dto.start_date}]]~[[${dto.end_date}]]까지 입니다
+     	
      </div>
    </div>
    </main>

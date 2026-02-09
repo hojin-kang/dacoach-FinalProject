@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dacoach.mapper.membership.MembershipMapper;
+import com.dacoach.model.company.AdDTO;
 import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
 
@@ -31,6 +32,10 @@ public class MembershipServiceImple implements MembershipService {
 		return membership.detailInfo(detailIdx);
 	}
 	
+	public MembershipDetailDTO detail(int detailIdx)throws Exception{
+		return membership.detail(detailIdx);
+	}
+	
 	public int membershipUpdate(MembershipDTO dto) throws Exception{
 		return membership.membershipUpdate(dto);
 	}
@@ -44,5 +49,13 @@ public class MembershipServiceImple implements MembershipService {
 	public int autoUpdate(MembershipDTO dto) throws Exception{
 		
 	return membership.autoUpdate(dto);
+	}
+	
+	public int bannerAdd(AdDTO dto) throws Exception{
+		return membership.bannerAdd(dto);
+	}
+	
+	public List<AdDTO> bannerSelect(Integer member_idx) throws Exception{
+		return membership.bannerSelect(member_idx);
 	}
 }

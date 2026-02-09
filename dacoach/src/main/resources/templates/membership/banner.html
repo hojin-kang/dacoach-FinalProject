@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+   <meta charset="UTF-8" />
+   <title>dacoach</title>
+
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+   <div th:replace="~{layout/header :: siteHeader}"></div>
+
+   <main class="main">
+   <div class="container">
+   <div th:if="${#lists.isEmpty(dto)}">등록된 베너가 없습니다</div>
+   <div th:unless="${#lists.isEmpty(dto)}">
+   	현재 베너:<img th:src="'/uploads/' + ${dto[0].photo}" style="max-width: 868px; max-height: 120px; border-radius: 0px;">
+   </div>
+   <form name="bannerForm" th:action="${action}" method="post" enctype="multipart/form-data">
+   	  <div class="fileArea" id="fileArea"></div>
+      <input type="file" name="photoFile" id="fileInput">
+      <div class="fileInfo">가로: 868px, 세로: 120px</div>
+      <input type="submit" value="베너등록">
+   </form>
+   </div>
+   </main>
+  
+   <div th:replace="~{layout/footer :: siteFooter}"></div>
+
+
+<script th:inline="javascript">
+const fileInput = document.getElementById('fileInput');
+const fileArea = document.getElementById('fileArea');
+fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            fileArea.innerHTML = `<img src="${event.target.result}" style="max-width: 868px; max-height: 120px; border-radius: 0px;">`;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+</script>
+</body>
+</html>
