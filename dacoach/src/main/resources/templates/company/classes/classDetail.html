@@ -12,7 +12,7 @@
 	<main class="main">
 		<div class="container">
 
-			<!-- ===== 상단 프로필/타이틀 영역 ===== -->
+			<!-- 상단 프로필/타이틀 영역 -->
 			<section class="classDetailTop">
 				<div class="topLeft">
 					<!-- 프로필 이미지 (provider) -->
@@ -46,7 +46,7 @@
 				</div>
 			</section>
 
-			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
+			<!-- 탭(상세정보 / 클래스후기) -->
 			<nav class="detailTabs">
 				<a class="tab active" href="#detail">상세정보</a> <a class="tab"
 					href="#reviews">클래스 후기</a>
@@ -56,7 +56,7 @@
 
 			<div class="classDetailPage">
 
-				<!-- ===== LEFT: 상세 ===== -->
+				<!-- LEFT: 상세 -->
 				<section class="detailArea" id="detail">
 
 					<!-- 클래스소개 -->
@@ -65,7 +65,7 @@
 						<p class="blockText" th:text="${classDTO.intro}"></p>
 					</article>
 
-					<!-- ⭐ 해시태그 -->
+					<!-- 해시태그 -->
 					<article class="detailBlock">
 						<h3 class="blockTitle">해시태그</h3>
 						<div class="tagRow">
@@ -79,12 +79,12 @@
 					<article class="detailBlock">
 						<h3 class="blockTitle">제공분야</h3>
 
-						<!-- ⭐ 분야 정보 (대분류 > 소분류) -->
+						<!-- 분야 정보 (대분류 > 소분류) -->
 						<div class="field-info">
 							<span class="field-text" th:if="${fieldInfo != null}"
 								th:text="${fieldInfo.MAJOR_FIELD_CD} + ' > ' + ${fieldInfo.MINOR_FIELD_NM}"></span>
-							<span class="field-empty" th:if="${fieldInfo == null}"> 분야
-								정보 없음 </span>
+							<span class="field-empty" th:if="${fieldInfo == null}">분야
+								정보 없음</span>
 						</div>
 
 					</article>
@@ -122,7 +122,7 @@
 						</div>
 					</article>
 
-					<!-- ===== 후기 블록 (앵커 목적지) ===== -->
+					<!-- 후기 블록 (앵커 목적지) -->
 					<article class="detailBlock" id="reviews">
 						<div class="reviewHead">
 							<h3 class="blockTitle">클래스 후기</h3>
@@ -187,7 +187,7 @@
 
 				</section>
 
-				<!-- ===== RIGHT: (원하면) 고정 사이드 요약 박스 ===== -->
+				<!-- RIGHT: (원하면) 고정 사이드 요약 박스 -->
 				<aside class="sideArea">
 					<div class="sideCard">
 						<div class="sideTitle">클래스 정보</div>
@@ -209,8 +209,12 @@
 						</div>
 
 						<div class="sideBtns">
-							<a class="actionBtn solid"
+							<!-- 종료된 클래스면 비활성화 -->
+							<a class="actionBtn solid" th:if="${now <= classDTO.end_date}"
 								th:href="@{/class/company/update(classId=${classDTO.class_idx})}">수정하기</a>
+							<button class="actionBtn solid disabled"
+								th:if="${now > classDTO.end_date}" disabled
+								title="종료된 클래스는 수정할 수 없습니다">수정하기</button>
 						</div>
 					</div>
 				</aside>
