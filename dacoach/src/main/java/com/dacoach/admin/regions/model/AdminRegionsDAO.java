@@ -3,7 +3,12 @@ package com.dacoach.admin.regions.model;
 import java.util.List;
 import java.util.Map;
 
+import com.dacoach.majorregion.model.MajorRegionDTO;
+import com.dacoach.minorregion.model.MinorRegionDTO;
+
 public interface AdminRegionsDAO {
 
-	List<Map<String, Object>> selectMajorRegions();
+	List<MajorRegionDTO> selectMajorRegions();
+	List<MinorRegionDTO> selectMinorRegions(int majorIdx);
+
 }

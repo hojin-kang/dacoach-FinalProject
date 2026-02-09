@@ -3,12 +3,22 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-  <mapper namespace="com.dacoach.mapper.adminregions.AdminRegionsMapper">
-  	<select id="selectMajorRegions" resultType="map">
-  		select
-  			major_region_idx,
-  			region_nm
-  		from major_region
-  		order by major_region_idx
-  	</select>
-  </mapper>
+<mapper namespace="com.dacoach.mapper.adminregions.AdminRegionsMapper">
+	<select id="selectMajorRegions" resultType="com.dacoach.majorregion.model.MajorRegionDTO">
+		select
+		major_region_idx ,
+		region_nm
+		from major_region
+		order by major_region_idx
+	</select>
+	
+	<select id="selectMinorRegions" resultType="com.dacoach.minorregion.model.MinorRegionDTO">
+		select
+        minor_region_idx ,
+        major_region_idx ,
+        district_nm
+        from minor_region
+        where major_region_idx = #{majorRegionIdx}
+        order by minor_region_idx
+	</select>
+</mapper>
