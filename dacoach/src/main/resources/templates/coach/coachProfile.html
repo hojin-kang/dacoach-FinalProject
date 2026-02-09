@@ -126,7 +126,7 @@
 	        if (!val) { msg.style.display = 'none'; isNickValid = false; return checkFormValidity(); }
 
 	        try {
-	            const res = await fetch(`/api/member/idCheck?username=${encodeURIComponent(val)}`);
+	            const res = await fetch(`/api/member/checkNick?nickname=${encodeURIComponent(val)}`);
 	            isNickValid = await res.json();
 	            msg.textContent = isNickValid ? "사용 가능한 닉네임입니다." : "이미 사용중인 닉네임입니다.";
 	            msg.style.cssText = `display:block; color:${isNickValid ? "#28a745" : "#ff6b6b"}`;

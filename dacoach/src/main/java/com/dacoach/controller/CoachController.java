@@ -99,7 +99,7 @@ public class CoachController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return result;
+		return !result;
 	}
 
 	@GetMapping("/api/coach/minorFields")

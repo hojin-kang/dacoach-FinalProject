@@ -12,7 +12,7 @@ public interface CoachMapper {
 
 	public Integer coachProfile(UsersDTO udto) throws Exception;
 
-	public boolean checkNick(String nickname) throws Exception;
+	public Integer checkNick(String nickname) throws Exception;
 
 	public Integer emailCheck(String email) throws Exception;
 
