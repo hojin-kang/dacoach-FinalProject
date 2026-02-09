@@ -1,11 +1,68 @@
 package com.dacoach.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.dacoach.model.users.UsersDTO;
+import com.dacoach.service.admin.AdminService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AdminDashboardController {
+	
+	@Autowired
+	private AdminService adminService;
+	
+	@GetMapping("/admin")
+	public String adminLoginForm() {
+		return "admin/login";
+	}
+	
+	@PostMapping("/admin/login")
+	public String adminLogin(@RequestParam String login_id,
+			@RequestParam String password,
+			HttpSession session,
+			RedirectAttributes rttr) {
+		
+		Map<String, String> loginMap = new HashMap<>();
+		loginMap.put("login_id", login_id);
+		loginMap.put("password", password);
+		
+		try {
+			UsersDTO dto = adminService.adminLogin(loginMap);
+			
+			if(dto != null) {
+				session.setAttribute("loginAdmin", dto);
+				
+				if (!"ADMIN".equals(dto.getUser_type())) {
+	                session.invalidate();
+	                rttr.addFlashAttribute("msg", "관리자 권한이 없습니다.");
+	                return "redirect:/admin";
+	            }
+				
+				return "redirect:/admin/mainStats";
+				
+			}else {
+				rttr.addFlashAttribute("msg", "아이디 또는 비밀번호가 일치하지 않습니다.");
+	            return "redirect:/admin";
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "서버 오류가 발생했습니다.");
+	        return "redirect:/admin";
+		}
+	}
 	
 	@GetMapping("/admin/mainStats")
 	public String dashboard(Model model) {
@@ -13,4 +70,12 @@ public class AdminDashboardController {
         model.addAttribute("contentFragment", "statsContent"); // 보여줄 조각
         return "admin/dashboard"; 
     }
+	
+	@GetMapping("/admin/logout")
+	public String adminLogout(HttpSession session,
+			RedirectAttributes rttr) {
+		session.invalidate();
+		rttr.addFlashAttribute("msg", "로그아웃 되었습니다.");
+		return "redirect:/admin";
+	}
 }

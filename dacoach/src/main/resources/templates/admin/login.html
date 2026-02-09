@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 로그인 | DACOACH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* 1. 공통 폰트 및 컬러 설정 */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        .font-main { font-family: 'Pretendard', sans-serif; }
+        
+        /* 2. 포인트 컬러 (민트) */
+        :root {
+            --mint-main: #9dbbb5;
+            --mint-bg: #f0f8f7;
+        }
+
+        /* 3. 레이아웃 & 카드 디자인 (상세페이지 둥근 느낌 계승) */
+        body { background-color: var(--mint-bg); }
+        .login-card { 
+            background-color: white; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 40px; /* 기존 상세페이지 Radius값 */
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05); 
+        }
+
+        /* 4. 입력창 스타일 */
+        .login-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .login-input:focus {
+            border-color: var(--mint-main);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(157, 187, 181, 0.1);
+        }
+
+        /* 5. 버튼 스타일 */
+        .btn-submit {
+            background-color: var(--mint-main);
+            color: white;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-submit:hover {
+            filter: brightness(90%);
+            transform: translateY(-1px);
+        }
+
+        /* 배지 스타일 */
+        .admin-badge {
+            display: inline-block;
+            background-color: var(--mint-main);
+            color: white;
+            padding: 0.4rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body class="font-main min-h-screen flex items-center justify-center p-6">
+
+    <div class="login-card w-full max-w-[420px] p-10 md:p-14">
+        <div class="text-center mb-10">
+            <span class="admin-badge">ADMIN ONLY</span>
+            <h1 class="text-3xl font-black text-gray-800 tracking-tight">DACOACH</h1>
+            <p class="text-gray-400 mt-2 text-sm">시스템 관리자 전용 로그인</p>
+        </div>
+
+        <form th:action="@{/admin/login}" method="post" class="space-y-5">
+            <div th:if="${param.error}" class="bg-red-50 text-red-500 text-xs p-3 rounded-lg text-center mb-4">
+                아이디 또는 비밀번호가 일치하지 않습니다.
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-xs font-bold text-gray-500 ml-2">ADMIN ID</label>
+                <input type="text" name="login_id" class="login-input" placeholder="아이디를 입력하세요" required autofocus>
+            </div>
+            
+            <div class="space-y-1">
+                <label class="block text-xs font-bold text-gray-500 ml-2">PASSWORD</label>
+                <input type="password" name="password" class="login-input" placeholder="비밀번호를 입력하세요" required>
+            </div>
+
+            <div class="flex items-center justify-between px-2 text-xs text-gray-400 pt-2">
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" class="accent-[#9dbbb5] mr-2 w-4 h-4"> 자동 로그인
+                </label>
+                <span class="cursor-help border-b border-gray-200">계정 문의</span>
+            </div>
+
+            <div class="pt-6">
+                <button type="submit" class="btn-submit shadow-lg">LOGIN</button>
+            </div>
+        </form>
+    </div>
+	<script th:inline="javascript">
+		window.onload = function() {
+			const msg = /*[[${msg}]]*/null;
+
+			if (msg && msg !== "null" && msg.trim() !== "") {
+				alert(msg);
+			}
+		};
+	</script>
+</body>
+</html>

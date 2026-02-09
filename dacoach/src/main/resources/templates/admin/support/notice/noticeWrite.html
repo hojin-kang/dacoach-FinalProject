@@ -93,14 +93,15 @@
 
         <form th:action="@{/admin/support/notice/insert}" method="post">
             <div class="write-container">
-                <div class="form-row">
-                    <div class="form-label">작성자</div>
-					<input type="text" name="userName" class="form-input"
-						th:value="${session.loginUser != null ? session.loginUser.USER_NAME : '관리자'}"
-						readonly>
+				<div class="form-row">
+					<div class="form-label">작성자</div>
+					<input type="text" class="form-input"
+						th:value="${session.loginAdmin != null ? session.loginAdmin.user_name : '관리자'}"
+						readonly> <input type="hidden" name="user_idx"
+						th:value="${session.loginAdmin != null ? session.loginAdmin.user_idx : ''}">
 				</div>
 
-                <div class="form-row">
+				<div class="form-row">
                     <div class="form-label">제목</div>
                     <input type="text" name="title" class="form-input" placeholder="제목을 입력해주세요." required>
                 </div>
@@ -116,7 +117,7 @@
                     </select>
                 </div>
 
-                <textarea name="content" class="form-textarea" placeholder="내용을 작성해주세요."></textarea>
+                <textarea name="question" class="form-textarea" placeholder="내용을 작성해주세요."></textarea>
             </div>
 
             <button type="submit" class="btn-submit">등록</button>

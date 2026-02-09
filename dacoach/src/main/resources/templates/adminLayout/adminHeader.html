@@ -10,9 +10,10 @@
         <i class="fa-solid fa-magnifying-glass absolute right-4 top-2.5 text-gray-500"></i>
     </div>
 
-    <div class="text-gray-600 text-sm">
-        관리자 <span class="font-bold text-gray-900" th:text="${adminName}">홍길동</span>님 |
-        <a th:href="@{/logout}" class="hover:underline">로그아웃</a>
-    </div>
+	<div class="text-gray-600 text-sm">
+		관리자 <span class="font-bold text-gray-900"
+			th:text="${session.loginAdmin != null ? session.loginAdmin.user_name : '관리자'}">
+			홍길동 </span>님 | <a th:href="@{/admin/logout}" class="hover:underline ml-2">로그아웃</a>
+	</div>
 </div>
 </html>

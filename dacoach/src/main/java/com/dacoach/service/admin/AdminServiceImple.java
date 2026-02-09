@@ -8,12 +8,19 @@ import org.springframework.stereotype.Service;
 
 import com.dacoach.mapper.admin.AdminMapper;
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.qna.QnaDTO;
+import com.dacoach.model.users.UsersDTO;
 
 @Service
 public class AdminServiceImple implements AdminService {
 
 	@Autowired
 	private AdminMapper adminMapper;
+	
+	@Override
+	public UsersDTO adminLogin(Map<String, String> params) throws Exception {
+		return adminMapper.adminLogin(params);
+	}
 	
 	@Override
 	public List<Map<String, Object>> getCoachList() throws Exception {
@@ -107,6 +114,16 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public List<Map<String, Object>> getNoticeList() throws Exception {
 		return adminMapper.getNoticeList();
+	}
+	
+	@Override
+	public int insertNotice(QnaDTO dto) throws Exception {
+		return adminMapper.insertNotice(dto);
+	}
+	
+	@Override
+	public QnaDTO getNoticeContent(int qna_idx) throws Exception {
+		return adminMapper.getNoticeContent(qna_idx);
 	}
 
 }

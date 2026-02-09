@@ -22,4 +22,6 @@ public class QnaDTO {
     private Date created_at;
 
     private String answerStatus;
+    
+    private String user_name;
 }

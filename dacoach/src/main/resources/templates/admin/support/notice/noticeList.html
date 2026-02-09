@@ -50,15 +50,23 @@
                     </tr>
                 </thead>
                 <tbody class="notice-tbody">
-                    <tr th:if="${not #lists.isEmpty(noticeList)}" th:each="notice : ${noticeList}" 
-                        th:onclick="|location.href='/admin/notice/detail?idx=' + ${notice.QNA_IDX}|">
-                        <td th:text="${notice.QNA_IDX}">번호</td>
-                        <td class="title-cell" th:text="${notice.TITLE}">공지사항 제목</td>
-                        <td th:text="${notice.USER_NAME}">작성자</td>
-                        <td th:text="${#strings.contains(notice.CREATED_AT, ' ') ? #strings.substring(notice.CREATED_AT, 0, 10) : notice.CREATED_AT}">2026-02-07</td>
-                    </tr>
-                    
-                    <tr th:if="${#lists.isEmpty(noticeList)}">
+					<tr th:if="${not #lists.isEmpty(noticeList)}"
+						th:each="notice : ${noticeList}">
+						<td th:text="${notice.QNA_IDX}">번호</td>
+
+						<td class="title-cell"><a
+							th:href="@{/admin/support/notice/content(qna_idx=${notice.QNA_IDX})}"
+							th:text="|[${notice.QNA_TYPE}] ${notice.TITLE}|"
+							class="hover:underline text-blue-600"> [분류] 제목 </a></td>
+
+						<td th:text="${notice.USER_NAME}">작성자</td>
+
+						<td
+							th:text="${#strings.contains(notice.CREATED_AT, ' ') ? #strings.substring(notice.CREATED_AT, 0, 10) : notice.CREATED_AT}">
+							2026-02-07</td>
+					</tr>
+
+					<tr th:if="${#lists.isEmpty(noticeList)}">
                         <td colspan="4" class="py-24 text-gray-400 text-center text-lg">
                             <i class="fa-regular fa-folder-open mb-3 block text-3xl opacity-50"></i>
                             등록된 공지사항이 없습니다.
