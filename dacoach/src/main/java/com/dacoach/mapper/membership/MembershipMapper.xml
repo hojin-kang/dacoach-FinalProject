@@ -58,7 +58,7 @@
   	<select id="bannerSelect">
   		select * from ad 
   		<where>
-  			<if test="#{member_idx!=null}">
+  			<if test="member_idx!=null">
   				member_idx=#{member_idx}
   			</if>
   		</where>

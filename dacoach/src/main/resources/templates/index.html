@@ -77,7 +77,9 @@
       </section>
       
       <section class="adBanner">
+      <div id="banner">
       	<img src="/img/banner/banner.png">
+      </div>	
       </section>
       
       <section class="mainSection">
@@ -90,6 +92,22 @@
   </main>
   
   <div th:replace="~{layout/footer :: siteFooter}"></div>
+<script th:inline="javascript">
 
+	function showBanner(){
+		var list= [[${list}]];
+		var banner=document.getElementById('banner');
+		var num=Math.floor(Math.random()* list.length);
+		
+		if(list&&list.length>0){
+		
+		banner.innerHTML='<a href="forward:/company/companyprofile?member_idx='+list[num].member_idx+'"><img src="/uploads/' + list[num].photo +'"></a>';
+		}
+	}
+	
+	window.onload=function(){		
+		window.setInterval('showBanner()',3000);
+	}
+</script>
 </body>
 </html>
