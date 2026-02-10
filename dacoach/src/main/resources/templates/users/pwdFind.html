@@ -1,21 +1,172 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <title>dacoach - 비밀번호 찾기</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/coach/coachJoin.css}" />
+    <style>
+        .error-msg { color: #ff4d4d; font-size: 12px; margin-top: 5px; display: none; }
+        .success-msg { color: #2ecc71; font-size: 12px; margin-top: 5px; display: none; }
+        
+        /* 탭 스타일 */
+        .tab-container { display: flex; margin-bottom: 30px; border-bottom: 2px solid #eee; }
+        .tab-item { 
+            flex: 1; text-align: center; padding: 15px; cursor: pointer; 
+            font-weight: bold; color: #999; transition: 0.3s;
+        }
+        .tab-item.active { color: #328889; border-bottom: 3px solid #328889; }
 
-   <meta charset="UTF-8" />
-   <title>dacoach</title>
-
-   <link rel="stylesheet" th:href="@{/css/main.css}" />
+        /* 섹션 제어 */
+        .find-section { display: none; }
+        .find-section.active { display: block; }
+    </style>
 </head>
 <body>
-   <div th:replace="layout/header :: siteHeader"></div>
+    <div th:replace="~{layout/header :: siteHeader}"></div>
 
-   <main class="main">
-   <div class="container">
-      
-   </div>
-   </main>
-  
-   <div th:replace="layout/footer :: siteFooter"></div>
+    <main>
+        <div class="signup-container">
+            <div class="tab-container">
+                <div class="tab-item active" id="tab-coach" onclick="showSection('coach')">코치 ID 찾기</div>
+                <div class="tab-item" id="tab-company" onclick="showSection('company')">컴퍼니 ID 찾기</div>
+            </div>
 
+            <div id="section-coach" class="find-section active">
+                <h4 class="signup-title">코치 ID 찾기</h4>
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="coachEmail" class="form-control" placeholder="코치 이메일 입력">
+                        <button type="button" onclick="sendCoachEmail()" id="coachSendBtn" class="btn-sub">인증번호 받기</button>
+                    </div>
+                    <span id="coachEmailError" class="error-msg">가입되지 않은 이메일입니다.</span>
+                </div>
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="coachAuth" class="form-control" placeholder="인증번호" disabled>
+                        <button type="button" onclick="verifyCoachId()" id="coachVerifyBtn" class="btn-sub" disabled>인증</button>
+                    </div>
+                    <span id="coachSuccess" class="success-msg"></span>
+                    <span id="coachAuthError" class="error-msg">인증번호가 일치하지 않습니다.</span>
+                </div>
+            </div>
+
+            <div id="section-company" class="find-section">
+                <h4 class="signup-title">컴퍼니 ID 찾기</h4>
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="companyEmail" class="form-control" placeholder="이메일 입력">
+                        <button type="button" onclick="sendCompanyEmail()" id="companySendBtn" class="btn-sub">인증번호 받기</button>
+                    </div>
+                    <span id="companyEmailError" class="error-msg">등록된 기업 정보가 없습니다.</span>
+                </div>
+                <div class="form-group">
+                    <div class="input-row">
+                        <input type="text" id="companyAuth" class="form-control" placeholder="인증번호" disabled>
+                        <button type="button" onclick="verifyCompanyId()" id="companyVerifyBtn" class="btn-sub" disabled>인증</button>
+                    </div>
+                    <span id="companySuccess" class="success-msg"></span>
+                    <span id="companyAuthError" class="error-msg">인증번호가 올바르지 않습니다.</span>
+                </div>
+            </div>
+
+            <a href="/login"><button type="button" id="submitBtn" class="btn-submit" disabled>로그인 하러 가기</button></a>
+        </div>
+    </main>
+
+    <div th:replace="~{layout/footer :: siteFooter}"></div>
+    
+    <script th:inline="javascript">
+        // --- 공통: 섹션 전환 ---
+        function showSection(mode) {
+            document.querySelectorAll('.find-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById('section-' + mode).classList.add('active');
+            document.getElementById('tab-' + mode).classList.add('active');
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        // ================= [ COACH 전용 로직 ] =================
+        async function sendCoachEmail() {
+            const email = document.getElementById('coachEmail').value.trim();
+            const error = document.getElementById('coachEmailError');
+            error.style.display = 'none';
+
+            try {
+                // 코치 전용 중복체크 (예시 경로)
+                const checkRes = await fetch(`/api/member/emailCheck?email=${email}`);
+                const isAvailable = await checkRes.json();
+                if (isAvailable) { error.style.display = 'block'; return; }
+
+                const sendRes = await fetch(`/api/mail/send?email=${email}`, { method: 'POST' });
+                if (await sendRes.text() === "success") {
+                    alert("코치 인증번호가 발송되었습니다.");
+                    document.getElementById('coachAuth').disabled = false;
+                    document.getElementById('coachVerifyBtn').disabled = false;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function verifyCoachId() {
+            const email = document.getElementById('coachEmail').value;
+            const code = document.getElementById('coachAuth').value;
+
+            fetch(`/api/mail/getId?code=${code}&email=${email}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === "success") {
+                        const success = document.getElementById('coachSuccess');
+                        success.style.display = 'block';
+                        success.innerHTML = `인증 성공! ID: <strong>${result.userId}</strong>`;
+                        document.getElementById('coachVerifyBtn').disabled = true;
+                        document.getElementById('submitBtn').disabled = false;
+                    } else {
+                        document.getElementById('coachAuthError').style.display = 'block';
+                    }
+                });
+        }
+
+        // ================= [ COMPANY 전용 로직 ] =================
+        async function sendCompanyEmail() {
+            const email = document.getElementById('companyEmail').value.trim();
+            const error = document.getElementById('companyEmailError');
+            error.style.display = 'none';
+
+            try {
+                // 기업 전용 이메일 체크
+                const checkRes = await fetch(`/api/company/emailCheck?email=${email}`);
+                const exists = await checkRes.json();
+                if (exists) { error.style.display = 'block'; return; }
+
+                const sendRes = await fetch(`/api/mail/send?email=${email}`, { method: 'POST' });
+                if (await sendRes.text() === "success") {
+                    alert("기업 인증번호가 발송되었습니다.");
+                    document.getElementById('companyAuth').disabled = false;
+                    document.getElementById('companyVerifyBtn').disabled = false;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function verifyCompanyId() {
+            const email = document.getElementById('companyEmail').value;
+            const code = document.getElementById('companyAuth').value;
+
+            // 기업 전용 ID 조회
+            fetch(`/api/email/getCompanyId?code=${code}&email=${email}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === "success") {
+                        const success = document.getElementById('companySuccess');
+                        success.style.display = 'block';
+                        success.innerHTML = `인증 성공!: ID : <strong>${result.userId}</strong>`;
+                        document.getElementById('companyVerifyBtn').disabled = true;
+                        document.getElementById('submitBtn').disabled = false;
+                    } else {
+                        document.getElementById('companyAuthError').style.display = 'block';
+                    }
+                });
+        }
+    </script>
 </body>
+</html>
