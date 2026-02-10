@@ -153,7 +153,7 @@
             const code = document.getElementById('companyAuth').value;
 
             // 기업 전용 ID 조회
-            fetch(`/api/email/getCompanyId?code=${code}&email=${email}`, { method: 'POST' })
+            fetch(`/api/mail/getCompanyId?code=${code}&email=${email}`, { method: 'POST' })
                 .then(res => res.json())
                 .then(result => {
                     if (result.status === "success") {
