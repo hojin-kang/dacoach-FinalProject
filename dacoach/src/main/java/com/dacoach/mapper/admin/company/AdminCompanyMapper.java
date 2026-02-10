@@ -12,7 +12,7 @@ public interface AdminCompanyMapper {
     // 기업 회원 관리
     List<Map<String, Object>> companyList();
     Map<String, Object> companyDetail(@Param("usersIdx") long usersIdx);
-    
+    int countCompanyTotal();    
     int updateUserStatus(@Param("userIdx") long userIdx, @Param("status") String status);
     int insertEmbeddedHistory(Map<String, Object> param);
     int closeLatestEmbeddedHistory(@Param("userIdx") long userIdx);
@@ -24,6 +24,7 @@ public interface AdminCompanyMapper {
     // 클래스 목록
     List<Map<String, Object>> selectClassPage(Map<String, Object> param);
     int countClassTotal();
+    
     
     // 클래스 상세 (간소화 버전)
     Map<String, Object> classDetail(@Param("classIdx") int classIdx);
