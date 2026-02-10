@@ -57,4 +57,6 @@ public interface CoachMapper {
 	public String getId(String email) throws Exception;
 	
 	public String getCompanyId(String email) throws Exception;
+	
+	public Integer pwdChange(HashMap map) throws Exception;
 }

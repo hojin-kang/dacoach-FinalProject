@@ -166,4 +166,8 @@
         join company C on U.user_idx = C.user_idx
         where C.email = #{email}
     </select>
+    <update id="pwdChange" parameterType="HashMap">
+        update users set password = #{password}
+        where login_id = #{login_id}
+    </update>
 </mapper>

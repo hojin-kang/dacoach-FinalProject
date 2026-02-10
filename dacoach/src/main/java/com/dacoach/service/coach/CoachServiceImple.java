@@ -162,5 +162,14 @@ public class CoachServiceImple implements CoachService {
 		return result>0?true:false;
 	}
 
+	@Override
+	public Integer pwdChange(String login_id, String password) throws Exception {
+		HashMap<String, Object> map=new HashMap<>();
+		map.put("login_id", login_id);
+		map.put("password", com.dacoach.javasecure.JavaDataSecureModule.getSHA256(password));
+		int result=coachMapper.pwdChange(map);
+		return result;
+	}
+
 	
 }
