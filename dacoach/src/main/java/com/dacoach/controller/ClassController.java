@@ -181,6 +181,10 @@ public class ClassController {
 		// 분야 정보 조회 (Service를 통해)
 		Map<String, Object> fieldInfo = classService.getClassFieldInfo(id);
 		mav.addObject("fieldInfo", fieldInfo);
+		
+		// 지역 정보 조회 (Service를 통해)
+		Map<String, Object> regionInfo = classService.getClassRegionInfo(id);
+		mav.addObject("regionInfo", regionInfo);
 
 		// ⭐ 리뷰 정보 조회
 		List<Map<String, Object>> reviewList = classService.getReviewsByClass(id);
@@ -191,9 +195,10 @@ public class ClassController {
 		mav.addObject("avgRating", avgRating);
 		mav.addObject("reviewCount", reviewCount);
 
-		// 제공자 정보 (일단 빈 값으로)
-		mav.addObject("providerName", "");
-		mav.addObject("providerPhoto", "");
+		// 제공자 정보 조회
+	    Map<String, Object> providerInfo = classService.getProviderInfo(classDTO.getProvider_idx());
+	    mav.addObject("providerName", providerInfo.get("PROVIDER_NAME"));
+	    mav.addObject("providerPhoto", providerInfo.get("PROVIDER_PHOTO"));
 
 		mav.setViewName("company/classes/classDetail");
 		return mav;

@@ -20,6 +20,8 @@ public interface ClassService {
 	List<ClassDTO> getClassesByProvider(Integer providerIdx, String sort) throws Exception;
 
 	ClassDTO getClassDetail(int class_idx) throws Exception;
+	
+	Map<String, Object> getProviderInfo(int provider_idx) throws Exception;
 
 	Map<String, Object> getClassStats(int class_idx, int provider_idx) throws Exception;
 
@@ -31,6 +33,9 @@ public interface ClassService {
 
 	// ⭐ 분야 정보 조회
 	Map<String, Object> getClassFieldInfo(int class_idx) throws Exception;
+	
+	// ⭐ 지역 정보 조회
+	Map<String, Object> getClassRegionInfo(int class_idx) throws Exception;
 
 	// ⭐ 지역 정보 조회
 	Map<String, Object> getRegionInfoByMinorIdx(Integer minorRegionIdx) throws Exception;

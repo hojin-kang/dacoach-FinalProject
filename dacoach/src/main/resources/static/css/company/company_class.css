@@ -870,6 +870,23 @@
 	font-size: 14px;
 }
 
+/* 지역 정보 */
+.region-info {
+	margin-bottom: 15px;
+	margin-left: 20px;
+}
+
+.region-text {
+	font-weight: bold;
+	color: #328889;
+	font-size: 15px;
+}
+
+.region-empty {
+	color: #999;
+	font-size: 14px;
+}
+
 /* =========================
    미디어 영역
    ========================= */

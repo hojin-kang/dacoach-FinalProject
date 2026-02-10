@@ -129,6 +129,22 @@
 		</choose>
 	</select>
 
+	<!-- ⭐ 제공자 정보 조회 (이름, 사진) -->
+	<select id="selectProviderInfo" parameterType="int"
+		resultType="map">
+		SELECT
+		u.USER_NAME AS PROVIDER_NAME,
+		CASE
+		WHEN c.COACH_IDX IS NOT NULL THEN c.PHOTO
+		WHEN co.COMPANY_IDX IS NOT NULL THEN co.PHOTO
+		ELSE NULL
+		END AS PROVIDER_PHOTO
+		FROM USERS u
+		LEFT JOIN COACH c ON u.USER_IDX = c.USER_IDX
+		LEFT JOIN COMPANY co ON u.USER_IDX = co.USER_IDX
+		WHERE u.USER_IDX = #{provider_idx}
+	</select>
+
 	<select id="getClassDetail" parameterType="int"
 		resultType="com.dacoach.model.classes.ClassDTO">
 		SELECT
@@ -223,6 +239,20 @@
 		mnf.MINOR_FIELD_IDX
 		INNER JOIN MAJOR_FIELD mf ON mnf.MAJOR_FIELD_IDX =
 		mf.MAJOR_FIELD_IDX
+		WHERE c.CLASS_IDX = #{class_idx}
+	</select>
+	
+	<!-- ⭐ 클래스의 지역 정보 조회 (대지역, 소지역) -->
+	<select id="selectClassRegionInfo" parameterType="int"
+		resultType="map">
+		SELECT
+		mr.REGION_NM,
+		mnr.DISTRICT_NM 
+		FROM CLASS c
+		INNER JOIN MINOR_REGION mnr ON c.MINOR_REGION_IDX =
+		mnr.MINOR_REGION_IDX
+		INNER JOIN MAJOR_REGION mr ON mnr.MAJOR_REGION_IDX =
+		mr.MAJOR_REGION_IDX
 		WHERE c.CLASS_IDX = #{class_idx}
 	</select>
 
