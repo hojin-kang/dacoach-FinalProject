@@ -45,10 +45,10 @@ public interface ClassMapper {
 
 	// 클래스의 분야 정보 조회 (대분류, 소분류)
 	Map<String, Object> selectClassFieldInfo(int class_idx) throws Exception;
-	
+
 	// 클래스의 분야 정보 조회 (대지역, 소지역)
 	Map<String, Object> selectClassRegionInfo(int class_idx) throws Exception;
-	
+
 	// 제공자 정보 조회 (이름, 사진)
 	Map<String, Object> selectProviderInfo(int provider_idx) throws Exception;
 
