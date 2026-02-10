@@ -2,147 +2,232 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="keywordContent">
     <style>
-        /* [공통 및 배경 색상] */
-        .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
-        .bg-mint-light { background-color: #f0f8f7; }
-        .bg-mint-dark { background-color: #9dbbb5; }
-        
-        /* [메인 카드 레이아웃] */
-        .info-card { background-color: white; border: 2px solid #e5e7eb; border-radius: 40px; padding: 2rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 1.5rem; position: relative; }
-        .section-badge { display: inline-block; background-color: #9dbbb5; color: white; padding: 0.5rem 2rem; border-radius: 9999px; font-weight: bold; margin-bottom: 1.5rem; font-size: 1rem; border: none; }
-        
-        /* [사이드 탭 스타일] */
-        .side-tab-group { display: flex; flex-direction: column; gap: 0.75rem; width: 150px; padding: 1rem; background-color: #f0f8f7; border-radius: 25px; border: 1px solid #9dbbb540; }
+        /* [코치 관리 레이아웃과 동일한 아이덴티티 적용] */
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+        }
+
+        .keyword-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; min-height: 800px; }
+
+        /* [상단 헤더 영역] */
+        .admin-top-bar { 
+            display: flex; align-items: flex-end; gap: 15px; 
+            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
+        }
+        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
+
+        /* [메인 레이아웃 구성] */
+        .keyword-main-layout { display: flex; gap: 30px; }
+
+        /* [좌측 사이드 탭] */
+        .side-menu-wrapper { width: 180px; shrink: 0; }
+        .side-tab-group { 
+            display: flex; flex-direction: column; gap: 8px; 
+            padding: 15px; background-color: var(--mint-bg); border-radius: 20px;
+        }
         .side-tab-btn { 
-            width: 100%; padding: 0.6rem 0.5rem; border-radius: 12px; font-weight: bold; font-size: 0.85rem;
-            background-color: white; border: 1px solid #e5e7eb; color: #6b7280; transition: all 0.2s; cursor: pointer;
-            text-align: center; text-decoration: none; display: block;
+            width: 100%; padding: 12px 15px; border-radius: 12px; font-weight: 700; font-size: 13px;
+            background-color: white; border: 1px solid transparent; color: #6b7280; 
+            transition: all 0.2s; text-align: left; display: block; text-decoration: none;
         }
-        .side-tab-btn.active { background-color: #9dbbb5; color: white; border-color: #9dbbb5; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .side-tab-btn:hover:not(.active) { background-color: #e5e7eb; }
+        .side-tab-btn.active { background-color: var(--mint-main); color: white; box-shadow: 0 4px 10px rgba(157, 187, 181, 0.3); }
+        .side-tab-btn:hover:not(.active) { border-color: var(--mint-main); color: var(--mint-main); }
+        .count-pill { float: right; font-size: 11px; opacity: 0.8; }
 
-        /* [키워드 영역 (등록 폼 & 태그 목록)] */
-        .keyword-area { background-color: #f0f8f7; border-radius: 20px; padding: 1.25rem; border: 1px solid #9dbbb520; }
-        .keyword-tag-container { display: flex; flex-wrap: wrap; gap: 0.75rem; min-height: 20px; }
+        /* [중앙 컨텐츠 영역] */
+        .content-area { flex: 1; }
+
+        /* [키워드 입력 & 태그 영역] */
+        .control-panel-box { 
+            background-color: white; border-radius: 20px; border: 1px solid #f3f4f6;
+            padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .panel-title { font-weight: 800; color: var(--mint-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        /* 키워드 등록 폼 */
+        .keyword-form { display: flex; gap: 10px; margin-bottom: 20px; }
+        .select-type { 
+            width: 130px; border: 2px solid var(--mint-bg); border-radius: 12px; 
+            padding: 0 10px; font-weight: 700; font-size: 13px; outline: none;
+        }
+        .input-keyword { 
+            flex: 1; border: 2px solid var(--mint-bg); border-radius: 12px; 
+            padding: 10px 15px; font-size: 14px; outline: none; transition: 0.2s;
+        }
+        .input-keyword:focus { border-color: var(--mint-main); }
+        .btn-save { 
+            background-color: var(--mint-main); color: white; border: none; 
+            border-radius: 12px; width: 80px; font-weight: 800; cursor: pointer; transition: 0.2s;
+        }
+        .btn-save:hover { background-color: var(--mint-dark); }
+
+        /* 키워드 태그 목록 */
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; }
         .keyword-tag { 
-            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem; 
-            background-color: white; border: 1px solid #e5e7eb; border-radius: 9999px; font-weight: bold; font-size: 0.85rem; color: #374151;
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; 
+            background-color: var(--mint-bg); border-radius: 10px; font-weight: 700; 
+            font-size: 13px; color: var(--mint-dark); border: 1px solid transparent;
         }
-        .tag-del-btn { border: none; background: transparent; cursor: pointer; color: inherit; opacity: 0.5; font-size: 10px; padding: 0 2px; }
-        
-        /* [키워드 입력 폼 커스텀] */
-        .input-keyword { flex: 1; px: 1rem; height: 42px; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 0.85rem; padding: 0 1rem; }
-        .input-keyword:focus { outline: none; border-color: #9dbbb5; }
-        .select-type { width: 120px; height: 42px; margin: 0; padding: 0 0.5rem; border-radius: 12px; border: 1px solid #e5e7eb; font-weight: bold; font-size: 0.85rem; color: #374151; cursor: pointer; }
+        .tag-del-btn { border: none; background: transparent; cursor: pointer; color: #9ca3af; font-size: 10px; padding-left: 5px; }
+        .tag-del-btn:hover { color: #ef4444; }
 
-        /* [댓글 목록 스타일] */
-        .comment-row { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.5rem; background-color: #f0f8f7; border-radius: 15px; margin-bottom: 0.75rem; border: 1px solid transparent; }
-        .writer-name { width: 85px; font-weight: bold; color: #374151; text-align: center; font-size: 0.9rem; }
-        .comment-content { flex: 1; font-size: 0.875rem; color: #4b5563; }
-        .btn-icon { color: #9ca3af; display: flex; align-items: center; justify-content: center; text-decoration: none; }
-        .btn-del-sm { background-color: white; border: 1px solid #e5e7eb; padding: 0.4rem 1.2rem; border-radius: 10px; font-weight: bold; font-size: 0.8rem; color: #6b7280; cursor: pointer; }
-        .btn-del-sm:hover { background-color: #fee2e2; color: #ef4444; border-color: #fecaca; }
+        /* [댓글 목록 리스트] */
+        .list-header { 
+            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
+            margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; text-align: center;
+        }
+        .comment-item-card {
+            display: flex; align-items: center; padding: 15px 20px;
+            background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
+            margin-bottom: 10px; transition: 0.2s;
+        }
+        .comment-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+
+        .col-writer { width: 100px; font-weight: 700; text-align: center; }
+        .col-content { flex: 1; padding: 0 15px; font-size: 13px; line-height: 1.4; }
+        .detected-badge { font-size: 11px; color: #f87171; font-weight: 800; margin-top: 4px; display: block; }
+        
+        /* [수정된 버튼 영역] */
+        .col-action { 
+            width: 160px; /* 너비 확보 */
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 8px; 
+            white-space: nowrap; /* 줄바꿈 방지 */
+        }
+
+        /* 공통 버튼 스타일 */
+        .action-btn { 
+            padding: 7px 12px; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            border: 1px solid #eee; 
+            background: white; 
+            color: #6b7280;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-view { color: var(--mint-main); }
+        .btn-view:hover { background-color: var(--mint-bg); border-color: var(--mint-main); }
+        .btn-del:hover { background-color: #fee2e2; color: #ef4444; border-color: #fecaca; }
     </style>
 
-    <div class="max-w-[1100px] mx-auto p-8 font-main">
-        <div class="info-card">
-            <h2 class="section-badge">검열 키워드 관리</h2>
-            
-            <div class="flex gap-8">
-                <div class="side-tab-group shrink-0">
+    <div class="max-w-[1100px] mx-auto p-10 keyword-admin-container">
+        <div class="admin-top-bar">
+            <h1>Keyword Management</h1>
+            <span class="current-path">Customer / Censorship Keywords</span>
+        </div>
+
+        <div class="keyword-main-layout">
+            <div class="side-menu-wrapper">
+                <div class="side-tab-group">
                     <a th:href="@{/admin/keyword/keyword}"
                        th:classappend="${selectedType == null} ? 'active' : ''"
-                       class="side-tab-btn">전체</a> 
+                       class="side-tab-btn">
+                       전체 <span class="count-pill">ALL</span>
+                    </a> 
                     <a th:each="type : ${keywordType}"
                        th:href="@{/admin/keyword/keyword(keyword_type=${type['KEYWORD_TYPE']})}"
                        th:classappend="${selectedType == type['KEYWORD_TYPE']} ? 'active' : ''"
                        class="side-tab-btn"> 
-                       <span th:text="${type['KEYWORD_TYPE']}">타입명</span>
-                       <span th:text="'(' + ${type['CNT']} + ')'"></span>
+                       <span th:text="${type['KEYWORD_TYPE']}"></span>
+                       <span class="count-pill" th:text="${type['CNT']}"></span>
                     </a>
                 </div>
+            </div>
 
-                <div class="flex-1">
-                    <div class="keyword-area mb-4">
-                        <form th:action="@{/admin/keyword/insertKeyword}" method="post" class="flex items-center gap-3 w-full">
-                            <select name="keyword_type" class="select-type">
-                                <option value="">타입 선택</option>
-                                <option th:each="type : ${keywordType}"
-                                        th:value="${type['KEYWORD_TYPE']}"
-                                        th:text="${type['KEYWORD_TYPE']}"></option>
-                            </select> 
-                            <input type="text" name="keyword_name" placeholder="추가할 키워드 입력" class="input-keyword">
-                            <button type="submit" class="side-tab-btn active" style="width: 80px; height: 42px; margin: 0;">저장</button>
-                        </form>
+            <div class="content-area">
+                <div class="control-panel-box">
+                    <div class="panel-title">
+                        <span>⚙️</span> 키워드 설정
                     </div>
+                    
+                    <form th:action="@{/admin/keyword/insertKeyword}" method="post" class="keyword-form">
+                        <select name="keyword_type" class="select-type">
+                            <option value="">타입 선택</option>
+                            <option th:each="type : ${keywordType}"
+                                    th:value="${type['KEYWORD_TYPE']}"
+                                    th:text="${type['KEYWORD_TYPE']}"></option>
+                        </select> 
+                        <input type="text" name="keyword_name" placeholder="새로운 금지어를 입력하세요" class="input-keyword">
+                        <button type="submit" class="btn-save">저장</button>
+                    </form>
 
-                    <div class="keyword-area mb-8">
-                        <div class="keyword-tag-container">
-                            <div th:each="kw : ${keywordName}" class="keyword-tag">
-                                <span th:text="'#' + ${kw}"></span>
-                                <button class="tag-del-btn" th:onclick="deleteKeyword([[${kw}]])">✕</button>
-                            </div>
-                            <div th:if="${#lists.isEmpty(keywordName)}" class="text-gray-400 text-sm italic">등록된 키워드가 없습니다.</div>
+                    <div class="tag-container">
+                        <div th:each="kw : ${keywordName}" class="keyword-tag">
+                            <span th:text="'#' + ${kw}"></span>
+                            <button class="tag-del-btn" th:onclick="deleteKeyword([[${kw}]])">✕</button>
+                        </div>
+                        <div th:if="${#lists.isEmpty(keywordName)}" class="text-gray-300 text-xs italic py-2">
+                            등록된 키워드가 없습니다.
                         </div>
                     </div>
+                </div>
 
-                    <div class="comment-container">
-                        <div th:if="${#lists.isEmpty(typeReview)}"
-                             class="py-12 text-center text-gray-400 italic bg-mint-light rounded-[20px]">
-                            현재 감지된 불량 댓글이 없습니다.
-                        </div>
+                <div class="panel-title" style="padding-left: 10px; margin-bottom: 10px;">
+                    <span>🚨</span> 실시간 키워드 감지 현황
+                </div>
 
-                        <div th:unless="${#lists.isEmpty(typeReview)}"
-                             th:each="comment : ${typeReview}" class="comment-row">
-                            <div class="writer-name" th:text="${comment.USER_NAME}">홍길동</div>
-                            <div class="comment-content">
-                                <span th:text="${comment.CONTENT}">리뷰 내용</span>
-                                <div class="text-xs text-red-400 mt-1" th:text="'감지된 키워드: ' + ${comment.KEYWORDS}"></div>
-                            </div>
-                            <a th:href="@{/admin/coach/coachDetail(user_idx=${comment.REVIEWER_IDX},coach_idx=${comment.coach_idx})}" class="btn-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </a>
-                            <button class="btn-del-sm" th:onclick="deleteReview([[${comment.REVIEW_IDX}]], [[${comment.ROLE}]])">삭제</button>
-                        </div>
+                <div class="list-header">
+                    <div class="col-writer">작성자</div>
+                    <div class="col-content">댓글 내용 및 감지 키워드</div>
+                    <div class="col-action">관리</div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(typeReview)}" class="text-center py-20 text-gray-300 italic">
+                    감지된 불량 댓글이 없습니다.
+                </div>
+
+                <div th:unless="${#lists.isEmpty(typeReview)}" th:each="comment : ${typeReview}" class="comment-item-card">
+                    <div class="col-writer" th:text="${comment.USER_NAME}"></div>
+                    <div class="col-content">
+                        <div th:text="${comment.CONTENT}"></div>
+                        <span class="detected-badge" th:text="'[감지] ' + ${comment.KEYWORDS}"></span>
                     </div>
-                </div> </div>
+                    <div class="col-action">
+                        <a th:href="@{/admin/coach/coachDetail(user_idx=${comment.REVIEWER_IDX},coach_idx=${comment.coach_idx})}" 
+                           class="action-btn btn-view">
+                           회원정보
+                        </a>
+                        <button type="button" class="action-btn btn-del" th:onclick="deleteReview([[${comment.REVIEW_IDX}]], [[${comment.ROLE}]])">삭제</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script th:inline="javascript">
-		let msg = /*[[${msg}]]*/ null; 
-    
-   		if(msg !== null && msg !== "") {
-        	alert(msg);
-    	}
-   	 	
-   		function deleteReview(idx, role) {
-   		    if(confirm('해당 리뷰를 삭제하시겠습니까?')) {
-   		        fetch('/admin/keyword/deleteReview', {
-   		            method: 'POST',
-   		            headers: {
-   		                'Content-Type': 'application/json'
-   		            },
-   		            body: JSON.stringify({
-   		                review_idx: idx,
-   		                role: role
-   		            })
-   		        })
-   		        .then(response => response.text())
-   		        .then(data => {
-   		            if (data === "success") {
-   		                alert('삭제되었습니다.');
-   		                location.reload();
-   		            } else {
-   		                alert('삭제에 실패했습니다.');
-   		            }
-   		        })
-   		        .catch(err => console.log("에러 발생: ", err));
-   		    }
-   		}
+        let msg = /*[[${msg}]]*/ null; 
+        if(msg !== null && msg !== "") {
+            alert(msg);
+        }
+        
+        function deleteReview(idx, role) {
+            if(confirm('해당 리뷰를 삭제하시겠습니까?')) {
+                fetch('/admin/keyword/deleteReview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ review_idx: idx, role: role })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    if (data === "success") {
+                        alert('삭제되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('삭제에 실패했습니다.');
+                    }
+                })
+                .catch(err => console.log("에러 발생: ", err));
+            }
+        }
         
         function deleteKeyword(name) {
             if(confirm('키워드를 삭제하시겠습니까?')) {
