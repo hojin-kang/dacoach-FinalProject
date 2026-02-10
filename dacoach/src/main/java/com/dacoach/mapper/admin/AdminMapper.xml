@@ -146,13 +146,29 @@
 	delete from review_class where review_class_idx=#{review_idx}
 	</delete>
 	
-	<select id="getNoticeList" resultType="map">
-	select q.qna_idx,q.qna_type,q.title,u.user_name,q.created_at
+	<select id="getNoticeList" resultType="map" parameterType="String">
+	select 
+	q.qna_idx,
+	q.qna_type,
+	q.title,
+	u.user_name,
+	q.created_at
 	from qna q
-	join users u
-	on q.user_idx=u.user_idx
-	where u.user_type='ADMIN'
-	order by q.created_at desc
+	join users u on q.user_idx = u.user_idx
+		<where>
+		u.user_type='ADMIN'
+		and q.qna_type!='운영정책'
+		
+			<if test="keyword != null and keyword != ''">
+			and (
+				q.title like '%' || #{keyword} || '%' or
+				q.qna_type like '%' || #{keyword} || '%' or
+				u.user_name like '%' || #{keyword} || '%' or
+				q.qna_idx like '%' || #{keyword} || '%'
+			)
+			</if>
+		</where>
+		order by q.qna_idx desc
 	</select>
 	
 	<insert id="insertNotice" parameterType="com.dacoach.model.qna.QnaDTO">
@@ -166,6 +182,14 @@
 	where q.qna_idx=#{qna_idx}
 	</select>
 	
+	<update id="updateNotice" parameterType="com.dacoach.model.qna.QnaDTO">
+	update qna set qna_type=#{qna_type}, title=#{title}, question=#{question} where qna_idx=#{qna_idx}
+	</update>
+	
+	<delete id="deleteNotice" parameterType="int">
+	delete from qna where qna_idx=#{qna_idx}
+	</delete>
+	
 	<select id="getMajorField" resultType="map">
 	select * from major_field
 	</select>
@@ -173,4 +197,12 @@
 	<select id="getMinorField" parameterType="int" resultType="map">
 	select * from minor_field where major_field_idx=#{major_field_idx}
 	</select>
+	
+	<insert id="insertMinorField" parameterType="map">
+	insert into minor_field values (seq_minor_field.nextval,#{major_field_idx},#{minor_field_nm})
+	</insert>
+	
+	<update id="updateMinorField" parameterType="map">
+	update minor_field set minor_field_nm =#{minor_field_nm} where minor_field_idx=#{minor_field_idx}
+	</update>
 </mapper>

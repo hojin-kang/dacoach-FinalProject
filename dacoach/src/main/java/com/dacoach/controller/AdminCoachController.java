@@ -239,18 +239,20 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/notice")
-	public String noticeList(Model model) {
+	public String noticeList(Model model,
+			@RequestParam(value="keyword", required=false) String keyword) {
 		
 		List<Map<String, Object>> noticeList = new ArrayList<>();
 		
 		try {
-			noticeList = adminService.getNoticeList();
+			noticeList = adminService.getNoticeList(keyword);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		model.addAttribute("noticeList", noticeList);
+		model.addAttribute("keyword", keyword);
 		model.addAttribute("contentPage", "admin/support/notice/noticeList");
 		model.addAttribute("contentFragment", "noticeList");
 		
@@ -261,7 +263,7 @@ public class AdminCoachController {
 	public String noticeWrite(Model model) {
 		
 		model.addAttribute("contentPage", "admin/support/notice/noticeWrite");
-		model.addAttribute("contentFragment", "noticeWrite");
+		model.addAttribute("contentFragment", "noticeForm");
 		
 		return "admin/dashboard";
 	}
@@ -305,6 +307,73 @@ public class AdminCoachController {
 		model.addAttribute("contentFragment", "noticeContent");
 		return "admin/dashboard";
 	}
+	
+	@GetMapping("/support/notice/noticeUpdateForm")
+	public String noticeUpdateForm(Model model, @RequestParam int qna_idx) {
+		
+		QnaDTO dto = new QnaDTO();
+		
+		try {
+			dto = adminService.getNoticeContent(qna_idx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("content", dto);
+		model.addAttribute("contentPage", "admin/support/notice/noticeWrite");
+		model.addAttribute("contentFragment", "noticeForm");
+		return "admin/dashboard";
+	}
+	
+	@PostMapping("/support/notice/update")
+	public String updateNotice(QnaDTO dto,
+			RedirectAttributes rttr) {
+		
+		try {
+			int result = adminService.updateNotice(dto);
+			
+			if(result > 0) {
+				rttr.addFlashAttribute("msg", "공지사항이 수정되었습니다.");
+				return "redirect:/admin/support/notice";
+			}else {
+				rttr.addFlashAttribute("msg", "공지사항 수정에 실패했습니다.");
+				return "redirect:/admin/support/notice/noticeUpdateForm?qna_idx=" + dto.getQna_idx();
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+			return "redirect:/admin/support/notice/noticeUpdateForm?qna_idx=" + dto.getQna_idx();
+		}
+		
+	}
+	
+	@PostMapping("/support/notice/delete")
+	public String deleteNotice(@RequestParam int qna_idx,
+			RedirectAttributes rttr) {
+		
+		try {
+			int result = adminService.deleteNotice(qna_idx);
+			
+			if(result > 0) {
+				rttr.addFlashAttribute("msg", "공지사항이 삭제되었습니다.");
+			}else {
+				rttr.addFlashAttribute("msg", "공지사항 삭제에 실패했습니다.");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+		}
+		
+		return "redirect:/admin/support/notice";
+	}
+	
+	
+	
 	
 	
 	@GetMapping("/support/qna")
@@ -350,5 +419,55 @@ public class AdminCoachController {
 
 		return "admin/dashboard";
 	}
+	
+	@PostMapping("/filter/insert")
+	public String insertMinorField(
+			@RequestParam int major_field_idx,
+			@RequestParam String minor_field_nm,
+			RedirectAttributes rttr) {
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("major_field_idx", major_field_idx);
+		params.put("minor_field_nm", minor_field_nm);
+		
+		try {
+			int result = adminService.insertMinorField(params);
+			
+			if(result > 0) {
+				rttr.addFlashAttribute("msg", "세부 분야가 추가되었습니다.");
+			}else {
+				rttr.addFlashAttribute("msg", "세부 분야 추가에 실패했습니다.");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "시스템 오류 발생");
+		}
+		
+		return "redirect:/admin/filter/field?major_field_idx=" + major_field_idx;
+	}
+	
+	@PostMapping("/filter/update")
+	@ResponseBody
+	public String updateMinorField(@RequestBody Map<String, Object> params) {
+		
+		try {
+			int result = adminService.updateMinorField(params);
+			
+			if(result > 0) {
+				return "success";
+			}else {
+				return "fail";
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "error";
+		}
+	}
+	
+	
 	
 }

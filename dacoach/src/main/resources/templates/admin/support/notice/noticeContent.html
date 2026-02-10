@@ -2,10 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="noticeContent">
     <style>
-        .font-main { font-family: 'Pretendard', -apple-system, sans-serif; font-size: 14px; color: #374151; }
-        .text-mint-dark { color: #7a948f; }
-        .bg-mint-main { background-color: #9dbbb5; }
-        
+        .font-main {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .text-mint-dark {
+            color: #7a948f;
+        }
+
+        .bg-mint-main {
+            background-color: #9dbbb5;
+        }
+
         .detail-container {
             background-color: #ffffff;
             border: 1px solid #e5e7eb;
@@ -44,7 +54,11 @@
             font-size: 13px;
         }
 
-        .meta-item { display: flex; align-items: center; gap: 5px; }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
         .detail-content {
             padding: 40px;
@@ -71,9 +85,16 @@
             border: 1px solid #e5e7eb;
             transition: all 0.2s;
         }
-        .btn-list:hover { background-color: #f9fafb; color: #374151; }
 
-        .right-buttons { display: flex; gap: 10px; }
+        .btn-list:hover {
+            background-color: #f9fafb;
+            color: #374151;
+        }
+
+        .right-buttons {
+            display: flex;
+            gap: 10px;
+        }
 
         .btn-edit {
             background-color: #9dbbb5;
@@ -106,9 +127,7 @@
         <div class="detail-container">
             <div class="detail-header">
                 <span class="category-badge" th:text="'[' + ${content.qna_type} + ']'">[서비스]</span>
-                
                 <h1 class="detail-title" th:text="${content.title}">제목</h1>
-
                 <div class="detail-meta">
                     <div class="meta-item">
                         <i class="fa-regular fa-user"></i>
@@ -120,21 +139,37 @@
                     </div>
                 </div>
             </div>
-
             <div class="detail-content" th:text="${content.question}">내용</div>
         </div>
 
-        <div class="action-bar">
-            <button type="button" class="btn-list"
-                onclick="location.href='/admin/support/notice'">목록으로</button>
+        <form id="contentForm" method="post">
+            <input type="hidden" name="qna_idx" th:value="${content.qna_idx}">
+            
+            <div class="action-bar">
+                <button type="button" class="btn-list"
+                    onclick="location.href='/admin/support/notice'">목록으로</button>
 
-            <div class="right-buttons">
-                <button type="button" class="btn-delete"
-                    th:onclick="|if(confirm('정말 삭제하시겠습니까?')) location.href='/admin/support/notice/delete?idx=' + ${content.qna_idx}|">삭제</button>
-                <button type="button" class="btn-edit"
-                    th:onclick="|location.href='/admin/support/notice/edit?idx=' + ${content.qna_idx}|">수정하기</button>
+                <div class="right-buttons">
+                    <button type="button" class="btn-delete" onclick="submitNotice('delete')">삭제</button>
+                    <button type="button" class="btn-edit" onclick="submitNotice('update')">수정하기</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
+
+    <script th:inline="javascript">
+        function submitNotice(mode) {
+            const form = document.getElementById('contentForm');
+            
+            if (mode === 'update') {
+            	location.href = '/admin/support/notice/noticeUpdateForm?qna_idx=' + /*[[${content.qna_idx}]]*/ '0';
+            } else if (mode === 'delete') {
+                if (confirm('정말 삭제하시겠습니까?')) {
+                    form.action = '/admin/support/notice/delete';
+                    form.submit();
+                }
+            }
+        }
+    </script>
 </div>
 </html>
