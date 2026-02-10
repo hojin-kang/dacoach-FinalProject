@@ -161,6 +161,11 @@ public class ClassServiceImple implements ClassService {
 	public ClassDTO getClassDetail(int classIdx) throws Exception {
 		return classMapper.getClassDetail(classIdx);
 	}
+	
+	@Override
+	public Map<String, Object> getProviderInfo(int provider_idx) throws Exception {
+	    return classMapper.selectProviderInfo(provider_idx);
+	}
 
 	@Override
 	public Map<String, Object> getClassStats(int classIdx, int providerIdx) throws Exception {
@@ -320,6 +325,11 @@ public class ClassServiceImple implements ClassService {
 	@Override
 	public Map<String, Object> getClassFieldInfo(int class_idx) throws Exception {
 		return classMapper.selectClassFieldInfo(class_idx);
+	}
+	
+	@Override
+	public Map<String, Object> getClassRegionInfo(int class_idx) throws Exception {
+		return classMapper.selectClassRegionInfo(class_idx);
 	}
 
 	@Override

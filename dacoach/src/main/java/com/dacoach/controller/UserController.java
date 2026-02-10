@@ -205,7 +205,7 @@ public class UserController {
 					mav.setViewName("alert");
 					return mav;
 				}else {
-					if(!companyService.regionCheck(dto.getCompany_idx())) {
+					if(!companyService.regionCheck(dto.getCompany_idx())||!companyService.provideCheck(dto.getCompany_idx())) {			
 						mav.addObject("msg","회원가입이 완료되지 않았습니다 계속 진행하겠습니다");
 						mav.addObject("url","/company/profile/profileForm?userIdx="+loginUser.getUser_idx());
 						mav.setViewName("alert");

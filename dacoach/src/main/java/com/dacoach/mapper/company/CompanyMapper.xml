@@ -82,13 +82,17 @@
   			company_idx,
   			major_region_idx,
   			minor_region_idx,
-  			region_detail) 
+  			region_detail,
+  			branch_name,
+  			branch_tel) 
   		
   		values (
 	  		#{company_idx},
 	  		#{major_region_idx},
 	  		#{minor_region_idx},
-	  		#{region_detail}
+	  		#{region_detail},
+	  		#{branch_name},
+	  		#{branch_tel}
   		)
   		
   	</insert>
@@ -103,6 +107,16 @@
   		)
   	
   	</insert>
+  	
+  	<select id="getCompanyRegion">
+  		select 
+		major_region.region_nm,minor_region.district_nm,region_detail,branch_name,branch_tel
+		from major_region,minor_region,
+		(select * from company_region where company_idx=#{idx}) a
+		where
+		major_region.major_region_idx=a.major_region_idx and
+		minor_region.minor_region_idx=a.minor_region_idx
+  	</select>
   	<select id="getUserIdx">
   		select user_idx from users where login_id=#{login_id}
   	</select>
@@ -118,6 +132,11 @@
   	<select id="getCompanyInfo">
   		select * from company where user_idx=#{idx}
   	</select>
+  	
+  	<select id="provideCheck">
+  		select * from company_provide where company_idx=#{idx}
+  	</select>
+  	
   	<select id="regionCheck">
   		select * from company_region where company_idx=#{idx}
   	</select>

@@ -14,6 +14,11 @@
 		<div class="container">
 			<form name="regionForm">
 			<div class="classRegion">
+			<div class="companyRegion" th:if="${regionList!=null}">
+				<span th:each="list:${regionList}">[[${list.REGION_NM}]] [[${list.DISTRICT_NM}]]
+					[[${list.REGION_DETAIL}]] [[${list.BRANCH_NAME}]] [[${list.BRANCH_TEL}]]
+				</span>
+			</div>
 				<p class="classMagerRegion" id="MagerRegion">
 					<select name="major_region_idx" id="majorSelect">
 						<option>대분류</option>
@@ -73,12 +78,12 @@ var addedRegionIds = []; //  선택된 소분류 ID를 담을 배열
 
 var region_text=document.getElementById('region_detail_text');
 var b_name=document.getElementById('branch_name_text');
-var b_text=document.getElementById('branch_tel_text');
+var b_tel=document.getElementById('branch_tel_text');
 
 var submitBtn = document.querySelector('input[type="submit"]');
 var majorFieldSelect = document.getElementById('majorFieldSelect');
 var minorFieldSelect = document.getElementById('minorFieldSelect');
-
+var addRegionBtn=document.getElementById('addRegion');
 // 가입 완료 버튼 활성화 체크
 function checkSubmitVaild() {
     if (addRegionCount > 0 && minorFieldSelect.value !== "" && minorFieldSelect.value !== "minor_field_intro") {
@@ -91,8 +96,25 @@ function checkSubmitVaild() {
         submitBtn.style.cursor = "not-allowed";
     }
 }
+function addRegionVaild(){
+	if(b_name.value==null||b_name.value==""||b_tel.value==null||b_tel.value==""||region_text.value==null||region_text.value==""){
+		addRegionBtn.disabled=true;
+	}else{
+		addRegionBtn.disabled=false;
+	}
+}
 
 checkSubmitVaild();
+addRegionVaild()
+b_name.oninput=function(){
+	addRegionVaild();
+}
+b_tel.oninput=function(){
+	addRegionVaild();
+}
+region_text.oninput=function(){
+	addRegionVaild();
+}
 
 // 분야 대분류 선택 시 분야선택 옵션 삭제
 majorFieldSelect.addEventListener('change', function() {
@@ -146,7 +168,9 @@ function addRegionFun() {
         company_idx: companyIdx,
         major_region_idx: majorIdx,
         minor_region_idx: minorIdx,
-        region_detail: detail
+        region_detail: detail,
+        branch_name:b_name.value,
+        branch_tel:b_tel.value
     };
 
     fetch('/api/company/addRegion?minorName=' + encodeURIComponent(minorName), {
@@ -159,7 +183,7 @@ function addRegionFun() {
         var ResultTag = document.getElementById('regionResultTag');
         if (resultText && resultText !== "실패") {
             // 주소 표시 상세주소 포함
-            ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail}</span>`;
+            ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail} ${b_name.value} ${b_tel.value}</span>`;
             
             // 중복 방지용 저장 성공하면 배열에 추가
             addedRegionIds.push(minorIdx);
@@ -168,7 +192,8 @@ function addRegionFun() {
             document.regionForm.region_detail.value = "";
             majorSelect.selectedIndex = 0;
             minorSelect.innerHTML = '<option id="m_intro">소분류</option>';
-            
+            document.regionForm.branch_name.value='' ;
+            document.regionForm.branch_tel.value='' ;
             addRegionCount++;
             checkSubmitVaild();
         } else {

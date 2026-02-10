@@ -30,10 +30,6 @@
 
 							<h1>클래스 수정</h1>
 
-							<!-- CSRF 토큰 -->
-							<input type="hidden" th:name="${_csrf.parameterName}"
-								th:value="${_csrf.token}" th:if="${_csrf}" />
-
 							<!-- 클래스 IDX (hidden) -->
 							<input type="hidden" name="class_idx"
 								th:value="${classDTO.class_idx}" />
@@ -50,8 +46,8 @@
 								<h3 class="required">클래스 소개</h3>
 								<textarea id="classContent" name="intro"
 									th:text="${classDTO.intro}"
-									placeholder="클래스 내용을 자세히 작성해주세요 (최대 3000자)" maxlength="3000"
-									required></textarea>
+									placeholder="클래스 내용을 자세히 작성해주세요 (최대 3000자)&#10;※ 25자를 넘으면 자동으로 줄바꿈됩니다"
+									maxlength="3000" wrap="soft" cols="10" required></textarea>
 							</div>
 
 							<!-- 분야 (수정 불가) -->

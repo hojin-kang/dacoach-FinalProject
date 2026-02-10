@@ -67,7 +67,6 @@
 					<!-- 제공분야 블록 -->
 					<article class="detailBlock">
 						<h3 class="blockTitle">제공분야</h3>
-
 						<!-- 분야 정보 (대분류 > 소분류) -->
 						<div class="field-info">
 							<span class="field-text" th:if="${fieldInfo != null}"
@@ -75,7 +74,18 @@
 							<span class="field-empty" th:if="${fieldInfo == null}">분야
 								정보 없음</span>
 						</div>
-
+					</article>
+					
+					<!-- 제공지역 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">제공지역</h3>
+						<!-- 분야 정보 (대지역 > 소지역) -->
+						<div class="region-info">
+							<span class="region-text" th:if="${regionInfo != null}"
+								th:text="${regionInfo.REGION_NM} + ' > ' + ${regionInfo.DISTRICT_NM}"></span>
+							<span class="region-empty" th:if="${regionInfo == null}">지역
+								정보 없음</span>
+						</div>
 					</article>
 
 					<!-- 사진/동영상 -->
@@ -103,8 +113,6 @@
 									th:src="'/uploads/' + ${classDTO.photo}" alt="class photo" />
 							</div>
 
-							<!-- (선택) 슬라이드 화살표 UI만 -->
-							<button type="button" class="slideArrow" aria-label="next">›</button>
 						</div>
 					</article>
 
@@ -162,7 +170,7 @@
 									th:if="${reviewList == null or #lists.isEmpty(reviewList)}">
 									<div class="reviewTop">
 										<div class="reviewMeta">
-											<div class="reviewText">아직 후기가 없습니다. 첫 후기를 남겨보세요!</div>
+											<div class="reviewText">아직 후기가 없습니다.</div>
 										</div>
 									</div>
 								</div>

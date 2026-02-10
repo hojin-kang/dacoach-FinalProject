@@ -79,18 +79,18 @@ public class FileUpload {
             if (file.exists()) { // 파일 삭제 디버깅 콘솔 로그(추후 삭제 예정 - 양진유)
                 boolean deleted = file.delete();
                 if (deleted) {
-                    System.out.println("파일 삭제 성공: " + fullPath);
+                    // System.out.println("파일 삭제 성공: " + fullPath);
                 } else {
-                    System.err.println("파일 삭제 실패: " + fullPath);
+                    // System.err.println("파일 삭제 실패: " + fullPath);
                 }
                 return deleted;
             } else {
-                System.out.println("삭제할 파일이 존재하지 않음: " + fullPath);
+                // System.out.println("삭제할 파일이 존재하지 않음: " + fullPath);
                 return false;
             }
             
         } catch (Exception e) {
-            System.err.println("파일 삭제 중 오류 발생: " + relativePath);
+            // System.err.println("파일 삭제 중 오류 발생: " + relativePath);
             e.printStackTrace();
             return false;
         }
