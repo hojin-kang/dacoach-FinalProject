@@ -57,4 +57,25 @@ public interface CoachMapper {
 	public String getId(String email) throws Exception;
 	
 	public String getCompanyId(String email) throws Exception;
+	
+	
+	// 개인정보 수정
+    int updateCoachInfo(CoachDTO dto) throws Exception;
+
+    // 기존 선택값 로딩
+    Map<String, Object> getMyProvideField(int user_idx) throws Exception;
+    Map<String, Object> getMyInterestField(int user_idx) throws Exception;
+    Map<String, Object> getMyRegion(int user_idx) throws Exception;
+
+    // 기존 해시태그 로딩
+    List<String> getMyHashtags(int user_idx) throws Exception;
+    List<String> getInterHashtags(int user_idx) throws Exception;
+
+    // 매핑 삭제
+    int deleteProvideByCoachIdx(int coach_idx) throws Exception;
+    int deleteInterestByCoachIdx(int coach_idx) throws Exception;
+    int deleteRegionByCoachIdx(int coach_idx) throws Exception;
+
+    int deleteMyHashtagMapping(int user_idx) throws Exception;
+    int deleteInterHashtagMapping(int user_idx) throws Exception;
 }
