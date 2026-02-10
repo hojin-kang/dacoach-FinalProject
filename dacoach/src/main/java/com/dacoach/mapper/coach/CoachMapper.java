@@ -58,6 +58,7 @@ public interface CoachMapper {
 	
 	public String getCompanyId(String email) throws Exception;
 	
+	public Integer pwdChange(HashMap map) throws Exception;
 	
 	// 개인정보 수정
     int updateCoachInfo(CoachDTO dto) throws Exception;

@@ -279,6 +279,31 @@ public class UserController {
 		
 		return mav;
 	}
+	//비밀번호 변경
+	@PostMapping("/pwdChange")
+	public ModelAndView pwdChange(@RequestParam(value="login_id", required = true)String login_id,
+			@RequestParam(value="password", required = true)String password,
+			HttpSession session) {
+		ModelAndView mav=new ModelAndView();
+		try {
+			int result=coachService.pwdChange(login_id,password);
+			if(result>0) {
+				mav.addObject("msg", "비밀번호 변경이 완료되었습니다.");
+				mav.addObject("url", "/login");
+				mav.setViewName("alert");
+			}else {
+				mav.addObject("msg", "비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
+				mav.addObject("url", "/pwdFind");
+				mav.setViewName("alert");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.addObject("msg", "비밀번호 변경에 실패했습니다. 다시 시도해주세요.");
+			mav.addObject("url", "/pwdFind");
+			mav.setViewName("alert");
+		}
+		return mav;
+	}
 	
 
 }

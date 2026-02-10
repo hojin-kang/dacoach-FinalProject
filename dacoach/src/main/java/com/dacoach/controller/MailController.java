@@ -24,18 +24,43 @@ public class MailController {
 
     @PostMapping("/send")
     @ResponseBody
-    public String sendMail(@RequestParam String email, HttpSession session) {
+    public String sendMail(@RequestParam(value="email", required = true) String email,
+    		@RequestParam(value="userId", required = false) String userId,
+    		@RequestParam(value="userType", required = false) String userType,
+    		HttpSession session) {
+    	//비밀번호 초기화 페이지에서 사용자 id와 가입시 입력한 이메일 일치 여부 확인
+    	if(userId != null && !userId.isEmpty()) {
+    		if(userType.equals("COACH")) {
+    			if(userId.equals(mailService.getId(email))) {
+    		        String authCode = String.valueOf((int)(Math.random() * 899999) + 100000);
+    		        session.setAttribute("authCode", authCode);
+    		        session.setMaxInactiveInterval(180); 
+    		        mailService.sendVerificationEmail(email, authCode);
+    		        return "success";
+    			}else {
+    				return "incorrect";
+    			}
+    		}else if(userType.equals("COMPANY")) {
+    			if(userId.equals(mailService.getCompanyId(email))) {
+    		        String authCode = String.valueOf((int)(Math.random() * 899999) + 100000);
+    		        session.setAttribute("authCode", authCode);
+    		        session.setMaxInactiveInterval(180); 
+    		        mailService.sendVerificationEmail(email, authCode);
+    		        return "success";
+    			}else {
+    				return "incorrect";
+    			}
+    		}
+    	}
+    	//비밀번호 초기화가 아닌 경우 입력한 메일로 인증번호만 전송
         // 1. 6자리 랜덤 인증번호 생성
         String authCode = String.valueOf((int)(Math.random() * 899999) + 100000);
-        
         // 2. 세션에 인증번호 저장
         session.setAttribute("authCode", authCode);
         // 세션 유지 시간을 3분(180초)으로 설정
         session.setMaxInactiveInterval(180); 
-
-        // 3. 메일 발송 (우리가 만든 메서드는 제목/내용을 내부에서 처리하므로 email과 authCode만 전달)
+        // 3. 메일 발송
         mailService.sendVerificationEmail(email, authCode);
-        
         return "success";
     }
     @PostMapping("/verify")
