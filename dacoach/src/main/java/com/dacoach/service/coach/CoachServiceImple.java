@@ -156,5 +156,11 @@ public class CoachServiceImple implements CoachService {
 		
 	}
 
+	@Override
+	public boolean emailCompanyCheck(String email) throws Exception {
+		int result=coachMapper.emailCompanyCheck(email);
+		return result>0?true:false;
+	}
+
 	
 }

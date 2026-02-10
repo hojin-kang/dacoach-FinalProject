@@ -62,4 +62,14 @@ public class MailService {
 		}
 		return id;
 	}
+	public String getCompanyId(String email) {
+		String id=null;
+		try {
+			id = coachMapper.getCompanyId(email);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return id;
+	}
 }

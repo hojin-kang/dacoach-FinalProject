@@ -69,4 +69,25 @@ public class MailController {
         }
         return response;
     }
+    @PostMapping("/getCompanyId")
+    @ResponseBody
+    public Map<String, Object> getCompanyId(@RequestParam String code, @RequestParam String email, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        String sessionCode = (String) session.getAttribute("authCode");
+
+        if (sessionCode != null && sessionCode.equals(code)) {
+            session.removeAttribute("authCode");
+            String userId = mailService.getCompanyId(email);
+            
+            if (userId == null) {
+                response.put("status", "none");
+            } else {
+                response.put("status", "success");
+                response.put("userId", userId);
+            }
+        } else {
+            response.put("status", "fail");
+        }
+        return response;
+    }
 }
