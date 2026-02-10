@@ -1,0 +1,60 @@
+package com.dacoach.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.dacoach.adminpolicy.service.AdminPolicyService;
+import com.dacoach.model.adminPolicy.PolicyDTO;
+import com.dacoach.model.users.UsersDTO;
+import com.dacoach.service.admin.AdminService;
+
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("/admin/support")	
+public class AdminPolicyController {
+
+	@Autowired
+	AdminPolicyService service;
+	
+	@Autowired
+	AdminService adminService;
+	@GetMapping("/policy")
+	public String viewPolicyPage(Model model) {
+		List<PolicyDTO> policyList = service.getPolicyList();
+		model.addAttribute("policyList", policyList);
+	    model.addAttribute("contentPage", "admin/support/policy/operating");
+	    model.addAttribute("contentFragment", "contentPage");
+		return "admin/dashboard";
+	}
+	
+	@PostMapping("/policy/save")
+	public String savePolicy(PolicyDTO policy, HttpSession session) {
+	    UsersDTO loginUser = (UsersDTO) session.getAttribute("loginAdmin");
+	    
+	    if (loginUser == null) {
+	        return "redirect:/admin"; 
+	    }
+	    
+	    policy.setUser_idx(loginUser.getUser_idx());
+	    service.savePolicy(policy);
+	    
+	    return "redirect:/admin/support/policy";
+	}
+	
+	@GetMapping("/policy/delete")
+	public String deletePolicy(@RequestParam int qna_idx) {
+	    service.deletePolicy(qna_idx);
+	    return "redirect:/admin/support/policy";
+	}
+	
+}

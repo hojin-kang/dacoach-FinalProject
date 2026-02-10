@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="contentPage" class="page-wrap font-main">
+	<style>
+/* 기존 스타일 유지 및 정책 관리 최적화 */
+.font-main {
+	font-family: 'Pretendard', sans-serif;
+	font-size: 14px;
+	color: #374151;
+}
+
+.page-wrap {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 32px;
+}
+
+.bg-mint-main {
+	background-color: #9dbbb5;
+}
+
+.info-card {
+	background: #fff;
+	border: 2px solid #e5e7eb;
+	border-radius: 40px;
+	padding: 2.5rem;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.section-badge {
+	display: inline-block;
+	background: #9dbbb5;
+	color: #fff;
+	padding: 0.5rem 2.5rem;
+	border-radius: 9999px;
+	font-weight: 700;
+	font-size: 1rem;
+	margin-bottom: 30px;
+}
+
+.panel {
+	border: 1px solid #e5e7eb;
+	border-radius: 20px;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.panel-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	background: #f9fafb;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.panel-title {
+	font-weight: 700;
+	color: #1f2937;
+	font-size: 15px;
+}
+
+.btn-mint {
+	background-color: #9dbbb5;
+	color: white;
+	padding: 8px 20px;
+	border-radius: 10px;
+	font-weight: bold;
+	border: none;
+	cursor: pointer;
+	font-size: 13px;
+	transition: 0.2s;
+}
+
+.btn-mint:hover {
+	background-color: #88a9a3;
+}
+
+.btn-outline {
+	background: transparent;
+	border: 1px solid #e5e7eb;
+	padding: 5px 12px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 12px;
+	color: #6b7280;
+}
+
+.btn-outline:hover {
+	background: #f3f4f6;
+}
+
+/* 테이블 스타일 */
+.policy-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.policy-thead {
+	background-color: #f9fafb;
+	border-bottom: 2px solid #e5e7eb;
+}
+
+.policy-thead th {
+	padding: 12px;
+	font-size: 13px;
+	color: #6b7280;
+	font-weight: 600;
+	text-align: center;
+}
+
+.policy-tbody td {
+	padding: 16px 10px;
+	text-align: center;
+	border-bottom: 1px solid #f3f4f6;
+	color: #4b5563;
+}
+
+.policy-tbody tr:hover {
+	background-color: #fcfdfd;
+}
+
+.text-left {
+	text-align: left !important;
+	padding-left: 25px !important;
+}
+
+.truncate {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ✅ 작성자 태그 스타일 */
+.author-tag {
+	display: inline-block;
+	background: #f0f8f7;
+	color: #9dbbb5;
+	padding: 4px 12px;
+	border-radius: 12px;
+	font-size: 11px;
+	font-weight: 700;
+}
+
+/* 모달 (정책 상세/수정용) */
+.modal {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(2px);
+}
+
+.modal.show {
+	display: flex;
+}
+
+.modal-box {
+	width: 90%;
+	max-width: 600px;
+	background: #fff;
+	border-radius: 24px;
+	padding: 30px;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+.form-label {
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 700;
+	font-size: 13px;
+	color: #4b5563;
+}
+
+.form-input {
+	width: 100%;
+	border: 2px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 12px;
+	outline: none;
+	box-sizing: border-box;
+}
+
+.form-textarea {
+	width: 100%;
+	border: 2px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 12px;
+	outline: none;
+	min-height: 200px;
+	resize: none;
+	box-sizing: border-box;
+}
+
+.form-input:focus, .form-textarea:focus {
+	border-color: #9dbbb5;
+}
+
+/* ✅ 읽기 전용 필드 스타일 */
+.form-input:read-only {
+	background-color: #f9fafb;
+	color: #6b7280;
+	cursor: not-allowed;
+}
+</style>
+
+	<div class="info-card">
+		<h2 class="section-badge">이용약관 및 정책 관리</h2>
+
+		<div class="panel">
+			<div class="panel-head">
+				<div class="panel-title">정책 리스트</div>
+				<button type="button" class="btn-mint" onclick="openPolicyModal()">+
+					새 정책 등록</button>
+			</div>
+
+			<div class="policy-content">
+				<div th:if="${#lists.isEmpty(policyList)}" class="empty-state"
+					style="padding: 80px; text-align: center; color: #9ca3af;">
+					<i class="fa-regular fa-file-lines mb-3 block text-4xl opacity-20"></i>
+					등록된 정책 데이터가 없습니다.
+				</div>
+
+				<table th:if="${not #lists.isEmpty(policyList)}"
+					class="policy-table">
+					<thead class="policy-thead">
+						<tr>
+							<th style="width: 10%;">번호</th>
+							<th style="width: 50%;">정책 제목</th>
+							<th style="width: 15%;">작성자</th>
+							<th style="width: 25%;">관리</th>
+						</tr>
+					</thead>
+					<tbody class="policy-tbody">
+						<tr th:each="p : ${policyList}">
+							<td th:text="${p.qna_idx}">1</td>
+							<td class="text-left font-semibold"><span class="truncate"
+								th:text="${p.title}">개인정보 처리방침</span></td>
+							<td><span class="author-tag" th:text="${p.login_id}">admin01</span>
+							</td>
+							<td>
+								<div style="display: flex; gap: 8px; justify-content: center;">
+									<!-- 보기/수정 버튼 -->
+									<button type="button" class="btn-outline"
+										th:onclick="openPolicyModal([[${p.qna_idx}]], [[${p.title}]], 
+                                        [[${p.question}]], [[${p.login_id}]])">
+										보기/수정</button>
+
+									<!-- ✅ 삭제 버튼 (추가!) -->
+									<button type="button" class="btn-outline"
+										style="color: #ef4444;"
+										th:onclick="|if(confirm('정말 삭제하시겠습니까?')) 
+                        location.href='@{/admin/support/policy/delete(qna_idx=${p.qna_idx})}'|">
+										삭제</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" id="policyModal"
+		onclick="if(event.target == this) closePolicyModal()">
+		<div class="modal-box">
+			<div class="modal-head"
+				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+				<h3 class="panel-title" id="modalTitle" style="font-size: 18px;">정책
+					상세 설정</h3>
+				<button type="button" onclick="closePolicyModal()"
+					style="border: none; background: none; cursor: pointer; font-size: 24px; color: #9ca3af;">&times;</button>
+			</div>
+
+			<form th:action="@{/admin/support/policy/save}" method="post">
+				<input type="hidden" id="modalIdx" name="qna_idx">
+
+				<div class="form-group">
+					<label class="form-label">작성자 (관리자)</label> <input type="text"
+						class="form-input" id="modalAuthor" readonly
+						placeholder="새 정책 등록 시 자동 입력됩니다">
+				</div>
+
+				<div class="form-group">
+					<label class="form-label">정책 제목</label> <input type="text"
+						class="form-input" id="modalTitleInput" name="title"
+						placeholder="정책 제목을 입력하세요" required>
+				</div>
+
+				<div class="form-group">
+					<label class="form-label">정책 내용 (질문/본문)</label>
+					<textarea class="form-textarea" id="modalQuestionInput"
+						name="question" placeholder="상세 정책 내용을 입력하세요" required></textarea>
+				</div>
+
+				<div
+					style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 30px;">
+					<button type="button" class="btn-outline"
+						style="padding: 10px 25px;" onclick="closePolicyModal()">취소</button>
+					<button type="submit" class="btn-mint" style="padding: 10px 30px;">정책
+						저장</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+    function openPolicyModal(idx, title, question, loginId) {
+        const modal = document.getElementById('policyModal');
+        
+        document.getElementById('modalIdx').value = idx || 0; 
+        document.getElementById('modalTitleInput').value = title || '';
+        document.getElementById('modalQuestionInput').value = question || '';
+        
+        if (loginId) {
+            document.getElementById('modalAuthor').value = loginId;
+        } else {
+            const currentAdmin = /*[[${session.loginUser?.login_id}]]*/ '현재 로그인 관리자';
+            document.getElementById('modalAuthor').value = currentAdmin;
+        }
+        
+        document.getElementById('modalTitle').textContent = idx ? '정책 수정' : '새 정책 등록';
+        modal.classList.add('show');
+    }
+    
+    function closePolicyModal() {
+        document.getElementById('policyModal').classList.remove('show');
+    }
+    </script>
+</div>
+</html>

@@ -24,7 +24,6 @@ public class AdminRegionsController {
     // 지역 필터 관리 페이지 (초기 로드)
     @GetMapping("/regions")
     public String regionFilter(Model model) {
-        // ✅ 대분류 목록을 Model에 담기!
         List<MajorRegionDTO> majorRegions = service.getMajorRegions();
         model.addAttribute("majorRegions", majorRegions);
         
