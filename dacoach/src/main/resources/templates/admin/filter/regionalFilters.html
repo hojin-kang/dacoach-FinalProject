@@ -1,129 +1,195 @@
-<div th:fragment="contentPage" class="page-wrap font-main">
-  <style>
-    .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
-    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 32px; }
-    .info-card { background: #fff; border: 2px solid #e5e7eb; border-radius: 40px; padding: 2rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-    .section-badge { display: inline-block; background: #9dbbb5; color: #fff; padding: 0.5rem 2rem; border-radius: 9999px; font-weight: 700; font-size: 1rem; margin-bottom: 24px; }
-    .filter-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; }
-    .panel { border: 1px solid #e5e7eb; border-radius: 18px; overflow: hidden; background: #fff; height: fit-content; }
-    .panel-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #f0f8f7; border-bottom: 1px solid #e5e7eb; }
-    .panel-title { font-weight: 700; color: #111827; }
-    .btn-add { background: #9dbbb5; color: #fff; border: none; padding: 6px 14px; border-radius: 9999px; font-size: 13px; cursor: pointer; transition: 0.2s; }
-    .btn-add:hover { background: #88a9a3; }
-    .region-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 100px; }
-    .region-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #e5e7eb; border-radius: 14px; background: #fff; }
-    .region-item.selectable:hover { background: #f0f8f7; cursor: pointer; border-color: #9dbbb5; }
-    .region-item.active { border-color: #9dbbb5; background: #f0f8f7; font-weight: 700; }
-    .actions { display: flex; gap: 6px; }
-    .btn-icon { background: transparent; border: 1px solid #e5e7eb; padding: 6px 8px; border-radius: 10px; cursor: pointer; font-size: 12px; }
-    .btn-icon:hover { background: #f3f4f6; }
-    .empty { padding: 30px; color: #9ca3af; text-align: center; font-size: 13px; }
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-    .modal.show { display: flex; }
-    .modal-box { width: 92%; max-width: 450px; background: #fff; border-radius: 18px; padding: 20px; }
-    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .form-group { margin-bottom: 15px; }
-    .form-label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 12px; color: #6b7280; }
-    .form-input { width: 100%; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; outline: none; }
-    .modal-foot { display: flex; justify-content: flex-end; gap: 8px; }
-    @media (max-width: 768px) { .filter-grid { grid-template-columns: 1fr; } }
-  </style>
+<div th:fragment="contentPage">
+    <style>
+        /* [코치 관리 레이아웃과 동일한 아이덴티티 적용] */
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+        }
 
-  <div class="info-card">
-    <h2 class="section-badge">지역 필터 관리</h2>
+        .region-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; min-height: 800px; }
 
-    <div class="filter-grid">
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">대분류 지역 목록</div>
-        </div>
-        <div class="region-list">
-          <div th:if="${#lists.isEmpty(majorRegions)}" class="empty">등록된 대분류가 없습니다.</div>
-          <div th:each="m : ${majorRegions}" 
-               class="region-item selectable" 
-               th:classappend="${selectedMajorIdx != null and selectedMajorIdx == m.major_region_idx} ? 'active' : ''"
-               th:data-major-idx="${m.major_region_idx}"
-               onclick="location.href='/admin/filter/major?majorIdx=' + this.getAttribute('data-major-idx')">
-            <span th:text="${m.region_nm}">서울특별시</span>
-            <i class="fas fa-chevron-right" style="color:#d1d5db; font-size:12px;"></i>
-          </div>
-        </div>
-      </div>
+        /* [상단 헤더 영역] */
+        .admin-top-bar { 
+            display: flex; align-items: flex-end; gap: 15px; 
+            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
+        }
+        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
 
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">소분류 관리</div>
-          <button th:if="${selectedMajorIdx != null}" type="button" class="btn-add" onclick="openSubModal()">+ 소분류 추가</button>
-        </div>
-        <div class="region-list">
-          <div th:if="${subRegions == null or #lists.isEmpty(subRegions)}" class="empty">
-            대분류를 선택하거나 소분류를 등록해주세요.
-          </div>
+        /* [메인 레이아웃: 2컬럼 구성] */
+        .content-layout { display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
 
-          <div th:each="s : ${subRegions}" class="region-item">
-            <span th:text="${s.district_nm}"></span>
-            
-            <div class="actions">
-              <button type="button" class="btn-icon" 
-                      th:data-idx="${s.minor_region_idx}"
-                      th:data-name="${s.district_nm}"
-                      onclick="openSubModal(this.getAttribute('data-idx'), this.getAttribute('data-name'))">수정</button>
-            </div>
-          </div>
+        /* [왼쪽: 대분류 사이드 메뉴 스타일] */
+        .sidebar-panel { 
+            background-color: var(--mint-bg); border-radius: 25px; padding: 20px 15px;
+            height: fit-content; position: sticky; top: 20px;
+        }
+        .panel-label { font-size: 11px; font-weight: 800; color: var(--mint-main); padding-left: 10px; margin-bottom: 12px; opacity: 0.8; }
+        
+        .major-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 18px; border-radius: 15px; margin-bottom: 8px;
+            background-color: white; font-weight: 700; font-size: 14px; color: #6b7280;
+            text-decoration: none; transition: 0.2s; border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .major-item:hover:not(.active) { border-color: var(--mint-main); color: var(--mint-main); }
+        .major-item.active { background-color: var(--mint-main); color: white; box-shadow: 0 4px 10px rgba(157, 187, 181, 0.3); }
+
+        /* [오른쪽: 소분류 관리 공간] */
+        .main-panel { flex: 1; }
+
+        /* 소분류 헤더/추가 버튼 영역 (코치 관리 요약 박스 스타일) */
+        .sub-control-box {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; background-color: var(--mint-bg); 
+            border-radius: 20px; margin-bottom: 25px;
+        }
+        .sub-title { font-weight: 800; color: var(--mint-dark); font-size: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .btn-add-sub { 
+            background-color: var(--mint-main); color: white; border: none; 
+            padding: 8px 20px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 13px;
+        }
+        .btn-add-sub:hover { background-color: var(--mint-dark); transform: translateY(-1px); }
+
+        /* 소분류 리스트 카드형 */
+        .list-header { 
+            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
+            margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; 
+        }
+        .sub-item-card {
+            display: flex; align-items: center; padding: 15px 25px;
+            background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
+            margin-bottom: 10px; transition: 0.2s;
+        }
+        .sub-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        
+        .sub-name { flex: 1; font-weight: 700; font-size: 15px; }
+        
+        /* 버튼 스타일 */
+        .btn-edit {
+            background: white; border: 1px solid #eee; padding: 6px 14px; border-radius: 8px; 
+            font-size: 11px; font-weight: 700; color: #6b7280; cursor: pointer; transition: 0.2s;
+        }
+        .btn-edit:hover { background-color: var(--mint-bg); color: var(--mint-main); border-color: var(--mint-main); }
+
+        /* [모달 스타일 개편] */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+        .modal.show { display: flex; }
+        .modal-box { width: 90%; max-width: 400px; background: white; border-radius: 25px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal-title { font-size: 18px; font-weight: 900; color: var(--mint-dark); margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 800; font-size: 12px; color: #9ca3af; }
+        .form-input { 
+            width: 100%; border: 2px solid var(--mint-bg); border-radius: 12px; padding: 12px; 
+            outline: none; font-weight: 600; transition: 0.2s; margin-bottom: 20px;
+        }
+        .form-input:focus { border-color: var(--mint-main); }
+        .modal-foot { display: flex; gap: 10px; justify-content: flex-end; }
+        
+        .empty-state { padding: 60px; text-align: center; color: #d1d5db; font-style: italic; font-size: 14px; }
+
+        @media (max-width: 900px) { .content-layout { grid-template-columns: 1fr; } }
+    </style>
+
+    <div class="max-w-[1100px] mx-auto p-10 region-admin-container">
+        <div class="admin-top-bar">
+            <h1>Region Management</h1>
+            <span class="current-path">Setting / Region Filters</span>
         </div>
-      </div>
+
+        <div class="content-layout">
+            <aside class="sidebar-panel">
+                <div class="panel-label">MAJOR REGIONS</div>
+                <div th:if="${#lists.isEmpty(majorRegions)}" class="empty-state" style="padding: 20px;">등록된 대분류가 없습니다.</div>
+                <div th:each="m : ${majorRegions}" 
+                     class="major-item" 
+                     th:classappend="${selectedMajorIdx != null and selectedMajorIdx == m.major_region_idx} ? 'active' : ''"
+                     th:data-major-idx="${m.major_region_idx}"
+                     onclick="location.href='/admin/filter/major?majorIdx=' + this.getAttribute('data-major-idx')">
+                    <span th:text="${m.region_nm}"></span>
+                    <i class="fas fa-chevron-right" style="font-size: 10px; opacity: 0.5;"></i>
+                </div>
+            </aside>
+
+            <main class="main-panel">
+                <div class="sub-control-box">
+                    <div class="sub-title">
+                        <span>📍</span> 소분류 지역 관리
+                    </div>
+                    <button th:if="${selectedMajorIdx != null}" type="button" class="btn-add-sub" onclick="openSubModal()">+ 추가하기</button>
+                </div>
+
+                <div class="list-header">
+                    <div style="flex: 1; padding-left: 10px;">DISTRICT NAME</div>
+                    <div style="width: 80px; text-align: center;">ACTION</div>
+                </div>
+
+                <div th:if="${subRegions == null or #lists.isEmpty(subRegions)}" class="empty-state">
+                    왼쪽 대분류를 선택하거나 새로운 소분류를 등록해주세요.
+                </div>
+
+                <div th:each="s : ${subRegions}" class="sub-item-card">
+                    <div class="sub-name" th:text="${s.district_nm}"></div>
+                    <div class="actions">
+                        <button type="button" class="btn-edit" 
+                                th:data-idx="${s.minor_region_idx}"
+                                th:data-name="${s.district_nm}"
+                                onclick="openSubModal(this.getAttribute('data-idx'), this.getAttribute('data-name'))">수정</button>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
-  </div>
 
-  <div class="modal" id="subModal" onclick="closeOnBackdrop(event, 'subModal')">
-    <div class="modal-box">
-      <div class="modal-head">
-        <div class="modal-title" id="subModalTitle">소분류 추가</div>
-        <button type="button" onclick="closeSubModal()" style="border:none; background:none; cursor:pointer; font-size:20px;">&times;</button>
-      </div>
+    <div class="modal" id="subModal" onclick="closeOnBackdrop(event, 'subModal')">
+        <div class="modal-box">
+            <div class="modal-title" id="subModalTitle">소분류 추가</div>
 
-      <form th:action="@{/admin/filter/regions/sub/save}" method="post">
-        <input type="hidden" name="major_region_idx" th:value="${selectedMajorIdx}">
-        <input type="hidden" id="subIdx" name="minor_region_idx">
+            <form th:action="@{/admin/filter/regions/sub/save}" method="post">
+                <input type="hidden" name="major_region_idx" th:value="${selectedMajorIdx}">
+                <input type="hidden" id="subIdx" name="minor_region_idx">
 
-        <div class="form-group">
-          <label class="form-label">소분류 지역명</label>
-          <input class="form-input" type="text" id="subName" name="district_nm" placeholder="예: 강남구" required>
+                <div class="form-group">
+                    <label class="form-label">소분류 지역명</label>
+                    <input class="form-input" type="text" id="subName" name="district_nm" placeholder="예: 강남구" required>
+                </div>
+
+                <div class="modal-foot">
+                    <button type="button" class="btn-edit" style="padding: 10px 20px;" onclick="closeSubModal()">취소</button>
+                    <button type="submit" class="btn-add-sub" style="padding: 10px 25px;">저장</button>
+                </div>
+            </form>
         </div>
-
-        <div class="modal-foot">
-          <button type="button" class="btn-icon" style="padding:10px 20px;" onclick="closeSubModal()">취소</button>
-          <button type="submit" class="btn-add" style="padding:10px 20px;">저장</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <script th:inline="javascript">
-    function openSubModal(idx, name) {
-      const modal = document.getElementById('subModal');
-      const title = document.getElementById('subModalTitle');
-      const subIdxInput = document.getElementById('subIdx');
-      const subNameInput = document.getElementById('subName');
+    <script th:inline="javascript">
+        function openSubModal(idx, name) {
+            const modal = document.getElementById('subModal');
+            const title = document.getElementById('subModalTitle');
+            const subIdxInput = document.getElementById('subIdx');
+            const subNameInput = document.getElementById('subName');
 
-      if (idx) {
-        title.textContent = '소분류 수정';
-        subIdxInput.value = idx;
-        subNameInput.value = name;
-      } else {
-        title.textContent = '소분류 추가';
-        subIdxInput.value = '';
-        subNameInput.value = '';
-      }
-      modal.classList.add('show');
-    }
+            if (idx) {
+                title.textContent = '📍 소분류 수정';
+                subIdxInput.value = idx;
+                subNameInput.value = name;
+            } else {
+                title.textContent = '📍 소분류 추가';
+                subIdxInput.value = '';
+                subNameInput.value = '';
+            }
+            modal.classList.add('show');
+        }
 
-    function closeSubModal() {
-      document.getElementById('subModal').classList.remove('show');
-    }
+        function closeSubModal() {
+            document.getElementById('subModal').classList.remove('show');
+        }
 
-    function closeOnBackdrop(e, id) {
-      if (e.target && e.target.id === id) closeSubModal();
-    }
-  </script>
+        function closeOnBackdrop(e, id) {
+            if (e.target && e.target.id === id) closeSubModal();
+        }
+    </script>
 </div>
