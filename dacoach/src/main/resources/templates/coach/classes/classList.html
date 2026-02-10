@@ -102,9 +102,10 @@
 								th:href="@{/coach/classDetail(id=${c.class_idx})}">
 
 								<div class="thumb">
-									<img
-										th:src="${c.photo != null and c.photo != ''} ? @{/uploads/classes/photos/{img}(img=${c.photo})} : @{/images/default_class.png}"
-										alt="class">
+									<span th:if="${c.photo == null or c.photo == ''}"
+										class="no-media-message">📷 이미지가 없습니다</span> <img
+										th:if="${c.photo != null and c.photo != ''}"
+										th:src="'/uploads/' + ${c.photo}" th:alt="${c.title}" />
 								</div>
 
 								<div class="meta">

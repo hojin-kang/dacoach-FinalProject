@@ -26,18 +26,20 @@ public class ClassController {
 	@Autowired
 	private ClassService classService;
 
-	
 	// 기업 회원 권한 체크 메서드
 	private boolean isCompanyUser(HttpSession session) {
 		String userType = (String) session.getAttribute("user_type");
 		return userType != null && userType.equalsIgnoreCase("company");
 	}
 
-	
 	// 기업 회원 권한 체크 및 리다이렉트 처리
 	private ModelAndView checkCompanyAuth(HttpSession session) {
 		if (!isCompanyUser(session)) {
-			return new ModelAndView("redirect:/");
+			ModelAndView mav=new ModelAndView();
+			mav.addObject("url", "/");
+			mav.addObject("msg", "컴퍼니 회원만 접근 가능합니다.");
+			mav.setViewName("alert");
+			return mav;
 		}
 		return null;
 	}
@@ -143,10 +145,6 @@ public class ClassController {
 		ModelAndView mav = new ModelAndView("company/classes/classList");
 
 		Integer providerIdx = (Integer) session.getAttribute("user_idx");
-		if (providerIdx == null) {
-			mav.setViewName("redirect:/login");
-			return mav;
-		}
 
 		List<ClassDTO> classList = classService.getClassesByProvider(providerIdx, sort);
 		mav.addObject("classList", classList);
@@ -181,7 +179,7 @@ public class ClassController {
 		// 분야 정보 조회 (Service를 통해)
 		Map<String, Object> fieldInfo = classService.getClassFieldInfo(id);
 		mav.addObject("fieldInfo", fieldInfo);
-		
+
 		// 지역 정보 조회 (Service를 통해)
 		Map<String, Object> regionInfo = classService.getClassRegionInfo(id);
 		mav.addObject("regionInfo", regionInfo);
@@ -196,9 +194,9 @@ public class ClassController {
 		mav.addObject("reviewCount", reviewCount);
 
 		// 제공자 정보 조회
-	    Map<String, Object> providerInfo = classService.getProviderInfo(classDTO.getProvider_idx());
-	    mav.addObject("providerName", providerInfo.get("PROVIDER_NAME"));
-	    mav.addObject("providerPhoto", providerInfo.get("PROVIDER_PHOTO"));
+		Map<String, Object> providerInfo = classService.getProviderInfo(classDTO.getProvider_idx());
+		mav.addObject("providerName", providerInfo.get("PROVIDER_NAME"));
+		mav.addObject("providerPhoto", providerInfo.get("PROVIDER_PHOTO"));
 
 		mav.setViewName("company/classes/classDetail");
 		return mav;

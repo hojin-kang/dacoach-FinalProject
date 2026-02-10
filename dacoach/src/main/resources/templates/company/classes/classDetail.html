@@ -5,6 +5,9 @@
 <title>dacoach</title>
 <link rel="stylesheet" th:href="@{/css/main.css}" />
 <link rel="stylesheet" th:href="@{/css/company/company_class.css}" />
+<!-- 카카오맵 API -->
+<script type="text/javascript"
+	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6f04c74845d3e7a3116d5982f61b9eb9&libraries=services"></script>
 </head>
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
@@ -27,7 +30,6 @@
 					<div class="topInfo">
 						<div class="providerLine">
 							<div class="providerName" th:text="${providerName}"></div>
-							<div class="providerBadge" title="인증">👑</div>
 						</div>
 
 						<div class="classTitle" th:text="${classDTO.title}"></div>
@@ -66,7 +68,7 @@
 
 					<!-- 제공분야 블록 -->
 					<article class="detailBlock">
-						<h3 class="blockTitle">제공분야</h3>
+						<h3 class="blockTitle">분야</h3>
 						<!-- 분야 정보 (대분류 > 소분류) -->
 						<div class="field-info">
 							<span class="field-text" th:if="${fieldInfo != null}"
@@ -75,17 +77,25 @@
 								정보 없음</span>
 						</div>
 					</article>
-					
+
 					<!-- 제공지역 -->
 					<article class="detailBlock">
-						<h3 class="blockTitle">제공지역</h3>
+						<h3 class="blockTitle">위치</h3>
 						<!-- 분야 정보 (대지역 > 소지역) -->
 						<div class="region-info">
 							<span class="region-text" th:if="${regionInfo != null}"
-								th:text="${regionInfo.REGION_NM} + ' > ' + ${regionInfo.DISTRICT_NM}"></span>
+								th:text="${regionInfo.REGION_NM} + ' ' + ${regionInfo.DISTRICT_NM} + ' ' + ${classDTO.region_detail}"></span>
 							<span class="region-empty" th:if="${regionInfo == null}">지역
 								정보 없음</span>
 						</div>
+
+						<!-- 카카오맵 -->
+						<div id="kakaoMap"
+							style="width: 100%; height: 350px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
+
+						<!-- 숨겨진 필드로 주소 정보 전달 (지도용)-->
+						<input type="hidden" id="addressData"
+							th:value="${regionInfo != null ? (regionInfo.REGION_NM + ' ' + regionInfo.DISTRICT_NM + ' ' + (classDTO.region_detail != null ? classDTO.region_detail : '')) : ''}" />
 					</article>
 
 					<!-- 사진/동영상 -->
@@ -221,8 +231,8 @@
 
 	<div th:replace="~{layout/footer :: siteFooter}"></div>
 
-	<script>
-		// (선택) 앵커 이동 부드럽게
+	<script th:inline="javascript">
+		// 앵커 이동 부드럽게
 		document.querySelectorAll('a[href^="#"]').forEach(a => {
 			a.addEventListener('click', (e) => {
 				const id = a.getAttribute('href');
@@ -230,6 +240,54 @@
 				if (!el) return;
 				e.preventDefault();
 				el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			});
+		});
+
+		// 카카오맵 초기화
+		window.addEventListener('DOMContentLoaded', function() {
+			const addressData = document.getElementById('addressData').value;
+			
+			if (!addressData || addressData.trim() === '') {
+				console.log('주소 정보가 없습니다.');
+				return;
+			}
+
+			// 지도를 표시할 div 
+			const mapContainer = document.getElementById('kakaoMap');
+			const mapOption = {
+				center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울시청 기본 좌표
+				level: 4 // 지도 확대 레벨
+			};
+
+			// 지도 생성
+			const map = new kakao.maps.Map(mapContainer, mapOption);
+
+			// 주소-좌표 변환 객체 생성
+			const geocoder = new kakao.maps.services.Geocoder();
+
+			// 주소로 좌표를 검색
+			geocoder.addressSearch(addressData, function(result, status) {
+				// 정상적으로 검색이 완료됐으면 
+				if (status === kakao.maps.services.Status.OK) {
+					const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+					// 결과값으로 받은 위치를 마커로 표시
+					const marker = new kakao.maps.Marker({
+						map: map,
+						position: coords
+					});
+
+					// 지도의 중심을 결과값으로 받은 위치로 이동
+					map.setCenter(coords);
+				} else {
+					
+					// 검색 실패 시 지도 위에 메시지 표시
+					const message = document.createElement('div');
+					message.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.9);padding:15px 20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.2);z-index:1000;font-size:14px;color:#666;text-align:center;';
+					message.innerHTML = '🗺️ 주소 정보가 정확하지 않습니다.<br><small style="font-size:12px;color:#999;">검색 주소: ' + addressData + '</small>';
+					mapContainer.style.position = 'relative';
+					mapContainer.appendChild(message);
+				}
 			});
 		});
 	</script>

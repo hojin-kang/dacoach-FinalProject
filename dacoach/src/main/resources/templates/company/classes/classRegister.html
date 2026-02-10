@@ -42,8 +42,8 @@
 								<h3 class="required">클래스 내용</h3>
 								<textarea id="classContent" name="intro"
 									th:text="${classDTO?.intro}"
-									placeholder="클래스 내용을 자세히 작성해주세요 (최대 3000자)"
-									maxlength="3000" wrap="soft" required></textarea>
+									placeholder="클래스 내용을 자세히 작성해주세요 (최대 3000자)" maxlength="3000"
+									wrap="soft" required></textarea>
 							</div>
 
 							<div class="form-group">
@@ -66,6 +66,14 @@
 										<option value="">구/군 선택</option>
 									</select>
 								</div>
+							</div>
+
+							<div class="form-group">
+								<h3>상세 주소</h3>
+								<input type="text" id="regionDetail" name="region_detail"
+									th:value="${classDTO?.region_detail}"
+									placeholder="상세 주소를 입력하세요 (예: 도로명 + 번호 등)"
+									maxlength="200" required>
 							</div>
 
 							<div class="form-group">
@@ -136,7 +144,9 @@
 								<div class="range-group">
 									<input type="range" id="participantLimit" name="max_user_cnt"
 										min="1" max="99" value="10">
-									<output id="participantOutput">10명</output>
+									<output id="participantOutput">
+										10명
+										</output>
 								</div>
 							</div>
 

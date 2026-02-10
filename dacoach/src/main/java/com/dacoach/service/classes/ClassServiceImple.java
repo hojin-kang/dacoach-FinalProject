@@ -81,6 +81,9 @@ public class ClassServiceImple implements ClassService {
 		if (classDTO.getMinor_region_idx() == null) {
 			throw new IllegalArgumentException("클래스 장소를 선택해주세요.");
 		}
+		if (classDTO.getRegion_detail() == null) {
+			throw new IllegalArgumentException("상세 주소를 입력해주세요.");
+		}
 		if (classDTO.getPrice() == null || classDTO.getPrice() < 0) {
 			throw new IllegalArgumentException("올바른 가격을 입력해주세요.");
 		}
@@ -161,10 +164,10 @@ public class ClassServiceImple implements ClassService {
 	public ClassDTO getClassDetail(int classIdx) throws Exception {
 		return classMapper.getClassDetail(classIdx);
 	}
-	
+
 	@Override
 	public Map<String, Object> getProviderInfo(int provider_idx) throws Exception {
-	    return classMapper.selectProviderInfo(provider_idx);
+		return classMapper.selectProviderInfo(provider_idx);
 	}
 
 	@Override
@@ -295,6 +298,9 @@ public class ClassServiceImple implements ClassService {
 		if (classDTO.getMinor_region_idx() == null) {
 			throw new IllegalArgumentException("클래스 장소를 선택해주세요.");
 		}
+		if (classDTO.getRegion_detail() == null) {
+			throw new IllegalArgumentException("상세 주소를 입력해주세요.");
+		}
 		if (classDTO.getStart_date() == null) {
 			throw new IllegalArgumentException("시작일을 입력해주세요.");
 		}
@@ -326,7 +332,7 @@ public class ClassServiceImple implements ClassService {
 	public Map<String, Object> getClassFieldInfo(int class_idx) throws Exception {
 		return classMapper.selectClassFieldInfo(class_idx);
 	}
-	
+
 	@Override
 	public Map<String, Object> getClassRegionInfo(int class_idx) throws Exception {
 		return classMapper.selectClassRegionInfo(class_idx);
