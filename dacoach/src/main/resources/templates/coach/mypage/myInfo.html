@@ -181,9 +181,15 @@
       const submitBtn = document.getElementById('submitBtn');
 
       let isNickValid = false;
+      let hasChange = false;
 
       // ===== 공통: 폼 유효성 검사 =====
       const checkFormValidity = () => {
+    	  if (hasChange) {
+    		    submitBtn.disabled = false;
+    		    submitBtn.classList.add('active');
+    		    return;
+    		  }
          const selectsFilled = [...f.querySelectorAll('.required-field')].every(s => s.value);
          const phoneFilled = phoneInput.value.length === 13;
 
@@ -222,6 +228,11 @@
          }
          checkFormValidity();
       };
+      
+      const enableSubmit = () => {
+    	  submitBtn.disabled = false;
+    	  submitBtn.classList.add('active');
+    	};
 
       nicknameInput.addEventListener('blur', runNickCheck);
 
@@ -393,24 +404,29 @@
       const handleFile = (id, callback) => document.getElementById(id)?.addEventListener('change', callback);
 
       handleFile('profileFile', e => {
-         const file = e.target.files[0];
-         if (file) {
-            const reader = new FileReader();
-            reader.onload = ev => document.getElementById('previewImg').src = ev.target.result;
-            reader.readAsDataURL(file);
-         }
-      });
+    	  const file = e.target.files[0];
+    	  if (file) {
+    	    const reader = new FileReader();
+    	    reader.onload = ev => document.getElementById('previewImg').src = ev.target.result;
+    	    reader.readAsDataURL(file);
+
+    	    // 사진만 바꿔도 제출 가능하게
+    	    enableSubmit();
+    	  }
+    	});
 
       handleFile('introVideo', e => {
-         const file = e.target.files[0];
-         if (file && file.size > 10 * 1024 * 1024) {
-            alert("영상은 10MB 이하만 업로드 가능합니다.");
-            e.target.value = "";
-            document.getElementById('video-filename').textContent = "선택된 파일 없음";
-            return;
-         }
-         document.getElementById('video-filename').textContent = file?.name || "선택된 파일 없음";
-      });
+    	  const file = e.target.files[0];
+    	  if (file && file.size > 10 * 1024 * 1024) {
+    	    alert("영상은 10MB 이하만 업로드 가능합니다.");
+    	    e.target.value = "";
+    	    document.getElementById('video-filename').textContent = "선택된 파일 없음";
+    	    return;
+    	  }
+    	  document.getElementById('video-filename').textContent = file?.name || "선택된 파일 없음";
+
+    	  if (file) enableSubmit();
+    	});
 
       // 마지막 유효성 체크
       checkFormValidity();
