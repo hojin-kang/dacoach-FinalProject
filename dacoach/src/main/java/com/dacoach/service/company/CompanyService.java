@@ -24,4 +24,6 @@ public interface CompanyService {
 	public int provideOk(CompanyProvideDTO dto) throws Exception;
 	public CompanyDTO getCompanyInfo(int idx) throws Exception;
 	public boolean regionCheck(int idx) throws Exception;
+	public boolean provideCheck(int idx)	throws Exception;
+	public List<Map<String,Object>> getCompanyRegion(int idx) throws Exception;
 }

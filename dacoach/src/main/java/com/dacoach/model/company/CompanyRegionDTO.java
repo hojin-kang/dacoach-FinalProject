@@ -15,5 +15,6 @@ public class CompanyRegionDTO {
 	private int major_region_idx;
 	private int minor_region_idx;
 	private String region_detail;
-	
+	private String branch_name;
+	private String branch_tel;
 }

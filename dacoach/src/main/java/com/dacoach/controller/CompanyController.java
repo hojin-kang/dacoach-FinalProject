@@ -119,12 +119,16 @@ public class CompanyController {
 		List<Map<String, Object>> field = null;
 		List<Map<String, Object>> region = null;
 		try {
-			
+			int companyNum=companyService.getCompanyNum(userIdx);
 			field = companyService.fieldTeg();
 			region = companyService.regionTeg();
+			System.out.println(companyService.getCompanyRegion(companyNum));
+			if(companyService.regionCheck(companyNum))
+			mav.addObject("regionList",companyService.getCompanyRegion(companyNum));
+			
 			mav.addObject("field_con", field);
 			mav.addObject("region_con", region);
-			mav.addObject("company_num",companyService.getCompanyNum(userIdx));
+			mav.addObject("company_num",companyService.getCompanyNum(companyNum));
 			mav.setViewName("/company/profile/profileForm");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

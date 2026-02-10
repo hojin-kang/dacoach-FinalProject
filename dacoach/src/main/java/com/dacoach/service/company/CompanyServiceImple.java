@@ -72,8 +72,20 @@ public class CompanyServiceImple implements CompanyService {
 		return companyMapper.getCompanyInfo(idx);
 	}
 	public boolean regionCheck(int idx) throws Exception{
-		CompanyRegionDTO d=companyMapper.regionCheck(idx);
+		
+		List<CompanyRegionDTO> d=companyMapper.regionCheck(idx);
+		boolean check=d==null||d.size()==0?false:true;
+		return check;
+	}
+	
+	@Override
+	public boolean provideCheck(int idx) throws Exception {
+		CompanyProvideDTO d=companyMapper.provideCheck(idx);
 		boolean check=d==null?false:true;
 		return check;
+	}
+	
+	public List<Map<String,Object>> getCompanyRegion(int idx) throws Exception{
+		return companyMapper.getCompanyRegion(idx);
 	}
 }
