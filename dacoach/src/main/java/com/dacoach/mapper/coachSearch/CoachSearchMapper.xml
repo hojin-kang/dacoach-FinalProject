@@ -33,6 +33,7 @@
                     </choose>
                 FROM coach A
                 LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
+                JOIN minor_field MF ON B.minor_field_idx = MF.minor_field_idx
                 LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
                 LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
                 LEFT JOIN user_hashtag_like UHL ON A.user_idx = UHL.user_idx
@@ -42,6 +43,7 @@
                 <where>
                     (A.nickname LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%' 
                      OR NVL(H.TAGS, ' ') LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%')
+                    <if test="majorField != null and majorField != 0">AND MF.major_field_idx = #{majorField}</if>
                     <if test="minorField != null and minorField != 0">AND B.minor_field_idx = #{minorField}</if>
                     <if test="majorRegion != null and majorRegion != 0">AND C.major_region_idx = #{majorRegion}</if>
                     <if test="minorRegion != null and minorRegion != 0">AND C.minor_region_idx = #{minorRegion}</if>
