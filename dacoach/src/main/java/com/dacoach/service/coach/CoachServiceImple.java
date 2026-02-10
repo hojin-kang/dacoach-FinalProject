@@ -260,4 +260,13 @@ public class CoachServiceImple implements CoachService {
     public List<String> getInterHashtags(int user_idx) throws Exception {
         return coachMapper.getInterHashtags(user_idx);
     }
+
+	@Override
+	public Integer likeCoach(int login_idx, int targer_idx) throws Exception {
+		HashMap<String, Object> map=new HashMap<>();
+		map.put("login_idx", login_idx);
+		map.put("target_idx", targer_idx);
+		int result=coachMapper.likeCoach(map);
+		return result;
+	}
 }

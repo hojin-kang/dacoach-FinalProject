@@ -1,6 +1,7 @@
 package com.dacoach.controller;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -187,5 +189,31 @@ public class CoachController {
 		}
 
 		return mav;
+	}
+	@PostMapping("/coach/like")
+	@ResponseBody
+	public Map<String, String> likeCoach(@RequestBody Map<String, Integer> params, HttpSession session) {
+	    Map<String, String> response = new HashMap<>();
+	    Integer login_idx = (Integer) session.getAttribute("user_idx");
+
+	    if (login_idx == null) {
+	        response.put("status", "login_required");
+	        return response;
+	    }
+
+	    try {
+	        int target_idx = params.get("target_idx");
+	        int result = coachService.likeCoach(login_idx, target_idx);
+	        
+	        if (result > 0) {
+	            response.put("status", "success");
+	        } else {
+	            response.put("status", "error");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.put("status", "error");
+	    }
+	    return response; // 
 	}
 }

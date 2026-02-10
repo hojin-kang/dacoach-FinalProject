@@ -14,4 +14,5 @@ public interface CoachSearchService {
 	public Integer addTokenHistory(Integer user_idx, String hist_type, Integer amount, Integer balance_after) throws Exception;
 	public Integer acceptChat(int user_idx, int target_idx) throws Exception;
 	public Integer acceptMatch(int user_idx, int target_idx) throws Exception;
+	public boolean isLiked(int login_idx, int target_idx) throws Exception;
 }

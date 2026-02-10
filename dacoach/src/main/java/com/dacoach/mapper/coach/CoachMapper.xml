@@ -272,6 +272,9 @@
 	<delete id="deleteInterHashtagMapping" parameterType="int">
 		DELETE FROM user_hashtag_like WHERE user_idx = #{user_idx}
 	</delete>
-	
+	<insert id="likeCoach" parameterType="HashMap">
+        INSERT INTO likes_user (likes_user_idx, liker_idx, liked_user_idx)
+        VALUES (seq_likes_user.nextval,#{login_idx}, #{target_idx})
+    </insert>
     
 </mapper>
