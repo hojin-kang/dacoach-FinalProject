@@ -94,7 +94,7 @@
             error.style.display = 'none';
 
             try {
-                // 코치 전용 중복체크 API (예시 경로)
+                // 코치 전용 중복체크 (예시 경로)
                 const checkRes = await fetch(`/api/member/emailCheck?email=${email}`);
                 const isAvailable = await checkRes.json();
                 if (isAvailable) { error.style.display = 'block'; return; }
@@ -134,7 +134,7 @@
             error.style.display = 'none';
 
             try {
-                // 기업 전용 이메일 체크 API (따로 쓰신다고 한 부분)
+                // 기업 전용 이메일 체크
                 const checkRes = await fetch(`/api/company/emailCheck?email=${email}`);
                 const exists = await checkRes.json();
                 if (!exists) { error.style.display = 'block'; return; }
@@ -152,8 +152,8 @@
             const email = document.getElementById('companyEmail').value;
             const code = document.getElementById('companyAuth').value;
 
-            // 기업 전용 ID 조회 API (따로 쓰신다고 한 부분)
-            fetch(`/api/company/findId?code=${code}&email=${email}`, { method: 'POST' })
+            // 기업 전용 ID 조회
+            fetch(`/api/company/getCompanyId?code=${code}&email=${email}`, { method: 'POST' })
                 .then(res => res.json())
                 .then(result => {
                     if (result.status === "success") {

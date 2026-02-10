@@ -59,6 +59,18 @@ public class CoachController {
 		}
 		return !result;
 	}
+	@GetMapping("/api/company/emailCheck")
+	@ResponseBody
+	public boolean checkCompanyEmail(@RequestParam("email") String email) {
+		boolean result = true;
+		try {
+			result = coachService.emailCompanyCheck(email);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return !result;
+	}
 
 	@RequestMapping("/coachProfile")
 	public ModelAndView coachProfile(UsersDTO udto, @RequestParam(value = "email", required = false) String mail,

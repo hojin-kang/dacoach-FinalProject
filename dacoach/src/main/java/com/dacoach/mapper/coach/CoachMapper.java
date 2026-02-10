@@ -15,6 +15,8 @@ public interface CoachMapper {
 	public Integer checkNick(String nickname) throws Exception;
 
 	public Integer emailCheck(String email) throws Exception;
+	
+	public Integer emailCompanyCheck(String email) throws Exception;
 
 	public List<Map<String, Object>> getMajorFields() throws Exception;
 
@@ -53,4 +55,6 @@ public interface CoachMapper {
 	public void interHashtagMapping(@Param("user_idx")int user_idx,@Param("list")List<Integer> list) throws Exception;
 	
 	public String getId(String email) throws Exception;
+	
+	public String getCompanyId(String email) throws Exception;
 }

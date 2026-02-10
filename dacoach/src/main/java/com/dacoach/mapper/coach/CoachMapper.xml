@@ -23,8 +23,7 @@
 	<select id="checkNick" parameterType="String" resultType="Integer">
 		select count(*) from coach where nickname = #{nickname}
 	</select>
-	<select id="emailCheck" parameterType="String"
-		resultType="Integer">
+	<select id="emailCheck" parameterType="String" resultType="Integer">
 		SELECT CASE
 		WHEN EXISTS (SELECT 1 FROM coach WHERE mail = #{mail}) THEN 1
 		WHEN EXISTS (SELECT 1 FROM company WHERE email = #{mail}) THEN 1
@@ -32,6 +31,9 @@
 		END
 		FROM DUAL
 	</select>
+	<select id="emailCompanyCheck" parameterType="String" resultType="Integer">
+        select count(*) from company where email = #{mail}
+    </select>
 	<select id="getMajorFields" resultType="map">
 		select major_field_idx, major_field_cd
 		from major_field
@@ -158,5 +160,10 @@
         select U.login_id from users U
         join coach C on U.user_idx = C.user_idx
         where C.mail = #{email}
+    </select>
+    <select id="getCompanyId" parameterType="String" resultType="String">
+        select U.login_id from users U
+        join company C on U.user_idx = C.user_idx
+        where C.email = #{email}
     </select>
 </mapper>
