@@ -111,7 +111,7 @@
             <section class="control-panel">
                 <div class="registration-box">
                     <span style="font-size: 20px;">✨</span>
-                    <form th:action="@{/admin/category/insertMinor}" method="post" class="flex flex-1 gap-2" style="display: flex; width: 100%; gap: 10px;">
+                    <form th:action="@{/admin/filter/insert}" method="post" class="flex flex-1 gap-2" style="display: flex; width: 100%; gap: 10px;">
                         <input type="hidden" name="major_field_idx" th:value="${selectedMajorIdx}">
                         <input type="text" name="minor_field_nm" placeholder="새로운 소분류 명칭을 입력하세요" class="reg-input" required>
                         <button type="submit" class="reg-btn">ADD</button>
@@ -144,6 +144,14 @@
     </div>
 
     <script th:inline="javascript">
+    	
+   		 /*<![CDATA[*/
+   		 const msg = /*[[${msg}]]*/ null;
+  		  if (msg) {
+  		      alert(msg);
+   	  	  }
+   		 /*]]>*/
+    
         function toggleFieldEdit(idx) {
             const row = document.getElementById('minor-' + idx);
             const text = row.querySelector('.m-name-text');
@@ -170,14 +178,20 @@
             const val = row.querySelector('.inline-edit-input').value;
             if(!val.trim()) return;
 
-            fetch('/admin/category/updateMinor', {
+            fetch('/admin/filter/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ minor_field_idx: idx, minor_field_nm: val })
             }).then(res => res.text()).then(data => {
-                if(data === "success") location.reload();
+                if(data === "success") {
+                	alert("수정이 완료되었습니다.");
+                	location.reload();
+                }else{
+                	alert("수정에 실패했습니다.");
+                }
             });
         }
+        
     </script>
 </div>
 </html>

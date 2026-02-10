@@ -112,8 +112,8 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> getNoticeList() throws Exception {
-		return adminMapper.getNoticeList();
+	public List<Map<String, Object>> getNoticeList(String keyword) throws Exception {
+		return adminMapper.getNoticeList(keyword);
 	}
 	
 	@Override
@@ -127,6 +127,16 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
+	public int updateNotice(QnaDTO dto) throws Exception {
+		return adminMapper.updateNotice(dto);
+	}
+	
+	@Override
+	public int deleteNotice(int qna_idx) throws Exception {
+		return adminMapper.deleteNotice(qna_idx);
+	}
+	
+	@Override
 	public List<Map<String, Object>> getMajorField() throws Exception {
 		return adminMapper.getMajorField();
 	}
@@ -134,6 +144,16 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public List<Map<String, Object>> getMinorField(int major_field_idx) throws Exception {
 		return adminMapper.getMinorField(major_field_idx);
+	}
+	
+	@Override
+	public int insertMinorField(Map<String, Object> params) throws Exception {
+		return adminMapper.insertMinorField(params);
+	}
+	
+	@Override
+	public int updateMinorField(Map<String, Object> params) throws Exception {
+		return adminMapper.updateMinorField(params);
 	}
 
 }

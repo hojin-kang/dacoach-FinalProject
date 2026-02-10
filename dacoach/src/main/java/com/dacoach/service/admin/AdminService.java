@@ -33,11 +33,15 @@ public interface AdminService {
 	public int deleteReviewClass(int review_idx) throws Exception;
 	
 	//공지 관리(QnA 테이블 사용)
-	List<Map<String, Object>> getNoticeList() throws Exception;
+	List<Map<String, Object>> getNoticeList(String keyword) throws Exception;
 	public int insertNotice(QnaDTO dto) throws Exception;
 	public QnaDTO getNoticeContent(int qna_idx) throws Exception;
+	public int updateNotice(QnaDTO dto) throws Exception;
+	public int deleteNotice(int qna_idx) throws Exception;
 	
 	//분야 카테고리 관리
 	List<Map<String, Object>> getMajorField() throws Exception;
 	List<Map<String, Object>> getMinorField(int major_field_idx) throws Exception;
+	public int insertMinorField(Map<String, Object> params) throws Exception;
+	public int updateMinorField(Map<String, Object> params) throws Exception;
 }
