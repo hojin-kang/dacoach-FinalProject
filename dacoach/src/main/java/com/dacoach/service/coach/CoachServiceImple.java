@@ -10,10 +10,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dacoach.mapper.coach.CoachMapper;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.users.UsersDTO;
+import com.dacoach.service.file.FileUpload;
 
 @Service
 @Transactional
@@ -161,6 +163,91 @@ public class CoachServiceImple implements CoachService {
 		int result=coachMapper.emailCompanyCheck(email);
 		return result>0?true:false;
 	}
-
 	
+	@Override
+    @Transactional
+    public void updateMyInfo(
+            CoachDTO dto,
+            MultipartFile uploadPhoto,
+            MultipartFile uploadVideo,
+            int myMinorCate,
+            int interMinorCate,
+            int myMajorRegion,
+            int myMinorRegion,
+            String myHashtags,
+            String interHashtags
+    ) throws Exception {
+
+        // 기존 코치 정보
+        CoachDTO origin = coachMapper.getCoachInfo(dto.getUser_idx());
+        if (origin == null) {
+            throw new IllegalStateException("코치 정보가 존재하지 않습니다.");
+        }
+
+        // 파일 처리
+        String newPhotoPath = origin.getPhoto();
+        String newVideoPath = origin.getVideo();
+
+        if (uploadPhoto != null && !uploadPhoto.isEmpty()) {
+            // 기존 파일 삭제
+            FileUpload.deleteFile(origin.getPhoto());
+            newPhotoPath = FileUpload.saveFile(uploadPhoto, "coach/profile");
+        }
+        if (uploadVideo != null && !uploadVideo.isEmpty()) {
+            FileUpload.deleteFile(origin.getVideo());
+            newVideoPath = FileUpload.saveFile(uploadVideo, "coach/video");
+        }
+
+        dto.setPhoto(newPhotoPath);
+        dto.setVideo(newVideoPath);
+
+        // 코치 기본정보 update
+        int updated = coachMapper.updateCoachInfo(dto);
+        if (updated <= 0) {
+            throw new RuntimeException("코치 기본정보 수정 실패");
+        }
+
+        // 매핑 테이블 삭제
+        int coach_idx = origin.getCoach_idx();
+
+        coachMapper.deleteProvideByCoachIdx(coach_idx);
+        coachMapper.deleteInterestByCoachIdx(coach_idx);
+        coachMapper.deleteRegionByCoachIdx(coach_idx);
+
+        coachMapper.deleteMyHashtagMapping(dto.getUser_idx());
+        coachMapper.deleteInterHashtagMapping(dto.getUser_idx());
+
+        // 다시 저장
+        saveCoachDetails(dto.getUser_idx(),
+                myMinorCate, interMinorCate,
+                myMajorRegion, myMinorRegion,
+                myHashtags == null ? "" : myHashtags,
+                interHashtags == null ? "" : interHashtags
+        );
+    }
+	
+	@Override
+    public Map<String, Object> getMyProvideField(int user_idx) throws Exception {
+        return coachMapper.getMyProvideField(user_idx);
+    }
+
+    @Override
+    public Map<String, Object> getMyInterestField(int user_idx) throws Exception {
+        return coachMapper.getMyInterestField(user_idx);
+    }
+
+    @Override
+    public Map<String, Object> getMyRegion(int user_idx) throws Exception {
+        return coachMapper.getMyRegion(user_idx);
+    }
+
+    @Override
+    public List<String> getMyHashtags(int user_idx) throws Exception {
+        return coachMapper.getMyHashtags(user_idx);
+    }
+
+    @Override
+    public List<String> getInterHashtags(int user_idx) throws Exception {
+        return coachMapper.getInterHashtags(user_idx);
+    }
 }

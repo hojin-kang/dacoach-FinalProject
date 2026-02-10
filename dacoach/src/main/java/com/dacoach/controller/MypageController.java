@@ -1,20 +1,28 @@
 package com.dacoach.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+import java.sql.Date;
+
 import com.dacoach.service.qna.QnaService;
 import com.dacoach.service.review.ReviewService;
 import com.dacoach.service.token.TokenService;
+import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.likes.LikesClassDTO;
 import com.dacoach.model.likes.LikesUserDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.token.TokenHistoryDTO;
+import com.dacoach.service.coach.CoachService;
+import com.dacoach.service.file.FileUpload;
 import com.dacoach.service.likes.LikesService;
 import com.dacoach.service.mypage.MypageService;
 
@@ -37,6 +45,9 @@ public class MypageController {
 	
 	@Autowired
 	private TokenService tokenService;
+	
+	@Autowired
+	private CoachService coachService;
 
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
@@ -65,20 +76,114 @@ public class MypageController {
 		return mav;
 	}
 	
-	@GetMapping("/myInfo")
-	public String myInfo() {
-		return "/coach/mypage/myInfo";
-	}
+	// ✅ 마이페이지 > 개인정보 수정 페이지
+    @GetMapping("/myInfo")
+    public ModelAndView myInfo(HttpSession session) {
+        ModelAndView mav = new ModelAndView();
+
+        if (session.getAttribute("user_idx") == null || (Integer) session.getAttribute("user_idx") == 0) {
+            mav.setViewName("/needLogin");
+            return mav;
+        }
+
+        int user_idx = (Integer) session.getAttribute("user_idx");
+
+        try {
+            // 셀렉트 옵션
+            mav.addObject("majorFields", coachService.getMajorFields());
+            mav.addObject("majorRegions", coachService.getMajorRegions());
+
+            // 기본정보
+            CoachDTO coachInfo = coachService.getCoachInfo(user_idx);
+            mav.addObject("coachInfo", coachInfo);
+
+            // 기존 매핑값
+            mav.addObject("myField", coachService.getMyProvideField(user_idx));
+            mav.addObject("interField", coachService.getMyInterestField(user_idx));
+            mav.addObject("myRegion", coachService.getMyRegion(user_idx));
+
+            // 기존 해시태그(리스트)
+            mav.addObject("myTags", coachService.getMyHashtags(user_idx));
+            mav.addObject("interTags", coachService.getInterHashtags(user_idx));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mav.setViewName("/coach/mypage/myInfo");
+        return mav;
+    }
+
+    // ✅ 수정 저장 (가입 coachJoin이랑 거의 같은 방식)
+    @PostMapping("/myInfoUpdate")
+    public ModelAndView myInfoUpdate(
+            HttpSession session,
+            @RequestParam(value = "uploadPhoto", required = false) MultipartFile uploadPhoto,
+            @RequestParam(value = "uploadVideo", required = false) MultipartFile uploadVideo,
+
+            @RequestParam("nickname") String nickname,
+            @RequestParam(value = "intro", required = false) String intro,
+            @RequestParam(value="birth_date", required=false) String birth_date,
+            @RequestParam("phone") String phone,
+
+            @RequestParam("myMinorCate") int myMinorCate,
+            @RequestParam("interMinorCate") int interMinorCate,
+            @RequestParam("myMajorRegion") int myMajorRegion,
+            @RequestParam("myMinorRegion") int myMinorRegion,
+            @RequestParam(value = "myHashtags", required = false, defaultValue = "") String myHashtags,
+            @RequestParam(value = "interHashtags", required = false, defaultValue = "") String interHashtags
+    ) {
+        ModelAndView mav = new ModelAndView();
+
+        if (session.getAttribute("user_idx") == null || (Integer) session.getAttribute("user_idx") == 0) {
+            mav.setViewName("/needLogin");
+            return mav;
+        }
+
+        int user_idx = (Integer) session.getAttribute("user_idx");
+
+        try {
+        	java.sql.Date birthSqlDate = null;
+        	if (birth_date != null && !birth_date.isBlank()) {
+        	    birthSqlDate = java.sql.Date.valueOf(birth_date); // "yyyy-MM-dd" 전용
+        	}
+        	
+        	
+        	
+            CoachDTO dto = new CoachDTO();
+            dto.setUser_idx(user_idx);
+            dto.setNickname(nickname);
+            dto.setIntro(intro);
+            dto.setBirth_date(birthSqlDate);
+            dto.setPhone(phone);
+
+            // ✅ service에서: 기존 파일 유지/교체 + 기본정보 update + 매핑 싹 갱신
+            coachService.updateMyInfo(dto, uploadPhoto, uploadVideo,
+                    myMinorCate, interMinorCate, myMajorRegion, myMinorRegion, myHashtags, interHashtags);
+
+            mav.addObject("msg", "개인정보 수정이 완료되었습니다.");
+            mav.addObject("url", "/myInfo");
+            mav.setViewName("alert");
+            return mav;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mav.addObject("msg", "오류가 발생했습니다. 다시 시도해주세요.");
+            mav.addObject("url", "/myInfo");
+            mav.setViewName("alert");
+            return mav;
+        }
+    }
 	
 	@GetMapping("/myHeart")
 	  public ModelAndView myHeart(HttpSession session) throws Exception {
 	    ModelAndView mav = new ModelAndView();
 
 	    Integer userIdx = (Integer) session.getAttribute("user_idx");
-	    if (userIdx == null) {
-	      mav.setViewName("redirect:/login");
-	      return mav;
-	    }
+	    if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/needLogin");
+			return mav;
+		}
 
 	    List<LikesUserDTO> likedCoaches = likesService.getLikedCoaches(userIdx);
 	    List<LikesClassDTO> likedClasses = likesService.getLikedClasses(userIdx);
@@ -129,15 +234,14 @@ public class MypageController {
 	
 	@GetMapping("/myPayment")
 	public ModelAndView myPaymentList(HttpSession session) {
-ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView();
 		
 		Integer user_idx = (Integer) session.getAttribute("user_idx");
-        if (user_idx == null || user_idx == 0) {
-        	mav.setViewName("redirect:/needLogin");
-        	return mav;
-        }
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/needLogin");
+			return mav;
+		}
         
-        Integer token_balance = 0;
         List<TokenHistoryDTO> thdtos = null;
         
         try {

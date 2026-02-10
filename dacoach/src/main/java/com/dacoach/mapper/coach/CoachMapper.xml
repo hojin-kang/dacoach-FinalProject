@@ -166,4 +166,108 @@
         join company C on U.user_idx = C.user_idx
         where C.email = #{email}
     </select>
+
+
+	<!-- 개인정보 수정 -->
+	<update id="updateCoachInfo"
+		parameterType="com.dacoach.model.coach.CoachDTO">
+		UPDATE coach
+		SET
+		nickname = #{nickname},
+		intro = #{intro},
+		birth_date = #{birth_date, jdbcType=DATE},
+		phone = #{phone},
+		photo = #{photo, jdbcType=VARCHAR},
+		video = #{video, jdbcType=VARCHAR}
+		WHERE user_idx = #{user_idx}
+	</update>
+
+	<!-- 기존 선택값 조회 -->
+	<select id="getMyProvideField" parameterType="int"
+		resultType="map">
+		SELECT MAJOR_FIELD_IDX, MINOR_FIELD_IDX
+		FROM (
+		SELECT
+		mf.major_field_idx AS MAJOR_FIELD_IDX,
+		mi.minor_field_idx AS MINOR_FIELD_IDX
+		FROM coach c
+		JOIN coach_provide cp ON cp.coach_idx = c.coach_idx
+		JOIN minor_field mi ON mi.minor_field_idx = cp.minor_field_idx
+		JOIN major_field mf ON mf.major_field_idx = mi.major_field_idx
+		WHERE c.user_idx = #{user_idx}
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<select id="getMyInterestField" parameterType="int"
+		resultType="map">
+		SELECT MAJOR_FIELD_IDX, MINOR_FIELD_IDX
+		FROM (
+		SELECT
+		mf.major_field_idx AS MAJOR_FIELD_IDX,
+		mi.minor_field_idx AS MINOR_FIELD_IDX
+		FROM coach c
+		JOIN coach_interest ci ON ci.coach_idx = c.coach_idx
+		JOIN minor_field mi ON mi.minor_field_idx = ci.minor_field_idx
+		JOIN major_field mf ON mf.major_field_idx = mi.major_field_idx
+		WHERE c.user_idx = #{user_idx}
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<select id="getMyRegion" parameterType="int" resultType="map">
+		SELECT MAJOR_REGION_IDX, MINOR_REGION_IDX
+		FROM (
+		SELECT
+		cr.major_region_idx AS MAJOR_REGION_IDX,
+		cr.minor_region_idx AS MINOR_REGION_IDX
+		FROM coach c
+		JOIN coach_region cr ON cr.coach_idx = c.coach_idx
+		WHERE c.user_idx = #{user_idx}
+		)
+		WHERE ROWNUM = 1
+	</select>
+
+	<!-- 기존 해시태그 조회 -->
+	<select id="getMyHashtags" parameterType="int"
+		resultType="String">
+		SELECT h.tags
+		FROM user_hashtag uh
+		JOIN hashtag h ON h.hashtag_idx = uh.hashtag_idx
+		WHERE uh.user_idx = #{user_idx}
+		ORDER BY h.hashtag_idx
+	</select>
+
+	<select id="getInterHashtags" parameterType="int"
+		resultType="String">
+		SELECT h.tags
+		FROM user_hashtag_like uhl
+		JOIN hashtag h ON h.hashtag_idx = uhl.hashtag_idx
+		WHERE uhl.user_idx = #{user_idx}
+		ORDER BY h.hashtag_idx
+	</select>
+
+	<!-- 매핑 삭제 -->
+	<delete id="deleteProvideByCoachIdx" parameterType="int">
+		DELETE FROM coach_provide WHERE coach_idx = #{coach_idx}
+	</delete>
+
+	<delete id="deleteInterestByCoachIdx" parameterType="int">
+		DELETE FROM coach_interest WHERE coach_idx = #{coach_idx}
+	</delete>
+
+	<delete id="deleteRegionByCoachIdx" parameterType="int">
+		DELETE FROM coach_region WHERE coach_idx = #{coach_idx}
+	</delete>
+
+	<!-- 해시태그 매핑 삭제 (user_idx 기준) -->
+	<delete id="deleteMyHashtagMapping" parameterType="int">
+		DELETE FROM user_hashtag WHERE user_idx = #{user_idx}
+	</delete>
+
+	<delete id="deleteInterHashtagMapping" parameterType="int">
+		DELETE FROM user_hashtag_like WHERE user_idx = #{user_idx}
+	</delete>
+	
+    
 </mapper>

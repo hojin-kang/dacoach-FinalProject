@@ -1,23 +1,420 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>개인정보 수정</title>
 <link rel="stylesheet" th:href="@{/css/main.css}" />
-<link rel="stylesheet" th:href="@{/css/mypage.css}" />
+<link rel="stylesheet" th:href="@{/css/coach/coachProfile.css}" />
 </head>
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
-	
+
 	<main class="main">
-    	<div class="container">
-    		<h2>개인정보 수정</h2><hr>
-    		<div></div>
-    	
-    	</div>
-    	
-    	
-    </main>
+		<div class="join-form-wrapper">
+			<h2 class="form-title">개인정보 수정</h2>
+
+			<!--  수정 저장 endpoint로 변경 -->
+			<form name="profile" id="coachForm" th:action="@{/myInfoUpdate}"
+				method="post" enctype="multipart/form-data">
+
+				<!--  기존 닉네임 비교용 (닉네임 중복체크 스킵) -->
+				<input type="hidden" id="originNickname"
+					th:value="${coachInfo != null ? coachInfo.nickname : ''}">
+
+				<!--  프로필 이미지 -->
+				<div class="profile-img-section">
+					<div class="img-placeholder">
+						<img id="previewImg"
+							th:src="${coachInfo != null and coachInfo.photo != null and coachInfo.photo != ''} ? @{/uploads/{p}(p=${coachInfo.photo})} : @{/img/profile/defaultProfile.jpg}"
+							src="/img/profile/defaultProfile.jpg">
+					</div>
+					<label for="profileFile" class="btn-upload">프로필사진 변경</label> <input
+						type="file" id="profileFile" name="uploadPhoto"
+						style="display: none;" accept="image/*">
+				</div>
+
+				<!--  닉네임 -->
+				<div class="input-group">
+					<label class="required-label">닉네임</label> <input type="text"
+						name="nickname" id="nickname" placeholder="닉네임을 입력하세요"
+						th:value="${coachInfo != null ? coachInfo.nickname : ''}">
+					<p id="nickname-msg" class="error-msg"></p>
+				</div>
+
+				<!--  자기소개 -->
+				<div class="input-group">
+					<label>자기소개</label>
+					<textarea name="intro" rows="5" placeholder="코치님을 소개해 주세요."
+						th:text="${coachInfo != null ? coachInfo.intro : ''}"></textarea>
+				</div>
+
+				<!--  소개 영상 -->
+				<div class="input-group">
+					<label>소개 영상 업로드</label>
+					<div style="display: flex; align-items: center; gap: 10px;">
+						<label for="introVideo" class="btn-upload"
+							style="display: inline-block; width: fit-content; margin: 0;">영상
+							파일 선택</label> <span id="video-filename"
+							style="font-size: 0.85rem; color: #666;"
+							th:text="${coachInfo != null and coachInfo.video != null and coachInfo.video != ''} ? ${coachInfo.video} : '선택된 파일 없음'">
+							선택된 파일 없음 </span>
+					</div>
+					<input type="file" id="introVideo" name="uploadVideo"
+						accept="video/*" style="display: none;">
+					<p
+						style="font-size: 0.75rem; color: #888; margin-top: 8px; padding-left: 5px;">
+						* 10MB 이하의 영상 파일만 업로드 가능합니다.</p>
+				</div>
+
+				<!--  생년월일 -->
+				<div class="input-group">
+					<label>생년월일</label> <input type="date" name="birth_date"
+						th:value="${coachInfo != null and coachInfo.birth_date != null} ? ${#dates.format(coachInfo.birth_date,'yyyy-MM-dd')} : ''">
+				</div>
+
+				<!--  전화번호 -->
+				<div class="input-group">
+					<label class="required-label">전화번호</label> <input type="tel"
+						id="phone" name="phone" placeholder="010-0000-0000" maxlength="13"
+						th:value="${coachInfo != null ? coachInfo.phone : ''}">
+				</div>
+
+				<!-- ===================== 제공 분야 ===================== -->
+				<div class="section-group">
+					<h3 class="section-header">제공 분야</h3>
+					<div class="flex-row">
+						<select name="myMajorCate"
+							class="major-select field required-field" id="myMajorCate"
+							th:data-selected-major="${myField != null ? myField.MAJOR_FIELD_IDX : ''}">
+							<option value="">분야 대분류</option>
+							<option th:each="m : ${majorFields}"
+								th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"
+								th:selected="${myField != null and myField.MAJOR_FIELD_IDX == m.MAJOR_FIELD_IDX}">
+							</option>
+						</select> <select name="myMinorCate" class="minor-select required-field"
+							id="myMinorCate"
+							th:data-selected-minor="${myField != null ? myField.MINOR_FIELD_IDX : ''}">
+							<option value="">분야 소분류</option>
+						</select>
+					</div>
+
+					<div class="hashtag-input">
+						<input type="text" placeholder="해시태그 입력" id="myTagInput">
+						<button type="button" class="btn-reg" id="myTagBtn">등록</button>
+					</div>
+
+					<div class="tag-list" id="myTagList"></div>
+					<input type="hidden" name="myHashtags" id="myHashtags">
+				</div>
+
+				<!-- ===================== 관심 분야 ===================== -->
+				<div class="section-group">
+					<h3 class="section-header">관심 분야</h3>
+					<div class="flex-row">
+						<select name="interMajorCate"
+							class="major-select field required-field" id="interMajorCate"
+							th:data-selected-major="${interField != null ? interField.MAJOR_FIELD_IDX : ''}">
+							<option value="">분야 대분류</option>
+							<option th:each="m : ${majorFields}"
+								th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"
+								th:selected="${interField != null and interField.MAJOR_FIELD_IDX == m.MAJOR_FIELD_IDX}">
+							</option>
+						</select> <select name="interMinorCate" class="minor-select required-field"
+							id="interMinorCate"
+							th:data-selected-minor="${interField != null ? interField.MINOR_FIELD_IDX : ''}">
+							<option value="">분야 소분류</option>
+						</select>
+					</div>
+
+					<div class="hashtag-input">
+						<input type="text" placeholder="해시태그 입력" id="interTagInput">
+						<button type="button" class="btn-reg" id="interTagBtn">등록</button>
+					</div>
+
+					<div class="tag-list" id="interTagList"></div>
+					<input type="hidden" name="interHashtags" id="interHashtags">
+				</div>
+
+				<!-- ===================== 활동 지역 ===================== -->
+				<div class="section-group">
+					<h3 class="section-header">활동 지역</h3>
+					<div class="flex-row">
+						<select name="myMajorRegion"
+							class="major-select region required-field" id="myMajorRegion"
+							th:data-selected-major="${myRegion != null ? myRegion.MAJOR_REGION_IDX : ''}">
+							<option value="">지역 대분류</option>
+							<option th:each="r : ${majorRegions}"
+								th:value="${r.MAJOR_REGION_IDX}" th:text="${r.REGION_NM}"
+								th:selected="${myRegion != null and myRegion.MAJOR_REGION_IDX == r.MAJOR_REGION_IDX}">
+							</option>
+						</select> <select name="myMinorRegion" class="minor-select required-field"
+							id="myMinorRegion"
+							th:data-selected-minor="${myRegion != null ? myRegion.MINOR_REGION_IDX : ''}">
+							<option value="">지역 소분류</option>
+						</select>
+					</div>
+
+					<div class="tag-list"></div>
+				</div>
+
+				<!--  수정 -->
+				<input type="submit" id="submitBtn" class="btn-submit" value="수정하기">
+			</form>
+		</div>
+	</main>
+
 	<div th:replace="~{layout/footer :: siteFooter}"></div>
+
+	<!--  서버에서 기존 해시태그를 JS로 넘기기 -->
+	<script th:inline="javascript">
+      const EXIST_MY_TAGS = /*[[${myTags}]]*/ [];
+      const EXIST_INTER_TAGS = /*[[${interTags}]]*/ [];
+   </script>
+
+	<script>
+   document.addEventListener('DOMContentLoaded', function() {
+      const f = document.getElementById('coachForm');
+      const nicknameInput = document.getElementById('nickname');
+      const norm = (s) => (s ?? '').toString().trim();
+      const originNickname = norm(document.getElementById('originNickname')?.value);
+      const phoneInput = document.getElementById('phone');
+      const submitBtn = document.getElementById('submitBtn');
+
+      let isNickValid = false;
+
+      // ===== 공통: 폼 유효성 검사 =====
+      const checkFormValidity = () => {
+         const selectsFilled = [...f.querySelectorAll('.required-field')].every(s => s.value);
+         const phoneFilled = phoneInput.value.length === 13;
+
+         const isValid = isNickValid && selectsFilled && phoneFilled;
+         submitBtn.disabled = !isValid;
+         submitBtn.classList.toggle('active', isValid);
+      };
+
+      // ===== 닉네임 중복 체크 =====
+      // - 닉네임이 기존과 같으면 무조건 OK 처리
+      // - 바꿨을 때만 서버 체크
+      const runNickCheck = async () => {
+    	 const val = norm(nicknameInput.value);
+         const msg = document.getElementById('nickname-msg');
+
+         if (!val) {
+            msg.style.display = 'none';
+            isNickValid = false;
+            return checkFormValidity();
+         }
+
+         if (val && val === originNickname) {
+            isNickValid = true;
+            //msg.textContent = "현재 사용중인 닉네임입니다.";
+            //msg.style.cssText = `display:block; color:#28a745`;
+            return checkFormValidity();
+         }
+
+         try {
+            const res = await fetch(`/api/member/checkNick?nickname=${encodeURIComponent(val)}`);
+            isNickValid = await res.json(); // true면 사용 가능
+            msg.textContent = isNickValid ? "사용 가능한 닉네임입니다." : "이미 사용중인 닉네임입니다.";
+            msg.style.cssText = `display:block; color:${isNickValid ? "#28a745" : "#ff6b6b"}`;
+         } catch(e) {
+            isNickValid = false;
+         }
+         checkFormValidity();
+      };
+
+      nicknameInput.addEventListener('blur', runNickCheck);
+
+      //  페이지 들어오자마자 현재 닉네임으로 유효 처리
+      runNickCheck();
+      isNickValid = true; // 우선 기존값 기준 통과로 시작
+      checkFormValidity();
+      runNickCheck();
+
+      // ===== 전화번호 자동 하이픈 =====
+      phoneInput.addEventListener('input', function() {
+         this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
+         checkFormValidity();
+      });
+
+      // ======== 해시태그 로직 ========
+      const updateHashtagHidden = (section) => {
+         const tagList = section.querySelector('.tag-list');
+         const hiddenInput = section.querySelector('input[type="hidden"][name*="Hashtags"]');
+         if (!hiddenInput) return;
+
+         const tags = Array.from(tagList.querySelectorAll('.tag')).map(t => t.textContent.trim());
+         hiddenInput.value = tags.join('');
+      };
+
+      //  기존 태그를 화면에 뿌리는 함수
+      const loadExistingTags = (section, tags) => {
+         const tagList = section.querySelector('.tag-list');
+         tagList.innerHTML = '';
+         (tags || []).forEach(val => {
+            const v = (val || '').trim();
+            if(!v) return;
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.textContent = v.startsWith('#') ? v : '#'+v;
+            tag.onclick = () => {
+               tag.remove();
+               updateHashtagHidden(section);
+            };
+            tagList.appendChild(tag);
+         });
+         updateHashtagHidden(section);
+      };
+
+      // 제공/관심 섹션에 기존 태그 세팅
+      const provideSection = document.getElementById('myMajorCate').closest('.section-group');
+      const interestSection = document.getElementById('interMajorCate').closest('.section-group');
+      loadExistingTags(provideSection, EXIST_MY_TAGS);
+      loadExistingTags(interestSection, EXIST_INTER_TAGS);
+
+      // 해시태그 등록 버튼 클릭
+      f.querySelectorAll('.btn-reg').forEach(btn => btn.addEventListener('click', function() {
+         const section = this.closest('.section-group');
+         const input = section.querySelector('.hashtag-input input');
+         const minorSelect = section.querySelector('.minor-select');
+         let val = input.value.trim();
+
+         if (!val || !minorSelect.value) return;
+         val = val.startsWith('#') ? val : '#' + val;
+
+         // 중복 방지(간단)
+         const exists = Array.from(section.querySelectorAll('.tag')).some(t => t.textContent.trim() === val);
+         if (exists) { input.value=''; return; }
+
+         const tag = document.createElement('span');
+         tag.className = 'tag';
+         tag.textContent = val;
+         tag.onclick = () => {
+            tag.remove();
+            updateHashtagHidden(section);
+         };
+
+         section.querySelector('.tag-list').appendChild(tag);
+         updateHashtagHidden(section);
+         input.value = '';
+      }));
+
+      // 해시태그 입력창 엔터 처리
+      f.querySelectorAll('.hashtag-input input').forEach(input => {
+         input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+               e.preventDefault();
+               this.nextElementSibling.click();
+            }
+         });
+      });
+
+      // ======== 대분류-소분류 캐스케이딩(가입 코드 스타일 유지) ========
+      const handleCascading = async (e, apiUrl, idKey, nameKey) => {
+         const section = e.target.closest('.section-group');
+         const minor = section.querySelector('.minor-select');
+         const tagList = section.querySelector('.tag-list');
+         const hiddenInput = section.querySelector('input[type="hidden"][name*="Hashtags"]');
+
+         //  수정 화면에서도 대분류 바꾸면 기존 태그는 초기화(가입 로직과 동일)
+         if (tagList) tagList.innerHTML = '';
+         if (hiddenInput) hiddenInput.value = '';
+
+         minor.innerHTML = `<option value="">${minor.options[0].text}</option>`;
+         if (!e.target.value) {
+            minor.disabled = true;
+            return checkFormValidity();
+         }
+
+         const res = await fetch(`${apiUrl}?majorIdx=${e.target.value}`);
+         const data = await res.json();
+         data.forEach(item => minor.add(new Option(item[nameKey], item[idKey])));
+         minor.disabled = false;
+         checkFormValidity();
+      };
+
+      // 가입 화면과 API 동일
+      f.querySelectorAll('.major-select.field').forEach(el =>
+         el.addEventListener('change', e => handleCascading(e, '/api/coach/minorFields', 'MINOR_FIELD_IDX', 'MINOR_FIELD_NM'))
+      );
+      f.querySelectorAll('.major-select.region').forEach(el =>
+         el.addEventListener('change', e => handleCascading(e, '/api/coach/minorRegions', 'MINOR_REGION_IDX', 'DISTRICT_NM'))
+      );
+
+      f.querySelectorAll('.minor-select').forEach(s => s.addEventListener('change', function() {
+         this.closest('.section-group').querySelector('.btn-reg')?.classList.toggle('active', !!this.value);
+         checkFormValidity();
+      }));
+
+      // ========  수정 화면 핵심: 페이지 로드 시 기존 소분류 자동 로딩 + 선택 ========
+      const loadMinorAndSelect = async (majorEl, minorEl, apiUrl, idKey, nameKey) => {
+         const majorIdx = majorEl.value;
+         const selectedMinor = minorEl.dataset.selectedMinor;
+
+         minorEl.innerHTML = `<option value="">${minorEl.options[0].text}</option>`;
+         if (!majorIdx) { minorEl.disabled = true; return; }
+
+         const res = await fetch(`${apiUrl}?majorIdx=${majorIdx}`);
+         const data = await res.json();
+         data.forEach(item => {
+            const opt = new Option(item[nameKey], item[idKey]);
+            if (String(item[idKey]) === String(selectedMinor)) opt.selected = true;
+            minorEl.add(opt);
+         });
+         minorEl.disabled = false;
+      };
+
+      // 제공/관심/지역 소분류 초기 세팅
+      loadMinorAndSelect(
+         document.getElementById('myMajorCate'),
+         document.getElementById('myMinorCate'),
+         '/api/coach/minorFields',
+         'MINOR_FIELD_IDX',
+         'MINOR_FIELD_NM'
+      );
+
+      loadMinorAndSelect(
+         document.getElementById('interMajorCate'),
+         document.getElementById('interMinorCate'),
+         '/api/coach/minorFields',
+         'MINOR_FIELD_IDX',
+         'MINOR_FIELD_NM'
+      );
+
+      loadMinorAndSelect(
+         document.getElementById('myMajorRegion'),
+         document.getElementById('myMinorRegion'),
+         '/api/coach/minorRegions',
+         'MINOR_REGION_IDX',
+         'DISTRICT_NM'
+      );
+
+      // ======== 파일 업로드 미리보기 + 파일명 표시 ========
+      const handleFile = (id, callback) => document.getElementById(id)?.addEventListener('change', callback);
+
+      handleFile('profileFile', e => {
+         const file = e.target.files[0];
+         if (file) {
+            const reader = new FileReader();
+            reader.onload = ev => document.getElementById('previewImg').src = ev.target.result;
+            reader.readAsDataURL(file);
+         }
+      });
+
+      handleFile('introVideo', e => {
+         const file = e.target.files[0];
+         if (file && file.size > 10 * 1024 * 1024) {
+            alert("영상은 10MB 이하만 업로드 가능합니다.");
+            e.target.value = "";
+            document.getElementById('video-filename').textContent = "선택된 파일 없음";
+            return;
+         }
+         document.getElementById('video-filename').textContent = file?.name || "선택된 파일 없음";
+      });
+
+      // 마지막 유효성 체크
+      checkFormValidity();
+   });
+   </script>
 </body>
 </html>
