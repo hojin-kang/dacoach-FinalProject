@@ -31,7 +31,9 @@
 					
 				</p>
 				<p>
-					<input type="text" name="region_detail" placeholder="상세주소를 입력해주세요">
+					<input type="text" name="region_detail" placeholder="상세주소를 입력해주세요" id="region_detail_text">
+					<input type="text" name="branch_name" placeholder="지점 명을 입력해주세요" id="branch_name_text">
+					<input type="text" name="branch_tel" placeholder="지점 전화번호를 입력해주세요" id="branch_tel_text">
 				</p>
 				<p class="classAddRegion" id="AddRegion">
 					<input type="button" value="주소 추가하기" id="addRegion">
@@ -68,6 +70,10 @@
 var val = '';
 var addRegionCount = 0;
 var addedRegionIds = []; //  선택된 소분류 ID를 담을 배열
+
+var region_text=document.getElementById('region_detail_text');
+var b_name=document.getElementById('branch_name_text');
+var b_text=document.getElementById('branch_tel_text');
 
 var submitBtn = document.querySelector('input[type="submit"]');
 var majorFieldSelect = document.getElementById('majorFieldSelect');
