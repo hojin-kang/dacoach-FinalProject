@@ -55,7 +55,7 @@
                 <h4 class="signup-title">컴퍼니 ID 찾기</h4>
                 <div class="form-group">
                     <div class="input-row">
-                        <input type="text" id="companyEmail" class="form-control" placeholder="기업 담당자 이메일 입력">
+                        <input type="text" id="companyEmail" class="form-control" placeholder="컴퍼니 이메일 입력">
                         <button type="button" onclick="sendCompanyEmail()" id="companySendBtn" class="btn-sub">인증번호 받기</button>
                     </div>
                     <span id="companyEmailError" class="error-msg">등록된 기업 정보가 없습니다.</span>
@@ -153,7 +153,7 @@
             const code = document.getElementById('companyAuth').value;
 
             // 기업 전용 ID 조회
-            fetch(`/api/company/getCompanyId?code=${code}&email=${email}`, { method: 'POST' })
+            fetch(`/api/email/getCompanyId?code=${code}&email=${email}`, { method: 'POST' })
                 .then(res => res.json())
                 .then(result => {
                     if (result.status === "success") {

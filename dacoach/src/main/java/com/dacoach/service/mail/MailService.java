@@ -32,7 +32,7 @@ public class MailService {
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 			helper.setTo(toEmail);
-			helper.setSubject("[다코치] 회원가입 인증번호 안내");
+			helper.setSubject("[다코치] 인증번호");
 
 			// Thymeleaf 템플릿 처리
 			Context context = new Context();
