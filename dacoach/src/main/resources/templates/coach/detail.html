@@ -196,14 +196,39 @@
            alert("통신 중 오류가 발생했습니다.");
        });
    }
+   function unlike(){
+	   const target_idx = [[${dto.user_idx}]];
+	   fetch('/coach/unlike',{
+		   method: 'POST',
+		   headers: {
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify({ target_idx: target_idx })
+	   })
+	   .then(res => res.json())
+	   .then(data => {
+		   if(data.status === 'success'){
+               alert("좋아요 취소되었습니다.");
+               location.reload();
+           } else if(data.status === 'login_required'){
+               alert("로그인이 필요합니다.");
+               location.href = '/login';
+           } else {
+               alert("오류가 발생했습니다. 다시 시도해주세요.");
+           }
+	   }).catch(err => {
+           console.log(err);
+           alert("통신 중 오류가 발생했습니다.");
+       });
+   }
    function report() {
 	    const target_idx = [[${dto.user_idx}]]; // 신고 대상자 PK
-	    const returnUrl = window.location.pathname + window.location.search; // 현재 페이지 주소
+	    const returnUrl = window.location.pathname + window.location.search;
 
 	    // 1. 가상의 Form 엘리먼트 생성
 	    const form = document.createElement('form');
 	    form.method = 'POST';
-	    form.action = '/report/form'; // 컨트롤러의 @PostMapping("/report/form")과 일치
+	    form.action = '/report/form';
 
 	    // 2. 신고 대상자 번호(reported_idx) 추가
 	    const inputIdx = document.createElement('input');
@@ -243,7 +268,7 @@
          </div>
 		<div class="action-icons">
              <span th:if="${isLiked == false}" onclick="like()">♡</span>
-             <span th:if="${isLiked == true}">❤️</span>
+             <span th:if="${isLiked == true}" onclick="unlike()">❤️</span>
              <span onclick="report()">🚨</span> 
         </div>
 			<div class="header-buttons">

@@ -276,5 +276,10 @@
         INSERT INTO likes_user (likes_user_idx, liker_idx, liked_user_idx)
         VALUES (seq_likes_user.nextval,#{login_idx}, #{target_idx})
     </insert>
+    <delete id="unlikeCoach" parameterType="HashMap">
+        DELETE FROM likes_user
+        WHERE liker_idx=#{login_idx}
+        AND liked_user_idx=#{target_idx}
+    </delete>
     
 </mapper>
