@@ -29,7 +29,7 @@
         <div class="signup-container">
             <div class="tab-container">
                 <div class="tab-item active" id="tab-coach" onclick="showSection('coach')">코치 ID 찾기</div>
-                <div class="tab-item" id="tab-company" onclick="showSection('company')">기업 ID 찾기</div>
+                <div class="tab-item" id="tab-company" onclick="showSection('company')">컴퍼니 ID 찾기</div>
             </div>
 
             <div id="section-coach" class="find-section active">
@@ -52,7 +52,7 @@
             </div>
 
             <div id="section-company" class="find-section">
-                <h4 class="signup-title">기업 ID 찾기</h4>
+                <h4 class="signup-title">컴퍼니 ID 찾기</h4>
                 <div class="form-group">
                     <div class="input-row">
                         <input type="text" id="companyEmail" class="form-control" placeholder="기업 담당자 이메일 입력">
@@ -137,7 +137,7 @@
                 // 기업 전용 이메일 체크
                 const checkRes = await fetch(`/api/company/emailCheck?email=${email}`);
                 const exists = await checkRes.json();
-                if (!exists) { error.style.display = 'block'; return; }
+                if (exists) { error.style.display = 'block'; return; }
 
                 const sendRes = await fetch(`/api/mail/send?email=${email}`, { method: 'POST' });
                 if (await sendRes.text() === "success") {
@@ -159,7 +159,7 @@
                     if (result.status === "success") {
                         const success = document.getElementById('companySuccess');
                         success.style.display = 'block';
-                        success.innerHTML = `기업 ID 조회 성공: <strong>${result.userId}</strong>`;
+                        success.innerHTML = `인증 성공!: ID : <strong>${result.userId}</strong>`;
                         document.getElementById('companyVerifyBtn').disabled = true;
                         document.getElementById('submitBtn').disabled = false;
                     } else {
