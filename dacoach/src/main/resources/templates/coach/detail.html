@@ -196,6 +196,33 @@
            alert("통신 중 오류가 발생했습니다.");
        });
    }
+   function report() {
+	    const target_idx = [[${dto.user_idx}]]; // 신고 대상자 PK
+	    const returnUrl = window.location.pathname + window.location.search; // 현재 페이지 주소
+
+	    // 1. 가상의 Form 엘리먼트 생성
+	    const form = document.createElement('form');
+	    form.method = 'POST';
+	    form.action = '/report/form'; // 컨트롤러의 @PostMapping("/report/form")과 일치
+
+	    // 2. 신고 대상자 번호(reported_idx) 추가
+	    const inputIdx = document.createElement('input');
+	    inputIdx.type = 'hidden';
+	    inputIdx.name = 'reported_idx';
+	    inputIdx.value = target_idx;
+	    form.appendChild(inputIdx);
+
+	    // 3. 처리가 끝난 후 돌아올 주소(returnUrl) 추가
+	    const inputUrl = document.createElement('input');
+	    inputUrl.type = 'hidden';
+	    inputUrl.name = 'returnUrl';
+	    inputUrl.value = returnUrl;
+	    form.appendChild(inputUrl);
+
+	    // 4. 문추가 후 제출 (화면 전환 발생)
+	    document.body.appendChild(form);
+	    form.submit();
+	}
    </script>
 </head>
 <body>
@@ -217,7 +244,7 @@
 		<div class="action-icons">
              <span th:if="${isLiked == false}" onclick="like()">♡</span>
              <span th:if="${isLiked == true}">❤️</span>
-             <span>🚨</span> 
+             <span onclick="report()">🚨</span> 
         </div>
 			<div class="header-buttons">
 			    <th:block th:switch="${dto.chatStatus}">
