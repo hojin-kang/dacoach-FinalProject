@@ -94,17 +94,16 @@ public class CoachSearchController {
 	 	    }
 
 	 	    try {
-	 	        // 상세 정보와 '내' 기준의 상태값을 함께 가져옴
-	 	        // (팁: coachList 쿼리에 user_idx 필터를 걸어 1개만 가져오도록 재활용 가능)
 	 	        Map<String, Object> map = new HashMap<>();
 	 	        map.put("start", 1); map.put("end", 1);
 	 	        map.put("keyword", ""); map.put("login_idx", login_idx);
 	 	        
 	 	        // 현재 상세페이지 코치의 정보를 가져오는 로직 (상태값 포함)
 	 	        CoachDTO cdto = coachSearchService.getCoachDetailStatus(target_idx, login_idx);
-	 	        
 	 	        List<String> myHashtags = coachSearchService.getCoachHashtags(target_idx);
 	 	        List<String> interHashtags = coachSearchService.getInterHashtags(target_idx);
+	 	        boolean isLiked = coachSearchService.isLiked(login_idx, target_idx);
+	 	        mav.addObject("isLiked", isLiked);
 	 	        mav.addObject("myHashtags", myHashtags);
 	 	        mav.addObject("interHashtags", interHashtags);
 	 	        mav.addObject("dto", cdto);

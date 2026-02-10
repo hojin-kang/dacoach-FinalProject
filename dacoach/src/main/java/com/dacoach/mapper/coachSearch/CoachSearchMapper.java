@@ -15,4 +15,5 @@ public interface CoachSearchMapper {
     public Integer addTokenHistory(Map thmap);
     public Integer acceptChat(Map<String, Object> map);
     public Integer acceptMatch(Map<String, Object> map);
+    public Integer isLiked(Map<String, Object> map);
 }

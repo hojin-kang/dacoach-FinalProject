@@ -125,4 +125,15 @@ public class CoachSearchServiceImple implements CoachSearchService {
 		return result;
 	}
 
+	@Override
+	public boolean isLiked(int login_idx, int target_idx) throws Exception {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("login_idx", login_idx);
+		map.put("target_idx", target_idx);
+		Integer result=coachSearchMapper.isLiked(map);
+		result= result==null?0:result;
+		boolean like=result>0?true:false;
+		return like;
+	}
+
 }

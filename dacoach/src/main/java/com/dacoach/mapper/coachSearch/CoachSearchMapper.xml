@@ -8,8 +8,8 @@
             SELECT rownum AS rnum, R.* FROM (
                 SELECT 
                     A.user_idx, A.coach_idx, A.nickname, A.photo,
-                    ROUND(NVL(AVG(rt.rating), 0), 1) AS rating,
-                    COUNT(rt.content) AS review_count,
+                    ROUND(NVL(AVG(distinct rt.rating), 0), 1) AS rating,
+                    COUNT(distinct rt.content) AS review_count,
                     <choose>
                         <when test="login_idx != null and login_idx != 0">
                             (SELECT CASE 
@@ -52,7 +52,18 @@
                     </if>
                 </where>
                 GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo
-                ORDER BY A.coach_idx DESC
+                <choose>
+                	<when test="sort == 'rating'">
+                	    ORDER BY rating DESC
+                	</when>
+                	<when test="sort == 'most'">
+                		ORDER BY review_count DESC
+                    </when>
+	                <otherwise>
+	                	ORDER BY A.coach_idx DESC
+	                </otherwise>
+                </choose>
+                
             ) R
             WHERE rownum &lt;= #{end}
         )
@@ -188,4 +199,10 @@
         VALUES (SEQ_NOTIFICATION.NEXTVAL, #{target, jdbcType=INTEGER}, #{me, jdbcType=INTEGER}, 
                 #{notiType, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, 'N', SYSDATE)
     </insert>
+    <select id="isLiked" parameterType="map" resultType="Integer">
+    	select count(*) from likes_user
+    	where liker_idx = #{login_idx}
+    	and liked_user_idx = #{target_idx}
+    </select>
+        
 </mapper>

@@ -170,6 +170,33 @@
       .review-hash { font-size: 12px; color: #888; }
 
    </style>
+   <script th:inline="javascript">
+   function like(){
+	   const target_idx = [[${dto.user_idx}]];
+	   fetch('/coach/like',{
+		   method: 'POST',
+		   headers: {
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify({ target_idx: target_idx })
+	   })
+	   .then(res => res.json())
+	   .then(data => {
+		   if(data.status === 'success'){
+               alert("좋아요 처리되었습니다.");
+               location.reload();
+           } else if(data.status === 'login_required'){
+               alert("로그인이 필요합니다.");
+               location.href = '/login';
+           } else {
+               alert("오류가 발생했습니다. 다시 시도해주세요.");
+           }
+	   }).catch(err => {
+           console.log(err);
+           alert("통신 중 오류가 발생했습니다.");
+       });
+   }
+   </script>
 </head>
 <body>
    <div th:replace="~{layout/header :: siteHeader}"></div>
@@ -188,7 +215,9 @@
             </div>
          </div>
 		<div class="action-icons">
-             <span>♡</span> <span>🚨</span> 
+             <span th:if="${isLiked == false}" onclick="like()">♡</span>
+             <span th:if="${isLiked == true}">❤️</span>
+             <span>🚨</span> 
         </div>
 			<div class="header-buttons">
 			    <th:block th:switch="${dto.chatStatus}">
