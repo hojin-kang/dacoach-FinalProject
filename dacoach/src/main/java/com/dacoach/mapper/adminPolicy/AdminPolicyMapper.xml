@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.dacoach.mapper.adminPolicy.AdminPolicyMapper">
+
+	<select id="getPolicyList"
+		resultType="com.dacoach.model.adminPolicy.PolicyDTO">
+		SELECT
+		q.qna_idx,
+		q.title,
+		q.question,
+		q.created_at,
+		q.user_idx,
+		u.login_id
+		FROM qna q
+		LEFT JOIN users u ON q.user_idx =
+		u.user_idx
+		where u.user_type = 'ADMIN' AND q.qna_type = '운영정책'
+		ORDER BY
+		q.qna_idx DESC
+
+	</select>
+
+	<insert id="insertPolicy"
+		parameterType="com.dacoach.model.adminPolicy.PolicyDTO">
+		INSERT INTO qna (
+		qna_idx,
+		title,
+		question,
+		created_at,
+		qna_type,
+		user_idx
+		) VALUES (
+		SEQ_QNA.NEXTVAL,
+		#{title},
+		#{question},
+		SYSDATE,
+		'운영정책',
+		#{user_idx}
+		)
+	</insert>
+
+	<update id="updatePolicy"
+		parameterType="com.dacoach.model.adminPolicy.PolicyDTO">
+		UPDATE qna
+		SET
+		title = #{title},
+		question = #{question}
+		WHERE qna_idx = #{qna_idx}
+	</update>
+
+	<delete id="deletePolicy">
+		DELETE FROM qna
+		WHERE qna_idx = #{qna_idx}
+	</delete>
+
+	<select id="getLatestPolicy"
+		resultType="com.dacoach.model.adminPolicy.PolicyDTO">
+		select * from (
+		select
+		q.qna_idx,
+		q.title,
+		q.question,
+		q.created_at,
+		u.login_id
+		from qna q
+		left join users u on q.user_idx =
+		u.user_idx
+		where q.qna_type = '운영정책' and u.user_type='ADMIN'
+		order by q.qna_idx DESC
+		) where ROWNUM = 1
+	</select>
+</mapper>

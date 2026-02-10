@@ -7,7 +7,7 @@
 	where login_id=#{login_id} and password=#{password}
 	</select>
 
-	<select id="getCoachList" resultType="map">
+	<select id="getCoachList" resultType="map"> 
 	select
 	c.coach_idx,
 	u.user_idx,
