@@ -62,6 +62,8 @@ public interface CoachMapper {
 	
 	public Integer likeCoach(HashMap map) throws Exception;
 	
+	public Integer unlikeCoach(HashMap map) throws Exception;
+	
 	// 개인정보 수정
     int updateCoachInfo(CoachDTO dto) throws Exception;
 

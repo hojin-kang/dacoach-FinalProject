@@ -269,4 +269,12 @@ public class CoachServiceImple implements CoachService {
 		int result=coachMapper.likeCoach(map);
 		return result;
 	}
+	@Override
+	public Integer unlikeCoach(int login_idx, int targer_idx) throws Exception {
+		HashMap<String, Object> map=new HashMap<>();
+		map.put("login_idx", login_idx);
+		map.put("target_idx", targer_idx);
+		int result=coachMapper.unlikeCoach(map);
+		return result;
+	}
 }

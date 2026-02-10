@@ -26,6 +26,7 @@ public interface CoachService {
     public void saveCoachDetails(int user_idx, int myMinorCate, int interMinorCate, int myMajorRegion, int myMinorRegion,String myHashtags,String interHashtags) throws Exception;
     public Integer pwdChange(String login_id, String password) throws Exception;
     public Integer likeCoach(int login_idx, int targer_idx) throws Exception;
+    public Integer unlikeCoach(int login_idx, int targer_idx) throws Exception;
     // 개인정보 수정
     public void updateMyInfo(
     	    CoachDTO dto,

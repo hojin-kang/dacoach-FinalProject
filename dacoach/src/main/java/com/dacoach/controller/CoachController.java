@@ -216,4 +216,30 @@ public class CoachController {
 	    }
 	    return response; // 
 	}
+	@PostMapping("/coach/unlike")
+	@ResponseBody
+	public Map<String, String> unlikeCoach(@RequestBody Map<String, Integer> params, HttpSession session) {
+	    Map<String, String> response = new HashMap<>();
+	    Integer login_idx = (Integer) session.getAttribute("user_idx");
+
+	    if (login_idx == null) {
+	        response.put("status", "login_required");
+	        return response;
+	    }
+
+	    try {
+	        int target_idx = params.get("target_idx");
+	        int result = coachService.unlikeCoach(login_idx, target_idx);
+	        
+	        if (result > 0) {
+	            response.put("status", "success");
+	        } else {
+	            response.put("status", "error");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.put("status", "error");
+	    }
+	    return response; // 
+	}
 }
