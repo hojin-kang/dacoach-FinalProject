@@ -37,4 +37,6 @@ public interface CompanyMapper {
 	public CompanyProvideDTO provideCheck(int idx)	throws Exception;
 	
 	public List<Map<String,Object>> getCompanyRegion(int idx) throws Exception;
+	
+	public Map<String,Object> companyProfile(int member_idx) throws Exception;
  }
