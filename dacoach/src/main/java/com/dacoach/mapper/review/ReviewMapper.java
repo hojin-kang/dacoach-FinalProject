@@ -23,4 +23,6 @@ public interface ReviewMapper {
     // 삭제
     int deleteCoachReview(@Param("review_coach_idx") int review_coach_idx, @Param("user_idx") int user_idx);
     int deleteClassReview(@Param("review_class_idx") int review_class_idx, @Param("user_idx") int user_idx);
+    
+    List<ReviewCoachDTO> getCoachReviews(int target_idx);
 }

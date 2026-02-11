@@ -1,6 +1,8 @@
 package com.dacoach.model.review;
 
 import java.sql.Date;
+import java.util.List;
+
 import lombok.*;
 
 @AllArgsConstructor
@@ -27,4 +29,8 @@ public class ReviewCoachDTO {
     // 라벨(유형/랭크)
     private String reviewer_label;
     private String reviewee_label;
+    
+    private String photo;
+    private double score;
+    private List<String> tagList;
 }
