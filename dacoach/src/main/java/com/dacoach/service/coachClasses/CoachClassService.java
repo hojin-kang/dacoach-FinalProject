@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.dacoach.model.coachClasses.CoachClassDTO;
+import com.dacoach.model.coachClasses.ClassEnrollmentDTO;
 
 public interface CoachClassService {
-	
+
+	// ===== 기존 메서드 =====
+
 	List<Map<String, Object>> getMajorFields() throws Exception;
 
 	List<Map<String, Object>> getMinorFields(Integer majorFieldIdx) throws Exception;
@@ -15,30 +18,64 @@ public interface CoachClassService {
 
 	List<Map<String, Object>> getMinorRegions(Integer majorRegionIdx) throws Exception;
 
-	// 코치 - 클래스 검색
-	List<CoachClassDTO> classSearch(Integer majorField, Integer minorField, Integer majorRegion, Integer minorRegion, String q, String sort) throws Exception;
-	
-	// 코치 - 클래스 상세
+	List<CoachClassDTO> classSearch(Integer majorField, Integer minorField, Integer majorRegion, Integer minorRegion,
+			String q, String sort) throws Exception;
+
 	CoachClassDTO getClassDetail(int class_idx) throws Exception;
-	
-	// 양진유 추가: 해시태그 목록 조회
+
 	List<String> getHashtagsByClass(int class_idx) throws Exception;
-	
-	// 양진유 추가: 분야 정보 조회
+
 	Map<String, Object> getClassFieldInfo(int class_idx) throws Exception;
-	
-	// 양진유 추가: 지역 정보 조회
+
 	Map<String, Object> getClassRegionInfo(int class_idx) throws Exception;
-	
-	// 양진유 추가: 제공자 정보 조회
+
 	Map<String, Object> getProviderInfo(int provider_idx) throws Exception;
-	
-	// 양진유 추가: 리뷰 목록 조회
+
 	List<Map<String, Object>> getReviewsByClass(int class_idx) throws Exception;
-	
-	// 양진유 추가: 평균 평점 조회
+
 	Double getAvgRatingByClass(int class_idx) throws Exception;
-	
-	// 양진유 추가: 리뷰 개수 조회
+
 	Integer getReviewCountByClass(int class_idx) throws Exception;
+
+	// ===== 수강신청 관련 메서드 추가 =====
+
+	/**
+	 * 특정 날짜의 수강 신청 인원 수 조회
+	 */
+	Integer getEnrollmentCountByDate(int class_idx, String enrollment_date) throws Exception;
+
+	/**
+	 * 수강 신청 중복 확인
+	 */
+	boolean checkDuplicateEnrollment(int class_idx, int user_idx, String enrollment_date) throws Exception;
+
+	/**
+	 * 수강 신청 등록
+	 */
+	boolean enrollClass(int class_idx, int user_idx, String enrollment_date) throws Exception;
+
+	/**
+	 * 특정 유저의 수강 신청 목록 조회
+	 */
+	List<ClassEnrollmentDTO> getEnrollmentsByUser(int user_idx) throws Exception;
+
+	/**
+	 * 특정 클래스의 수강 신청 목록 조회
+	 */
+	List<ClassEnrollmentDTO> getEnrollmentsByClass(int class_idx) throws Exception;
+
+	/**
+	 * 수강 신청 취소
+	 */
+	boolean cancelEnrollment(int enroll_idx) throws Exception;
+
+	/**
+	 * 수강 신청 상세 조회
+	 */
+	ClassEnrollmentDTO getEnrollmentDetail(int enroll_idx) throws Exception;
+
+	/**
+	 * 사용자가 해당 클래스를 이미 신청했는지 확인
+	 */
+	boolean isUserEnrolled(int class_idx, int user_idx) throws Exception;
 }
