@@ -41,4 +41,8 @@ public interface CompanyMapper {
 	public Map<String,Object> companyProfile(int member_idx) throws Exception;
 	
 	public List<Map<String,Object>> getProfileClass(Map<String,Object> map)throws Exception;
+	
+	public CertDTO getCompanyCert(int user_idx) throws Exception;
+	
+	public Map<String,Object> getCompanyProvide(int company_idx) throws Exception;
  }

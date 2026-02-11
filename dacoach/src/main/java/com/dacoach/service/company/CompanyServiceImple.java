@@ -94,4 +94,12 @@ public class CompanyServiceImple implements CompanyService {
 	public List<Map<String,Object>> getProfileClass(Map<String,Object> map)throws Exception{
 		return companyMapper.getProfileClass(map);
 	}
+	@Override
+	public CertDTO getCompanyCert(int user_idx) throws Exception {
+		// TODO Auto-generated method stub
+		return companyMapper.getCompanyCert(user_idx);
+	}
+	public Map<String,Object> getCompanyProvide(int company_idx) throws Exception{
+		return companyMapper.getCompanyProvide(company_idx);
+	}
 }

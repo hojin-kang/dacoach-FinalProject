@@ -59,19 +59,18 @@
       		<span id="classRatingSpan">별점 </span>
       		<span id="majorFiledSpan">[[${class.MAJOR_FIELD_CD }]]</span>
       		<span id="minorFiledSpan">[[${class.MINOR_FIELD_NM }]]</span>
-      		
+      		<input type="hidden" id="classIdx" th:value="${class.CLASS_IDX}">
       	</span>
       </div>
       </div>
-      
-
-   </div>
+     
    </main>  
    <div th:replace="~{layout/footer :: siteFooter}"></div>
    <script th:inline="javascript">
    	var goClass=document.getElementById('classSpan');
+   	var classIdx=document.getElementById('classIdx').value;
    	goClass.onclick=function(){
-   		window.location.href='/coach/classDetail?id=2';
+   		window.location.href='/coach/classDetail?id='+classIdx;
    	}
    </script>
 </body>
