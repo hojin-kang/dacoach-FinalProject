@@ -189,6 +189,7 @@ public class UserController {
 		}
 		//기업 로그인 부분임당
 		}else if(userType.equals("company")) {
+			
 			try {
 				UsersDTO loginUser = usersService.userLogin(udto);
 				
