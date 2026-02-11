@@ -91,4 +91,7 @@ public class CompanyServiceImple implements CompanyService {
 	public Map<String,Object> companyProfile(int member_idx) throws Exception{
 		return companyMapper.companyProfile(member_idx);
 	}
+	public List<Map<String,Object>> getProfileClass(Map<String,Object> map)throws Exception{
+		return companyMapper.getProfileClass(map);
+	}
 }

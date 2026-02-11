@@ -1,6 +1,8 @@
 package com.dacoach.controller;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +97,7 @@ public class CompanyController {
 			companyDto.setUser_idx(companyService.getUserIdx(login_id));
 			certDto.setUser_idx(companyService.getUserIdx(login_id));
 			int infoResult = companyService.companyInfo(companyDto);
+			certDto.setCert_name("사업자등록증");
 			int certResurt = companyService.insertcert(certDto);
 			if(infoResult<=0||certResurt<=0) {
 				mav.addObject("msg","오류가 발생했습니다 다시 시도해주세요");
@@ -197,12 +200,24 @@ public class CompanyController {
 	@PostMapping("/company/profile/companyProfileForm")
 	public ModelAndView companyProfileForm(Integer idx){
 		ModelAndView mav=new ModelAndView();
-		
+		Calendar now=Calendar.getInstance();
+		int year=now.get(Calendar.YEAR);
+		int month=now.get(Calendar.MONTH)+1;
+		int day=now.get(Calendar.DATE);
+		String strDate=""+year+"-"+month+"-"+day;
+		Date nowDay=Date.valueOf(strDate);
+		Map<String,Object> classMap=new HashMap<>();
 		try {
 			Map<String,Object> map=companyService.companyProfile(idx);
+			int userIdx=Integer.parseInt(String.valueOf(map.get("USER_IDX")));
+			classMap.put("idx", userIdx);
+			classMap.put("today", nowDay);
+			
 			int companyIdx=Integer.parseInt(String.valueOf(map.get("COMPANY_IDX")));
+			List<Map<String,Object>> classList=companyService.getProfileClass(classMap);
 			List<Map<String,Object>> region=companyService.getCompanyRegion(companyIdx);
-			System.out.println(region);
+			System.out.println(classList);
+			mav.addObject("classList",classList);
 			mav.addObject("profile",map);
 			mav.addObject("regionList",region);
 		} catch (Exception e) {

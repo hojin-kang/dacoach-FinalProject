@@ -180,10 +180,10 @@
 		a.*    
 		from minor_field,minor_region,
 		(select * from class 
-		where provider_idx=45 and
-		start_date <![CDATA[<=]]> '2026-02-11'
-		or start_date >= '2026-02-11'
-		and end_date >= '2026-02-11' 
+		where provider_idx=#{idx} and
+		start_date <![CDATA[<=]]> #{today}
+		or start_date <![CDATA[>=]]> #{today}
+		and end_date <![CDATA[>=]]> #{today} 
 		) a
 		where minor_field.minor_field_idx=a.minor_field_idx 
 		and minor_region.minor_region_idx=a.minor_region_idx) b
