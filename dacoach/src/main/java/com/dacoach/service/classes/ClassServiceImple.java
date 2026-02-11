@@ -87,6 +87,12 @@ public class ClassServiceImple implements ClassService {
 		if (classDTO.getPrice() == null || classDTO.getPrice() < 0) {
 			throw new IllegalArgumentException("올바른 가격을 입력해주세요.");
 		}
+		if (classDTO.getPhoto() == null) {
+			throw new IllegalArgumentException("사진을 입력해주세요.");
+		}
+		if (classDTO.getVideo() == null) {
+			throw new IllegalArgumentException("영상을 입력해주세요.");
+		}
 		if (classDTO.getStart_date() == null) {
 			throw new IllegalArgumentException("시작일을 입력해주세요.");
 		}
