@@ -117,6 +117,20 @@
   	
   	</insert>
   	
+  	<select id="getCompanyProvide">
+  		select major_field_cd,b.*
+		from major_field,
+		(select minor_field_nm,major_field_idx,a.*
+		from minor_field,
+		(select * from company_provide where company_idx=#{idx}) a
+		where minor_field.minor_field_idx=a.minor_field_idx) b
+		where major_field.major_field_idx=b.major_field_idx
+  	</select>
+  	
+  	<select id="getCompanyCert">
+  		select * from cert where user_idx=#{idx}
+  	</select>
+  	
   	<select id="getCompanyRegion">
   		select 
 		major_region.region_nm,minor_region.district_nm,region_detail,branch_name,branch_tel

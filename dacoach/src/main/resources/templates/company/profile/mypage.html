@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>마이페이지</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/mypage.css}" />
+</head>
+<body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
+	
+	<main class="main">
+    	<div class="container">
+    		<h2>마이페이지</h2>
+    		<div class="profileArea">
+    			<img th:src="${session.photo!=null}?@{'/uploads/'+${session.photo}}:@{/img/profile/defaultProfile.jpg}">
+    			<div class="companyInfo">
+    				
+					
+					<span id="membershipSpan">[[${membership}]]</span>
+					<span id="userNameSpan">[[${user_name}]]</span>
+    			</div>
+    			<div class="profileBtnArea">
+    				<a href="/company/mypage/myInfo"><button>개인정보 수정</button></a>
+    				<a href="/logout"><button>로그아웃</button></a>
+    			</div>
+    		</div>
+    		<hr>
+    		<div class="mypageMenu">
+    			
+    			<div class="menuUnit">
+    				<span class="titleSpan">클래스관리</span>
+    				<a>클래스관리</a>
+    			</div>    
+    			<div class="menuUnit">
+    				<span class="titleSpan">멤버십</span>
+    				<a>멤버십 관리</a>
+    			</div>    
+    			
+    			<div class="menuUnit">
+    				<span class="titleSpan">결제 관리</span>
+    				<a href="/myPayment">나의 결제 내역</a>
+    			</div>
+    			
+    			<div class="menuUnit">
+    				<span class="titleSpan">고객센터</span>
+    				<a href="/notice">공지사항</a>
+    				<a href="/myQnaList">1:1 문의</a>
+    			</div>
+    						
+    			
+    			<a href="/myWithdraw" style="color:#6A6A6A;">회원 탈퇴</a>
+    		</div>
+    	</div>
+    </main>
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
+</html>

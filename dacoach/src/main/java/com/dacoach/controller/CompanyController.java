@@ -26,10 +26,13 @@ import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.company.CompanyProvideDTO;
 import com.dacoach.model.company.CompanyRegionDTO;
+import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.file.FileUpload;
 import com.dacoach.service.membership.MembershipService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CompanyController {
@@ -51,7 +54,51 @@ public class CompanyController {
 
 		return "/company/join/companyJoin";
 	}
-
+	
+	@GetMapping("/company/mypage")
+	public ModelAndView mypage(HttpSession session) {
+		
+		ModelAndView mav=new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/needLogin");
+			return mav;
+		}
+		
+		try {
+			MembershipDTO mdto=membershipService.userMembershipInfo((Integer)session.getAttribute("user_idx"));
+			String membership=mdto.getMember_detail_idx()==1?"일반":"프리미엄";
+			mav.addObject("membership",membership);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mav.addObject("user_name",session.getAttribute("user_name"));
+		mav.setViewName("/company/profile/mypage");
+		return mav;
+	}
+	
+	@GetMapping("/company/mypage/myInfo")
+	public ModelAndView myInfo(HttpSession session) {
+		ModelAndView mav=new ModelAndView();
+		int userIdx=(int)session.getAttribute("user_idx");
+		int companyIdx=(int)session.getAttribute("company_idx");
+		try {
+			CompanyDTO companyDto=companyService.getCompanyInfo(userIdx);
+			List<Map<String,Object>> regionList=companyService.getCompanyRegion(companyIdx);
+			Map<String,Object> provideDto=companyService.getCompanyProvide(companyIdx);
+			
+			mav.addObject("company",companyDto);
+			mav.addObject("region", regionList);
+			mav.addObject("provide", provideDto);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		mav.setViewName("/company/profile/myInfo");
+		return mav;
+	}
+	
 	@PostMapping("company/join/loginInfoOK")
 	public ModelAndView LoginInfoOk(UsersDTO dto) {
 		try {

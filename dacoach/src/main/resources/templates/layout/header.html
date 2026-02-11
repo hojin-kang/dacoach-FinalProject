@@ -11,7 +11,7 @@
 	          
 	          <!-- 컴퍼니 회원일 때만 메뉴 양진유 추가 -->
 	          <th:block th:if="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
-	            <a href="membership/membershipForm">멤버십</a>
+	            <a href="/membership/membershipForm">멤버십</a>
 	            <a th:href="@{/class/company/classList}">클래스</a>
 	          </th:block>
 	          
@@ -33,7 +33,20 @@
         <div class="gnb" th:if="${session.user_idx == null}">
         	<a th:href="@{/login}">로그인 / 회원가입</a>
         </div>
-
+		<!-- 컴퍼니헤더 호지닝 -->
+		<th:block th:if="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+		
+		  <a class="iconBtn notiIcon" th:href="@{/notification}" title="알림">
+		  <img src="/img/icon/notification.png">
+  		  <span class="notiDot" th:if="${unreadNotiCount > 0}"></span>
+  		  </a>
+	      <a class="iconBtn" th:href="@{/chat}" title="채팅"><img src="/img/icon/chat.png"></a>
+          <a class="iconBtn" href="/company/mypage" title="마이페이지"><img th:src="${session.photo!=null}?@{'/uploads/'+${session.photo}}:@{/img/profile/defaultProfile.jpg}"></a>
+			
+		</th:block>
+		
+		<!-- 코치해더 -->
+		<th:block th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
         <div class="headerIcons" th:unless="${session.user_idx == null}">
           <a class="iconBtn" th:href="@{/tokenHistory}" title="닭꼬치"><img src="/img/icon/dakcoachIcon.png"></a>
           <a class="iconBtn notiIcon" th:href="@{/notification}" title="알림">
@@ -43,7 +56,7 @@
           <a class="iconBtn" th:href="@{/chat}" title="채팅"><img src="/img/icon/chat.png"></a>
           <a class="iconBtn" th:href="@{/mypage}" title="마이페이지"><img th:src="${session.photo!=null}?@{'/uploads/'+${session.photo}}:@{/img/profile/defaultProfile.jpg}"></a>
         </div>
-        
+         </th:block>
       </div>
 		<script>
 		  document.addEventListener("DOMContentLoaded", function () {
