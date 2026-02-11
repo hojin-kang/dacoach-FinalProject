@@ -29,7 +29,13 @@
 
 			<section class="mainSection">
   <div class="sectionHeader">
-    <span>실시간 </span><span class="accent">인기 코치</span>
+    <span>실시간 <b class="accent">인기 코치</b></span>
+  <div class="infoWrap">
+    <img src="/img/icon/info.png" class="infoIcon" data-tooltip="coach">
+    <div class="infoBubble" data-tooltip-box="coach">
+      최근 7일 찜 수가 많은 코치 순으로 선정돼요.
+    </div>
+</div>
   </div>
 
   <div class="wrap">
@@ -86,7 +92,13 @@
 
 		<section class="mainSection">
       	<div class="sectionHeader">
-    <span>실시간 </span><span class="accent">인기 분야</span>
+    <span>실시간 <b class="accent">인기 분야</b></span>
+	<div class="infoWrap">
+    <img src="/img/icon/info.png" class="infoIcon" data-tooltip="field">
+    <div class="infoBubble" data-tooltip-box="field">
+      가장 많이 선택된 관심분야 TOP5예요.
+    </div>
+  </div>
   </div>
       	<div class="wrap">
     <div class="viewport">
@@ -129,7 +141,13 @@
       
       <section class="mainSection">
       	<div class="sectionHeader">
-    <span>실시간 </span><span class="accent2">인기 클래스</span>
+    <span>실시간 <b class="accent2">인기 클래스</b></span>
+	<div class="infoWrap">
+    <img src="/img/icon/info.png" class="infoIcon" data-tooltip="class">
+    <div class="infoBubble" data-tooltip-box="class">
+      최근 7일 찜 수가 많은 클래스 순으로 선정돼요.
+    </div>
+  </div>
   </div>
       	<div class="wrap">
     <div class="viewport">
@@ -218,6 +236,29 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", update);
   update(); // 초기 상태 세팅(처음엔 prev 숨김)
 });
+
+// info 창 열기
+document.addEventListener("click", (e) => {
+	  const icon = e.target.closest(".infoIcon");
+
+	  // 아이콘 눌렀을 때
+	  if(icon){
+	    const key = icon.dataset.tooltip;
+
+	    // 다른 툴팁은 전부 닫고
+	    document.querySelectorAll(".infoBubble").forEach(b => b.classList.remove("isOpen"));
+
+	    // 해당 툴팁만 토글
+	    const bubble = document.querySelector(`.infoBubble[data-tooltip-box="${key}"]`);
+	    if(bubble) bubble.classList.toggle("isOpen");
+
+	    e.stopPropagation();
+	    return;
+	  }
+
+	  // 바깥 클릭하면 닫기
+	  document.querySelectorAll(".infoBubble").forEach(b => b.classList.remove("isOpen"));
+	});
 </script>
 
 
