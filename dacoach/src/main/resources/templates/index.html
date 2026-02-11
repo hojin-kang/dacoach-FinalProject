@@ -17,46 +17,12 @@
     		<span>관심 분야를 선택해보세요</span>
     		
 		      <div class="category">
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=1, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/computer.png">
-		      		<span>IT/전자</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=2, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/art.png">
-		      		<span>예술</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=3, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/language.png">
-		      		<span>어학</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=4, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/money.png">
-		      		<span>투자/금융</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=5, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/sport.png">
-		      		<span>스포츠</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=6, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/life.png">
-		      		<span>생활</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=7, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/beauty.png">
-		      		<span>패션/뷰티</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=8, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/interior.png">
-		      		<span>인테리어</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=9, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/cooking.png">
-		      		<span>요리</span>
-		      	</a>
-		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=10, minorField='', majorRegion='', keyword='', sort='latest')}">
-		      		<img src="/img/icon/game.png">
-		      		<span>게임</span>
-		      	</a>
+		      	<div class="categoryUnit" th:each="m : ${majorFields}">
+		      		<a th:href="@{/coach/search(majorField=${m.MAJOR_FIELD_IDX}, minorField='', majorRegion='', keyword='', sort='latest')}">
+			      		<img th:src="@{/img/icon/{idx}.png(idx=${m.MAJOR_FIELD_IDX})}">
+			      		<span th:text="${m.MAJOR_FIELD_CD}">IT/전자</span>
+		      		</a>
+		      	</div>
 		      </div>
 		      
     	</div>
@@ -124,7 +90,30 @@
   </div>
       	<div class="wrap">
     <div class="viewport">
-      <div class="track" id="popularFieldTrack">
+      <div class="track5" id="popularFieldTrack">
+
+        <div class="fieldCard"
+             th:each="f : ${popularFields}">
+
+          <a th:href="@{/coach/search(
+                majorField=${f.major_field_idx},
+                minorField=${f.minor_field_idx},
+                majorRegion='',
+                keyword='',
+                sort='latest'
+              )}">
+
+            <img class="fieldIcon"
+                 th:src="@{/img/icon/{idx}.png(idx=${f.major_field_idx})}" />
+
+            <span class="fieldName"
+                  th:text="${f.minor_field_nm}">
+            </span>
+
+          </a>
+
+        </div>
+
       </div>
       </div>
       </div>

@@ -1,6 +1,7 @@
 package com.dacoach.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.AdDTO;
+import com.dacoach.model.minorField.MinorFieldDTO;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.membership.MembershipService;
 
@@ -24,14 +26,20 @@ public class IndexController {
 	@GetMapping("/")
 	public ModelAndView index() {
 		ModelAndView mav=new ModelAndView();
+		List<Map<String, Object>> majorFields = null;
 		List<AdDTO> lists=null;
 		List<CoachDTO> cdtos = null;
+		List<MinorFieldDTO> mdtos = null;
 		
 		try {
+			majorFields = coachService.getMajorFields();
 			lists=membershipService.bannerSelect(null);
 			cdtos = coachService.getPopularCoach();
+			mdtos = coachService.getPopularField();
+			mav.addObject("majorFields",majorFields);
 			mav.addObject("list",lists);
 			mav.addObject("popularCoaches", cdtos);
+			mav.addObject("popularFields", mdtos);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

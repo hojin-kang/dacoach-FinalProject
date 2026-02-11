@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dacoach.mapper.coach.CoachMapper;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.minorField.MinorFieldDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.file.FileUpload;
 
@@ -302,6 +303,11 @@ public class CoachServiceImple implements CoachService {
 	        c.setInterhashtags(inter);
 	    }
 	    return list;
+	}
+	
+	@Override
+	public List<MinorFieldDTO> getPopularField() throws Exception {
+		return coachMapper.getPopularField();
 	}
 
 	@Override
