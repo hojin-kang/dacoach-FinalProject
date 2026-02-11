@@ -5,6 +5,7 @@ import java.util.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CoachService {
@@ -46,4 +47,5 @@ public interface CoachService {
 
     List<String> getMyHashtags(int user_idx) throws Exception;
     List<String> getInterHashtags(int user_idx) throws Exception;
+    public List<CertDTO> getCoachCertList(int user_idx) throws Exception;
 }

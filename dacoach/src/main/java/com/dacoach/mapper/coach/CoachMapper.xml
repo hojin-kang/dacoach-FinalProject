@@ -281,5 +281,8 @@
         WHERE liker_idx=#{login_idx}
         AND liked_user_idx=#{target_idx}
     </delete>
-    
+    <select id="getCoachCertList" parameterType="int" resultType="com.dacoach.model.company.CertDTO">
+        select * from cert
+        where user_idx = #{user_idx}
+    </select>
 </mapper>
