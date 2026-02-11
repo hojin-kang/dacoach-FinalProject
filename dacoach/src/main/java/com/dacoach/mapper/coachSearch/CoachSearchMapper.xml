@@ -47,9 +47,6 @@
                     <if test="minorField != null and minorField != 0">AND B.minor_field_idx = #{minorField}</if>
                     <if test="majorRegion != null and majorRegion != 0">AND C.major_region_idx = #{majorRegion}</if>
                     <if test="minorRegion != null and minorRegion != 0">AND C.minor_region_idx = #{minorRegion}</if>
-                    <if test="login_idx != null and login_idx != 0">
-                        AND A.user_idx != #{login_idx, jdbcType=INTEGER}
-                    </if>
                 </where>
                 GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo
                 <choose>
