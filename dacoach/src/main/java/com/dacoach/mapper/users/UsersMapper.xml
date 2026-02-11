@@ -6,5 +6,6 @@
     <select id="userLogin" parameterType="com.dacoach.model.users.UsersDTO" resultType="com.dacoach.model.users.UsersDTO">
         select * from users 
         where login_id = #{login_id}
+        and user_type = 'COACH'
     </select>
 </mapper>
