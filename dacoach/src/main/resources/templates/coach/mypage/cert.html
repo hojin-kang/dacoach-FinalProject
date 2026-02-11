@@ -107,6 +107,7 @@
                 <p class="sub-title">증빙 서류를 업로드하여 전문가 인증을 받으세요.</p>
                 
                 <form th:action="@{/cert}" method="post" enctype="multipart/form-data">
+                	<input type="text" name="cert_name" placeholder="자격증 명칭을 입력하세요" style="width:100%; padding:12px 16px; margin-bottom:20px; border:1px solid #ccc; border-radius:8px;" required />
                     <div class="file-upload-container">
                         <label for="certFile" class="file-label">
                             <span class="upload-icon">📁</span>
