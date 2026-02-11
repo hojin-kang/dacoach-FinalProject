@@ -38,7 +38,9 @@ public class AdminCompanyController {
     @GetMapping("/companyDetail/{usersIdx}")
     public String companyDetail(@PathVariable long usersIdx, Model model) {
         Map<String, Object> row = service.getCompanyDetail(usersIdx);
-        model.addAttribute("row", row);
+        String certFilePath = service.getCertFilePath((int) usersIdx);
+        model.addAttribute("certFilePath", certFilePath);
+        model.addAttribute("row", row);	
         model.addAttribute("contentPage", "admin/company/companyDetail");
         model.addAttribute("contentFragment", "contentPage");
         return "admin/dashboard";

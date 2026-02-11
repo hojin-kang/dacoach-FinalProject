@@ -1,5 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="contentPage" class="company-detail-page">
   <style>
+    /* 기존 스타일 그대로 */
     .company-detail-page {
       max-width: 1100px;
       margin: 0 auto;
@@ -205,8 +208,12 @@
     <div class="info-card">
       <form id="companyForm" th:action="@{/admin/companyDetail/save}" method="post" onsubmit="return validateForm()">
         <input type="hidden" name="usersIdx" th:value="${row['USER_IDX']}">
-        <input type="hidden" id="certStatus" name="certStatus" th:value="${row['CERT_STATUS']}">
-        <input type="hidden" id="certType" name="certType" value="사업증">
+        <input type="hidden" id="certStatus" th:value="${row['CERT_STATUS']}">
+        
+        <!-- ✅ certStatus가 '확인'이 아니면 기본 status 전송! -->
+        <input type="hidden" name="status" 
+               th:if="${row['CERT_STATUS'] == null || row['CERT_STATUS'] != '확인'}"
+               value="ACTIVE">
 
         <div class="section-badge">기업 상세</div>
 
@@ -314,7 +321,7 @@
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td><a href="#" class="file-link">파일보기</a></td>
+                <td><a th:href="${certFilePath}" target="_blank" class="file-link">파일보기</a></td>
               </tr>
             </tbody>
           </table>
@@ -336,8 +343,16 @@
     </div>
 
     <script>
-      // 폼 유효성 검사
+      // ✅ 수정된 validateForm()
       function validateForm() {
+        const certStatus = document.getElementById('certStatus')?.value;
+        
+        // certStatus가 '확인'이 아니면 validation 건너뛰기
+        if (certStatus !== '확인') {
+          console.log('certStatus is not confirmed, skipping validation');
+          return true;
+        }
+        
         const statusRadio = document.querySelector('input[name="status"]:checked');
         
         if (!statusRadio) {
@@ -443,12 +458,10 @@
 	       reason.required = true;
 	       reason.focus();
 	       
-	       // 필수 표시(*) 보이기
 	       if (requiredIndicator) {
 	         requiredIndicator.style.display = 'inline';
 	       }
 	       
-	       // 입력 시 에러 스타일 제거
 	       suspendUntil.addEventListener('change', function() {
 	         this.style.borderColor = '#d1d5db';
 	       });
@@ -469,7 +482,6 @@
 	       reason.style.borderColor = '#d1d5db';
 	       reason.required = false;
 	       
-	       // 필수 표시(*) 숨기기
 	       if (requiredIndicator) {
 	         requiredIndicator.style.display = 'none';
 	       }
@@ -482,3 +494,4 @@
       };
     </script>
   </div>
+  </html>

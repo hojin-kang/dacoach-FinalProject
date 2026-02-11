@@ -85,7 +85,7 @@ public class CompanyController {
 		try {
 			int userIdx=companyService.getUserIdx(login_id);
 			if (photoFile != null && !photoFile.isEmpty()) {
-				String photoPath = FileUpload.saveFile(photoFile, "company/photo");			
+				String photoPath	 = FileUpload.saveFile(photoFile, "company/photo");			
 				companyDto.setPhoto(photoPath);				
 				companyDto.setUser_idx(companyService.getUserIdx(login_id));
 			}
