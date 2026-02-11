@@ -60,4 +60,42 @@ public class CoachClassServiceImple implements CoachClassService {
 	public CoachClassDTO getClassDetail(int classIdx) throws Exception {
 	    return classMapper.getClassDetail(classIdx);
 	}
+	
+	// 양진유 추가 메서드 부분 ---------------------
+	@Override
+	public List<String> getHashtagsByClass(int class_idx) throws Exception {
+		return classMapper.selectHashtagsByClass(class_idx);
+	}
+	
+	@Override
+	public Map<String, Object> getClassFieldInfo(int class_idx) throws Exception {
+		return classMapper.selectClassFieldInfo(class_idx);
+	}
+	
+	@Override
+	public Map<String, Object> getClassRegionInfo(int class_idx) throws Exception {
+		return classMapper.selectClassRegionInfo(class_idx);
+	}
+	
+	@Override
+	public Map<String, Object> getProviderInfo(int provider_idx) throws Exception {
+		return classMapper.selectProviderInfo(provider_idx);
+	}
+	
+	@Override
+	public List<Map<String, Object>> getReviewsByClass(int class_idx) throws Exception {
+		return classMapper.selectReviewsByClass(class_idx);
+	}
+	
+	@Override
+	public Double getAvgRatingByClass(int class_idx) throws Exception {
+		Double avgRating = classMapper.selectAvgRatingByClass(class_idx);
+		return avgRating != null ? avgRating : 0.0;
+	}
+	
+	@Override
+	public Integer getReviewCountByClass(int class_idx) throws Exception {
+		Integer count = classMapper.selectReviewCountByClass(class_idx);
+		return count != null ? count : 0;
+	}
 }

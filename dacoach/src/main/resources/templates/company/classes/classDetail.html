@@ -199,18 +199,18 @@
 						<div class="sideTitle">클래스 정보</div>
 
 						<div class="sideRow">
-							<span class="sideLabel">기간</span> <span class="sideValue"
+							<span class="sideLabel">수강 가능 기간</span> <span class="sideValue"
 								th:text="|${#dates.format(classDTO.start_date,'yyyy.MM.dd')} ~ ${#dates.format(classDTO.end_date,'yyyy.MM.dd')}|">
 							</span>
 						</div>
 
 						<div class="sideRow">
-							<span class="sideLabel">가격</span> <span class="sideValue"
+							<span class="sideLabel">수강 가격(하루)</span> <span class="sideValue"
 								th:text="|${#numbers.formatInteger(classDTO.price, 3, 'COMMA')}₩|"></span>
 						</div>
 
 						<div class="sideRow">
-							<span class="sideLabel">정원</span> <span class="sideValue"
+							<span class="sideLabel">하루 수강 정원</span> <span class="sideValue"
 								th:text="|${classDTO.max_user_cnt}명|"></span>
 						</div>
 
@@ -255,7 +255,7 @@
 			// 지도를 표시할 div 
 			const mapContainer = document.getElementById('kakaoMap');
 			const mapOption = {
-				center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울시청 기본 좌표
+				center: new kakao.maps.LatLng(37.5565426, 126.9195486), // 쌍용강북교육센터 = 기본 좌표
 				level: 4 // 지도 확대 레벨
 			};
 
