@@ -266,12 +266,12 @@
                
             </div>
          </div>
-		<div class="action-icons">
+		<div class="action-icons" th:if="${dto.user_idx != session.user_idx}">
              <span th:if="${isLiked == false}" onclick="like()">♡</span>
              <span th:if="${isLiked == true}" onclick="unlike()">❤️</span>
              <span onclick="report()">🚨</span> 
         </div>
-			<div class="header-buttons">
+			<div class="header-buttons" th:if="${dto.user_idx != session.user_idx}">
 			    <th:block th:switch="${dto.chatStatus}">
 			        <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">채팅 수락</button>
 			        <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled style="background:#eee;">채팅 신청됨</button>
