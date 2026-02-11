@@ -46,4 +46,7 @@ public interface CoachService {
 
     List<String> getMyHashtags(int user_idx) throws Exception;
     List<String> getInterHashtags(int user_idx) throws Exception;
+    
+    // 인기 코치 불러오기
+    public List<CoachDTO> getPopularCoach() throws Exception;
 }

@@ -6,6 +6,7 @@
   <title>dacoach</title>
 
   <link rel="stylesheet" th:href="@{/css/main.css}" />
+  <link rel="stylesheet" th:href="@{/css/index.css}" />
 </head>
 <body>
   <div th:replace="~{layout/header :: siteHeader}"></div>
@@ -16,80 +17,137 @@
     		<span>관심 분야를 선택해보세요</span>
     		
 		      <div class="category">
-		      	<div class="categoryUnit">
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=1, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/computer.png">
 		      		<span>IT/전자</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=2, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/art.png">
 		      		<span>예술</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=3, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/language.png">
 		      		<span>어학</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=4, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/money.png">
 		      		<span>투자/금융</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=5, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/sport.png">
 		      		<span>스포츠</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=6, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/life.png">
 		      		<span>생활</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=7, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/beauty.png">
 		      		<span>패션/뷰티</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=8, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/interior.png">
 		      		<span>인테리어</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=9, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/cooking.png">
 		      		<span>요리</span>
-		      	</div>
-		      	<div class="categoryUnit">
+		      	</a>
+		      	<a class="categoryUnit" th:href="@{/coach/search(majorField=10, minorField='', majorRegion='', keyword='', sort='latest')}">
 		      		<img src="/img/icon/game.png">
 		      		<span>게임</span>
-		      	</div>
+		      	</a>
 		      </div>
 		      
     	</div>
-      
-      <section class="mainSection">
-      	<span>실시간 </span><span style="color:#328889;">인기 코치</span>
-      	<div class="mainSectionUnit">
-      		<div class="card">
-      		여기에 각 내용
-      		</div>
-      	</div>
-      </section>
-      
-      <section class="mainSection">
-      	<span>실시간 </span><span style="color:#328889;">인기 분야</span>
-      	<div class="mainSectionUnit">
-      		<!-- 실시간 인기 코치 나오는 곳 -->
-      	</div>
+
+			<section class="mainSection">
+  <div class="sectionHeader">
+    <span>실시간 </span><span class="accent">인기 코치</span>
+  </div>
+
+  <div class="wrap">
+  <button type="button" class="arrowBtn left" id="popPrev" aria-label="prev">‹</button>
+    <div class="viewport">
+      <div class="track" id="popularCoachTrack">
+        <div class="popularCard" th:each="c : ${popularCoaches}">
+          <a class="popularCardInner" th:href="@{/coach/detail(user_idx=${c.user_idx})}">
+            
+            <!-- 왼쪽: 프로필 영역 -->
+            <div class="left">
+              <div class="avatar">
+                <img th:src="${c.photo != null and c.photo != ''} ? @{/uploads/{p}(p=${c.photo})} : @{/img/profile/defaultProfile.jpg}"
+                     alt="coach">
+              </div>
+
+              <div class="badge" th:text="${c.rank_name}">베테랑 코치</div>
+              <div class="name" th:text="${c.nickname}">홍길동</div>
+
+              <div class="rating">
+                <span class="star">★</span>
+                <span th:text="${#numbers.formatDecimal(c.rating, 1, 1)}">4.7</span>
+                <span class="cnt" th:text="'(' + ${c.review_count} + ')'">(54)</span>
+              </div>
+            </div>
+
+            <!-- 오른쪽: 제공/관심 분야 -->
+            <div class="right">
+              <div class="row">
+                <div class="label">제공분야</div>
+                <div class="tags">
+                  <span class="tag" th:each="t : ${c.hashtags}" th:text="${t}">#축구</span>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="label">관심분야</div>
+                <div class="tags">
+                  <span class="tag" th:each="t : ${c.interhashtags}" th:text="${t}">#야구</span>
+                </div>
+              </div>
+            </div>
+
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 오른쪽 화살표 (스샷처럼 겹치기) -->
+    <button type="button" class="arrowBtn right" id="popNext" aria-label="next">›</button>
+  </div>
+</section>
+
+
+		<section class="mainSection">
+      	<div class="sectionHeader">
+    <span>실시간 </span><span class="accent">인기 분야</span>
+  </div>
+      	<div class="wrap">
+    <div class="viewport">
+      <div class="track" id="popularFieldTrack">
+      </div>
+      </div>
+      </div>
       </section>
       
       <section class="adBanner">
       <form name="bannerForm" id="bannerForm" action="/company/profile/companyProfileForm" method="post">
       <div id="banner">
       	<img src="/img/banner/banner.png">
-      	
       </div>	
       </form>
       </section>
       
       <section class="mainSection">
-      	<span>실시간 </span><span style="color:#328889;">인기 클래스</span>
-      	<div class="mainSectionUnit">
-      		
-      	</div>
+      	<div class="sectionHeader">
+    <span>실시간 </span><span class="accent2">인기 클래스</span>
+  </div>
+      	<div class="wrap">
+    <div class="viewport">
+      <div class="track" id="popularClassTrack">
+      </div>
+      </div>
+      </div>
       </section>
     </div>
   </main>
@@ -117,5 +175,61 @@
 		bannerForm.submit();
 	}
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.getElementById("popularCoachTrack");
+  const nextBtn = document.getElementById("popNext");
+  const prevBtn = document.getElementById("popPrev");
+  if(!track || !nextBtn || !prevBtn) return;
+
+  const cards = track.querySelectorAll(".popularCard");
+  const total = cards.length;
+  const visible = 3;
+
+  let index = 0;
+  let maxIndex = Math.max(0, total - visible);
+  const gap = 12;
+
+  function move(){
+    if(total === 0) return;
+
+    const cardWidth = cards[0].offsetWidth;
+    track.style.transform = `translateX(${-(cardWidth + gap) * index}px)`;
+  }
+
+  function toggleButtons(){
+    // 처음이면 prev 숨김
+    if(index === 0) prevBtn.classList.add("isHidden");
+    else prevBtn.classList.remove("isHidden");
+
+    // 끝이면 next 숨김
+    if(index === maxIndex) nextBtn.classList.add("isHidden");
+    else nextBtn.classList.remove("isHidden");
+  }
+
+  function update(){
+    maxIndex = Math.max(0, total - visible); // resize 시 재계산
+    if(index > maxIndex) index = maxIndex;
+
+    move();
+    toggleButtons();
+  }
+
+  nextBtn.addEventListener("click", () => {
+    index = Math.min(maxIndex, index + 1);
+    update();
+  });
+
+  prevBtn.addEventListener("click", () => {
+    index = Math.max(0, index - 1);
+    update();
+  });
+
+  window.addEventListener("resize", update);
+  update(); // 초기 상태 세팅(처음엔 prev 숨김)
+});
+</script>
+
+
 </body>
 </html>
