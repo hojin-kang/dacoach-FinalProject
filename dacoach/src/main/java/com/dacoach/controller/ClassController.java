@@ -35,7 +35,7 @@ public class ClassController {
 	// 기업 회원 권한 체크 및 리다이렉트 처리
 	private ModelAndView checkCompanyAuth(HttpSession session) {
 		if (!isCompanyUser(session)) {
-			ModelAndView mav=new ModelAndView();
+			ModelAndView mav = new ModelAndView();
 			mav.addObject("url", "/");
 			mav.addObject("msg", "컴퍼니 회원만 접근 가능합니다.");
 			mav.setViewName("alert");

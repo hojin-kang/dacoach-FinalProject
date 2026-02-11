@@ -194,7 +194,7 @@ public class ClassServiceImple implements ClassService {
 
 		// 기본 통계
 		int totalEnrollments = enrollments.size();
-		long activeStudents = enrollments.stream().filter(e -> "ENROLLED".equals(e.get("STATUS"))).count();
+		long activeStudents = enrollments.stream().filter(e -> "CONFIRMED".equals(e.get("STATUS"))).count();
 		int totalRevenue = classDTO.getPrice() * (int) activeStudents;
 
 		result.put("totalEnrollments", totalEnrollments);
