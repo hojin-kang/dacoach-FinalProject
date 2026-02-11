@@ -45,7 +45,7 @@ public class AdminCompanyController {
     }
 
     //기업 회원 상태 변경 (저장)
-    @PostMapping("/companyDetail/save")
+    @PostMapping("/companyDetail/save")	
     public String saveCompanyStatus(
             @RequestParam long usersIdx,
             @RequestParam String status,

@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.qna.QnaDTO;
+import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.service.admin.AdminService;
 
 @Controller
@@ -371,19 +372,134 @@ public class AdminCoachController {
 		
 		return "redirect:/admin/support/notice";
 	}
-	
-	
-	
-	
+
 	
 	@GetMapping("/support/qna")
-	public String qnaList(Model model) {
+	public String qnaList(Model model,
+			@RequestParam(value="keyword", required=false) String keyword) {
 		
+			List<Map<String, Object>> qnaList = new ArrayList<>();
+			
+			try {
+				qnaList = adminService.getQnaList(keyword);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
+		model.addAttribute("qnaList", qnaList);
+		model.addAttribute("keyword", keyword);
 		model.addAttribute("contentPage", "admin/support/qna/qnaList");
 		model.addAttribute("contentFragment", "qnaList");
 		
 		return "admin/dashboard";
 	}
+	
+	@GetMapping("/support/qna/content")
+	public String qnaContent(Model model,@RequestParam int qna_idx) {
+		
+		Map<String, Object> qnaContent = null;
+		
+		try {
+			qnaContent = adminService.getQnaContent(qna_idx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("content", qnaContent);
+		model.addAttribute("contentPage", "admin/support/qna/qnaContent");
+		model.addAttribute("contentFragment", "qnaContent");
+		
+		return "admin/dashboard";
+	}
+	
+	@PostMapping("/support/qna/insert")
+	public String insertQnaAnswer(@RequestParam int qna_idx,
+			@RequestParam String title,
+			@RequestParam String answer,
+			RedirectAttributes rttr) {
+		
+		Qna_aDTO dto = new Qna_aDTO();
+		dto.setQna_idx(qna_idx);
+		dto.setTitle(title);
+		dto.setAnswer(answer);
+		
+		try {
+			int result = adminService.insertQnaAnswer(dto);
+			
+			if(result > 0) {
+				rttr.addFlashAttribute("msg", "답변이 등록되었습니다.");
+	
+			}else {
+				rttr.addFlashAttribute("msg", "답변 등록에 실패했습니다.");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+		}
+		
+		return "redirect:/admin/support/qna/content?qna_idx=" + qna_idx;
+		
+	}
+	
+	@PostMapping("/support/qna/update")
+	public String updateQnaAnswer(@RequestParam int qna_a_idx,
+			@RequestParam int qna_idx,
+			@RequestParam String title,
+			@RequestParam String answer,
+			RedirectAttributes rttr) {
+		
+		Qna_aDTO dto = new Qna_aDTO();
+		dto.setQna_a_idx(qna_a_idx);
+		dto.setTitle(title);
+		dto.setAnswer(answer);
+		
+		try {
+			int result = adminService.updateQnaAnswer(dto);
+			
+			if(result > 0) {
+				rttr.addFlashAttribute("msg", "답변이 수정되었습니다.");
+	
+			}else {
+				rttr.addFlashAttribute("msg", "답변 수정에 실패했습니다.");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+		}
+		
+		return "redirect:/admin/support/qna/content?qna_idx=" + qna_idx;
+	}
+	
+	@PostMapping("/support/qna/delete")
+	public String deleteQnaAnswer(@RequestParam int qna_a_idx,
+			@RequestParam int qna_idx,
+			RedirectAttributes rttr) {
+		
+		try {
+			int result = adminService.deleteQnaAnswer(qna_a_idx);
+			
+			if(result > 0) {
+				rttr.addFlashAttribute("msg", "답변이 삭제되었습니다.");
+	
+			}else {
+				rttr.addFlashAttribute("msg", "답변 삭제에 실패했습니다.");
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			rttr.addFlashAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+		}
+		
+		return "redirect:/admin/support/qna/content?qna_idx=" + qna_idx;
+	}
+	
 	
 	@GetMapping("/filter/field")
 	public String fieldContent(Model model,

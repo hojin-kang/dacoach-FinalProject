@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.qna.QnaDTO;
+import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.model.users.UsersDTO;
 
 @Mapper
@@ -39,6 +40,13 @@ public interface AdminMapper {
 	public QnaDTO getNoticeContent(int qna_idx) throws Exception;
 	public int updateNotice(QnaDTO dto) throws Exception;
 	public int deleteNotice(int qna_idx) throws Exception;
+	
+	//QnA 관리
+	public List<Map<String, Object>> getQnaList(String keyword) throws Exception;
+	public Map<String, Object> getQnaContent(int qna_idx) throws Exception;
+	public int insertQnaAnswer(Qna_aDTO dto) throws Exception;
+	public int updateQnaAnswer(Qna_aDTO dto) throws Exception;
+	public int deleteQnaAnswer(int qna_a_idx) throws Exception;
 	
 	//분야 카테고리 관리
 	public List<Map<String, Object>> getMajorField() throws Exception;

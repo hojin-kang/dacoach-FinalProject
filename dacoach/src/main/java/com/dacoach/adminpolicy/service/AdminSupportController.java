@@ -12,7 +12,7 @@ import com.dacoach.model.adminPolicy.PolicyDTO;
 
 @Controller
 @RequestMapping("/support")
-public class SupportController {
+public class AdminSupportController {
 
 	@Autowired
 	AdminPolicyService service;
@@ -24,3 +24,4 @@ public class SupportController {
 		return "admin/support/notice/policies";
 	}
 }
+     

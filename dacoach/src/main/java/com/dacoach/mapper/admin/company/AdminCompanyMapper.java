@@ -6,12 +6,18 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.dacoach.model.company.CertDTO;
+
 @Mapper
 public interface AdminCompanyMapper {
 
     // 기업 회원 관리
     List<Map<String, Object>> companyList();
     Map<String, Object> companyDetail(@Param("usersIdx") long usersIdx);
+    String getCertFilePath(@Param("userIdx") long userIdx);
+    int insertCert(CertDTO dto);
+    int hasCert(@Param("userIdx") int userIdx);
+    
     int countCompanyTotal();    
     int updateUserStatus(@Param("userIdx") long userIdx, @Param("status") String status);
     int insertEmbeddedHistory(Map<String, Object> param);
@@ -26,7 +32,7 @@ public interface AdminCompanyMapper {
     int countClassTotal();
     
     
-    // 클래스 상세 (간소화 버전)
+    // 클래스 상세 
     Map<String, Object> classDetail(@Param("classIdx") int classIdx);
     Map<String, Object> selectClassRatingSummary(@Param("classIdx") int classIdx);
     int selectClassEnrollCount(@Param("classIdx") int classIdx);

@@ -6,14 +6,14 @@
    <title>dacoach</title>
 
    <link rel="stylesheet" th:href="@{/css/main.css}" />
+  
 </head>
 <body>
    <div th:replace="~{layout/header :: siteHeader}"></div>
 
    <main class="main">
    <div class="container">
-      준비중입니다
-      프사	이름	소개글	전화번호	문의하기	별점/리뷰	클래스 지역??및 분야?
+      
       <div class="profileTop">
       	
       	<span id="photoSpan">
@@ -29,24 +29,36 @@
       	<span id="emailSpan">
       		E-MAIL: [[${profile.EMAIL}]]
       	</span>
-      	<span id="addressSapn">
-      		주소: [[${profile.ADDRESS}]]
+      	<span id="addressSpan">
+      		📍 [[${profile.ADDRESS}]]
       	</span>
       	<span id="phoneSpan">
-      		전화번호: [[${profile.PHONE}]]
+      		📞 [[${profile.PHONE}]]
       	</span>
       </div>
       <div class="profileMiddle_field">
       	<span id="fieldSpan">
       		제공분야: [[${profile.MAJOR_FIELD_CD}]] [[${profile.MINOR_FIELD_NM}]]
       	</span>
-      <div class="profileMiddle_field">	
       	<span id="regionSpan" th:each="region:${regionList}">
-      		[[${region.REGION_NM}]] [[${region.DISTRICT_NM}]]
+      		📍[[${region.REGION_NM}]] [[${region.DISTRICT_NM}]]
       	</span>
       </div>
       <div class="profileBottom">
-      	<span id="classSpan">
+      	<span id="classSpan" th:each="class:${classList}">
+      		<img th:src="'/uploads/'+${class.PHOTO}">
+      		
+      		<span id="classRegionSpan">[[${class.REGION_NM }]]</span>
+      		<span id="classDistrictSpan">[[${class.DISTRICT_NM }]]</span>
+      		<span id="classRegionDetailSpan">[[${class.REGION_DETAIL }]]</span>
+      		<span id="classTitleSpan">[[${class.TITLE }]]</span>
+      		<span id="classIntroSpan">[[${class.INTRO }]]</span>
+      		<span id="classPriceSpan">[[${class.PRICE }]]</span>
+      		<span id="classStartDateSpan">[[${class.START_DATE }]]</span>
+      		<span id="classEndDateSpan">[[${class.END_DATE }]]</span>
+      		<span id="classRatingSpan">별점 </span>
+      		<span id="majorFiledSpan">[[${class.MAJOR_FIELD_CD }]]</span>
+      		<span id="minorFiledSpan">[[${class.MINOR_FIELD_NM }]]</span>
       		
       	</span>
       </div>
@@ -54,7 +66,12 @@
       
 
    </div>
-   </main>
-  
+   </main>  
    <div th:replace="~{layout/footer :: siteFooter}"></div>
+   <script th:inline="javascript">
+   	var goClass=document.getElementById('classSpan');
+   	goClass.onclick=function(){
+   		window.location.href='/coach/classDetail?id=2';
+   	}
+   </script>
 </body>
