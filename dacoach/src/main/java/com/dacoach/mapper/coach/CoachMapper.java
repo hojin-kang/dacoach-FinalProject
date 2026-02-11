@@ -5,6 +5,7 @@ import java.util.*;
 import org.apache.ibatis.annotations.Param;
 
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CoachMapper {
@@ -63,6 +64,8 @@ public interface CoachMapper {
 	public Integer likeCoach(HashMap map) throws Exception;
 	
 	public Integer unlikeCoach(HashMap map) throws Exception;
+	
+	public List<CertDTO> getCoachCertList(int user_idx) throws Exception;
 	
 	// 개인정보 수정
     int updateCoachInfo(CoachDTO dto) throws Exception;
