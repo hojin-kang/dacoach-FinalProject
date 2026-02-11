@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.minorField.MinorFieldDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CoachService {
@@ -50,6 +51,8 @@ public interface CoachService {
     
     // 인기 코치 불러오기
     public List<CoachDTO> getPopularCoach() throws Exception;
+    // 인기 분야 불러오기
+    public List<MinorFieldDTO> getPopularField() throws Exception;
 
     public List<CertDTO> getCoachCertList(int user_idx) throws Exception;
 

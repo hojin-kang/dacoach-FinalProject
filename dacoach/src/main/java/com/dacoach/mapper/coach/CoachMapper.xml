@@ -345,6 +345,29 @@
 		]]>
 	</select>
 
+	<select id="getPopularField"
+		resultType="com.dacoach.model.minorField.MinorFieldDTO">
+		<![CDATA[
+			SELECT *
+			FROM (
+			    SELECT
+			        mi.major_field_idx,
+			        mi.minor_field_idx,
+			        mi.minor_field_nm,
+			        COUNT(*) AS provide_cnt
+			    FROM coach_provide cp
+			    JOIN minor_field mi
+			        ON mi.minor_field_idx = cp.minor_field_idx
+			    GROUP BY
+			        mi.major_field_idx,
+			        mi.minor_field_idx,
+			        mi.minor_field_nm
+			    ORDER BY provide_cnt DESC, mi.minor_field_idx ASC
+			)
+			WHERE ROWNUM <= 5
+		]]>
+	</select>
+
     <select id="getCoachCertList" parameterType="int" resultType="com.dacoach.model.company.CertDTO">
         select * from cert
         where user_idx = #{user_idx}
