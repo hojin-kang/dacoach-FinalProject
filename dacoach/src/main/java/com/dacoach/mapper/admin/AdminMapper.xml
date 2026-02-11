@@ -81,6 +81,20 @@
 	where user_idx=#{user_idx})
 	</update>
 	
+	<select id="getWaitCertList" parameterType="int" resultType="com.dacoach.model.company.CertDTO">
+	select cert_idx,cert_name,cert_file from cert 
+	where user_idx=#{user_idx} and cert_status='대기'
+	</select>
+	
+	<update id="updateCertStatus" parameterType="com.dacoach.model.company.CertDTO">
+	update cert 
+	set cert_name=#{cert_name}, 
+	get_date = #{get_date, jdbcType=DATE}, 
+	cert_from=#{cert_from}, 
+	cert_status='확인'
+	where  cert_idx=#{cert_idx}
+	</update>
+	
 	<select id="getKeywordType" resultType="map">
 	select keyword_type,count(*) as cnt
 	from keyword

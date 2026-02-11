@@ -3,6 +3,7 @@ package com.dacoach.service.admin;
 import java.util.*;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.model.users.UsersDTO;
@@ -22,6 +23,10 @@ public interface AdminService {
 	public int updateCoachStatus(Map<String, Object> params) throws Exception;
 	public int insertCoachSuspended(EmbeddedUserDTO dto) throws Exception;
 	public int updateEnddateSuspended(int user_idx) throws Exception;
+	
+	//코치 자격증 관리
+	public List<CertDTO> getWaitCertList(int user_idx) throws Exception;
+	public int updateCertStatus(CertDTO dto) throws Exception;
 	
 	// 검열 키워드 관리
 	List<Map<String,Object>> getKeywordType() throws Exception;
