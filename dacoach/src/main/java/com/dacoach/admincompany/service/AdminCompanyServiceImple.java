@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dacoach.mapper.admin.company.AdminCompanyMapper;
+import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.company.CertDTO;
 
 @Service
@@ -27,48 +28,6 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     @Override
     public Map<String, Object> getCompanyDetail(int usersIdx) {
         return mapper.companyDetail(usersIdx);
-    }
-
-    @Override
-    @Transactional
-    public void updateCompanyStatus(int usersIdx, String status, String startDate, String endDate, String reason) {
-        // 상태 업데이트
-        mapper.updateUserStatus(usersIdx, status);
-        
-        // 정지 상태인 경우 정지 이력 추가
-        if ("SUSPENDED".equals(status)) {
-            Map<String, Object> param = new HashMap<>();
-            param.put("userIdx", usersIdx);
-            param.put("startDate", startDate);
-            param.put("endDate", endDate);
-            param.put("reason", reason);
-            mapper.insertEmbeddedHistory(param);
-        }
-        // 사용 상태로 복귀 시 최신 정지 이력 종료
-        else if ("ACTIVE".equals(status)) {
-            mapper.closeLatestEmbeddedHistory(usersIdx);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void approveCert(int usersIdx) {
-        String certType = "사업증";
-        String certStatus = "확인";
-        
-        // 기존 CERT 존재 여부 확인
-        int cnt = mapper.countCertByUserAndType(usersIdx, certType);
-        
-        // 존재하면 업데이트, 없으면 새로 추가
-        if (cnt > 0) {
-            mapper.updateCertStatus(usersIdx, certStatus);
-        } else {
-            mapper.insertCertStatus(usersIdx, certStatus);
-        }
-        
-        // 계정 상태를 ACTIVE로 변경
-        mapper.updateUserStatus(usersIdx, "ACTIVE");
-       
     }
 
     //클래스 관리
@@ -130,5 +89,52 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
 	@Override
 	public boolean hasCert(int userIdx) {
 		return mapper.hasCert(userIdx)>0?true:false;
+	}
+
+	//기업 계정상태 관리
+	@Override
+	public int updateCompanyStatus(Map<String, Object> params) {
+		return mapper.updateCompanyStatus(params);
+	}
+
+	@Override
+	public int insertCompanySuspended(EmbeddedUserDTO dto) {
+		return mapper.insertCompanySuspended(dto);
+	}
+
+	@Override
+	public int updateEnddateSuspended(int user_idx) {
+		return mapper.updateEnddateSuspended(user_idx);
+	}
+
+	@Override
+	public void approveCompanyLogic(Map<String, Object> params) {
+		params.put("status", "ACTIVE");
+        mapper.updateCompanyStatus(params);
+        mapper.updateCertDetail(params);
+	}
+	
+	public void updateCompanyFullStatus(Map<String, Object> params, EmbeddedUserDTO dto) {
+	    String status = (String) params.get("status");
+	    int userIdx = Integer.parseInt(params.get("user_idx").toString());
+
+	    // 1. 공통: 유저 상태 업데이트 (ACTIVE, SUSPENDED, WARNING, DANGER 모두 수행)
+	    mapper.updateCompanyStatus(params);
+
+	    // 2. 상태별 분기 처리
+	    if ("ACTIVE".equals(status)) {
+	        // 승인 시: 사업자 정보(날짜, 기관 등) 업데이트 + 정지 이력 종료
+	        mapper.updateCertDetail(params); 
+	        mapper.updateEnddateSuspended(userIdx);
+	        
+	    } else if ("SUSPENDED".equals(status)) {
+	        // 정지 시: 정지 이력 테이블 INSERT
+	        dto.setUser_idx(userIdx);
+	        mapper.insertCompanySuspended(dto);
+	        
+	    } else {
+	        // WARNING, DANGER 등: 기존 정지 이력이 있다면 종료 처리
+	        mapper.updateEnddateSuspended(userIdx);
+	    }
 	}
 }

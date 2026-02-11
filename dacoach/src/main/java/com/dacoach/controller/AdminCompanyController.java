@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dacoach.admincompany.service.AdminCompanyService;
+import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.page.PageModule;
 
 @Controller
@@ -34,48 +35,46 @@ public class AdminCompanyController {
         return "admin/dashboard";
     }
 
- // 기업 회원 상세
-    @GetMapping("/companyDetail/{usersIdx}")
-    public String companyDetail(@PathVariable int usersIdx, Model model) {
+    @GetMapping("/companyDetail/{usersIdx}") // URL 경로에 있는 변수명과
+    public String companyDetail(@PathVariable("usersIdx") int usersIdx, Model model) { // 이름이 일치해야 합니다.
 
-        Map<String, Object> row = service.getCompanyDetail(usersIdx);
-
-        String certFilePath = service.getCertFilePath(usersIdx); // "company/cert/....png"
-
-        model.addAttribute("row", row);
-
-        // 앞에 / 를 붙여서 절대경로처럼 링크 생성
-        // null 방지도 같이
-        model.addAttribute("certFilePath",
-                (certFilePath == null || certFilePath.isBlank()) ? null : "/" + certFilePath);
-
+        Map<String, Object> companyInfo = service.getCompanyDetail(usersIdx);
+        
+        model.addAttribute("companyInfo", companyInfo);
         model.addAttribute("contentPage", "admin/company/companyDetail");
         model.addAttribute("contentFragment", "contentPage");
+        
         return "admin/dashboard";
     }
+    
+    @PostMapping("/company/updateStatus")
+    public String updateCompanyStatus(Model model,
+            @RequestParam int company_idx,
+            @RequestParam int user_idx,
+            @RequestParam Map<String, Object> params,
+            EmbeddedUserDTO dto) {
 
+        try {
+            // 서비스 호출
+            service.updateCompanyFullStatus(params, dto);
+            System.out.println("전달된 파라미터: " + params);
+            model.addAttribute("msg", "정보가 성공적으로 반영되었습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("msg", "오류가 발생했습니다.");
+        }
 
+        // 결과 화면 구성을 위해 데이터를 다시 세팅
+        model.addAttribute("companyInfo", service.getCompanyDetail(user_idx));
+        model.addAttribute("user_idx", user_idx);
+        model.addAttribute("company_idx", company_idx);
+        model.addAttribute("contentPage", "admin/company/companyDetail");
+        model.addAttribute("contentFragment", "contentPage");
 
-    //기업 회원 상태 변경 (저장)
-    @PostMapping("/companyDetail/save")	
-    public String saveCompanyStatus(
-            @RequestParam int usersIdx,
-            @RequestParam String status,
-            @RequestParam(required = false) String suspendFrom,
-            @RequestParam(required = false) String suspendUntil,
-            @RequestParam(required = false) String reason
-    ) {
-        service.updateCompanyStatus(usersIdx, status, suspendFrom, suspendUntil, reason);
-        return "redirect:/admin/companyDetail/" + usersIdx;
+        return "admin/dashboard";
     }
-
-    //승인 처리
-    @PostMapping("/companyDetail/{usersIdx}/approve")
-    @ResponseBody
-    public String approveCompany(@PathVariable int usersIdx) {
-        service.approveCert(usersIdx);
-        return "OK";
-    }
+    
+    
 
     //클래스 목록
     @GetMapping("/companyClassList")
