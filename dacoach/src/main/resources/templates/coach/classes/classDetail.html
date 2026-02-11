@@ -68,7 +68,7 @@
 							th:if="${classDTO != null and classDTO.provider_idx != null}"
 							th:href="@{/chat/start(targetIdx=${classDTO.provider_idx}, tab='COMPANY')}">
 							문의하기 </a> <a class="actionBtn solid"
-							th:href="@{/pay/class(classId=${classDTO.class_idx})}"> 결제하기
+							th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}"> 신청하기
 						</a>
 					</div>
 				</div>
@@ -253,7 +253,7 @@
 
 						<div class="sideBtns">
 							<a class="actionBtn solid"
-								th:href="@{/pay/class(classId=${classDTO.class_idx})}">결제하기</a>
+								th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">신청하기</a>
 						</div>
 					</div>
 				</aside>

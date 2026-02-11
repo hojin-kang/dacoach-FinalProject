@@ -12,6 +12,12 @@
 	gap: 18px;
 	margin-left: 30px;
 }
+
+.companyInfo {
+	gap: 18px;
+	margin-left: 30px;
+}
+
 .profileArea div span:first-child {
 	font-size: 20px;
 	font-weight: 500;
