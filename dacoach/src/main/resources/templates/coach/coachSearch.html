@@ -102,7 +102,7 @@
                                     </div>
                                 </a>
 
-								<div class="card-footer">
+								<div class="card-footer" th:if="${dto.user_idx != session.user_idx}">
 								    <th:block th:switch="${dto.chatStatus}">
 								        <button type="button" th:case="'RECEIVED'" class="btn-chat" 
 								                th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">

@@ -18,6 +18,7 @@ public class CoachClassDTO {
 	private String intro;
 	private Integer minor_field_idx;
 	private Integer minor_region_idx;
+	private String region_detail;
 	private Integer price;
 	private String photo;              
 	private String video;      

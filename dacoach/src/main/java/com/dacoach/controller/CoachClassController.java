@@ -1,6 +1,5 @@
 package com.dacoach.controller;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,19 +51,17 @@ public class CoachClassController {
 
 	// 코치 - 클래스 검색
 	@GetMapping("/coach/classList")
-	public ModelAndView coachClassList(
-			@RequestParam(required = false) Integer majorField,
-			@RequestParam(required = false) Integer minorField,
-			@RequestParam(required = false) Integer majorRegion,
-			@RequestParam(required = false) Integer minorRegion,
-			@RequestParam(required = false) String q,
+	public ModelAndView coachClassList(@RequestParam(required = false) Integer majorField,
+			@RequestParam(required = false) Integer minorField, @RequestParam(required = false) Integer majorRegion,
+			@RequestParam(required = false) Integer minorRegion, @RequestParam(required = false) String q,
 			@RequestParam(required = false, defaultValue = "latest") String sort) throws Exception {
 
 		ModelAndView mav = new ModelAndView();
 
 		List<Map<String, Object>> majorList = classService.getMajorFields();
 		List<Map<String, Object>> majorRegions = classService.getMajorRegions();
-		List<CoachClassDTO> classList = classService.classSearch(majorField, minorField, majorRegion, minorRegion, q, sort);
+		List<CoachClassDTO> classList = classService.classSearch(majorField, minorField, majorRegion, minorRegion, q,
+				sort);
 
 		mav.addObject("majorList", majorList);
 		mav.addObject("majorRegions", majorRegions);
@@ -87,15 +84,15 @@ public class CoachClassController {
 	public ModelAndView coachClassDetail(@RequestParam("id") int id, HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView();
 
+		// 1. 클래스 기본 정보
 		CoachClassDTO classDTO = classService.getClassDetail(id);
 		if (classDTO == null) {
 			mav.setViewName("redirect:/coach/classList");
 			return mav;
 		}
-
 		mav.addObject("classDTO", classDTO);
 
-		// isLiked 계산
+		// 2. 찜 여부 (isliked 계산)
 		boolean isLiked = false;
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
 		if (userIdx != null) {
@@ -103,12 +100,30 @@ public class CoachClassController {
 		}
 		mav.addObject("isLiked", isLiked);
 
-		// 화면 최소값
-		mav.addObject("providerPhoto", "");
-		mav.addObject("avgRating", 0);
-		mav.addObject("reviewCount", 0);
-		mav.addObject("reviewList", Collections.emptyList());
-		mav.addObject("tagList", Collections.emptyList());
+		// 3. 해시태그 목록 조회
+		List<String> hashtagList = classService.getHashtagsByClass(id);
+		mav.addObject("hashtagList", hashtagList);
+
+		// 4. 분야 정보 조회 (대분류 > 소분류)
+		Map<String, Object> fieldInfo = classService.getClassFieldInfo(id);
+		mav.addObject("fieldInfo", fieldInfo);
+
+		// 5. 지역 정보 조회 (대지역 > 소지역)
+		Map<String, Object> regionInfo = classService.getClassRegionInfo(id);
+		mav.addObject("regionInfo", regionInfo);
+
+		// 6. 제공자 정보 조회 (이름, 사진)
+		Map<String, Object> providerInfo = classService.getProviderInfo(classDTO.getProvider_idx());
+		mav.addObject("providerPhoto", providerInfo.get("PROVIDER_PHOTO"));
+
+		// 7. 리뷰 정보 조회
+		List<Map<String, Object>> reviewList = classService.getReviewsByClass(id);
+		Double avgRating = classService.getAvgRatingByClass(id);
+		Integer reviewCount = classService.getReviewCountByClass(id);
+
+		mav.addObject("reviewList", reviewList);
+		mav.addObject("avgRating", avgRating);
+		mav.addObject("reviewCount", reviewCount);
 
 		mav.setViewName("coach/classes/classDetail");
 		return mav;

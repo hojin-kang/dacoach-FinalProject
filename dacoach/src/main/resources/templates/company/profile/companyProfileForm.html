@@ -15,9 +15,11 @@
       준비중입니다
       프사	이름	소개글	전화번호	문의하기	별점/리뷰	클래스 지역??및 분야?
       <div class="profileTop">
+      	
       	<span id="photoSpan">
-      		<img th:src="'/uploads/'+${profile.PHOTO}" id="photoImgTag">
+      		<img th:src="${profile.PHOTO =='/img/profile/defaultProfile.jpg'}?'/img/profile/defaultProfile.jpg': '/uploads/'+${profile.PHOTO)}" id="photoImgTag">
       	</span>
+      	
       	<span id="nameSpan">
       		[[${profile.USER_NAME}]]
       	</span>

@@ -146,7 +146,7 @@ public class UserController {
 	}
 
 	@PostMapping("/loginOk")
-	public ModelAndView loginOk(UsersDTO udto, HttpSession session,String userType) {
+	public ModelAndView loginOk(UsersDTO udto, HttpSession session,String user_type) {
 		ModelAndView mav = new ModelAndView();
 		
 		if (udto == null) {
@@ -155,8 +155,9 @@ public class UserController {
 			mav.setViewName("alert");
 			return mav;
 		}
-		if(userType.equals("coach")) {
+		if(user_type.equalsIgnoreCase("coach")) {
 		try {
+			
 			UsersDTO loginUser = usersService.userLogin(udto);
 
 			if (loginUser == null) {
@@ -188,7 +189,8 @@ public class UserController {
 			mav.setViewName("alert");
 		}
 		//기업 로그인 부분임당
-		}else{
+		}else if(user_type.equalsIgnoreCase("company")) {
+			
 			try {
 				UsersDTO loginUser = usersService.userLogin(udto);
 				

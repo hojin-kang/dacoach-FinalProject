@@ -6,23 +6,27 @@
 
 <link rel="stylesheet" th:href="@{/css/main.css}" />
 <link rel="stylesheet" th:href="@{/css/coach_class.css}" />
+<!-- 카카오맵 API -->
+<script type="text/javascript"
+	src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6f04c74845d3e7a3116d5982f61b9eb9&libraries=services"></script>
 </head>
 <body>
-  <div th:replace="~{layout/header :: siteHeader}"></div>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
 
-  <main class="main">
-    <div class="container">
-	
-      <!-- ===== 상단 프로필/타이틀 영역 ===== -->
-      <section class="classDetailTop">
-      	<div class="topLeft">
-          <!-- 프로필 이미지 (provider) -->
-          <div class="providerAvatar">
-            <img
-              th:src="${providerPhoto != null and providerPhoto != ''} ? @{/uploads/profile/{img}(img=${providerPhoto})} : @{/images/default_profile.png}"
-              alt="provider"
-            />
-          </div>
+	<main class="main">
+		<div class="container">
+
+			<!-- ===== 상단 프로필/타이틀 영역 ===== -->
+			<section class="classDetailTop">
+				<div class="topLeft">
+					<!-- 프로필 이미지 (provider) -->
+					<div class="providerAvatar">
+						<span th:if="${providerPhoto == null or providerPhoto == ''}"
+							class="no-media-message"
+							style="width: 64px; height: 64px; border-radius: 50%; font-size: 11px;">👤</span>
+						<img th:if="${providerPhoto != null and providerPhoto != ''}"
+							th:src="'/uploads/' + ${providerPhoto}" alt="provider" />
+					</div>
 
 					<div class="topInfo">
 						<div class="providerLine">
@@ -36,210 +40,231 @@
 					</div>
 				</div>
 
-        <div class="topRight">
-          <div class="topIcons">
-			  
-			  <a class="iconBtn likeBtn"
-			     aria-label="찜"
-			     th:href="${isLiked} ? @{/delLikesClass(class_idx=${classDTO.class_idx})}
+				<div class="topRight">
+					<div class="topIcons">
+
+						<a class="iconBtn likeBtn" aria-label="찜"
+							th:href="${isLiked} ? @{/delLikesClass(class_idx=${classDTO.class_idx})}
 			                      : @{/addLikesClass(class_idx=${classDTO.class_idx})}">
-			    <img class="icon"
-			         th:src="${isLiked} ? @{/img/icon/heart_fill.png} : @{/img/icon/heart.png}"
-			         alt="heart">
-			  </a>
-			
-			  <form th:action="@{/report/form}" method="post" style="display:inline;">
-				  <input type="hidden" name="reported_idx" th:value="${classDTO.provider_idx}">
-				  <input type="hidden" name="returnUrl"
-				         th:value="@{/coach/classDetail(id=${classDTO.class_idx})}">
-				  <button type="submit" class="iconBtn">
-				    <img src="/img/icon/siren.png">
-			  </button>
-			</form>
+							<img class="icon"
+							th:src="${isLiked} ? @{/img/icon/heart_fill.png} : @{/img/icon/heart.png}"
+							alt="heart">
+						</a>
+
+						<form th:action="@{/report/form}" method="post"
+							style="display: inline;">
+							<input type="hidden" name="reported_idx"
+								th:value="${classDTO.provider_idx}"> <input
+								type="hidden" name="returnUrl"
+								th:value="@{/coach/classDetail(id=${classDTO.class_idx})}">
+							<button type="submit" class="iconBtn">
+								<img src="/img/icon/siren.png">
+							</button>
+						</form>
+					</div>
+
+					<div class="topActions">
+						<a class="actionBtn outline"
+							th:if="${classDTO != null and classDTO.provider_idx != null}"
+							th:href="@{/chat/start(targetIdx=${classDTO.provider_idx}, tab='COMPANY')}">
+							문의하기 </a> <a class="actionBtn solid"
+							th:href="@{/pay/class(classId=${classDTO.class_idx})}"> 결제하기
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
+			<nav class="detailTabs">
+				<a class="tab active" href="#detail">상세정보</a>
+				<!-- ✅ 여기 누르면 아래 후기 블록으로 앵커 이동 -->
+				<a class="tab" href="#reviews">클래스 후기</a>
+			</nav>
+
+			<hr class="divider" />
+
+			<div class="classPage classDetailPage">
+
+				<!-- ===== LEFT: 상세 ===== -->
+				<section class="detailArea" id="detail">
+
+					<!-- 클래스소개 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">클래스 소개</h3>
+						<p class="blockText" th:text="${classDTO.intro}"></p>
+					</article>
+
+					<!-- 해시태그 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">해시태그</h3>
+						<div class="tagRow">
+							<span class="tag" th:each="tag : ${hashtagList}" th:text="${tag}"></span>
+							<span class="tag tag-empty"
+								th:if="${hashtagList == null or #lists.isEmpty(hashtagList)}">#해시태그없음</span>
+						</div>
+					</article>
+
+					<!-- 제공분야 블록 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">분야</h3>
+						<!-- 분야 정보 (대분류 > 소분류) -->
+						<div class="field-info">
+							<span class="field-text" th:if="${fieldInfo != null}"
+								th:text="${fieldInfo.MAJOR_FIELD_CD} + ' > ' + ${fieldInfo.MINOR_FIELD_NM}"></span>
+							<span class="field-empty" th:if="${fieldInfo == null}">분야
+								정보 없음</span>
+						</div>
+					</article>
+
+					<!-- 제공지역 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">위치</h3>
+						<!-- 분야 정보 (대지역 > 소지역) -->
+						<div class="region-info">
+							<span class="region-text" th:if="${regionInfo != null}"
+								th:text="${regionInfo.REGION_NM} + ' ' + ${regionInfo.DISTRICT_NM} + ' ' + ${classDTO.region_detail}"></span>
+							<span class="region-empty" th:if="${regionInfo == null}">지역
+								정보 없음</span>
+						</div>
+
+						<!-- 카카오맵 -->
+						<div id="map"
+							style="width: 100%; height: 350px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
+
+						<!-- 숨겨진 필드로 주소 정보 전달 -->
+						<input type="hidden" id="addressData"
+							th:value="${regionInfo != null ? (regionInfo.REGION_NM + ' ' + regionInfo.DISTRICT_NM + ' ' + (classDTO.region_detail != null ? classDTO.region_detail : '')) : ''}" />
+					</article>
+
+					<!-- 사진/동영상 -->
+					<article class="detailBlock">
+						<h3 class="blockTitle">사진/동영상</h3>
+
+						<div class="mediaRow">
+							<!-- 동영상(있으면) -->
+							<div class="mediaBox">
+								<span th:if="${classDTO.video == null or classDTO.video == ''}"
+									class="no-media-message">🎥 영상이 없습니다</span>
+								<video class="mediaVideo" controls
+									th:if="${classDTO.video != null and classDTO.video != ''}">
+									<source th:src="'/uploads/' + ${classDTO.video}"
+										type="video/mp4">
+								</video>
+							</div>
+
+							<!-- 사진(대표 1장) -->
+							<div class="mediaBox">
+								<span th:if="${classDTO.photo == null or classDTO.photo == ''}"
+									class="no-media-message">📷 이미지가 없습니다</span> <img
+									class="mediaImg"
+									th:if="${classDTO.photo != null and classDTO.photo != ''}"
+									th:src="'/uploads/' + ${classDTO.photo}" alt="class photo" />
+							</div>
+						</div>
+					</article>
+
+					<!-- ===== 후기 블록 (앵커 목적지) ===== -->
+					<article class="detailBlock" id="reviews">
+						<div class="reviewHead">
+							<h3 class="blockTitle">클래스 후기</h3>
+
+							<!-- 요약: 리뷰수/평점 -->
+							<div class="reviewSummary">
+								<span class="summaryText"> <b
+									th:text="${reviewCount != null ? reviewCount : 0}"></b>명의 코치가
+									해당 클래스를 긍정적 (★<b th:text="${avgRating != null ? avgRating : 0}"></b>/5.0)으로
+									평가했습니다.
+								</span>
+							</div>
+						</div>
+
+						<!-- 후기 카드 슬라이더 느낌 -->
+						<div class="reviewSlider">
+
+							<button type="button" class="slideArrow left" aria-label="prev">‹</button>
+
+							<div class="reviewCards">
+								<!-- 리뷰 1개 -->
+								<div class="reviewCard" th:each="r : ${reviewList}">
+									<div class="reviewTop">
+										<div class="reviewAvatar">
+											<span
+												th:if="${r.REVIEWER_PHOTO == null or r.REVIEWER_PHOTO == ''}"
+												class="no-media-message"
+												style="width: 48px; height: 48px; border-radius: 50%; font-size: 11px;">👤</span>
+											<img
+												th:if="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''}"
+												th:src="'/uploads/' + ${r.REVIEWER_PHOTO}" alt="reviewer" />
+										</div>
+
+										<div class="reviewMeta">
+											<div class="reviewStars">
+												<span class="stars" th:text="|★ ${r.RATING}|"></span>
+											</div>
+											<div class="reviewText" th:text="${r.CONTENT}"></div>
+										</div>
+									</div>
+
+									<div class="reviewBottom">
+										<div class="reviewerName" th:text="${r.REVIEWER_NAME}"></div>
+										<div class="reviewTag"
+											th:if="${r.TAG != null and r.TAG != ''}" th:text="${r.TAG}"></div>
+									</div>
+								</div>
+
+								<!-- reviewList 없을 때 -->
+								<div class="reviewCard"
+									th:if="${reviewList == null or #lists.isEmpty(reviewList)}">
+									<div class="reviewTop">
+										<div class="reviewMeta">
+											<div class="reviewText">아직 후기가 없습니다. 첫 후기를 남겨보세요!</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<button type="button" class="slideArrow right" aria-label="next">›</button>
+
+						</div>
+					</article>
+
+				</section>
+
+				<!-- ===== RIGHT: (원하면) 고정 사이드 요약 박스 ===== -->
+				<aside class="sideArea">
+					<div class="sideCard">
+						<div class="sideTitle">클래스 정보</div>
+
+						<div class="sideRow">
+							<span class="sideLabel">수강 가능 기간</span> <span class="sideValue"
+								th:text="|${#dates.format(classDTO.start_date,'yyyy.MM.dd')} ~ ${#dates.format(classDTO.end_date,'yyyy.MM.dd')}|">
+							</span>
+						</div>
+
+						<div class="sideRow">
+							<span class="sideLabel">수강 가격(하루)</span> <span class="sideValue"
+								th:text="|${#numbers.formatInteger(classDTO.price, 3, 'COMMA')}₩|"></span>
+						</div>
+
+						<div class="sideRow">
+							<span class="sideLabel">하루 수강 정원</span> <span class="sideValue"
+								th:text="|${classDTO.max_user_cnt}명|"></span>
+						</div>
+
+						<div class="sideBtns">
+							<a class="actionBtn solid"
+								th:href="@{/pay/class(classId=${classDTO.class_idx})}">결제하기</a>
+						</div>
+					</div>
+				</aside>
+
 			</div>
+		</div>
+	</main>
 
-          <div class="topActions">
-            <a class="actionBtn outline"
-			   th:if="${classDTO != null and classDTO.provider_idx != null}"
-			   th:href="@{/chat/start(targetIdx=${classDTO.provider_idx}, tab='COMPANY')}">
-			  문의하기
-			</a>
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
 
-            <a class="actionBtn solid"
-               th:href="@{/pay/class(classId=${classDTO.class_idx})}">
-              결제하기
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===== 탭(상세정보 / 클래스후기) ===== -->
-      <nav class="detailTabs">
-        <a class="tab active" href="#detail">상세정보</a>
-        <!-- ✅ 여기 누르면 아래 후기 블록으로 앵커 이동 -->
-        <a class="tab" href="#reviews">클래스 후기</a>
-      </nav>
-
-      <hr class="divider" />
-
-      <div class="classPage classDetailPage">
-
-        <!-- ===== LEFT: 상세 ===== -->
-        <section class="detailArea" id="detail">
-
-          <!-- 클래스소개 -->
-          <article class="detailBlock">
-            <h3 class="blockTitle">클래스 소개</h3>
-            <p class="blockText" th:text="${classDTO.intro}">
-              원데이로! 연인과 함께! 도자기 작품을 만들어볼까요? 문의사항은 채팅 주세요!
-            </p>
-          </article>
-
-          <!-- 제공분야(태그) -->
-          <article class="detailBlock">
-            <h3 class="blockTitle">제공분야</h3>
-            <div class="tagRow">
-              <!-- 예: 해시태그 리스트 -->
-              <span class="tag"
-                    th:each="t : ${tagList}"
-                    th:text="${t}">#도자기</span>
-
-              <!-- tagList 없을 때 fallback -->
-              <span class="tag" th:if="${tagList == null or #lists.isEmpty(tagList)}">#선택안함</span>
-            </div>
-          </article>
-
-          <!-- 사진/동영상 -->
-          <article class="detailBlock">
-            <h3 class="blockTitle">사진/동영상</h3>
-
-            <div class="mediaRow">
-              <!-- 동영상(있으면) -->
-              <div class="mediaBox">
-                <video class="mediaVideo" controls
-                       th:if="${classDTO.video != null and classDTO.video != ''}">
-                  <source th:src="@{/uploads/classes/videos/{v}(v=${classDTO.video})}" type="video/mp4">
-                </video>
-
-                <!-- 동영상 없으면 이미지 -->
-                <img class="mediaImg"
-                     th:if="${classDTO.video == null or classDTO.video == ''}"
-                     th:src="@{/images/default_video.png}"
-                     alt="video placeholder" />
-              </div>
-
-              <!-- 사진(대표 1장) -->
-              <div class="mediaBox">
-                <img class="mediaImg"
-                     th:src="${classDTO.photo != null and classDTO.photo != ''} ? @{/uploads/classes/photos/{img}(img=${classDTO.photo})} : @{/images/default_class.png}"
-                     alt="class photo" />
-              </div>
-
-              <!-- (선택) 슬라이드 화살표 UI만 -->
-              <button type="button" class="slideArrow" aria-label="next">›</button>
-            </div>
-          </article>
-
-          <!-- ===== 후기 블록 (앵커 목적지) ===== -->
-          <article class="detailBlock" id="reviews">
-            <div class="reviewHead">
-              <h3 class="blockTitle">클래스 후기</h3>
-
-              <!-- 요약: 리뷰수/평점 -->
-              <div class="reviewSummary">
-                <span class="summaryText">
-                  <b th:text="${reviewCount != null ? reviewCount : 0}">54</b>명의 코치가 해당 클래스를 긍정적
-                  (<b th:text="|★${avgRating != null ? avgRating : 0}|">4.7</b>/5.0)으로 평가했습니다.
-                </span>
-              </div>
-            </div>
-
-            <!-- 후기 카드 슬라이더 느낌 -->
-            <div class="reviewSlider">
-
-              <button type="button" class="slideArrow left" aria-label="prev">‹</button>
-
-              <div class="reviewCards">
-                <!-- 리뷰 1개 -->
-                <div class="reviewCard" th:each="r : ${reviewList}">
-                  <div class="reviewTop">
-                    <div class="reviewAvatar">
-                      <img th:src="${r.reviewerPhoto != null and r.reviewerPhoto != ''} ? @{/uploads/profile/{img}(img=${r.reviewerPhoto})} : @{/images/default_profile.png}"
-                           alt="reviewer" />
-                    </div>
-
-                    <div class="reviewMeta">
-                      <div class="reviewStars">
-                        <span class="stars" th:text="|★ ${r.rating}|">★4.5</span>
-                      </div>
-                      <div class="reviewText" th:text="${r.content}">
-                        너무너무 좋고 재밌게 처음 입문했습니다. 감사합니다!
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="reviewBottom">
-                    <div class="reviewerName" th:text="${r.reviewerName}">양코치</div>
-                    <div class="reviewTag" th:if="${r.tag != null and r.tag != ''}"
-                         th:text="${r.tag}">#친절해요</div>
-                  </div>
-                </div>
-
-                <!-- reviewList 없을 때 -->
-                <div class="reviewCard" th:if="${reviewList == null or #lists.isEmpty(reviewList)}">
-                  <div class="reviewTop">
-                    <div class="reviewMeta">
-                      <div class="reviewText">아직 후기가 없습니다. 첫 후기를 남겨보세요!</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button type="button" class="slideArrow right" aria-label="next">›</button>
-
-            </div>
-          </article>
-
-        </section>
-
-        <!-- ===== RIGHT: (원하면) 고정 사이드 요약 박스 ===== -->
-        <aside class="sideArea">
-          <div class="sideCard">
-            <div class="sideTitle">클래스 정보</div>
-
-            <div class="sideRow">
-              <span class="sideLabel">기간</span>
-              <span class="sideValue"
-                    th:text="|${#dates.format(classDTO.start_date,'yyyy.MM.dd')} ~ ${#dates.format(classDTO.end_date,'yyyy.MM.dd')}|">
-                2026.02.01 ~ 2026.02.15
-              </span>
-            </div>
-
-            <div class="sideRow">
-              <span class="sideLabel">가격</span>
-              <span class="sideValue"
-                    th:text="|${#numbers.formatInteger(classDTO.price, 3, 'COMMA')}₩|">99,000₩</span>
-            </div>
-
-            <div class="sideRow">
-              <span class="sideLabel">정원</span>
-              <span class="sideValue" th:text="|${classDTO.max_user_cnt}명|">6명</span>
-            </div>
-
-            <div class="sideBtns">
-              <a class="actionBtn solid"
-                 th:href="@{/pay/class(classId=${classDTO.class_idx})}">결제하기</a>
-            </div>
-          </div>
-        </aside>
-
-      </div>
-    </div>
-  </main>
-
-  <div th:replace="~{layout/footer :: siteFooter}"></div>
-
-  <script>
+	<script th:inline="javascript">
     // (선택) 앵커 이동 부드럽게
     document.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', (e) => {
@@ -251,7 +276,7 @@
       });
     });
     
- // ✅ 탭 active 토글
+    // ✅ 탭 active 토글
     const tabs = document.querySelectorAll('.detailTabs .tab');
 
     function setActiveByHash() {
@@ -277,6 +302,55 @@
     window.addEventListener('hashchange', setActiveByHash);
     document.addEventListener('DOMContentLoaded', setActiveByHash);
 
+    // ===== 카카오맵 초기화 =====
+    window.addEventListener('DOMContentLoaded', function() {
+      const addressData = document.getElementById('addressData').value;
+      
+      if (!addressData || addressData.trim() === '') {
+        console.log('주소 정보가 없습니다.');
+        return;
+      }
+
+      // 지도를 표시할 div 
+      const mapContainer = document.getElementById('map');
+      const mapOption = {
+    	center: new kakao.maps.LatLng(37.5565426, 126.9195486), // 쌍용강북교육센터 = 기본 좌표
+        level: 4 // 지도 확대 레벨
+      };
+
+      // 지도 생성
+      const map = new kakao.maps.Map(mapContainer, mapOption);
+
+      // 주소-좌표 변환 객체 생성
+      const geocoder = new kakao.maps.services.Geocoder();
+
+      // 주소로 좌표를 검색
+      geocoder.addressSearch(addressData, function(result, status) {
+        // 정상적으로 검색이 완료됐으면 
+        if (status === kakao.maps.services.Status.OK) {
+          const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+          // 결과값으로 받은 위치를 마커로 표시
+          const marker = new kakao.maps.Marker({
+            map: map,
+            position: coords
+          });
+
+          // 지도의 중심을 결과값으로 받은 위치로 이동
+          map.setCenter(coords);
+        } else {
+          console.log('주소 검색 실패:', status);
+          console.log('검색 주소:', addressData);
+          
+          // 검색 실패 시 지도 위에 메시지 표시
+          const message = document.createElement('div');
+          message.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.9);padding:15px 20px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.2);z-index:1000;font-size:14px;color:#666;text-align:center;';
+          message.innerHTML = '🗺️ 정확한 주소 검색에 실패했습니다.<br><small style="font-size:12px;color:#999;">검색 주소: ' + addressData + '</small>';
+          mapContainer.style.position = 'relative';
+          mapContainer.appendChild(message);
+        }
+      });
+    });
   </script>
 </body>
 </html>

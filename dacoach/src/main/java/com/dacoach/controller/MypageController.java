@@ -17,11 +17,13 @@ import com.dacoach.service.qna.QnaService;
 import com.dacoach.service.review.ReviewService;
 import com.dacoach.service.token.TokenService;
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.likes.LikesClassDTO;
 import com.dacoach.model.likes.LikesUserDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.token.TokenHistoryDTO;
 import com.dacoach.service.coach.CoachService;
+import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.file.FileUpload;
 import com.dacoach.service.likes.LikesService;
 import com.dacoach.service.mypage.MypageService;
@@ -48,6 +50,9 @@ public class MypageController {
 	
 	@Autowired
 	private CoachService coachService;
+	
+	@Autowired
+	private CompanyService companyService;
 
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
@@ -328,6 +333,82 @@ public class MypageController {
 	    } else {
 	        mav.setViewName("/coach/mypage/myQnaForm");
 	    }
+		return mav;
+	}
+	@GetMapping("/cert")
+	public ModelAndView certPage(HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/alert");
+			mav.addObject("msg", "로그인이 필요합니다.");
+			mav.addObject("url", "/login");
+			return mav;
+		}
+		mav.setViewName("/coach/mypage/cert");
+		return mav;
+	}
+	@PostMapping("/cert")
+	public ModelAndView certPage(CertDTO dto, HttpSession session, MultipartFile certFile) {
+		ModelAndView mav = new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/alert");
+			mav.addObject("msg", "로그인이 필요합니다.");
+			mav.addObject("url", "/login");
+			return mav;
+		}
+		int result = 0;
+		try {
+			dto.setCert_file(FileUpload.saveFile(certFile,"coach/cert"));
+			result = companyService.insertcert(dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (result > 0) {
+			mav.addObject("msg", "정상적으로 제출되었습니다.");
+			mav.addObject("url", "/myCert");
+	        mav.setViewName("alert");
+	    } else {
+	    	mav.addObject("msg", "다시 시도해주세요");
+			mav.addObject("url", "/cert");
+	        mav.setViewName("alert");
+	    }
+		return mav;
+	}
+	@GetMapping("/myCert")
+	public ModelAndView myCertList(HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("/alert");
+			mav.addObject("msg", "로그인이 필요합니다.");
+			mav.addObject("url", "/login");
+			return mav;
+		}
+		List<CertDTO> certificatedList = new ArrayList<>();
+		List<CertDTO> pendingList = new ArrayList<>();
+		List<CertDTO> rejectedList = new ArrayList<>();
+		
+		List<CertDTO> allList = new ArrayList<>();
+		
+		try {
+			allList=coachService.getCoachCertList((Integer)session.getAttribute("user_idx"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for(int i=0;i<allList.size();i++) {
+			CertDTO dto = allList.get(i);
+			if(dto.getCert_status().equals("승인")) {
+				certificatedList.add(dto);
+			}else if(dto.getCert_status().equals("대기")) {
+				pendingList.add(dto);
+			}else if(dto.getCert_status().equals("반려")) {
+				rejectedList.add(dto);
+			}
+		}
+		mav.addObject("certificatedList", certificatedList);
+		mav.addObject("pendingList", pendingList);
+		mav.addObject("rejectedList", rejectedList);
+		mav.setViewName("/coach/mypage/myCert");
 		return mav;
 	}
 }

@@ -28,8 +28,10 @@ public class CoachDTO {
 	private int token_balance;
 	private String kakao_key;
 	
-	private long rating;
+	private double rating;
 	private int review_count;
+	
+	private String rank_name;
 	
 	private String chatStatus;  // 'NONE', 'APPLIED', 'RECEIVED', 'ACCEPTED'
     private String matchStatus; // 'NONE', 'APPLIED', 'RECEIVED', 'ACCEPTED'

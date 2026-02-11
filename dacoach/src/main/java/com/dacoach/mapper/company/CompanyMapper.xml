@@ -49,7 +49,12 @@
   			#{address},
   			#{email},
   			#{intro},
-  			#{photo},
+  			<if test="photo != null">
+  				#{photo},
+  			</if>
+  			<if test="photo == null">
+  				null,
+  			</if>
   			null
   			
   		)
@@ -68,11 +73,16 @@
   		values (
   			seq_cert.nextval,
   			#{user_idx},
+  			#{cert_name, jdbcType=VARCHAR},
   			null,
-  			sysdate,
   			null,
   			#{cert_type},
+  			<if test="cert_file !=null">
   			#{cert_file},
+  			</if>
+  			<if test="cert_file == null">
+  			null,
+  			</if>
   			#{cert_status}			
   		)
   	</insert>
@@ -147,7 +157,7 @@
 		from minor_field,
 		(select 
 		company.user_idx,company.company_idx,company.phone,users.user_name,
-		company.address,company.email,company.intro,company.photo,minor_field_idx
+		company.address,company.email,company.intro,decode(company.photo,null,'/img/profile/defaultProfile.jpg')as photo,minor_field_idx
 		from users,company,company_provide,
 		(select user_idx 
 		from membership 
@@ -157,5 +167,30 @@
 		company_provide.company_idx=company.company_idx) b
 		where minor_field.minor_field_idx = b.minor_field_idx) c
 		where major_field.major_field_idx = c.major_field_idx
+  	</select>
+  	
+  	<select id="getProfileClass">
+  		select major_field.major_field_cd,major_region.region_nm,b.*
+		from
+		major_region,major_field,
+		(select minor_field.major_field_idx,
+		minor_field.minor_field_nm,
+		minor_region.major_region_idx,
+		minor_region.district_nm,
+		a.*    
+		from minor_field,minor_region,
+		(select * from class 
+		where provider_idx=45 and
+		start_date <![CDATA[<=]]> '2026-02-11'
+		or start_date >= '2026-02-11'
+		and end_date >= '2026-02-11' 
+		) a
+		where minor_field.minor_field_idx=a.minor_field_idx 
+		and minor_region.minor_region_idx=a.minor_region_idx) b
+		where
+		major_field.major_field_idx=b.major_field_idx
+		and major_region.major_region_idx = b.major_region_idx
+
+  		
   	</select>
   </mapper>
