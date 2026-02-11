@@ -183,7 +183,6 @@
 	   .then(res => res.json())
 	   .then(data => {
 		   if(data.status === 'success'){
-               alert("좋아요 처리되었습니다.");
                var like=document.getElementById("like");
                like.style.display="none";
                var unlike=document.getElementById("unlike");
@@ -211,7 +210,6 @@
 	   .then(res => res.json())
 	   .then(data => {
 		   if(data.status === 'success'){
-               alert("좋아요 취소되었습니다.");
                var like=document.getElementById("like");
                like.style.display="inline";
                var unlike=document.getElementById("unlike");
@@ -273,7 +271,7 @@
             </div>
          </div>
 		<div class="action-icons" th:if="${dto.user_idx != session.user_idx}">
-             <span id="like" onclick="like()" th:style="'display: ' + (${isLiked} ? 'none' : 'inline')">♡</span>
+             <span id="like" onclick="like()" th:style="'display: ' + (${isLiked} ? 'none' : 'inline')">🤍</span>
              <span id="unlike" onclick="unlike()" th:style="'display: ' + (${isLiked} ? 'inline' : 'none')">❤️</span>
              <span onclick="report()">🚨</span> 
         </div>
