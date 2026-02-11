@@ -8,7 +8,7 @@
    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 <body>
-   <div th:replace="layout/header :: siteHeader"></div>
+   <div th:replace="~{layout/header :: siteHeader}"></div>
 
    <main class="main">
    
@@ -16,7 +16,7 @@
    <form name="companyJoinOk" action="/company/profile/companyInfoOk" method="post" enctype="multipart/form-data">
 	  
       <div class="picUpload">
-      	<p class="profilePic">업로드한 사진 올릴영역</p>
+      	<p class="profilePic">컴퍼니 프로필 사진</p>
       	<p class="picUpBtn"><input type="file" name="photoFile" id="profilePicFileId"></p>
       </div>
       <div class="profileInfoArea">
@@ -34,14 +34,14 @@
    		<p id="companyNumMsg" style="font-size: 0.8rem; margin-top: 5px;"></p>
    		<input type="hidden" name="cert_type" value="사업자등록증">
    		<input type="hidden" name="cert_status" value="대기">
-   		<p class="certFile"><input type="file" name="certFile"></p>
+   		<p class="certFile"><input type="file" name="certFile">사업자등록증</p>
    	</div>
    <input type="hidden" name="login_id" th:value="${param.login_id}">
   <p><input type="submit" value="저장하고 다음으로"></p>
   </form>
   </div>
   </main>
-   <div th:replace="layout/footer :: siteFooter"></div>
+   <div th:replace="~{layout/header :: siteFooter}"></div>
      <script th:inline="javascript">
      document.addEventListener('DOMContentLoaded', function() {
     	    const form = document.forms['companyJoinOk'];
