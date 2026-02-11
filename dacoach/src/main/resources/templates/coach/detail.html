@@ -184,7 +184,10 @@
 	   .then(data => {
 		   if(data.status === 'success'){
                alert("좋아요 처리되었습니다.");
-               location.reload();
+               var like=document.getElementById("like");
+               like.style.display="none";
+               var unlike=document.getElementById("unlike");
+               unlike.style.display="inline";
            } else if(data.status === 'login_required'){
                alert("로그인이 필요합니다.");
                location.href = '/login';
@@ -209,7 +212,10 @@
 	   .then(data => {
 		   if(data.status === 'success'){
                alert("좋아요 취소되었습니다.");
-               location.reload();
+               var like=document.getElementById("like");
+               like.style.display="inline";
+               var unlike=document.getElementById("unlike");
+               unlike.style.display="none";
            } else if(data.status === 'login_required'){
                alert("로그인이 필요합니다.");
                location.href = '/login';
@@ -267,8 +273,8 @@
             </div>
          </div>
 		<div class="action-icons" th:if="${dto.user_idx != session.user_idx}">
-             <span th:if="${isLiked == false}" onclick="like()">♡</span>
-             <span th:if="${isLiked == true}" onclick="unlike()">❤️</span>
+             <span id="like" onclick="like()" th:style="'display: ' + (${isLiked} ? 'none' : 'inline')">♡</span>
+             <span id="unlike" onclick="unlike()" th:style="'display: ' + (${isLiked} ? 'inline' : 'none')">❤️</span>
              <span onclick="report()">🚨</span> 
         </div>
 			<div class="header-buttons" th:if="${dto.user_idx != session.user_idx}">
