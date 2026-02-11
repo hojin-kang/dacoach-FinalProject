@@ -2,7 +2,6 @@ package com.dacoach.model.classes;
 
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 import lombok.*;
 
 @NoArgsConstructor
@@ -20,15 +19,15 @@ public class ClassDTO {
 	private Integer minor_region_idx;
 	private String region_detail;
 	private Integer price;
-	private String photo;              
-	private String video;              
-	
+	private String photo;
+	private String video;
+
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date start_date;
-	
+
 	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private Date end_date;
-	
+
 	private Date created_at;
 	private Integer max_user_cnt;
 }

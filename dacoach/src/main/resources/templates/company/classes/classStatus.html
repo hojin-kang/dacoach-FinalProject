@@ -194,21 +194,21 @@
 				
 				let statusClass = '';
 				let statusText = '';
-				if (student.status === 'ENROLLED') {
-					statusClass = 'enrolled';
+				if (student.STATUS === 'CONFIRMED') {
+					statusClass = 'confirmed';
 					statusText = '수강 중';
-				} else if (student.status === 'COMPLETED') {
+				} else if (student.STATUS === 'COMPLETED') {
 					statusClass = 'completed';
 					statusText = '수강 완료';
-				} else if (student.status === 'CANCELLED') {
+				} else if (student.STATUS === 'CANCELLED') {
 					statusClass = 'cancelled';
 					statusText = '취소';
 				}
 
 				tr.innerHTML = `
-					<td>${student.user_name}</td>
-					<td>${student.phone || '-'}</td>
-					<td>${formatDate(student.enrolled_at)}</td>
+					<td>${student.USER_NAME}</td>
+					<td>${student.PHONE || '-'}</td>
+					<td>${formatDate(student.ENROLLED_AT)}</td>
 					<td><span class="statusBadge ${statusClass}">${statusText}</span></td>
 				`;
 				tbody.appendChild(tr);
