@@ -24,4 +24,3 @@ public class AdminSupportController {
 		return "admin/support/notice/policies";
 	}
 }
-     

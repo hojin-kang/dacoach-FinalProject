@@ -25,13 +25,13 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     }
 
     @Override
-    public Map<String, Object> getCompanyDetail(long usersIdx) {
+    public Map<String, Object> getCompanyDetail(int usersIdx) {
         return mapper.companyDetail(usersIdx);
     }
 
     @Override
     @Transactional
-    public void updateCompanyStatus(long usersIdx, String status, String startDate, String endDate, String reason) {
+    public void updateCompanyStatus(int usersIdx, String status, String startDate, String endDate, String reason) {
         // 상태 업데이트
         mapper.updateUserStatus(usersIdx, status);
         
@@ -52,7 +52,7 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
 
     @Override
     @Transactional
-    public void approveCert(long usersIdx) {
+    public void approveCert(int usersIdx) {
         String certType = "사업증";
         String certStatus = "확인";
         

@@ -34,20 +34,32 @@ public class AdminCompanyController {
         return "admin/dashboard";
     }
 
-    //기업 회원 상세
+ // 기업 회원 상세
     @GetMapping("/companyDetail/{usersIdx}")
-    public String companyDetail(@PathVariable long usersIdx, Model model) {
+    public String companyDetail(@PathVariable int usersIdx, Model model) {
+
         Map<String, Object> row = service.getCompanyDetail(usersIdx);
+
+        String certFilePath = service.getCertFilePath(usersIdx); // "company/cert/....png"
+
         model.addAttribute("row", row);
+
+        // 앞에 / 를 붙여서 절대경로처럼 링크 생성
+        // null 방지도 같이
+        model.addAttribute("certFilePath",
+                (certFilePath == null || certFilePath.isBlank()) ? null : "/" + certFilePath);
+
         model.addAttribute("contentPage", "admin/company/companyDetail");
         model.addAttribute("contentFragment", "contentPage");
         return "admin/dashboard";
     }
 
+
+
     //기업 회원 상태 변경 (저장)
     @PostMapping("/companyDetail/save")	
     public String saveCompanyStatus(
-            @RequestParam long usersIdx,
+            @RequestParam int usersIdx,
             @RequestParam String status,
             @RequestParam(required = false) String suspendFrom,
             @RequestParam(required = false) String suspendUntil,
@@ -60,7 +72,7 @@ public class AdminCompanyController {
     //승인 처리
     @PostMapping("/companyDetail/{usersIdx}/approve")
     @ResponseBody
-    public String approveCompany(@PathVariable long usersIdx) {
+    public String approveCompany(@PathVariable int usersIdx) {
         service.approveCert(usersIdx);
         return "OK";
     }

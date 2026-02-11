@@ -9,9 +9,9 @@ public interface AdminCompanyService {
 
 	//기업 관리
     List<Map<String, Object>> getCompanyList();
-    Map<String, Object> getCompanyDetail(long usersIdx);
-    void updateCompanyStatus(long usersIdx, String status, String startDate, String endDate, String reason);
-    void approveCert(long usersIdx);
+    Map<String, Object> getCompanyDetail(int usersIdx);
+    void updateCompanyStatus(int usersIdx, String status, String startDate, String endDate, String reason);
+    void approveCert(int usersIdx);
 	String getCertFilePath(int userIdx);
 	int saveCert(CertDTO dto);
 	boolean hasCert(int userIdx);
