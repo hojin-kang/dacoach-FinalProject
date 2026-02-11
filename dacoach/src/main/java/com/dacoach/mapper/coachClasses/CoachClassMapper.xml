@@ -5,6 +5,8 @@
 <mapper
 	namespace="com.dacoach.mapper.coachClasses.CoachClassMapper">
 
+	<!-- ===== 기존 쿼리들 ===== -->
+
 	<!-- 대분류 조회 -->
 	<select id="selectMajorFields" resultType="map">
 		SELECT
@@ -23,7 +25,8 @@
 		FROM MINOR_FIELD
 		WHERE
 		MAJOR_FIELD_IDX = #{major_field_idx}
-		ORDER BY MINOR_FIELD_NM
+		ORDER BY
+		MINOR_FIELD_NM
 	</select>
 
 	<!-- 대지역 조회 -->
@@ -44,7 +47,8 @@
 		FROM MINOR_REGION
 		WHERE
 		MAJOR_REGION_IDX = #{major_region_idx}
-		ORDER BY DISTRICT_NM
+		ORDER BY
+		DISTRICT_NM
 	</select>
 
 	<!-- 코치 - 클래스 검색 -->
@@ -65,19 +69,19 @@
 		c.END_DATE,
 		c.CREATED_AT,
 		c.MAX_USER_CNT,
-
 		NVL(r.AVG_RATING,
 		0) AS AVG_RATING,
 		NVL(r.REVIEW_CNT, 0) AS REVIEW_CNT
-
 		FROM CLASS c
 		LEFT
-		JOIN MINOR_FIELD mf ON mf.MINOR_FIELD_IDX = c.MINOR_FIELD_IDX
+		JOIN MINOR_FIELD mf ON
+		mf.MINOR_FIELD_IDX = c.MINOR_FIELD_IDX
 		LEFT JOIN
-		MINOR_REGION mr ON mr.MINOR_REGION_IDX = c.MINOR_REGION_IDX
+		MINOR_REGION mr ON
+		mr.MINOR_REGION_IDX = c.MINOR_REGION_IDX
 		LEFT JOIN
-		USERS u
-		ON u.USER_IDX = c.PROVIDER_IDX
+		USERS u ON
+		u.USER_IDX = c.PROVIDER_IDX
 		LEFT JOIN (
 		SELECT
 		CLASS_IDX,
@@ -112,25 +116,18 @@
 
 		<choose>
 			<when test="sort == 'rating'">
-				ORDER BY r.AVG_RATING DESC NULLS LAST,
-				r.REVIEW_CNT
-				DESC,
-				c.CREATED_AT DESC
+				ORDER BY r.AVG_RATING DESC NULLS LAST, r.REVIEW_CNT
+				DESC, c.CREATED_AT DESC
 			</when>
-
 			<when test="sort == 'most'">
-				ORDER BY NVL(r.REVIEW_CNT, 0) desc,
-				c.CREATED_AT DESC
+				ORDER BY NVL(r.REVIEW_CNT, 0) DESC, c.CREATED_AT DESC
 			</when>
-
 			<when test="sort == 'priceAsc'">
 				ORDER BY c.PRICE ASC NULLS LAST, c.CREATED_AT DESC
 			</when>
-
 			<when test="sort == 'priceDesc'">
 				ORDER BY c.PRICE DESC NULLS LAST, c.CREATED_AT DESC
 			</when>
-
 			<otherwise>
 				ORDER BY c.CREATED_AT DESC
 			</otherwise>
@@ -140,48 +137,40 @@
 	<!-- 코치 - 클래스 상세 -->
 	<select id="getClassDetail" parameterType="int"
 		resultType="com.dacoach.model.coachClasses.CoachClassDTO">
-<![CDATA[
+	<![CDATA[
 		SELECT
-		cl.CLASS_IDX,
-		cl.PROVIDER_IDX,
-		cl.TITLE,
-		cl.INTRO,
-		cl.MINOR_FIELD_IDX,
-		cl.MINOR_REGION_IDX,
-		cl.REGION_DETAIL,
-		cl.PRICE,
-		cl.PHOTO,
-		cl.VIDEO,
-		cl.START_DATE,
-		cl.END_DATE,
-		cl.CREATED_AT,
-		cl.MAX_USER_CNT,
-
-		u.USER_NAME AS provider_name,
-
-		CASE
-		WHEN md.MEMBER_TYPE = '프리미엄'
-		AND m.STATUS = 'BEING'
-		AND SYSDATE >= m.START_DATE
-		AND (m.END_DATE IS NULL OR SYSDATE <= m.END_DATE)
-		THEN 1
-		ELSE 0
-		END AS is_premium
-
+			cl.CLASS_IDX,
+			cl.PROVIDER_IDX,
+			cl.TITLE,
+			cl.INTRO,
+			cl.MINOR_FIELD_IDX,
+			cl.MINOR_REGION_IDX,
+			cl.REGION_DETAIL,
+			cl.PRICE,
+			cl.PHOTO,
+			cl.VIDEO,
+			cl.START_DATE,
+			cl.END_DATE,
+			cl.CREATED_AT,
+			cl.MAX_USER_CNT,
+			u.USER_NAME AS provider_name,
+			CASE
+				WHEN md.MEMBER_TYPE = '프리미엄'
+				AND m.STATUS = 'BEING'
+				AND SYSDATE >= m.START_DATE
+				AND (m.END_DATE IS NULL OR SYSDATE <= m.END_DATE)
+				THEN 1
+				ELSE 0
+			END AS is_premium
 		FROM CLASS cl
 		JOIN USERS u ON u.USER_IDX = cl.PROVIDER_IDX
-
-		LEFT JOIN MEMBERSHIP m
-		ON m.USER_IDX = cl.PROVIDER_IDX
-
-		LEFT JOIN MEMBERSHIP_DETAIL md
-		ON md.MEMBER_DETAIL_IDX = m.MEMBER_DETAIL_IDX
-
+		LEFT JOIN MEMBERSHIP m ON m.USER_IDX = cl.PROVIDER_IDX
+		LEFT JOIN MEMBERSHIP_DETAIL md ON md.MEMBER_DETAIL_IDX = m.MEMBER_DETAIL_IDX
 		WHERE cl.CLASS_IDX = #{class_idx}
-]]>
+	]]>
 	</select>
 
-	<!-- ⭐ 클래스의 해시태그 목록 조회 -->
+	<!-- 클래스의 해시태그 목록 조회 -->
 	<select id="selectHashtagsByClass" parameterType="int"
 		resultType="string">
 		SELECT h.TAGS
@@ -193,7 +182,7 @@
 		BY h.HASHTAG_IDX
 	</select>
 
-	<!-- ⭐ 클래스의 분야 정보 조회 (대분류, 소분류) -->
+	<!-- 클래스의 분야 정보 조회 (대분류, 소분류) -->
 	<select id="selectClassFieldInfo" parameterType="int"
 		resultType="map">
 		SELECT
@@ -207,22 +196,24 @@
 		WHERE c.CLASS_IDX = #{class_idx}
 	</select>
 
-	<!-- ⭐ 클래스의 지역 정보 조회 (대지역, 소지역) -->
+	<!-- 클래스의 지역 정보 조회 (대지역, 소지역) -->
 	<select id="selectClassRegionInfo" parameterType="int"
 		resultType="map">
 		SELECT
 		mr.REGION_NM,
 		mnr.DISTRICT_NM
 		FROM CLASS c
-		INNER JOIN MINOR_REGION mnr ON c.MINOR_REGION_IDX =
+		INNER JOIN
+		MINOR_REGION mnr ON c.MINOR_REGION_IDX =
 		mnr.MINOR_REGION_IDX
-		INNER JOIN MAJOR_REGION mr ON mnr.MAJOR_REGION_IDX
-		=
-		mr.MAJOR_REGION_IDX
-		WHERE c.CLASS_IDX = #{class_idx}
+		INNER JOIN
+		MAJOR_REGION mr ON mnr.MAJOR_REGION_IDX
+		= mr.MAJOR_REGION_IDX
+		WHERE
+		c.CLASS_IDX = #{class_idx}
 	</select>
 
-	<!-- ⭐ 제공자 정보 조회 (이름, 사진) -->
+	<!-- 제공자 정보 조회 (이름, 사진) -->
 	<select id="selectProviderInfo" parameterType="int"
 		resultType="map">
 		SELECT
@@ -235,13 +226,14 @@
 		END AS PROVIDER_PHOTO
 		FROM USERS u
 		LEFT JOIN COACH c ON
-		u.USER_IDX = c.USER_IDX
-		LEFT JOIN COMPANY co ON u.USER_IDX =
-		co.USER_IDX
-		WHERE u.USER_IDX = #{provider_idx}
+		u.USER_IDX =
+		c.USER_IDX
+		LEFT JOIN COMPANY co ON u.USER_IDX = co.USER_IDX
+		WHERE
+		u.USER_IDX = #{provider_idx}
 	</select>
 
-	<!-- ⭐ 특정 클래스의 리뷰 목록 조회 -->
+	<!-- 특정 클래스의 리뷰 목록 조회 -->
 	<select id="selectReviewsByClass" parameterType="int"
 		resultType="map">
 		SELECT
@@ -270,7 +262,7 @@
 		ORDER BY rc.CREATED_AT DESC
 	</select>
 
-	<!-- ⭐ 클래스의 평균 평점 조회 -->
+	<!-- 클래스의 평균 평점 조회 -->
 	<select id="selectAvgRatingByClass" parameterType="int"
 		resultType="double">
 		SELECT NVL(ROUND(AVG(RATING), 1), 0)
@@ -279,13 +271,157 @@
 		CLASS_IDX = #{class_idx}
 	</select>
 
-	<!-- ⭐ 클래스의 리뷰 개수 조회 -->
+	<!-- 클래스의 리뷰 개수 조회 -->
 	<select id="selectReviewCountByClass" parameterType="int"
 		resultType="int">
 		SELECT NVL(COUNT(*), 0)
 		FROM REVIEW_CLASS
 		WHERE CLASS_IDX =
 		#{class_idx}
+	</select>
+
+	<!-- ===== 수강신청 관련 쿼리 추가 ===== -->
+
+	<!-- 특정 날짜의 수강 신청 인원 수 조회 -->
+	<select id="selectEnrollmentCountByDate" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM CLASS_ENROLLMENT
+		WHERE CLASS_IDX =
+		#{class_idx}
+		AND STATUS = 'CONFIRMED'
+		AND TRUNC(ENROLLED_AT) =
+		TRUNC(TO_DATE(#{enrollment_date}, 'YYYY-MM-DD'))
+	</select>
+
+	<!-- 수강 신청 중복 확인 -->
+	<select id="checkDuplicateEnrollment" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM CLASS_ENROLLMENT
+		WHERE CLASS_IDX =
+		#{class_idx}
+		AND USER_IDX = #{user_idx}
+		AND STATUS = 'CONFIRMED'
+		AND
+		TRUNC(ENROLLED_AT) = TRUNC(TO_DATE(#{enrollment_date}, 'YYYY-MM-DD'))
+	</select>
+
+	<!-- 수강 신청 등록 -->
+	<insert id="insertEnrollment"
+		parameterType="com.dacoach.model.coachClasses.ClassEnrollmentDTO">
+		<selectKey keyProperty="enroll_idx" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_CLASS_ENROLLMENT.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO CLASS_ENROLLMENT (
+		ENROLL_IDX,
+		CLASS_IDX,
+		USER_IDX,
+		STATUS,
+		ENROLLED_AT
+		) VALUES (
+		#{enroll_idx},
+		#{class_idx},
+		#{user_idx},
+		#{status},
+		#{enrolled_at}
+		)
+	</insert>
+
+	<!-- 특정 유저의 수강 신청 목록 조회 -->
+	<select id="selectEnrollmentsByUser" parameterType="int"
+		resultType="com.dacoach.model.coachClasses.ClassEnrollmentDTO">
+		SELECT
+		ce.ENROLL_IDX,
+		ce.CLASS_IDX,
+		ce.USER_IDX,
+		ce.STATUS,
+		ce.ENROLLED_AT,
+		ce.COMPLETED_AT,
+		c.TITLE AS class_title,
+		c.PRICE,
+		c.START_DATE,
+		c.END_DATE,
+		u.USER_NAME AS provider_name
+		FROM
+		CLASS_ENROLLMENT ce
+		INNER JOIN CLASS c ON
+		ce.CLASS_IDX = c.CLASS_IDX
+		INNER JOIN USERS u ON c.PROVIDER_IDX =
+		u.USER_IDX
+		WHERE ce.USER_IDX =
+		#{user_idx}
+		ORDER BY ce.ENROLLED_AT DESC
+	</select>
+
+	<!-- 특정 클래스의 수강 신청 목록 조회 -->
+	<select id="selectEnrollmentsByClass" parameterType="int"
+		resultType="com.dacoach.model.coachClasses.ClassEnrollmentDTO">
+		SELECT
+		ce.ENROLL_IDX,
+		ce.CLASS_IDX,
+		ce.USER_IDX,
+		ce.STATUS,
+		ce.ENROLLED_AT,
+		ce.COMPLETED_AT,
+		u.USER_NAME AS user_name
+		FROM
+		CLASS_ENROLLMENT ce
+		INNER JOIN USERS u ON ce.USER_IDX
+		= u.USER_IDX
+		WHERE
+		ce.CLASS_IDX = #{class_idx}
+		ORDER BY ce.ENROLLED_AT
+		DESC
+	</select>
+
+	<!-- 수강 신청 상태 업데이트 -->
+	<update id="updateEnrollmentStatus" parameterType="map">
+		UPDATE
+		CLASS_ENROLLMENT
+		SET STATUS = #{status},
+		COMPLETED_AT = SYSDATE
+		WHERE
+		ENROLL_IDX = #{enroll_idx}
+	</update>
+
+	<!-- 수강 신청 상세 조회 -->
+	<select id="selectEnrollmentDetail" parameterType="int"
+		resultType="com.dacoach.model.coachClasses.ClassEnrollmentDTO">
+		SELECT
+		ce.ENROLL_IDX,
+		ce.CLASS_IDX,
+		ce.USER_IDX,
+		ce.STATUS,
+		ce.ENROLLED_AT,
+		ce.COMPLETED_AT,
+		c.TITLE AS class_title,
+		c.PRICE,
+		c.START_DATE,
+		c.END_DATE,
+		u1.USER_NAME AS user_name,
+		u2.USER_NAME AS
+		provider_name
+		FROM CLASS_ENROLLMENT ce
+		INNER JOIN CLASS c ON
+		ce.CLASS_IDX = c.CLASS_IDX
+		INNER JOIN USERS u1 ON ce.USER_IDX =
+		u1.USER_IDX
+		INNER JOIN USERS u2 ON c.PROVIDER_IDX = u2.USER_IDX
+		WHERE
+		ce.ENROLL_IDX = #{enroll_idx}
+	</select>
+
+	<!-- 사용자가 해당 클래스를 이미 신청했는지 확인 (CONFIRMED 상태만) -->
+	<select id="checkUserEnrollment" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM CLASS_ENROLLMENT
+		WHERE CLASS_IDX =
+		#{class_idx}
+		AND USER_IDX = #{user_idx}
+		AND STATUS = 'CONFIRMED'
 	</select>
 
 </mapper>

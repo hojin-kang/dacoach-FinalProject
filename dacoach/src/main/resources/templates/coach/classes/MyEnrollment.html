@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>내 수강신청 목록 - dacoach</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/coach_class.css}" />
+</head>
+<body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
+
+	<main class="main">
+		<div class="my-enrollments-container">
+			<h1 style="text-align: center; margin-bottom: 40px;">내 수강신청 목록</h1>
+
+			<!-- 알림 메시지 -->
+			<div class="alert alert-info" th:if="${message}"
+				th:classappend="${messageType == 'error' ? 'alert-warning' : ''}"
+				th:text="${message}"></div>
+
+			<!-- 수강신청 목록 -->
+			<div class="enrollment-list"
+				th:if="${!#lists.isEmpty(enrollmentList)}">
+				<div class="enrollment-card"
+					th:each="enrollment : ${enrollmentList}">
+					<div class="enrollment-info">
+						<h3 th:text="${enrollment.class_title}">클래스 제목</h3>
+
+						<div class="enrollment-details">
+							<div class="detail-row">
+								<span class="detail-label">제공자</span> <span class="detail-value"
+									th:text="${enrollment.provider_name}">제공자명</span>
+							</div>
+
+							<div class="detail-row">
+								<span class="detail-label">수강 날짜</span> <span
+									class="detail-value"
+									th:text="${#dates.format(enrollment.enrolled_at, 'yyyy년 MM월 dd일')}">2024년
+									1월 1일</span>
+							</div>
+
+							<div class="detail-row">
+								<span class="detail-label">수강료</span> <span class="detail-value"
+									th:text="|${#numbers.formatInteger(enrollment.price, 3, 'COMMA')}원|">10,000원</span>
+							</div>
+
+							<div class="detail-row">
+								<span class="detail-label">신청일</span> <span class="detail-value"
+									th:text="${#dates.format(enrollment.enrolled_at, 'yyyy-MM-dd HH:mm')}">2024-01-01
+									12:00</span>
+							</div>
+
+							<div class="detail-row">
+								<span class="detail-label">상태</span> <span> <span
+									class="status-badge"
+									th:classappend="${enrollment.status == 'CONFIRMED' ? 'confirmed' : 
+														(enrollment.status == 'CANCELLED' ? 'cancelled' : 'completed')}"
+									th:text="${enrollment.status == 'CONFIRMED' ? '확정' : 
+												(enrollment.status == 'CANCELLED' ? '취소됨' : '완료')}">
+										확정 </span>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="enrollment-actions">
+						<a class="btn-small btn-view"
+							th:href="@{/coach/classDetail(id=${enrollment.class_idx})}">
+							클래스 보기 </a>
+
+						<form th:action="@{/coach/cancelEnrollment}" method="post"
+							style="display: inline;"
+							onsubmit="return confirm('정말 수강 신청을 취소하시겠습니까?');">
+							<input type="hidden" name="enrollIdx"
+								th:value="${enrollment.enroll_idx}" />
+							<button type="submit" class="btn-small btn-cancel"
+								th:disabled="${enrollment.status == 'CANCELLED' or enrollment.status == 'COMPLETED'}">
+								신청 취소</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!-- 빈 상태 -->
+			<div class="empty-state" th:if="${#lists.isEmpty(enrollmentList)}">
+				<div style="font-size: 64px; margin-bottom: 20px;">📚</div>
+				<h3>아직 수강신청한 클래스가 없습니다</h3>
+				<p>다양한 클래스를 둘러보고 관심있는 클래스에 수강신청 해보세요!</p>
+				<a href="/coach/classList" class="btn-browse">클래스 둘러보기</a>
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
+</html>

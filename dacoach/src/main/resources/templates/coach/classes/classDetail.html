@@ -67,9 +67,14 @@
 						<a class="actionBtn outline"
 							th:if="${classDTO != null and classDTO.provider_idx != null}"
 							th:href="@{/chat/start(targetIdx=${classDTO.provider_idx}, tab='COMPANY')}">
-							문의하기 </a> <a class="actionBtn solid"
-							th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}"> 신청하기
-						</a>
+							문의하기 </a>
+
+						<!-- 수강 신청 여부에 따라 버튼 변경 -->
+						<a class="actionBtn solid" th:if="${!isEnrolled}"
+							th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
+							신청하기 </a>
+						<button class="actionBtn solid" th:if="${isEnrolled}" disabled
+							style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
 					</div>
 				</div>
 			</section>
@@ -252,8 +257,12 @@
 						</div>
 
 						<div class="sideBtns">
-							<a class="actionBtn solid"
-								th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">신청하기</a>
+							<!-- 수강 신청 여부에 따라 버튼 변경 -->
+							<a class="actionBtn solid" th:if="${!isEnrolled}"
+								th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
+								신청하기 </a>
+							<button class="actionBtn solid" th:if="${isEnrolled}" disabled
+								style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
 						</div>
 					</div>
 				</aside>
