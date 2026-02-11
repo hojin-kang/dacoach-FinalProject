@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>dacoach - 자격증 등록</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    
+    <style>
+        /* 기본 레이아웃 유지 */
+        html, body { height: 100%; margin: 0; background-color: #f8f9fa; font-family: 'Pretendard', sans-serif; }
+        .wrapper { display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 50px 20px; }
+        header, footer { width: 100%; flex-shrink: 0; }
+
+        .cert-card {
+            background: #ffffff;
+            max-width: 450px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        h2 { font-size: 26px; font-weight: 800; color: #222; margin-bottom: 10px; }
+        .sub-title { font-size: 14px; color: #888; margin-bottom: 35px; }
+
+        /* 🔥 파일 업로드 커스텀 스타일 */
+        .file-upload-container {
+            margin-bottom: 25px;
+        }
+
+        /* 1. 실제 파일 인풋은 숨김 */
+        .input-file-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* 2. 커스텀 버튼 (Label) */
+        .file-label {
+            display: inline-block;
+            background-color: #f0f2f5;
+            color: #555;
+            padding: 40px 20px;
+            width: 100%;
+            border: 2px dashed #cbd5e0;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .file-label:hover {
+            background-color: #edf2ff;
+            border-color: #4A90E2;
+            color: #4A90E2;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* 3. 파일명이 표시될 영역 */
+        .file-name {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #4A90E2;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        /* 등록 버튼 */
+        .btn-submit {
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            padding: 18px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #357ABD;
+            box-shadow: 0 8px 15px rgba(74, 144, 226, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div th:replace="layout/header :: siteHeader"></div>
+
+        <main class="main-content">
+            <div class="cert-card">
+                <h2>자격증 등록</h2>
+                <p class="sub-title">증빙 서류를 업로드하여 전문가 인증을 받으세요.</p>
+                
+                <form th:action="@{/cert}" method="post" enctype="multipart/form-data">
+                    <div class="file-upload-container">
+                        <label for="certFile" class="file-label">
+                            <span class="upload-icon">📁</span>
+                            <span id="file-label-text">이곳을 클릭하여 파일을 선택하세요</span>
+                            <div id="file-name" class="file-name"></div>
+                        </label>
+                        <input type="file" id="certFile" name="certFile" class="input-file-hidden" accept="image/*" required onchange="displayFileName()" />
+                    </div>
+
+                    <input type="hidden" name="user_idx" th:value="${session.user_idx}" />
+                    <input type="hidden" name="cert_type" value="자격증" />
+                    <input type="hidden" name="cert_status" value="대기" />
+
+                    <button type="submit" class="btn-submit">등록 신청하기</button>
+                </form>
+            </div>
+        </main>
+      
+        <div th:replace="layout/footer :: siteFooter"></div>
+    </div>
+
+    <script>
+        function displayFileName() {
+            const input = document.getElementById('certFile');
+            const fileNameDisplay = document.getElementById('file-name');
+            const labelText = document.getElementById('file-label-text');
+            
+            if (input.files && input.files[0]) {
+                fileNameDisplay.innerText = "선택된 파일: " + input.files[0].name;
+                labelText.innerText = "파일 교체하기";
+            }
+        }
+    </script>
+</body>
+</html>
