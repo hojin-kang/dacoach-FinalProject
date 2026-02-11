@@ -26,4 +26,5 @@ public interface CompanyService {
 	public boolean regionCheck(int idx) throws Exception;
 	public boolean provideCheck(int idx)	throws Exception;
 	public List<Map<String,Object>> getCompanyRegion(int idx) throws Exception;
+	public Map<String,Object> companyProfile(int member_idx) throws Exception;
 }
