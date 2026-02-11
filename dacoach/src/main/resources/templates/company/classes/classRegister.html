@@ -69,7 +69,7 @@
 							</div>
 
 							<div class="form-group">
-								<h3>상세 주소</h3>
+								<h3 class="required">상세 주소</h3>
 								<input type="text" id="regionDetail" name="region_detail"
 									th:value="${classDTO?.region_detail}"
 									placeholder="상세 주소를 입력하세요 (예: 도로명 + 번호 등)"
@@ -143,9 +143,8 @@
 								<h3 class="required">수강인원 제한</h3>
 								<div class="range-group">
 									<input type="range" id="participantLimit" name="max_user_cnt"
-										min="1" max="99" value="10">
-									<output id="participantOutput">
-										10명
+										min="1" max="50" value="10">
+									<output id="participantOutput" th:text="'명'">
 										</output>
 								</div>
 							</div>
