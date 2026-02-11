@@ -350,7 +350,8 @@
          <div class="info-item">
             <h3 class="section-title">자격증</h3>
             <ul class="section-content">
-               <li>- 스포츠 지도사 2급</li>
+            	<span th:if="${#lists.isEmpty(certList)}">등록된 자격증이 없습니다.</span>
+               <li th:if="${certList != null}" th:each="dto : ${certList}">[[${dto.cert_name}]]</li>
             </ul>
          </div>
       </div>

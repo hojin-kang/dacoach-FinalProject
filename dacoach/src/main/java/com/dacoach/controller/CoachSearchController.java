@@ -1,5 +1,6 @@
 package com.dacoach.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.coachSearch.CoachSearchService;
 
@@ -107,6 +109,15 @@ public class CoachSearchController {
 	 	        mav.addObject("myHashtags", myHashtags);
 	 	        mav.addObject("interHashtags", interHashtags);
 	 	        mav.addObject("dto", cdto);
+	 	        List<CertDTO> lists=new ArrayList<CertDTO>();
+	 	        lists=coachService.getCoachCertList(target_idx);
+	 	        for(int i=0;i<lists.size();i++) {
+	 	        	if(lists.get(i).getCert_status()!="승인") {
+	 	        		lists.remove(i);
+	 	        	}
+	 	        }
+	 	        mav.addObject("certList", lists);
+	 	        
 	 	        mav.setViewName("coach/detail");
 	 	    } catch (Exception e) { e.printStackTrace(); }
 	 	    return mav;
