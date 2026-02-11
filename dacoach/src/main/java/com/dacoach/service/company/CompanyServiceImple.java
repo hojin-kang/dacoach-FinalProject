@@ -88,4 +88,7 @@ public class CompanyServiceImple implements CompanyService {
 	public List<Map<String,Object>> getCompanyRegion(int idx) throws Exception{
 		return companyMapper.getCompanyRegion(idx);
 	}
+	public Map<String,Object> companyProfile(int member_idx) throws Exception{
+		return companyMapper.companyProfile(member_idx);
+	}
 }

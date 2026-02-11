@@ -195,8 +195,20 @@ public class CompanyController {
 	}
 	
 	@PostMapping("/company/profile/companyProfileForm")
-	public ModelAndView companyProfileForm(String idx){
+	public ModelAndView companyProfileForm(Integer idx){
 		ModelAndView mav=new ModelAndView();
+		
+		try {
+			Map<String,Object> map=companyService.companyProfile(idx);
+			int companyIdx=Integer.parseInt(String.valueOf(map.get("COMPANY_IDX")));
+			List<Map<String,Object>> region=companyService.getCompanyRegion(companyIdx);
+			System.out.println(region);
+			mav.addObject("profile",map);
+			mav.addObject("regionList",region);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		mav.setViewName("/company/profile/companyProfileForm");
 		return mav;

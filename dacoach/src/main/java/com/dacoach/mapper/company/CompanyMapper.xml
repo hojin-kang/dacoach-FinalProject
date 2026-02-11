@@ -68,13 +68,12 @@
   		values (
   			seq_cert.nextval,
   			#{user_idx},
-  			#{cert_name},
+  			null,
   			sysdate,
   			null,
-  			null,
+  			#{cert_type},
   			#{cert_file},
-  			#{cert_status}
-  			
+  			#{cert_status}			
   		)
   	</insert>
   	<insert id="addRegion">
@@ -139,5 +138,24 @@
   	
   	<select id="regionCheck">
   		select * from company_region where company_idx=#{idx}
+  	</select>
+  	
+  	<select id="companyProfile">
+  		select major_field.major_field_cd,c.* 
+		from major_field,
+		(select minor_field.major_field_idx,minor_field.minor_field_nm,b.* 
+		from minor_field,
+		(select 
+		company.user_idx,company.company_idx,company.phone,users.user_name,
+		company.address,company.email,company.intro,company.photo,minor_field_idx
+		from users,company,company_provide,
+		(select user_idx 
+		from membership 
+		where member_idx=#{member_idx}) a
+		where users.user_idx=a.user_idx and 
+		company.user_idx=a.user_idx and 
+		company_provide.company_idx=company.company_idx) b
+		where minor_field.minor_field_idx = b.minor_field_idx) c
+		where major_field.major_field_idx = c.major_field_idx
   	</select>
   </mapper>
