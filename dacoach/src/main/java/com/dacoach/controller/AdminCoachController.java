@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.service.admin.AdminService;
@@ -53,10 +54,12 @@ public class AdminCoachController {
 		
 		List<Map<String, Object>> coachDetail = new ArrayList<>();
 		String status="";
+		List<CertDTO> certList = new ArrayList<>();
 		
 		try {
 			coachDetail = adminService.getCoachDetail(coach_idx);
 			status = adminService.getCoachStatus(user_idx);
+			certList = adminService.getWaitCertList(user_idx);
 			
 			model.addAttribute("coachStatus", status);
 			
@@ -71,7 +74,7 @@ public class AdminCoachController {
 		}
 		
 		model.addAttribute("coachDetail", coachDetail);
-		
+		model.addAttribute("certList", certList);
 		model.addAttribute("contentPage", "admin/coach/coachDetail");
 		model.addAttribute("contentFragment", "coachDetail");
 		
@@ -132,6 +135,54 @@ public class AdminCoachController {
 		
 		return "admin/dashboard";
 	}
+	
+	@PostMapping("/coach/updateCertStatus")
+	public String updateCertStatus(Model model,
+			@RequestParam int coach_idx,
+			@RequestParam int user_idx,
+			@RequestParam(value="cert_idx", required=false) List<Integer> certIdxList,
+			@RequestParam(value="cert_name", required=false) List<String> certNameList,
+			@RequestParam(value="get_date", required=false) List<String> getDateList,
+			@RequestParam(value="cert_from", required=false) List<String> certFromList
+			) {
+		
+		try {
+			if(certIdxList != null && !certIdxList.isEmpty()) {
+				for(int i=0;i<certIdxList.size();i++) {
+					CertDTO dto = new CertDTO();
+					dto.setCert_idx(certIdxList.get(i));
+					dto.setCert_name(certNameList.get(i));
+					
+					String dateStr = getDateList.get(i);
+	                if (dateStr != null && !dateStr.trim().isEmpty()) {
+	                    dto.setGet_date(java.sql.Date.valueOf(dateStr));
+	                }
+				
+					dto.setCert_from(certFromList.get(i));
+					
+					adminService.updateCertStatus(dto);
+				}
+				
+				model.addAttribute("msg", "자격증 심사가 완료되었습니다.");
+			}else {
+				model.addAttribute("msg", "심사할 자격증이 없습니다.");
+			}
+			
+		}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			model.addAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+		}
+		
+		model.addAttribute("contentPage", "admin/coach/coachDetail");
+		model.addAttribute("contentFragment", "coachDetail");
+		model.addAttribute("user_idx", user_idx);
+	    model.addAttribute("coach_idx", coach_idx);
+	    
+	    return "admin/dashboard";
+		
+	}
+	
 	
 	
 	@GetMapping("/keyword/keyword")

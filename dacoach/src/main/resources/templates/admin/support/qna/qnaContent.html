@@ -278,18 +278,21 @@
             </div>
         </div>
 
-        <div class="action-bar">
-            <button type="button" class="btn-list" onclick="location.href='/admin/support/qna'">목록으로</button>
-            <div class="flex gap-2">
-				<button type="button" class="btn-delete"
-					th:onclick="deleteQna([[${content['QNA_IDX']}]], [[${content['QNA_A_IDX']}]])">답변
-					삭제</button>
-				<button th:if="${content['QNA_A_IDX'] != null}" type="button" id="btnEditTrigger" class="btn-edit" onclick="toggleEdit(true)">
-                    답변 수정
-                </button>
-            </div>
-        </div>
-    </div>
+		<div class="action-bar">
+			<button type="button" class="btn-list"
+				onclick="location.href='/admin/support/qna'">목록으로</button>
+			<div class="flex gap-2">
+				<button th:if="${content['QNA_A_IDX'] != null}" type="button"
+					class="btn-delete"
+					th:onclick="deleteQna([[${content['QNA_IDX']}]], [[${content['QNA_A_IDX']}]])">
+					답변 삭제</button>
+
+				<button th:if="${content['QNA_A_IDX'] != null}" type="button"
+					id="btnEditTrigger" class="btn-edit" onclick="toggleEdit(true)">
+					답변 수정</button>
+			</div>
+		</div>
+	</div>
 
     <div th:if="${content == null}" class="text-center p-20 text-gray-400">
         해당 문의 내역을 찾을 수 없습니다.

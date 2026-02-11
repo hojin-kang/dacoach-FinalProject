@@ -22,6 +22,10 @@
 
         .btn-save-sm { background-color: #9dbbb5; color: white; padding: 0.5rem 1.5rem; border-radius: 12px; font-weight: bold; font-size: 0.8rem; transition: all; border: none; cursor: pointer; }
         .btn-save-sm:hover { filter: brightness(90%); }
+        
+        /* 목록 버튼용 추가 스타일 */
+        .btn-list-sm { background-color: #9ca3af; color: white; padding: 0.5rem 1.5rem; border-radius: 12px; font-weight: bold; font-size: 0.8rem; transition: all; border: none; cursor: pointer; text-decoration: none; }
+        .btn-list-sm:hover { filter: brightness(90%); }
     </style>
 
     <div class="max-w-[1100px] mx-auto p-8 font-main"
@@ -110,30 +114,68 @@
             </div>
 
             <div class="info-card flex flex-col min-h-[350px]">
-                <form th:action="@{/updateCoachCert}" method="post" class="flex-1 flex flex-col">
+                <form th:action="@{/admin/coach/updateCertStatus}" method="post" class="flex-1 flex flex-col">
                     <div>
                         <h2 class="section-badge">자격증</h2>
-                        <input type="hidden" name="coachIdx" th:value="${param.coachIdx}">
-                        
-                        <div class="overflow-hidden rounded-lg border border-gray-200 min-h-[120px]">
+						<input type="hidden" name="coach_idx" th:value="${param.coach_idx}">
+						<input type="hidden" name="user_idx" th:value="${param.user_idx}">
+
+						<div class="overflow-hidden rounded-lg border border-gray-200 min-h-[120px]">
                             <table class="w-full text-center text-xs border-collapse">
                                 <thead class="cert-thead">
                                     <tr>
                                         <th class="border-r border-white/20">발급일자</th>
                                         <th class="border-r border-white/20">자격명</th>
                                         <th class="border-r border-white/20">발급기관</th>
-                                        <th>파일</th>
+                                        <th style="min-width: 40px;">파일</th>
                                     </tr>
                                 </thead>
-                                <tbody class="cert-tbody">
-                                    <tr class="h-10 border-t border-white text-gray-400">
-                                        <td colspan="4" class="py-10">데이터가 없습니다.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+								<tbody class="cert-tbody">
+									<tr th:if="${certList == null or certList.isEmpty()}"
+										class="h-10 border-t border-white text-gray-400">
+										<td colspan="4" class="py-10 text-center">대기 중인 자격증이
+											없습니다.</td>
+									</tr>
+
+									<tr th:unless="${certList == null or certList.isEmpty()}"
+										th:each="cert : ${certList}"
+										class="h-10 border-t border-gray-100 text-gray-700">
+
+										<input type="hidden" name="cert_idx" th:value="${cert.cert_idx}">
+
+										<td class="border-r border-gray-100"><input type="date"
+											name="get_date"
+											class="w-full bg-transparent text-center focus:outline-none">
+										</td>
+
+										<td class="border-r border-gray-100 font-semibold"><input
+											type="text" name="cert_name" th:value="${cert.cert_name}"
+											class="w-full bg-transparent text-center focus:outline-none font-semibold">
+										</td>
+
+										<td class="border-r border-gray-100"><input type="text"
+											name="cert_from"
+											class="w-full bg-transparent text-center focus:outline-none"
+											placeholder="기관 입력"></td>
+
+										<td><th:block
+												th:if="${cert.cert_file != null and cert.cert_file != ''}">
+												<a href="javascript:void(0)"
+													th:onclick="viewCert([[${cert.cert_file}]])"
+													class="hover:opacity-70"> <i
+													class="fa-solid fa-folder-open"
+													style="color: #7a948f; font-size: 16px;"></i>
+												</a>
+											</th:block> <span
+											th:unless="${cert.cert_file != null and cert.cert_file != ''}"
+											class="text-gray-300">-</span></td>
+									</tr>
+								</tbody>
+							</table>
                         </div>
                     </div>
-                    <div class="flex justify-end mt-auto">
+                    <div class="flex justify-end mt-auto gap-2">
+                        <button type="button" onclick="location.href='/admin/coach/certList'" class="btn-list-sm">자격증 목록</button>
                         <button type="submit" class="btn-save-sm">자격증 정보 저장</button>
                     </div>
                 </form>
@@ -165,6 +207,19 @@
         if (dateArea) {
             dateArea.style.display = show ? 'flex' : 'none';
         }
+    }
+    
+    function viewCert(fileName) {
+        if (!fileName || fileName === '') {
+            alert("등록된 파일이 없습니다.");
+            return;
+        }
+
+        // 서버의 가상 경로(/uploads/)와 DB의 파일명을 합칩니다.
+        const fileUrl = '/uploads/' + fileName;
+
+        // 새 창으로 이미지 열기
+        window.open(fileUrl, '_blank', 'width=600, height=800, resizable=yes, scrollbars=yes');
     }
     </script>
 </div>

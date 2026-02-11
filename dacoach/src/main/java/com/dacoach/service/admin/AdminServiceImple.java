@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.dacoach.mapper.admin.AdminMapper;
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.model.users.UsersDTO;
@@ -61,6 +62,16 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public int updateEnddateSuspended(int user_idx) throws Exception {
 		return adminMapper.updateEnddateSuspended(user_idx);
+	}
+	
+	@Override
+	public List<CertDTO> getWaitCertList(int user_idx) throws Exception {
+		return adminMapper.getWaitCertList(user_idx);
+	}
+	
+	@Override
+	public int updateCertStatus(CertDTO dto) throws Exception {
+		return adminMapper.updateCertStatus(dto);
 	}
 	
 	@Override
