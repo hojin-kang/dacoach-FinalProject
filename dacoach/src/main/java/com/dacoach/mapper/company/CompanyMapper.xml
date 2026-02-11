@@ -181,7 +181,7 @@
 		from minor_field,minor_region,
 		(select * from class 
 		where provider_idx=45 and
-		start_date <![CDATE[<=]]> '2026-02-11'
+		start_date <![CDATA[<=]]> '2026-02-11'
 		or start_date >= '2026-02-11'
 		and end_date >= '2026-02-11' 
 		) a
