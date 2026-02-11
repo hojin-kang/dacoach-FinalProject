@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dacoach.mapper.admin.company.AdminCompanyMapper;
+import com.dacoach.model.company.CertDTO;
 
 @Service
 public class AdminCompanyServiceImple implements AdminCompanyService {
@@ -114,4 +115,20 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     public int deleteReview(int reviewIdx) {
         return mapper.deleteReview(reviewIdx);
     }
+
+    //파일 부분
+	@Override
+	public String getCertFilePath(int userIdx) {
+		return mapper.getCertFilePath(userIdx);
+	}
+
+	@Override
+	public int saveCert(CertDTO dto) {
+		return mapper.insertCert(dto);
+	}
+
+	@Override
+	public boolean hasCert(int userIdx) {
+		return mapper.hasCert(userIdx)>0?true:false;
+	}
 }

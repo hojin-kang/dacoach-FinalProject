@@ -22,3 +22,4 @@ public class CertDTO {
 	private String cert_file;
 	private String cert_status;
 }
+	

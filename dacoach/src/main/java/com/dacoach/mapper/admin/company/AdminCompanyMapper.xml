@@ -235,5 +235,36 @@
       SYSDATE
     )
   </insert>
+  
+  <select id="getCertFilePath" resultType="String">
+ 	select c.cert_file
+	from users u
+	join cert c on u.user_idx=c.user_idx
+	where u.user_type='COMPANY' and c.cert_type='사업증' and u.user_idx=#{userIdx}
+  </select>
+  
+  <insert id="incertCert" parameterType="com.dacoach.model.company.CertDTO">
+  insert into cert(cert_idx,
+  user_idx,
+  cert_type,
+  cert_name,
+  cert_from,
+  cert_file,
+  get_date,
+  cert_status)values (seq_cert.nextval,
+  #{user_idx},
+  '사업증',
+  #{cert_name},
+  #{cert_from},
+  #{cert_file},
+  #{get_date},
+  '미확인' )
+  </insert>
+  
+  <select id="hasCert" parameterType="int" resultType="int">
+       	select count(*)
+       	from cert
+       	where user_idx=#{userIdx} and cert_type='사업증'
+   </select>
 
 </mapper>
