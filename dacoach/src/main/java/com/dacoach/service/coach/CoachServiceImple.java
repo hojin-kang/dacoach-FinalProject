@@ -278,6 +278,31 @@ public class CoachServiceImple implements CoachService {
 		int result=coachMapper.unlikeCoach(map);
 		return result;
 	}
+	
+	@Override
+	public List<CoachDTO> getPopularCoach() throws Exception {
+		List<CoachDTO> list = coachMapper.getPopularCoach();
+
+	    // 인기코치 5명 각각의 해시태그 채우기
+		for (CoachDTO c : list) {
+	        int userIdx = c.getUser_idx();
+
+	        List<String> my = coachMapper.getMyHashtags(userIdx);
+	        List<String> inter = coachMapper.getInterHashtags(userIdx);
+
+	        // 최대 2개만
+	        if (my != null && my.size() > 2) {
+	            my = my.subList(0, 2);
+	        }
+	        if (inter != null && inter.size() > 2) {
+	            inter = inter.subList(0, 2);
+	        }
+
+	        c.setHashtags(my);
+	        c.setInterhashtags(inter);
+	    }
+	    return list;
+	}
 
 	@Override
 	public List<CertDTO> getCoachCertList(int user_idx) throws Exception {

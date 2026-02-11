@@ -86,4 +86,7 @@ public interface CoachMapper {
 
     int deleteMyHashtagMapping(int user_idx) throws Exception;
     int deleteInterHashtagMapping(int user_idx) throws Exception;
+    
+    // 인기 코치 불러오기
+    public List<CoachDTO> getPopularCoach() throws Exception;
 }
