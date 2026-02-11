@@ -101,7 +101,7 @@
 
 							<!-- 사진 업로드 -->
 							<div class="form-group">
-								<h3>클래스 소개 사진</h3>
+								<h3 class="required">클래스 소개 사진</h3>
 
 								<!-- 기존 사진 미리보기 -->
 								<div th:if="${classDTO.photo != null and classDTO.photo != ''}"
@@ -133,7 +133,7 @@
 
 							<!-- 영상 업로드 -->
 							<div class="form-group">
-								<h3>클래스 소개 영상</h3>
+								<h3 class="required">클래스 소개 영상</h3>
 
 								<!-- 기존 영상 미리보기 -->
 								<div th:if="${classDTO.video != null and classDTO.video != ''}"
@@ -167,7 +167,7 @@
 
 							<!-- 클래스 기간 -->
 							<div class="form-group">
-								<h3 class="required">클래스 기간</h3>
+								<h3 class="required">수강 가능 기간</h3>
 								<div class="date-time-group">
 									<div class="date-time-input">
 										<label for="startDate">시작일</label> <input
@@ -183,7 +183,7 @@
 
 							<!-- 수강인원 제한 -->
 							<div class="form-group">
-								<h3 class="required">수강인원 제한</h3>
+								<h3 class="required">하루 수강 인원</h3>
 								<div class="range-group">
 									<input type="range" id="participantLimit" name="max_user_cnt"
 										min="1" max="50" th:value="${classDTO.max_user_cnt}">

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.minorField.MinorFieldDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CoachMapper {
@@ -89,4 +90,6 @@ public interface CoachMapper {
     
     // 인기 코치 불러오기
     public List<CoachDTO> getPopularCoach() throws Exception;
+    // 인기 분야 불러오기
+    public List<MinorFieldDTO> getPopularField() throws Exception;
 }

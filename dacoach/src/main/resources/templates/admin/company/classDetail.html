@@ -324,7 +324,7 @@
       }
 
       fetch(`/admin/classDetail/${classIdx}/deleteReview/${reviewIdx}`, { 
-        method: 'POST' 
+        method: 'POST'
       })
         .then(resp => {
           if (!resp.ok) throw new Error('delete fail');

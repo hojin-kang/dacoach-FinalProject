@@ -194,7 +194,7 @@
                 <div class="search-box">
                     <span style="font-size: 20px; margin-right: 5px;">🔍</span>
                     <input type="text" name="keyword" class="search-input" 
-                           placeholder="작성자 또는 제목으로 검색" th:value="${keyword}">
+                           placeholder="검색어(상태, 제목, 작성자)를 입력하세요" th:value="${keyword}">
                     <button type="submit" class="btn-search">Search</button>
                 </div>
             </form>
@@ -207,15 +207,16 @@
             </div>
 
             <div th:if="${not #lists.isEmpty(qnaList)}" th:each="qna : ${qnaList}" 
-                 th:onclick="|location.href='/admin/support/qna/detail?idx=' + ${qna.QNA_IDX}|"
+                 th:onclick="|location.href='/admin/support/qna/content?qna_idx=' + ${qna.QNA_IDX}|"
                  class="qna-item-card">
-                
-                <div class="col-status">
-                    <span th:if="${qna.REPLY_CONTENT == null}" class="status-badge status-waiting">대기</span>
-                    <span th:if="${qna.REPLY_CONTENT != null}" class="status-badge status-complete">완료</span>
-                </div>
 
-                <div class="col-title">
+				<div class="col-status">
+					<span th:text="${qna.STATUS}"
+						th:classappend="${qna.STATUS == '대기' ? 'status-badge status-waiting' : 'status-badge status-complete'}">
+					</span>
+				</div>
+
+				<div class="col-title">
                     <span class="type-tag" th:text="'[' + ${qna.QNA_TYPE} + ']'"></span>
                     <span th:text="${qna.TITLE}" class="hover:text-[#9dbbb5] transition-colors"></span>
                 </div>

@@ -77,7 +77,7 @@
 							</div>
 
 							<div class="form-group">
-								<h3 class="required">클래스 가격</h3>
+								<h3 class="required">클래스 가격 (하루)</h3>
 								<input type="number" id="classCost" name="price"
 									th:value="${classDTO?.price}" placeholder="클래스 가격을 입력하세요 (원)"
 									min="0" max="10000000" required>
@@ -97,10 +97,10 @@
 
 							<!-- 사진 업로드 -->
 							<div class="form-group">
-								<h3>클래스 소개 사진</h3>
+								<h3 class="required">클래스 소개 사진</h3>
 								<div class="file-upload-area">
 									<input type="file" id="photoUpload" name="photoFile"
-										accept="image/*" style="display: none;">
+										accept="image/*" style="display: none;" required>
 									<button type="button" class="upload-btn"
 										onclick="document.getElementById('photoUpload').click()">
 										📷 사진 업로드</button>
@@ -112,10 +112,10 @@
 
 							<!-- 영상 업로드 -->
 							<div class="form-group">
-								<h3>클래스 소개 영상</h3>
+								<h3 class="required">클래스 소개 영상</h3>
 								<div class="file-upload-area">
 									<input type="file" id="videoUpload" name="videoFile"
-										accept="video/*" style="display: none;">
+										accept="video/*" style="display: none;" required>
 									<button type="button" class="upload-btn"
 										onclick="document.getElementById('videoUpload').click()">
 										🎥 영상 업로드</button>
@@ -125,7 +125,7 @@
 							</div>
 
 							<div class="form-group">
-								<h3 class="required">클래스 기간</h3>
+								<h3 class="required">수강 가능 기간</h3>
 								<div class="date-time-group">
 									<div class="date-time-input">
 										<label for="startDate">시작일</label> <input
@@ -140,11 +140,11 @@
 							</div>
 
 							<div class="form-group">
-								<h3 class="required">수강인원 제한</h3>
+								<h3 class="required">하루 수강 인원</h3>
 								<div class="range-group">
 									<input type="range" id="participantLimit" name="max_user_cnt"
 										min="1" max="50" value="10">
-									<output id="participantOutput" th:text="'명'">
+									<output id="participantOutput" th:text="'10명'">
 										</output>
 								</div>
 							</div>
