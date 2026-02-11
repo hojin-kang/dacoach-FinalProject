@@ -54,4 +54,10 @@ public class ReviewServiceImple implements ReviewService {
         if (!"coach".equals(type)) return 0;
         return reviewMapper.deleteClassReview(review_class_idx, user_idx);
     }
+
+	@Override
+	public List<ReviewCoachDTO> getCoachReviews(int target_idx) {
+		List<ReviewCoachDTO> reviews = reviewMapper.getCoachReviews(target_idx);
+		return reviews;
+	}
 }

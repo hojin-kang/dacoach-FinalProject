@@ -15,8 +15,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.review.ReviewCoachDTO;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.coachSearch.CoachSearchService;
+import com.dacoach.service.review.ReviewService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -26,6 +28,8 @@ public class CoachSearchController {
 		private CoachService coachService;
 		@Autowired
 		private CoachSearchService coachSearchService;
+		@Autowired
+		private ReviewService reviewService;
 		
 	 	@GetMapping("/coach/search")
 	public ModelAndView coachSearchForm(@RequestParam(value="cp", defaultValue = "1") int cp,
@@ -111,12 +115,17 @@ public class CoachSearchController {
 	 	        mav.addObject("dto", cdto);
 	 	        List<CertDTO> lists=new ArrayList<CertDTO>();
 	 	        lists=coachService.getCoachCertList(target_idx);
+	 	        List<CertDTO> certList = new ArrayList<CertDTO>();
 	 	        for(int i=0;i<lists.size();i++) {
-	 	        	if(lists.get(i).getCert_status()!="승인") {
-	 	        		lists.remove(i);
+	 	        	if(lists.get(i).getCert_status().equals("승인")) {
+	 	        		certList.add(lists.get(i));
 	 	        	}
 	 	        }
-	 	        mav.addObject("certList", lists);
+	 	        mav.addObject("certList", certList);
+	 	        //해당 코치 리뷰 리스트
+	 	        List<ReviewCoachDTO> reviewList = reviewService.getCoachReviews(target_idx);
+	 	        mav.addObject("reviewList", reviewList);
+	 	        
 	 	        
 	 	        mav.setViewName("coach/detail");
 	 	    } catch (Exception e) { e.printStackTrace(); }

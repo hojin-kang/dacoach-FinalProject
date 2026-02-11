@@ -189,5 +189,39 @@
         AND reviewer_idx = #{user_idx}
     ]]>
   </delete>
+  
+<resultMap id="reviewWithTagsMap" type="com.dacoach.model.review.ReviewCoachDTO">
+    <id property="review_coach_idx" column="REVIEW_COACH_IDX" />
+    
+    <result property="reviewer_name" column="nickname" /> 
+    <result property="photo" column="photo" />
+    <result property="score" column="score" />
+    <result property="content" column="CONTENT" />
+    <result property="rating" column="RATING" />
+    <result property="created_at" column="CREATED_AT" />
+    <result property="reviewer_idx" column="reviewer_idx" />
+    
+    <collection property="tagList" javaType="java.util.ArrayList" ofType="java.lang.String">
+        <result column="tag_content" />
+    </collection>
+</resultMap>
+
+<select id="getCoachReviews" parameterType="int" resultMap="reviewWithTagsMap">
+    SELECT 
+        RC.REVIEW_COACH_IDX,
+        RC.CONTENT,
+        RC.RATING,
+        RC.CREATED_AT,
+        C.user_idx as reviewer_idx,
+        C.nickname,
+        C.photo, 
+        C.point_score as score, 
+        RT.content as tag_content
+    FROM review_coach RC
+    JOIN coach C ON RC.reviewer_idx = C.user_idx
+    LEFT JOIN review_tag RT ON (RC.review_coach_idx = RT.review_tag_idx AND RT.review_type = 'COACH')
+    WHERE RC.reviewee_idx = #{target_idx}
+    ORDER BY RC.CREATED_AT DESC
+</select>
 
 </mapper>
