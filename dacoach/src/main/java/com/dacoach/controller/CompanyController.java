@@ -86,14 +86,14 @@ public class CompanyController {
 			int userIdx=companyService.getUserIdx(login_id);
 			if (photoFile != null && !photoFile.isEmpty()) {
 				String photoPath = FileUpload.saveFile(photoFile, "company/photo");			
-				companyDto.setPhoto(photoPath);				
-				companyDto.setUser_idx(companyService.getUserIdx(login_id));
+				companyDto.setPhoto(photoPath);								
 			}
 			if (certFile != null && !certFile.isEmpty()) {
 			String certPath = FileUpload.saveFile(certFile, "company/cert");
-			certDto.setCert_file(certPath);
-			certDto.setUser_idx(companyService.getUserIdx(login_id));
+			certDto.setCert_file(certPath);			
 			}
+			companyDto.setUser_idx(companyService.getUserIdx(login_id));
+			certDto.setUser_idx(companyService.getUserIdx(login_id));
 			int infoResult = companyService.companyInfo(companyDto);
 			int certResurt = companyService.insertcert(certDto);
 			if(infoResult<=0||certResurt<=0) {

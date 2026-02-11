@@ -383,6 +383,31 @@ public class MypageController {
 			mav.addObject("url", "/login");
 			return mav;
 		}
+		List<CertDTO> certificatedList = new ArrayList<>();
+		List<CertDTO> pendingList = new ArrayList<>();
+		List<CertDTO> rejectedList = new ArrayList<>();
+		
+		List<CertDTO> allList = new ArrayList<>();
+		
+		try {
+			allList=coachService.getCoachCertList((Integer)session.getAttribute("user_idx"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for(int i=0;i<allList.size();i++) {
+			CertDTO dto = allList.get(i);
+			if(dto.getCert_status().equals("승인")) {
+				certificatedList.add(dto);
+			}else if(dto.getCert_status().equals("대기")) {
+				pendingList.add(dto);
+			}else if(dto.getCert_status().equals("반려")) {
+				rejectedList.add(dto);
+			}
+		}
+		mav.addObject("certificatedList", certificatedList);
+		mav.addObject("pendingList", pendingList);
+		mav.addObject("rejectedList", rejectedList);
 		mav.setViewName("/coach/mypage/myCert");
 		return mav;
 	}

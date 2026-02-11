@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dacoach.mapper.coach.CoachMapper;
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.file.FileUpload;
 
@@ -301,5 +302,11 @@ public class CoachServiceImple implements CoachService {
 	        c.setInterhashtags(inter);
 	    }
 	    return list;
+	}
+
+	@Override
+	public List<CertDTO> getCoachCertList(int user_idx) throws Exception {
+		List<CertDTO> allLists=coachMapper.getCoachCertList(user_idx);
+		return allLists;
 	}
 }

@@ -1,21 +1,152 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-
    <meta charset="UTF-8" />
-   <title>dacoach</title>
-
+   <title>dacoach - 자격증 관리</title>
    <link rel="stylesheet" th:href="@{/css/main.css}" />
+   
+   <style>
+      /* 레이아웃 기본 설정 */
+      body {
+         background-color: #f4f7fa;
+         font-family: 'Pretendard', -apple-system, sans-serif;
+         margin: 0;
+         color: #333;
+      }
+
+      .main {
+         padding: 60px 20px;
+         min-height: 80vh;
+      }
+
+      .container {
+         max-width: 800px;
+         margin: 0 auto;
+         background: #ffffff;
+         padding: 40px;
+         border-radius: 20px;
+         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      }
+
+      /* 섹션 공통 스타일 */
+      .cert-section, .rejected-section {
+         margin-bottom: 40px;
+         padding-bottom: 20px;
+         border-bottom: 1px solid #f0f0f0;
+      }
+
+      .cert-section:last-child, .rejected-section:last-child {
+         border-bottom: none;
+         margin-bottom: 0;
+      }
+
+      h3 {
+         font-size: 18px;
+         font-weight: 700;
+         margin-bottom: 20px;
+         display: flex;
+         align-items: center;
+         gap: 8px;
+      }
+
+      /* 상태별 제목 아이콘/컬러 */
+      .cert-section:nth-of-type(1) h3 { color: #2ecc71; } /* 승인 - 초록 */
+      .cert-section:nth-of-type(2) h3 { color: #f1c40f; } /* 심사중 - 노랑 */
+      .rejected-section h3 { color: #e74c3c; }           /* 반려 - 빨강 */
+
+      .cert-section:nth-of-type(1) h3::before { content: '✅'; }
+      .cert-section:nth-of-type(2) h3::before { content: '⏳'; }
+      .rejected-section h3::before { content: '❌'; }
+
+      /* 리스트 스타일 */
+      ul {
+         list-style: none;
+         padding: 0;
+         margin: 0;
+         display: grid;
+         grid-template-columns: repeat(auto-fill, minmax(200px, 100%));
+         gap: 12px;
+      }
+
+      li {
+         background: #fafafa;
+         padding: 15px 20px;
+         border-radius: 12px;
+         border: 1px solid #eee;
+         font-weight: 500;
+         transition: transform 0.2s, box-shadow 0.2s;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+      }
+
+      li:hover {
+         transform: translateY(-3px);
+         box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+         border-color: #d1d8e0;
+      }
+
+      /* 비어있을 때 메시지 */
+      .empty-msg {
+         background: #fdfdfd;
+         border: 1px dashed #ddd;
+         padding: 30px;
+         text-align: center;
+         color: #999;
+         border-radius: 12px;
+         font-size: 14px;
+      }
+
+      /* 반응형 팁 */
+      @media (max-width: 600px) {
+         .container { padding: 25px; }
+         h3 { font-size: 16px; }
+      }
+   </style>
 </head>
 <body>
    <div th:replace="layout/header :: siteHeader"></div>
 
    <main class="main">
-   <div class="container">
-      
-   </div>
+      <div class="container">
+         <div class="cert-section">
+            <h3>승인된 자격증</h3>
+            <ul th:unless="${#lists.isEmpty(certificatedList)}">
+                <li th:each="cert : ${certificatedList}">
+                    <span th:text="${cert.cert_name}">자격증명</span>
+                </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(certificatedList)}" class="empty-msg">
+                승인된 자격증이 없습니다.
+            </p>
+         </div>
+
+         <div class="cert-section">
+            <h3>심사중 자격증</h3>
+            <ul th:unless="${#lists.isEmpty(pendingList)}">
+                <li th:each="cert : ${pendingList}">
+                    <span th:text="${cert.cert_name}">자격증명</span>
+                </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(pendingList)}" class="empty-msg">
+                심사중인 자격증이 없습니다.
+            </p>
+         </div>
+
+         <div class="rejected-section">
+            <h3>반려된 자격증</h3>
+            <ul th:unless="${#lists.isEmpty(rejectedList)}">
+                <li th:each="cert : ${rejectedList}">
+                    <span th:text="${cert.cert_name}">자격증명</span>
+                </li>
+            </ul>
+            <p th:if="${#lists.isEmpty(rejectedList)}" class="empty-msg">
+                반려된 자격증이 없습니다.
+            </p>
+         </div>
+      </div>
    </main>
   
    <div th:replace="layout/footer :: siteFooter"></div>
-
 </body>
+</html>
