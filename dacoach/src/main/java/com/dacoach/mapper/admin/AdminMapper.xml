@@ -190,6 +190,60 @@
 	delete from qna where qna_idx=#{qna_idx}
 	</delete>
 	
+	<select id="getQnaList" resultType="map" parameterType="String">
+	select 
+	q.qna_idx,
+	u.user_name,
+	q.qna_type,
+	q.title,
+	q.created_at,
+	case when a.qna_a_idx is null then '대기' else '완료' end as status
+	from qna q
+	join users u on q.user_idx=u.user_idx
+	left join qna_a a on q.qna_idx= a.qna_idx
+		<where>
+		(u.user_type='COACH' or u.user_type='COMPANY')
+		    <if test="keyword != null and keyword != ''">
+			and (
+			q.title like '%' || #{keyword} || '%' or
+			q.qna_type like '%' || #{keyword} || '%' or
+			u.user_name like '%' || #{keyword} || '%' or
+			(case when a.qna_a_idx is null then '대기' else '완료' end) = #{keyword}
+			)
+		    </if>
+		</where>
+	order by q.qna_idx desc
+	</select>
+	
+	<select id="getQnaContent" parameterType="int" resultType="map">
+	select q.qna_idx,
+	q.qna_type,
+	q.title as q_title,
+	u.user_name,
+	q.created_at as q_created_at,
+	q.question,
+	a.qna_a_idx,
+	a.title as a_title,
+	a.answer,
+	a.created_at as a_created_at
+	from qna q
+	join users u on q.user_idx=u.user_idx
+	left join qna_a a on q.qna_idx = a.qna_idx
+	where q.qna_idx=#{qna_idx}
+	</select>
+	
+	<insert id="insertQnaAnswer" parameterType="com.dacoach.model.qna.Qna_aDTO">
+	insert into qna_a values (seq_qna_a.nextval,#{qna_idx},#{title},#{answer},sysdate)
+	</insert>
+	
+	<update id="updateQnaAnswer" parameterType="com.dacoach.model.qna.Qna_aDTO">
+	update qna_a set title=#{title}, answer=#{answer}, created_at=sysdate where qna_a_idx=#{qna_a_idx}
+	</update>
+	
+	<delete id="deleteQnaAnswer" parameterType="int">
+	delete from qna_a where qna_a_idx=#{qna_a_idx}
+	</delete>
+	
 	<select id="getMajorField" resultType="map">
 	select * from major_field
 	</select>
@@ -205,4 +259,5 @@
 	<update id="updateMinorField" parameterType="map">
 	update minor_field set minor_field_nm =#{minor_field_nm} where minor_field_idx=#{minor_field_idx}
 	</update>
+	
 </mapper>

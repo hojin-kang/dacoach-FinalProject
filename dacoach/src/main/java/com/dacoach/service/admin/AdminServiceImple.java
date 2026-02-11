@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.dacoach.mapper.admin.AdminMapper;
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.qna.QnaDTO;
+import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.model.users.UsersDTO;
 
 @Service
@@ -134,6 +135,31 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public int deleteNotice(int qna_idx) throws Exception {
 		return adminMapper.deleteNotice(qna_idx);
+	}
+	
+	@Override
+	public List<Map<String, Object>> getQnaList(String keyword) throws Exception {
+		return adminMapper.getQnaList(keyword);
+	}
+	
+	@Override
+	public Map<String, Object> getQnaContent(int qna_idx) throws Exception {
+		return adminMapper.getQnaContent(qna_idx);
+	}
+	
+	@Override
+	public int insertQnaAnswer(Qna_aDTO dto) throws Exception {
+		return adminMapper.insertQnaAnswer(dto);
+	}
+	
+	@Override
+	public int updateQnaAnswer(Qna_aDTO dto) throws Exception {
+		return adminMapper.updateQnaAnswer(dto);
+	}
+	
+	@Override
+	public int deleteQnaAnswer(int qna_a_idx) throws Exception {
+		return adminMapper.deleteQnaAnswer(qna_a_idx);
 	}
 	
 	@Override
