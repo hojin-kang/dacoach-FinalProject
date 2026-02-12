@@ -35,6 +35,7 @@ public class AdminCompanyController {
         return "admin/dashboard";
     }
 
+    //해당 idx 컴퍼니 상세 페이지
     @GetMapping("/companyDetail/{usersIdx}")
     public String companyDetail(@PathVariable("usersIdx") int usersIdx, Model model) { 
 

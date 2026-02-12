@@ -157,30 +157,39 @@
 	</select>
 
 	<!-- 9. 기업 회원 상세 -->
-	<select id="companyDetail" parameterType="int" resultType="map">
-		select
-		u.user_idx,
-		u.user_name,
-		c.email,
-		c.phone,
-		u.status,
-		u.login_id,
-		c.company_idx,
-		c.company_num,
-		u.user_name,
-		c.address,
-		ct.cert_file,
-		ct.get_date,
-		ct.cert_from,
-		ct.cert_type,
-		ct.cert_status
-		from users u
-		join
-		company c on c.user_idx = u.user_idx
-		left join cert ct on u.user_idx=ct.user_idx and ct.cert_type = '사업자등록증'
-		where u.user_idx = #{userIdx}
-	</select>
-
+<select id="companyDetail" parameterType="int" resultType="map">
+    SELECT
+        u.user_idx,
+        u.user_name,
+        c.email,
+        c.phone,
+        c.photo,
+        u.status,
+        u.login_id,
+        c.company_idx,
+        c.company_num,
+        c.address,
+        ct.cert_file,
+        ct.get_date,
+        ct.cert_from,
+        ct.cert_type,
+        ct.cert_name,
+        ct.cert_status,
+        e.reason,
+        e.end_date
+    FROM users u
+    JOIN company c ON c.user_idx = u.user_idx
+    LEFT JOIN cert ct ON u.user_idx = ct.user_idx
+    LEFT JOIN (
+        SELECT * FROM embedded_user
+        WHERE (user_idx, embed_user_idx) IN (
+            SELECT user_idx, MAX(embed_user_idx)
+            FROM embedded_user
+            GROUP BY user_idx
+        )
+    ) e ON u.user_idx = e.user_idx
+    WHERE u.user_idx = #{userIdx}
+</select>
 	<!-- 10.컴퍼니 상태 업데이트 -->
 	<update id="updateCompanyStatus" parameterType="map">
 		update users
@@ -196,45 +205,54 @@
 		start_date,
 		end_date,
 		reason
-        )
+		)
 		values(seq_embed_user.nextval,
 		#{user_idx,jdbcType=NUMERIC},
-		#{start_date,jdbcType=DATE},
+		sysdate,
 		#{end_date,jdbcType=DATE},
 		#{reason,jdbcType=VARCHAR}
 		)
 	</insert>
 
 	<update id="updateEnddateSuspended" parameterType="int">
-		update embedded_user
-		set end_date = sysdate
-        where user_idx = #{userIdx} and end_date is null
+		UPDATE
+		embedded_user
+		SET end_date = SYSDATE
+		WHERE user_idx = #{userIdx}
+		AND
+		embed_user_idx = (
+		SELECT MAX(embed_user_idx)
+		FROM embedded_user
+		WHERE
+		user_idx = #{userIdx}
+		)
 	</update>
 	<!-- 11_1 -->
 	<!-- 11. 정지 이력 추가 -->
 	<insert id="insertEmbeddedHistory" parameterType="map">
-		INSERT INTO EMBEDDED_USER (
+		INSERT INTO
+		EMBEDDED_USER (
 		EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON
 		) VALUES (
 		SEQ_EMBED_USER.NEXTVAL,
 		#{userIdx},
-		TO_DATE(#{startDate}, 'YYYY-MM-DD'),
-		CASE
-		WHEN #{endDate} IS NULL OR #{endDate} = '' THEN NULL
-		ELSE TO_DATE(#{endDate}, 'YYYY-MM-DD')
-		END,
+		#{startDate},
+		#{endDate, jdbcType=DATE}, 
 		#{reason}
 		)
 	</insert>
 
 	<!-- 12. 최신 정지 이력 종료 처리 -->
 	<update id="closeLatestEmbeddedHistory" parameterType="map">
-		UPDATE EMBEDDED_USER
+		UPDATE
+		EMBEDDED_USER
 		SET END_DATE = SYSDATE
 		WHERE EMBED_USER_IDX = (
-		SELECT MAX(e2.EMBED_USER_IDX)
+		SELECT
+		MAX(e2.EMBED_USER_IDX)
 		FROM EMBEDDED_USER e2
-		WHERE e2.USER_IDX = #{userIdx}
+		WHERE e2.USER_IDX =
+		#{userIdx}
 		)
 	</update>
 
@@ -244,31 +262,30 @@
 		SELECT COUNT(*)
 		FROM CERT
 		WHERE USER_IDX = #{userIdx}
-		AND CERT_TYPE = #{certType}
+		AND
+		CERT_TYPE = #{certType}
 	</select>
 
 	<!-- 14. CERT 승인될떄 -->
-	<update id="updateCertDetail" parameterType="map">
+<update id="updateCertDetail">
     UPDATE cert
-    SET
-        get_date = CASE 
-                      WHEN #{get_date} IS NULL OR #{get_date} = '' THEN NULL 
-                      ELSE TO_DATE(SUBSTR(#{get_date}, 1, 10), 'YYYY-MM-DD') 
-                   END,
-        cert_from = #{cert_from},
-        cert_type = #{cert_type},
+    SET 
+        get_date = TO_DATE(SUBSTR(#{get_date, jdbcType=VARCHAR}, 1, 10), 'YYYY-MM-DD'),
+        cert_from = #{cert_from, jdbcType=VARCHAR},
+        cert_name = #{cert_name, jdbcType=VARCHAR},
+        cert_type='사업자등록증',
         cert_status = '승인'
-    WHERE user_idx = #{user_idx} 
-      AND cert_type = '사업자등록증'
+    WHERE user_idx = #{user_idx, jdbcType=NUMERIC}
 </update>
 	<!-- 15. CERT 추가 -->
 	<insert id="insertCertDetail" parameterType="map">
 		INSERT INTO CERT (
 		CERT_IDX, USER_IDX, CERT_NAME, CERT_TYPE, CERT_STATUS, GET_DATE
-		) VALUES (
+		)
+		VALUES (
 		SEQ_CERT.NEXTVAL,
 		#{user_idx},
-		'사업자등록증',
+		#{cert_name},
 		'사업자등록증',
 		#{cert_status},
 		SYSDATE
@@ -276,7 +293,8 @@
 	</insert>
 
 	<select id="getCertFile" parameterType="int" resultType="map">
-		SELECT CERT_FILE FROM CERT WHERE USER_IDX = #{userIdx} AND CERT_TYPE =
+		SELECT
+		CERT_FILE FROM CERT WHERE USER_IDX = #{userIdx} AND CERT_TYPE =
 		'사업자등록증'
 
 	</select>
