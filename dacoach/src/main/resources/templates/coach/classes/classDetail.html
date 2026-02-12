@@ -71,11 +71,12 @@
 								문의하기 </a>
 
 							<!-- 수강 신청 여부에 따라 버튼 변경 -->
+							<!-- isEnrolled = true: 모든 날짜 신청 완료 -->
 							<a class="actionBtn solid" th:if="${!isEnrolled}"
 								th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
 								신청하기 </a>
 							<button class="actionBtn solid" th:if="${isEnrolled}" disabled
-								style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
+								style="opacity: 0.5; cursor: not-allowed;">모든 날짜 신청완료</button>
 						</div>
 
 					</div>
@@ -285,11 +286,12 @@
 							th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
 							<div class="sideBtns">
 								<!-- 수강 신청 여부에 따라 버튼 변경 -->
+								<!-- isEnrolled = true: 모든 날짜 신청 완료 -->
 								<a class="actionBtn solid" th:if="${!isEnrolled}"
 									th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
 									신청하기 </a>
 								<button class="actionBtn solid" th:if="${isEnrolled}" disabled
-									style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
+									style="opacity: 0.5; cursor: not-allowed;">모든 날짜 신청완료</button>
 							</div>
 						</th:block>
 					</div>

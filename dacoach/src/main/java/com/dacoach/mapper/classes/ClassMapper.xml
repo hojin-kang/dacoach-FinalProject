@@ -200,16 +200,9 @@
 		COMPANY co ON u.USER_IDX = co.USER_IDX
 		WHERE e.CLASS_IDX =
 		#{class_idx}
-		AND e.ENROLL_IDX IN (
-		-- 각 유저별 가장 최근 신청 건만 선택
-		SELECT
-		MAX(e2.ENROLL_IDX)
-		FROM CLASS_ENROLLMENT e2
-		WHERE e2.CLASS_IDX =
-		#{class_idx}
-		GROUP BY e2.USER_IDX
-		)
-		ORDER BY e.ENROLLED_AT DESC
+		AND e.STATUS = 'CONFIRMED'
+		ORDER BY e.COMPLETED_AT DESC,
+		e.ENROLLED_AT DESC
 	</select>
 
 	<!-- ⭐ 해시태그 이름으로 IDX 찾기 (중복 체크) -->

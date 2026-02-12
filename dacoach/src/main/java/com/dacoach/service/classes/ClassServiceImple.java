@@ -207,8 +207,34 @@ public class ClassServiceImple implements ClassService {
 
 		// 기본 통계
 		int totalEnrollments = enrollments.size();
-		long activeStudents = enrollments.stream().filter(e -> "CONFIRMED".equals(e.get("STATUS"))).count();
-		int totalRevenue = classDTO.getPrice() * (int) activeStudents;
+
+		// 확정된 신청: CONFIRMED 상태이면서 수강 예정일이 오늘이거나 미래인 건
+		Date today = new Date();
+		java.util.Calendar cal = java.util.Calendar.getInstance();
+		cal.setTime(today);
+		cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+		cal.set(java.util.Calendar.MINUTE, 0);
+		cal.set(java.util.Calendar.SECOND, 0);
+		cal.set(java.util.Calendar.MILLISECOND, 0);
+		Date todayStart = cal.getTime();
+
+		long activeStudents = enrollments.stream().filter(e -> "CONFIRMED".equals(e.get("STATUS"))).filter(e -> {
+			Date completedAt = (Date) e.get("COMPLETED_AT");
+			if (completedAt == null)
+				return false;
+
+			java.util.Calendar completedCal = java.util.Calendar.getInstance();
+			completedCal.setTime(completedAt);
+			completedCal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+			completedCal.set(java.util.Calendar.MINUTE, 0);
+			completedCal.set(java.util.Calendar.SECOND, 0);
+			completedCal.set(java.util.Calendar.MILLISECOND, 0);
+			Date completedDateOnly = completedCal.getTime();
+
+			return !completedDateOnly.before(todayStart); // 오늘이거나 미래
+		}).count();
+
+		int totalRevenue = classDTO.getPrice() * totalEnrollments; // 전체 신청 건수 기준
 
 		result.put("totalEnrollments", totalEnrollments);
 		result.put("activeStudents", activeStudents);
@@ -217,7 +243,7 @@ public class ClassServiceImple implements ClassService {
 		// 수강생 정보
 		result.put("students", enrollments);
 
-		// 시간별 수강 신청 통계 (날짜별 집계)
+		// 시간별 수강 신청 통계 (신청일 기준)
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd");
 		Map<String, Long> enrollmentByDateMap = enrollments.stream().filter(e -> e.get("ENROLLED_AT") != null)
 				.collect(Collectors.groupingBy(e -> sdf.format((Date) e.get("ENROLLED_AT")), Collectors.counting()));
@@ -234,6 +260,23 @@ public class ClassServiceImple implements ClassService {
 		enrollmentByDate.sort((a, b) -> ((String) a.get("date")).compareTo((String) b.get("date")));
 
 		result.put("enrollmentByDate", enrollmentByDate);
+
+		// 수강 예정일별 통계 추가 (COMPLETED_AT 기준)
+		Map<String, Long> completedByDateMap = enrollments.stream().filter(e -> e.get("COMPLETED_AT") != null)
+				.collect(Collectors.groupingBy(e -> sdf.format((Date) e.get("COMPLETED_AT")), Collectors.counting()));
+
+		List<Map<String, Object>> completedByDate = new ArrayList<>();
+		for (Map.Entry<String, Long> entry : completedByDateMap.entrySet()) {
+			Map<String, Object> dateData = new HashMap<>();
+			dateData.put("date", entry.getKey());
+			dateData.put("count", entry.getValue());
+			completedByDate.add(dateData);
+		}
+
+		// 날짜순 정렬
+		completedByDate.sort((a, b) -> ((String) a.get("date")).compareTo((String) b.get("date")));
+
+		result.put("completedByDate", completedByDate);
 
 		// 수익 통계 (누적)
 		List<Map<String, Object>> revenueByDate = new ArrayList<>();

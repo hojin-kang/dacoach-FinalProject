@@ -197,6 +197,15 @@ public class CoachClassServiceImple implements CoachClassService {
 		return count != null && count > 0;
 	}
 
+	@Override
+	public List<String> getUserEnrolledDates(int class_idx, int user_idx) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		param.put("class_idx", class_idx);
+		param.put("user_idx", user_idx);
+
+		return classMapper.selectUserEnrolledDates(param);
+	}
+
 	// 현재 인기 클래스 불러오기
 	@Override
 	public List<CoachClassDTO> getPopularClass() throws Exception {
