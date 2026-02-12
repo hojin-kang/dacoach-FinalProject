@@ -56,7 +56,7 @@
             <tr th:each="h : ${thdto}">
               <td th:text="${#dates.format(h.created_at,'yyyy-MM-dd HH:mm:ss')}">시간</td>
               <td th:text="${h.hist_type}">타입</td>
-              <td th:text="${h.amount}">사용 개수</td>
+              <td th:text="${h.amount}" th:classappend="${h.amount > 0} ? 'plus' : (${h.amount < 0} ? 'minus' : '')">사용 개수</td>
               <td th:text="${h.balance_after}">남은 개수</td>
             </tr>
 
