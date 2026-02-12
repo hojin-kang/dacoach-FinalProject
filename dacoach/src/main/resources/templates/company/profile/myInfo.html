@@ -43,6 +43,7 @@
      		<span th:each="region:${regions}" class="regionClass">
      			[[${region.REGION_NM}]][[${region.DISTRICT_NM}]] [[${region.REGION_DETAIL}]] [[${region.BRANCH_NAME}]] [[${region.BRANCH_TEL}]]
      		</span>
+     		<div id="regionResultTag"></div>
      			<select name="major_region_idx" id="majorSelect">
 					<option>추가하실 지역 대분류를 선택 해주세요</option>
 					<option th:each="region:${regionTag}"
@@ -58,6 +59,7 @@
      	</fieldset>
      	</div>
      	
+     	<input type="hidden" th:value="${company.company_idx}">
      	<input type="submit" value="저장">
      	
      </form>	
@@ -118,7 +120,7 @@
 	    var majorIdx = majorSelect.value;
 	    var minorIdx = minorSelect.value;
 	    var detail = document.companyForm.region_detail.value;
-	    var companyIdx = document.companyForm.company_num.value;
+	    var companyIdx = document.companyForm.company_idx.value;
 
 	    //  유효성 검사
 	    if (majorIdx === "대분류" || minorIdx === "소분류" || !minorIdx) {
@@ -149,8 +151,6 @@
 	            // 주소 표시 상세주소 포함
 	            ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail} ${b_name.value} ${b_tel.value}</span>`;
 	            
-	            // 중복 방지용 저장 성공하면 배열에 추가
-	            addedRegionIds.push(minorIdx);
 	            
 	            // 입력값 초기화
 	            document.regionForm.region_detail.value = "";
