@@ -78,16 +78,35 @@ public class MypageController {
 			    user_nickname = (String) users_info.get("NICKNAME");
 			    user_rank = (String) users_info.get("RANKNAME");
 			}
+			mav.addObject("withdrawReasons", mypageService.getWithdrawReasons());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		mav.addObject("user_nickname", user_nickname);
 		mav.addObject("user_rank", user_rank);
+		
+	    
 		mav.setViewName("/coach/mypage/mypage");
 		return mav;
 	}
 	
-	// ✅ 마이페이지 > 개인정보 수정 페이지
+	@PostMapping("/withdraw")
+	public String withdraw(
+	        @RequestParam("reason_type_idx") int reasonTypeIdx,
+	        @RequestParam(value="extra", required=false) String extra,
+	        HttpSession session
+	) {
+	    Integer user_idx = (Integer) session.getAttribute("user_idx");
+	    if (user_idx == null || user_idx == 0) return "redirect:/needLogin";
+
+	    mypageService.withdrawUser(user_idx, reasonTypeIdx, extra);
+
+	    // 세션 만료(로그아웃)
+	    session.invalidate();
+	    return "redirect:/";
+	}
+	
+	// 마이페이지 > 개인정보 수정 페이지
     @GetMapping("/myInfo")
     public ModelAndView myInfo(HttpSession session) {
         ModelAndView mav = new ModelAndView();
@@ -125,7 +144,7 @@ public class MypageController {
         return mav;
     }
 
-    // ✅ 수정 저장 (가입 coachJoin이랑 거의 같은 방식)
+    // 수정 저장 (가입 coachJoin이랑 거의 같은 방식)
     @PostMapping("/myInfoUpdate")
     public ModelAndView myInfoUpdate(
             HttpSession session,
@@ -168,7 +187,7 @@ public class MypageController {
             dto.setBirth_date(birthSqlDate);
             dto.setPhone(phone);
 
-            // ✅ service에서: 기존 파일 유지/교체 + 기본정보 update + 매핑 싹 갱신
+            // service에서: 기존 파일 유지/교체 + 기본정보 update + 매핑 싹 갱신
             coachService.updateMyInfo(dto, uploadPhoto, uploadVideo,
                     myMinorCate, interMinorCate, myMajorRegion, myMinorRegion, myHashtags, interHashtags);
 
