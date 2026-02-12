@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.model.token.TokenHistoryDTO;
 
 @Mapper
@@ -19,4 +20,8 @@ public interface TokenMapper {
     int insertTokenHistory(Map<String, Object> map);
     
     List<TokenHistoryDTO> getChargeHistory(@Param("user_idx") Integer user_idx);
+    
+    int insertPay(PayDTO dto);
+    
+    List<PayDTO> getPayHistory(@Param("partner_user_id") String partner_user_id);
 }

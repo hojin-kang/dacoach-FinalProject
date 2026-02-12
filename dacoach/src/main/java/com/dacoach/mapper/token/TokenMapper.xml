@@ -18,7 +18,7 @@
       balance_after,
       created_at
     FROM token_history
-    WHERE user_idx = #{user_idx} and hist_type='채팅 신청' or hist_type='매칭 신청'
+    WHERE user_idx = #{user_idx} AND (hist_type='채팅 신청' OR hist_type='매칭 신청')
     ORDER BY created_at DESC
   </select>
   
@@ -58,5 +58,62 @@
       SYSDATE
     )
   </insert>
+  
+  <insert id="insertPay" parameterType="com.dacoach.kakaopay.PayDTO">
+  INSERT INTO PAY (
+    PAY_IDX,
+    TID, CID, SID,
+    PARTNER_ORDER_ID, PARTNER_USER_ID,
+    ITEM_NAME, ITEM_CODE,
+    QUANTITY,
+    CREATED_AT, APPROVED_AT,
+    TOTAL, TAX_FREE, TAX, POINT, DISCOUNT, GREEN_DEPOSIT,
+    PAY_TYPE
+  ) VALUES (
+    SEQ_PAY.NEXTVAL,
+    #{tid, jdbcType=VARCHAR},
+    #{cid, jdbcType=VARCHAR},
+    #{sid, jdbcType=VARCHAR},
+    #{partner_order_id, jdbcType=VARCHAR},
+    #{partner_user_id, jdbcType=VARCHAR},
+    #{item_name, jdbcType=VARCHAR},
+    #{item_code, jdbcType=VARCHAR},
+    #{quantity, jdbcType=NUMERIC},
+    #{created_at, jdbcType=VARCHAR},
+    #{approved_at, jdbcType=VARCHAR},
+    #{total, jdbcType=NUMERIC},
+    #{tax_free, jdbcType=NUMERIC},
+    #{tax, jdbcType=NUMERIC},
+    #{point, jdbcType=NUMERIC},
+    #{discount, jdbcType=NUMERIC},
+    #{green_deposit, jdbcType=NUMERIC},
+    #{pay_type, jdbcType=VARCHAR}
+  )
+</insert>
+
+<select id="getPayHistory" resultType="com.dacoach.kakaopay.PayDTO">
+  SELECT
+    pay_idx,
+    tid,
+    cid,
+    sid,
+    partner_order_id,
+    partner_user_id,
+    item_name,
+    item_code,
+    quantity,
+    created_at,
+    approved_at,
+    total,
+    tax_free,
+    tax,
+    point,
+    discount,
+    green_deposit,
+    pay_type
+  FROM pay
+  WHERE partner_user_id = #{partner_user_id, jdbcType=VARCHAR}
+  ORDER BY approved_at DESC
+</select>
 
 </mapper>

@@ -186,4 +186,10 @@ public class CoachClassServiceImple implements CoachClassService {
 		Integer count = classMapper.checkUserEnrollment(param);
 		return count != null && count > 0;
 	}
+	
+	// 현재 인기 클래스 불러오기
+	@Override
+	public List<CoachClassDTO> getPopularClass() throws Exception {
+		return classMapper.getPopularClass();
+	}
 }

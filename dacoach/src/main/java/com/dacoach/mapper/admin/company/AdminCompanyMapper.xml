@@ -3,10 +3,12 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
+<mapper
+	namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 
-  <!-- 1. 클래스 목록 (페이징) -->
-  <select id="selectClassPage" parameterType="map" resultType="map">
+	<!-- 1. 클래스 목록 (페이징) -->
+	<select id="selectClassPage" parameterType="map"
+		resultType="map">
   <![CDATA[
   SELECT *
   FROM (
@@ -38,16 +40,17 @@
     ) r ON r.CLASS_IDX = c.CLASS_IDX
   ) t
   WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}]]>
-  </select>
+	</select>
 
-  <!-- 2. 클래스 전체 개수 -->
-  <select id="countClassTotal" resultType="int">
-    SELECT COUNT(*)
-    FROM CLASS
-  </select>
+	<!-- 2. 클래스 전체 개수 -->
+	<select id="countClassTotal" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		CLASS
+	</select>
 
-  <!-- 3. 클래스 상세 (간소화 버전 - 기본 정보만) -->
-  <select id="classDetail" parameterType="map" resultType="map">
+	<!-- 3. 클래스 상세 (간소화 버전 - 기본 정보만) -->
+	<select id="classDetail" parameterType="map" resultType="map">
   <![CDATA[
     SELECT
       c.CLASS_IDX,
@@ -85,194 +88,197 @@
     
     WHERE c.CLASS_IDX = #{classIdx}
   ]]>
-  </select>
+	</select>
 
-  <!-- 4. 클래스 평점 및 리뷰 수 조회 -->
-  <select id="selectClassRatingSummary" parameterType="int" resultType="map">
-    SELECT
-      NVL(ROUND(AVG(RATING), 1), 0) AS AVG_RATING,
-      NVL(COUNT(*), 0) AS REVIEW_COUNT
-    FROM REVIEW_CLASS
-    WHERE CLASS_IDX = #{classIdx}
-  </select>
+	<!-- 4. 클래스 평점 및 리뷰 수 조회 -->
+	<select id="selectClassRatingSummary" parameterType="int"
+		resultType="map">
+		SELECT
+		NVL(ROUND(AVG(RATING), 1), 0) AS AVG_RATING,
+		NVL(COUNT(*), 0) AS REVIEW_COUNT
+		FROM REVIEW_CLASS
+		WHERE CLASS_IDX =
+		#{classIdx}
+	</select>
 
-  <!-- 5. 클래스 수강생 수 조회 -->
-  <select id="selectClassEnrollCount" parameterType="int" resultType="int">
-    SELECT NVL(COUNT(*), 0)
-    FROM CLASS_ENROLLMENT
-    WHERE CLASS_IDX = #{classIdx}
-  </select>
+	<!-- 5. 클래스 수강생 수 조회 -->
+	<select id="selectClassEnrollCount" parameterType="int"
+		resultType="int">
+		SELECT NVL(COUNT(*), 0)
+		FROM CLASS_ENROLLMENT
+		WHERE CLASS_IDX
+		= #{classIdx}
+	</select>
 
-  <!-- 6. 클래스별 리뷰 목록 -->
-  <select id="selectClassReviews" parameterType="int" resultType="map">
-    SELECT
-      rc.REVIEW_CLASS_IDX,
-      rc.RATING,
-      rc.TAG,
-      rc.CONTENT,
-      rc.CREATED_AT,
-      u.USER_NAME AS REVIEWER_NAME,
-      u.USER_TYPE AS REVIEWER_TYPE
-    FROM REVIEW_CLASS rc
-    LEFT JOIN USERS u ON u.USER_IDX = rc.REVIEWER_IDX
-    WHERE rc.CLASS_IDX = #{classIdx}
-    ORDER BY rc.CREATED_AT DESC
-  </select>
+	<!-- 6. 클래스별 리뷰 목록 -->
+	<select id="selectClassReviews" parameterType="int"
+		resultType="map">
+		SELECT
+		rc.REVIEW_CLASS_IDX,
+		rc.RATING,
+		rc.TAG,
+		rc.CONTENT,
+		rc.CREATED_AT,
+		u.USER_NAME AS REVIEWER_NAME,
+		u.USER_TYPE AS
+		REVIEWER_TYPE
+		FROM REVIEW_CLASS rc
+		LEFT JOIN USERS u ON u.USER_IDX =
+		rc.REVIEWER_IDX
+		WHERE rc.CLASS_IDX = #{classIdx}
+		ORDER BY rc.CREATED_AT
+		DESC
+	</select>
 
-  <!-- 7. 리뷰 삭제 -->
-  <delete id="deleteReview" parameterType="int">
-    DELETE FROM REVIEW_CLASS
-    WHERE REVIEW_CLASS_IDX = #{reviewIdx}
-  </delete>
+	<!-- 7. 리뷰 삭제 -->
+	<delete id="deleteReview" parameterType="int">
+		DELETE FROM REVIEW_CLASS
+		WHERE REVIEW_CLASS_IDX = #{reviewIdx}
+	</delete>
 
-  <!-- 8. 기업 회원 목록 -->
-  <select id="companyList" resultType="map">
-    SELECT
-    u.USER_IDX,
-    u.USER_NAME,
-    u.STATUS,
-    c.COMPANY_IDX,
-    c.COMPANY_NUM,
-    (SELECT MAX(CERT_STATUS) 
-     FROM CERT 
-     WHERE USER_IDX = u.USER_IDX 
-     AND CERT_TYPE = '사업증명서') AS CERT_STATUS
-  FROM USERS u
-  JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
-  WHERE u.USER_TYPE = 'COMPANY'
-  ORDER BY c.COMPANY_IDX DESC
-  </select>
+	<!-- 8. 기업 회원 목록 -->
+	<select id="companyList" resultType="map">
+		SELECT
+		u.USER_IDX,
+		u.USER_NAME,
+		u.STATUS,
+		c.COMPANY_IDX,
+		c.COMPANY_NUM,
+		NVL(ct.CERT_STATUS,
+		'INACTIVE') AS CERT_STATUS
+		FROM USERS u
+		JOIN COMPANY c ON c.USER_IDX =
+		u.USER_IDX
+		LEFT JOIN CERT ct ON u.USER_IDX = ct.USER_IDX AND
+		ct.CERT_TYPE = '사업자등록증'
+		WHERE u.USER_TYPE = 'COMPANY'
+		ORDER BY
+		c.COMPANY_IDX DESC
+	</select>
 
-  <!-- 9. 기업 회원 상세 -->
-  <select id="companyDetail" parameterType="map" resultType="map">
-    SELECT
-      u.USER_IDX,
-      u.USER_NAME,
-      u.LOGIN_ID,
-      u.STATUS,
-      c.COMPANY_NUM,
-      c.PHONE,
-      c.ADDRESS,
-      c.EMAIL,
-      cert.CERT_STATUS,
-      e.START_DATE,
-      e.END_DATE,
-      e.REASON
-    FROM USERS u
-    JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
-    LEFT JOIN CERT cert ON cert.USER_IDX = u.USER_IDX AND cert.CERT_TYPE = '사업증'
-    LEFT JOIN (
-      SELECT e1.*
-      FROM EMBEDDED_USER e1
-      WHERE e1.EMBED_USER_IDX IN (
-        SELECT MAX(e2.EMBED_USER_IDX)
-        FROM EMBEDDED_USER e2
-        GROUP BY e2.USER_IDX
-      )
-    ) e ON e.USER_IDX = u.USER_IDX
-    WHERE u.USER_IDX = #{usersIdx}
-  </select>
+	<!-- 9. 기업 회원 상세 -->
+	<select id="companyDetail" parameterType="int" resultType="map">
+		select
+		u.user_idx,
+		u.user_name,
+		c.email,
+		c.phone,
+		u.status,
+		u.login_id,
+		c.company_idx,
+		c.company_num,
+		u.user_name,
+		c.address,
+		ct.cert_file,
+		ct.get_date,
+		ct.cert_from,
+		ct.cert_type,
+		ct.cert_status
+		from users u
+		join
+		company c on c.user_idx = u.user_idx
+		left join cert ct on u.user_idx=ct.user_idx and ct.cert_type = '사업자등록증'
+		where u.user_idx = #{userIdx}
+	</select>
 
-  <!-- 10. USERS 상태 업데이트 -->
-  <update id="updateUserStatus" parameterType="map">
-    UPDATE USERS
-    SET STATUS = #{status}
-    WHERE USER_IDX = #{userIdx}
-  </update>
+	<!-- 10.컴퍼니 상태 업데이트 -->
+	<update id="updateCompanyStatus" parameterType="map">
+		update users
+		set
+		status = #{status} where user_idx = #{user_idx}
+	</update>
 
-  <!-- 11. 정지 이력 추가 -->
-  <insert id="insertEmbeddedHistory" parameterType="map">
-    INSERT INTO EMBEDDED_USER (
-      EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON
-    ) VALUES (
-      SEQ_EMBED_USER.NEXTVAL,
-      #{userIdx},
-      TO_DATE(#{startDate}, 'YYYY-MM-DD'),
-      CASE
-        WHEN #{endDate} IS NULL OR #{endDate} = '' THEN NULL
-        ELSE TO_DATE(#{endDate}, 'YYYY-MM-DD')
-      END,
-      #{reason}
-    )
-  </insert>
+	<insert id="insertCompanySuspended"
+		parameterType="com.dacoach.model.admin.EmbeddedUserDTO">
+		insert into embedded_user(
+		embed_user_idx,
+		user_idx,
+		start_date,
+		end_date,
+		reason
+        )
+		values(seq_embed_user.nextval,
+		#{user_idx,jdbcType=NUMERIC},
+		#{start_date,jdbcType=DATE},
+		#{end_date,jdbcType=DATE},
+		#{reason,jdbcType=VARCHAR}
+		)
+	</insert>
 
-  <!-- 12. 최신 정지 이력 종료 처리 -->
-  <update id="closeLatestEmbeddedHistory" parameterType="map">
-    UPDATE EMBEDDED_USER
-    SET END_DATE = SYSDATE
-    WHERE EMBED_USER_IDX = (
-      SELECT MAX(e2.EMBED_USER_IDX)
-      FROM EMBEDDED_USER e2
-      WHERE e2.USER_IDX = #{userIdx}
-    )
-  </update>
+	<update id="updateEnddateSuspended" parameterType="int">
+		update embedded_user
+		set end_date = sysdate
+        where user_idx = #{userIdx} and end_date is null
+	</update>
+	<!-- 11_1 -->
+	<!-- 11. 정지 이력 추가 -->
+	<insert id="insertEmbeddedHistory" parameterType="map">
+		INSERT INTO EMBEDDED_USER (
+		EMBED_USER_IDX, USER_IDX, START_DATE, END_DATE, REASON
+		) VALUES (
+		SEQ_EMBED_USER.NEXTVAL,
+		#{userIdx},
+		TO_DATE(#{startDate}, 'YYYY-MM-DD'),
+		CASE
+		WHEN #{endDate} IS NULL OR #{endDate} = '' THEN NULL
+		ELSE TO_DATE(#{endDate}, 'YYYY-MM-DD')
+		END,
+		#{reason}
+		)
+	</insert>
 
-  <!-- 13. CERT 존재 여부 확인 -->
-  <select id="countCertByUserAndType" parameterType="map" resultType="int">
-    SELECT COUNT(*)
-    FROM CERT
-    WHERE USER_IDX = #{userIdx}
-    AND CERT_TYPE = #{certType}
-  </select>
+	<!-- 12. 최신 정지 이력 종료 처리 -->
+	<update id="closeLatestEmbeddedHistory" parameterType="map">
+		UPDATE EMBEDDED_USER
+		SET END_DATE = SYSDATE
+		WHERE EMBED_USER_IDX = (
+		SELECT MAX(e2.EMBED_USER_IDX)
+		FROM EMBEDDED_USER e2
+		WHERE e2.USER_IDX = #{userIdx}
+		)
+	</update>
 
-  <!-- 14. CERT 상태 업데이트 -->
-  <update id="updateCertStatus" parameterType="map">
-    UPDATE CERT
-    SET CERT_STATUS = #{cert_status},
-        GET_DATE = SYSDATE
-    WHERE USER_IDX = #{user_idx}
-    AND CERT_TYPE = '사업자등록증'
-  </update>
+	<!-- 13. CERT 존재 여부 확인 -->
+	<select id="countCertByUserAndType" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM CERT
+		WHERE USER_IDX = #{userIdx}
+		AND CERT_TYPE = #{certType}
+	</select>
 
-  <!-- 15. CERT 추가 -->
-  <insert id="insertCertStatus" parameterType="map">
-    INSERT INTO CERT (
-      CERT_IDX, USER_IDX, CERT_NAME, CERT_TYPE, CERT_STATUS, GET_DATE
-    ) VALUES (
-      SEQ_CERT.NEXTVAL,
-      #{user_idx},
-      '사업자등록증',
-      '사업자등록증',
-      #{cert_status},
-      SYSDATE
-    )
-  </insert>
-  
- <select id="getCertFilePath" resultType="string">
-  SELECT cert_file
-  FROM (
-    SELECT c.cert_file
-    FROM cert c
-    WHERE c.user_idx = #{userIdx}
-      AND c.cert_type = '사업자등록증'
-    ORDER BY c.cert_idx DESC
-  )
-  WHERE ROWNUM = 1
-</select>
+	<!-- 14. CERT 승인될떄 -->
+	<update id="updateCertDetail" parameterType="map">
+    UPDATE cert
+    SET
+        get_date = CASE 
+                      WHEN #{get_date} IS NULL OR #{get_date} = '' THEN NULL 
+                      ELSE TO_DATE(SUBSTR(#{get_date}, 1, 10), 'YYYY-MM-DD') 
+                   END,
+        cert_from = #{cert_from},
+        cert_type = #{cert_type},
+        cert_status = '승인'
+    WHERE user_idx = #{user_idx} 
+      AND cert_type = '사업자등록증'
+</update>
+	<!-- 15. CERT 추가 -->
+	<insert id="insertCertDetail" parameterType="map">
+		INSERT INTO CERT (
+		CERT_IDX, USER_IDX, CERT_NAME, CERT_TYPE, CERT_STATUS, GET_DATE
+		) VALUES (
+		SEQ_CERT.NEXTVAL,
+		#{user_idx},
+		'사업자등록증',
+		'사업자등록증',
+		#{cert_status},
+		SYSDATE
+		)
+	</insert>
 
-  
-  <insert id="incertCert" parameterType="com.dacoach.model.company.CertDTO">
-  insert into cert(cert_idx,
-  user_idx,
-  cert_type,
-  cert_name,
-  cert_from,
-  cert_file,
-  get_date,
-  cert_status)values (seq_cert.nextval,
-  #{user_idx},
-  '사업증',
-  #{cert_name},
-  #{cert_from},
-  #{cert_file},
-  #{get_date},
-  '미확인' )
-  </insert>
-  
-  <select id="hasCert" parameterType="int" resultType="int">
-       	select count(*)
-       	from cert
-       	where user_idx=#{userIdx} and cert_type='사업증'
-   </select>
+	<select id="getCertFile" parameterType="int" resultType="map">
+		SELECT CERT_FILE FROM CERT WHERE USER_IDX = #{userIdx} AND CERT_TYPE =
+		'사업자등록증'
+
+	</select>
 
 </mapper>

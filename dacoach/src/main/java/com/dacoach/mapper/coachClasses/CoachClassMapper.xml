@@ -424,4 +424,56 @@
 		AND STATUS = 'CONFIRMED'
 	</select>
 
+	<!-- 최근 7일간 찜 수 많은 인기 클래스 TOP5 -->
+	<select id="getPopularClass"
+		resultType="com.dacoach.model.coachClasses.CoachClassDTO">
+		SELECT *
+		FROM (
+		SELECT
+		c.class_idx,
+		c.provider_idx,
+		c.title,
+		c.intro,
+		c.minor_field_idx,
+		c.minor_region_idx,
+		c.region_detail,
+		c.price,
+		c.photo,
+		c.video,
+		c.start_date,
+		c.end_date,
+		c.created_at,
+		c.max_user_cnt,
+		u.user_name AS user_name,
+		NVL(rv.avg_rating, 0) AS avg_rating,
+		NVL(rv.review_cnt, 0) AS review_cnt,
+		CASE WHEN pm.user_idx IS NOT NULL THEN 1 ELSE 0 END AS is_premium,
+		NVL(l.like_cnt, 0) AS like_cnt
+		FROM class c
+		JOIN users u ON u.user_idx = c.provider_idx
+		LEFT JOIN (
+		SELECT lc.class_idx, COUNT(*) AS like_cnt
+		FROM likes_class lc
+		WHERE lc.created_at >= (SYSDATE - 7)
+		GROUP BY lc.class_idx
+		) l ON l.class_idx = c.class_idx
+		LEFT JOIN (
+		SELECT rc.class_idx, AVG(rc.rating) AS avg_rating, COUNT(*) AS review_cnt
+		FROM review_class rc
+		GROUP BY rc.class_idx
+		) rv ON rv.class_idx = c.class_idx
+		LEFT JOIN (
+		SELECT DISTINCT m.user_idx
+		FROM membership m
+		JOIN membership_detail md ON md.member_detail_idx = m.member_detail_idx
+		WHERE md.member_type = 'PREMIUM'
+		AND m.status = 'BEING'
+		AND (m.end_date IS NULL OR m.end_date >= SYSDATE)
+		) pm ON pm.user_idx = c.provider_idx
+		ORDER BY NVL(l.like_cnt, 0) DESC, c.created_at DESC
+		)
+		WHERE ROWNUM &lt;= 5
+	</select>
+	
+
 </mapper>

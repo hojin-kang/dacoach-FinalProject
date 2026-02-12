@@ -150,10 +150,38 @@
   </div>
   </div>
       	<div class="wrap">
+      	<button type="button" class="arrowBtn left" id="popClassPrev" aria-label="prev">‹</button>
     <div class="viewport">
       <div class="track" id="popularClassTrack">
+      <div class="popularCard_class" th:each="pc : ${popularClasses}">
+          <a class="popularCardInner_class" th:href="@{/coach/classDetail(id=${pc.class_idx})}">
+            
+            <!-- 왼쪽: 프로필 영역 -->
+            <div class="top">
+              <div>
+                <img th:src="${pc.photo != null and pc.photo != ''} ? @{/uploads/{p}(p=${pc.photo})} : @{/img/profile/default_company.jpg}"
+                     alt="class">
+              </div>
+            </div>
+            <div class="middle">
+	            <div class="rating">
+	                <span class="star">★</span>
+	                <span th:text="${#numbers.formatDecimal(pc.avg_rating, 1, 1)}">4.7</span>
+	                <span class="cnt" th:text="'(' + ${pc.review_cnt} + ')'">(54)</span>
+	            </div>
+            	<div th:text="|[${pc.user_name}]|" class="class_name">기업 이름</div>
+            
+            </div>
+            <div class="bottom">
+            	<div class="name" th:text="${pc.title}">클래스 이름</div>
+            </div>
+              
+
+          </a>
+        </div>
       </div>
       </div>
+      <button type="button" class="arrowBtn right" id="popClassNext" aria-label="next">›</button>
       </div>
       </section>
     </div>
@@ -259,6 +287,60 @@ document.addEventListener("click", (e) => {
 	  // 바깥 클릭하면 닫기
 	  document.querySelectorAll(".infoBubble").forEach(b => b.classList.remove("isOpen"));
 	});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.getElementById("popularClassTrack");
+  const nextBtn = document.getElementById("popClassNext");
+  const prevBtn = document.getElementById("popClassPrev");
+  if(!track || !nextBtn || !prevBtn) return;
+
+  const cards = track.querySelectorAll(".popularCard_class");
+  const total = cards.length;
+  const visible = 3;
+
+  let index = 0;
+  let maxIndex = Math.max(0, total - visible);
+  const gap = 12;
+
+  function move(){
+    if(total === 0) return;
+
+    const cardWidth = cards[0].offsetWidth;
+    track.style.transform = `translateX(${-(cardWidth + gap) * index}px)`;
+  }
+
+  function toggleButtons(){
+    // 처음이면 prev 숨김
+    if(index === 0) prevBtn.classList.add("isHidden");
+    else prevBtn.classList.remove("isHidden");
+
+    // 끝이면 next 숨김
+    if(index === maxIndex) nextBtn.classList.add("isHidden");
+    else nextBtn.classList.remove("isHidden");
+  }
+
+  function update(){
+    maxIndex = Math.max(0, total - visible); // resize 시 재계산
+    if(index > maxIndex) index = maxIndex;
+
+    move();
+    toggleButtons();
+  }
+
+  nextBtn.addEventListener("click", () => {
+    index = Math.min(maxIndex, index + 1);
+    update();
+  });
+
+  prevBtn.addEventListener("click", () => {
+    index = Math.max(0, index - 1);
+    update();
+  });
+
+  window.addEventListener("resize", update);
+  update(); // 초기 상태 세팅(처음엔 prev 숨김)
+});
 </script>
 
 

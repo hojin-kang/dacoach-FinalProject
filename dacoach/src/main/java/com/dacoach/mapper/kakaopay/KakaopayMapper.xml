@@ -13,7 +13,14 @@
   	)
   </insert>
   <select id="getPayStatus">
-  	select * from pay_status where tid= #{tid}
+  	SELECT tid, partner_order_id, partner_user_id, status
+	FROM (
+		SELECT tid, partner_order_id, partner_user_id, status
+		FROM pay_status
+		WHERE tid = #{tid}
+		ORDER BY ROWID DESC
+		)
+	WHERE ROWNUM = 1
   </select>
   
   <update id="upPayStatus">
