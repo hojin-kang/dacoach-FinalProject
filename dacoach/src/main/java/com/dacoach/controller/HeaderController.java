@@ -16,7 +16,7 @@ public class HeaderController {
 
     @ModelAttribute("unreadNotiCount")
     public int unreadNotiCount(HttpSession session) {
-        Integer usersIdx = (Integer) session.getAttribute("users_idx");
+        Integer usersIdx = (Integer) session.getAttribute("user_idx");
         if (usersIdx == null) return 0;
         return notificationService.countUnread(usersIdx);
     }
