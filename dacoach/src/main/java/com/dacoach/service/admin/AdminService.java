@@ -25,8 +25,10 @@ public interface AdminService {
 	public int updateEnddateSuspended(int user_idx) throws Exception;
 	
 	//코치 자격증 관리
-	public List<CertDTO> getWaitCertList(int user_idx) throws Exception;
+	List<CertDTO> getWaitCertList(int user_idx) throws Exception;
 	public int updateCertStatus(CertDTO dto) throws Exception;
+	List<CertDTO> getCertList(int user_idx) throws Exception;
+	
 	
 	// 검열 키워드 관리
 	List<Map<String,Object>> getKeywordType() throws Exception;

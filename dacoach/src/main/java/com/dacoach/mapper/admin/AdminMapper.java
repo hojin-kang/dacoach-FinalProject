@@ -28,6 +28,7 @@ public interface AdminMapper {
 	//코치 자격증 관리
 	public List<CertDTO> getWaitCertList(int user_idx) throws Exception;
 	public int updateCertStatus(CertDTO dto) throws Exception;
+	public List<CertDTO> getCertList(int user_idx) throws Exception;
 	
 	// 검열 키워드 관리
 	public List<Map<String,Object>> getKeywordType() throws Exception;

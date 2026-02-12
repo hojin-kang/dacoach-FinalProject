@@ -2,224 +2,440 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="coachDetail">
     <style>
-        .bg-mint-light { background-color: #f0f8f7; }
-        .bg-mint-dark { background-color: #9dbbb5; }
-        .font-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
-        .info-card { background-color: white; border: 2px solid #e5e7eb; border-radius: 40px; padding: 2rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 1.5rem; position: relative; }
-        .section-badge { display: inline-block; background-color: #9dbbb5; color: white; padding: 0.5rem 2rem; border-radius: 9999px; font-weight: bold; margin-bottom: 1.5rem; font-size: 1rem; }
-
-        .row-container { display: flex; align-items: stretch; }
-        .label-base { background-color: #9dbbb5; color: white; width: 6.5rem; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.875rem; flex-shrink: 0; border-radius: 6px 0 0 6px; }
-        .content-base { background-color: #f0f8f7; flex: 1; display: flex; align-items: center; padding: 0 1rem; border-radius: 0 6px 6px 0; font-size: 0.875rem; }
-
-        .status-box { flex: 1; background-color: #f0f8f7; padding: 0.5rem 1rem; border-radius: 0 6px 6px 0; display: flex; flex-direction: column; gap: 0.5rem; justify-content: center; }
-        .radio-group { display: flex; align-items: center; gap: 0.5rem; font-weight: bold; font-size: 0.875rem; cursor: pointer; }
-        .date-picker-wrap { display: flex; align-items: center; gap: 0.25rem; background-color: white; padding: 2px 8px; border-radius: 4px; border: 1px solid #e5e7eb; }
-        .input-date { font-size: 11px; border: none; outline: none; cursor: pointer; background: transparent; }
-
-        .cert-thead { background-color: #9dbbb5; color: white; height: 2rem; }
-        .cert-tbody { background-color: #f0f8f7; }
-
-        .btn-save-sm { background-color: #9dbbb5; color: white; padding: 0.5rem 1.5rem; border-radius: 12px; font-weight: bold; font-size: 0.8rem; transition: all; border: none; cursor: pointer; }
-        .btn-save-sm:hover { filter: brightness(90%); }
-        
-        /* 목록 버튼용 추가 스타일 */
-        .btn-list-sm { background-color: #9ca3af; color: white; padding: 0.5rem 1.5rem; border-radius: 12px; font-weight: bold; font-size: 0.8rem; transition: all; border: none; cursor: pointer; text-decoration: none; }
-        .btn-list-sm:hover { filter: brightness(90%); }
+        .bg-m-l { 
+            background-color: #f0f8f7; 
+        }
+        .bg-m-d { 
+            background-color: #9dbbb5; 
+        }
+        .f-main { 
+            font-family: 'Pretendard', sans-serif; 
+            font-size: 14px; 
+            color: #374151; 
+        }
+        .i-card { 
+            background-color: white; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 40px; 
+            padding: 2rem; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+            margin-bottom: 1.5rem; 
+            position: relative; 
+        }
+        .s-badge { 
+            display: inline-block; 
+            background-color: #9dbbb5; 
+            color: white; 
+            padding: 0.5rem 2rem; 
+            border-radius: 999px; 
+            font-weight: bold; 
+            margin-bottom: 1.5rem; 
+            font-size: 1rem; 
+        }
+        .row-box { 
+            display: flex; 
+            align-items: stretch; 
+        }
+        .lbl { 
+            background-color: #9dbbb5; 
+            color: white; 
+            width: 6.5rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            font-size: 0.875rem; 
+            flex-shrink: 0; 
+            border-radius: 6px 0 0 6px; 
+        }
+        .cnt { 
+            background-color: #f0f8f7; 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            padding: 0 1rem; 
+            border-radius: 0 6px 6px 0; 
+            font-size: 0.875rem; 
+        }
+        .st-box { 
+            flex: 1; 
+            background-color: #f0f8f7; 
+            padding: 0.5rem 1rem; 
+            border-radius: 0 6px 6px 0; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 0.5rem; 
+            justify-content: center; 
+        }
+        .r-grp { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            font-weight: bold; 
+            font-size: 0.875rem; 
+            cursor: pointer; 
+        }
+        .d-wrap { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.25rem; 
+            background-color: white; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            border: 1px solid #e5e7eb; 
+        }
+        .i-date { 
+            font-size: 11px; 
+            border: none; 
+            outline: none; 
+            cursor: pointer; 
+            background: transparent; 
+        }
+        .c-th { 
+            background-color: #9dbbb5; 
+            color: white; 
+            height: 2rem; 
+        }
+        .c-tb { 
+            background-color: #f0f8f7; 
+        }
+        .btn-s { 
+            background-color: #9dbbb5; 
+            color: white; 
+            padding: 0.5rem 1.5rem; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            font-size: 0.8rem; 
+            transition: all; 
+            border: none; 
+            cursor: pointer; 
+        }
+        .btn-s:hover { 
+            filter: brightness(90%); 
+        }
+        .btn-l { 
+            background-color: #9ca3af; 
+            color: white; 
+            padding: 0.5rem 1.5rem; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            font-size: 0.8rem; 
+            transition: all; 
+            border: none; 
+            cursor: pointer; 
+            text-decoration: none; 
+        }
+        .btn-l:hover { 
+            filter: brightness(90%); 
+        }
+        .c-item { 
+            width: 16px; 
+            height: 16px; 
+            accent-color: #9dbbb5; 
+            cursor: pointer; 
+        }
+        .i-reason { 
+            width: 100%; 
+            background-color: white; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 4px; 
+            padding: 0.25rem 0.5rem; 
+            font-size: 0.75rem; 
+            outline: none; 
+        }
+        .i-reason:focus { 
+            border-color: #9dbbb5; 
+        }
+        .i-txt-c { 
+            width: 100%; 
+            background: transparent; 
+            text-align: center; 
+            border: none; 
+            outline: none; 
+        }
+        .f-bold { 
+            font-weight: 600; 
+        }
+        .br-w { 
+            border-right: 1px solid rgba(255,255,255,0.2); 
+        }
+        .br-g { 
+            border-right: 1px solid #f3f4f6; 
+        }
+        .photo-frame { 
+            width: 13rem; 
+            height: 13rem; 
+            background-color: #f0f8f7; 
+            border-radius: 1.5rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: 1px solid rgba(157, 187, 181, 0.2); 
+            flex-shrink: 0; 
+            overflow: hidden; 
+        }
+        .btn-back { 
+            background-color: #9ca3af; 
+            color: white; 
+            padding: 0.75rem 3rem; 
+            border-radius: 0.75rem; 
+            font-weight: bold; 
+            border: none; 
+            cursor: pointer; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+        }
+        .btn-back:hover { 
+            background-color: #6b7280; 
+        }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.4); 
+            z-index: 1000; 
+            align-items: center; 
+            justify-content: center; 
+            backdrop-filter: blur(2px); 
+        }
+        .modal.show { 
+            display: flex; 
+        }
+        .modal-box { 
+            width: 90%; 
+            max-width: 600px; 
+            background: white; 
+            border-radius: 25px; 
+            padding: 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+        }
+        .modal-title { 
+            font-size: 18px; 
+            font-weight: 900; 
+            color: #7a9a94; 
+            margin-bottom: 20px; 
+        }
+        .modal-foot { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: flex-end; 
+            margin-top: 20px;
+        }
+        .s-status {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 11px;
+            padding: 2px;
+            outline: none;
+            cursor: pointer;
+        }
     </style>
 
-    <div class="max-w-[1100px] mx-auto p-8 font-main"
+    <div class="max-w-[1100px] mx-auto p-8 f-main"
          th:with="hasData=${coachDetail != null and !coachDetail.isEmpty()}, info=${hasData ? coachDetail[0] : null}">
         
-        <div class="info-card">
-            <h2 class="section-badge">코치 정보</h2>
+        <div class="i-card">
+            <h2 class="s-badge">코치 정보</h2>
             <div class="flex gap-10">
                 <div class="flex-1 grid grid-cols-2 gap-x-6 gap-y-2">
-                    <div class="row-container h-10"><span class="label-base">이름</span><div class="content-base" th:text="${hasData ? info['USER_NAME'] : ''}"></div></div>
-                    <div class="row-container h-10"><span class="label-base">닉네임</span><div class="content-base" th:text="${hasData ? info['NICKNAME'] : ''}"></div></div>
-                    <div class="row-container h-10"><span class="label-base">아이디</span><div class="content-base" th:text="${hasData ? info['LOGIN_ID'] : ''}"></div></div>
-                    <div class="row-container h-10"><span class="label-base">비밀번호</span><div class="content-base">********</div></div>
-                    <div class="row-container h-10"><span class="label-base">카카오ID</span><div class="content-base" th:text="${hasData and info['KAKAO_KEY'] != null ? info['KAKAO_KEY'] : '-'}"></div></div>
-                    <div class="row-container h-10"><span class="label-base">이메일</span><div class="content-base" th:text="${hasData ? info['MAIL'] : ''}"></div></div>
-                    <div class="row-container h-10"><span class="label-base">생년월일</span><div class="content-base" th:text="${hasData and info['BIRTH_DATE'] != null ? #strings.substring(info['BIRTH_DATE'], 0, 10) : ''}"></div></div>
-                    <div class="row-container h-10"><span class="label-base">전화번호</span><div class="content-base" th:text="${hasData ? info['PHONE'] : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">이름</span><div class="cnt" th:text="${hasData ? info['USER_NAME'] : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">닉네임</span><div class="cnt" th:text="${hasData ? info['NICKNAME'] : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">아이디</span><div class="cnt" th:text="${hasData ? info['LOGIN_ID'] : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">비밀번호</span><div class="cnt">********</div></div>
+                    <div class="row-box h-10"><span class="lbl">카카오ID</span><div class="cnt" th:text="${hasData and info['KAKAO_KEY'] != null ? info['KAKAO_KEY'] : '-'}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">이메일</span><div class="cnt" th:text="${hasData ? info['MAIL'] : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">생년월일</span><div class="cnt" th:text="${hasData and info['BIRTH_DATE'] != null ? #strings.substring(info['BIRTH_DATE'], 0, 10) : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">전화번호</span><div class="cnt" th:text="${hasData ? info['PHONE'] : ''}"></div></div>
                 </div>
-                <div class="w-52 h-52 bg-mint-light rounded-3xl flex items-center justify-center border border-mint-dark/20 shrink-0 overflow-hidden">
+                <div class="photo-frame">
                     <img th:if="${hasData and info['PHOTO'] != null}" th:src="@{|/uploads/${info['PHOTO']}|}" class="w-full h-full object-cover">
                     <svg th:unless="${hasData and info['PHOTO'] != null}" class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-6">
-            <div class="info-card flex flex-col min-h-[350px]">
-            	<input type="hidden" id="serverMsg" th:value="${msg}">
-				<input type="hidden" id="serverUIdx" th:value="${user_idx}">
-				<input type="hidden" id="serverCIdx" th:value="${coach_idx}">
-            
+        <div class="grid grid-cols-[1fr_1.5fr] gap-6">
+            <div class="i-card flex flex-col min-h-[350px]">
+                <input type="hidden" id="serverMsg" th:value="${msg}">
+                <input type="hidden" id="serverUIdx" th:value="${user_idx}">
+                <input type="hidden" id="serverCIdx" th:value="${coach_idx}">
+                
                 <form th:action="@{/admin/coach/updateCoachStatus}" method="post" class="flex-1 flex flex-col">
                     <div>
-                        <h2 class="section-badge">계정관리</h2>
+                        <h2 class="s-badge">계정관리</h2>
                         <input type="hidden" name="user_idx" th:value="${param.user_idx}">
                         <input type="hidden" name="coach_idx" th:value="${param.coach_idx}">
                         
-                        <div class="row-container min-h-[120px]">
-                            <div class="label-base">계정상태</div>
-                            <div class="status-box">
-                                <label class="radio-group">
-                                    <input type="radio" name="status" value="ACTIVE" onclick="toggleDateInput(false)" 
-                                           th:checked="${coachStatus == 'ACTIVE'}" class="accent-mint-dark w-4 h-4"> 사용
-                                </label>
-
-                                <label class="radio-group">
-                                    <input type="radio" name="status" value="WARNING" onclick="toggleDateInput(false)" 
-                                           th:checked="${coachStatus == 'WARNING'}" class="accent-mint-dark w-4 h-4"> 주의
-                                </label>
-
-                                <label class="radio-group">
-                                    <input type="radio" name="status" value="DANGER" onclick="toggleDateInput(false)" 
-                                           th:checked="${coachStatus == 'DANGER'}" class="accent-mint-dark w-4 h-4"> 위험
-                                </label>
-
+                        <div class="row-box min-h-[120px]">
+                            <div class="lbl">계정상태</div>
+                            <div class="st-box">
+                                <label class="r-grp"><input type="radio" name="status" value="ACTIVE" onclick="toggleDateInput(false)" th:checked="${coachStatus == 'ACTIVE'}" class="c-item"> 사용</label>
+                                <label class="r-grp"><input type="radio" name="status" value="WARNING" onclick="toggleDateInput(false)" th:checked="${coachStatus == 'WARNING'}" class="c-item"> 주의</label>
+                                <label class="r-grp"><input type="radio" name="status" value="DANGER" onclick="toggleDateInput(false)" th:checked="${coachStatus == 'DANGER'}" class="c-item"> 위험</label>
                                 <div class="flex flex-col gap-2">
-                                    <label class="radio-group whitespace-nowrap">
-                                        <input type="radio" name="status" value="SUSPENDED" onclick="toggleDateInput(true)" 
-                                               th:checked="${coachStatus == 'SUSPENDED'}" class="accent-mint-dark w-4 h-4"> 정지
-                                    </label>
+                                    <label class="r-grp whitespace-nowrap"><input type="radio" name="status" value="SUSPENDED" onclick="toggleDateInput(true)" th:checked="${coachStatus == 'SUSPENDED'}" class="c-item"> 정지</label>
                                     
-                                    <div id="dateArea" class="flex flex-col gap-2 ml-6" th:style="${coachStatus == 'SUSPENDED' ? 'display:flex' : 'display:none'}">
-                                        <div class="date-picker-wrap w-fit">
-                                            <input type="date" id="startDate" name="start_date"
-                                                th:value="${coachStatus == 'SUSPENDED' ? coachEmbedded?.start_date : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
-                                                class="input-date" readonly> 
+                                    <div id="dateArea" class="flex flex-col gap-2 ml-6" 
+                                         th:style="${coachStatus == 'SUSPENDED' ? 'display:flex' : 'display:flex; visibility:hidden; pointer-events:none;'}">
+                                        <div class="d-wrap w-fit">
+                                            <input type="date" id="startDate" name="start_date" th:value="${coachStatus == 'SUSPENDED' ? coachEmbedded?.start_date : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}" class="i-date" readonly> 
                                             <span class="text-gray-300">~</span> 
-                                            <input type="date" name="end_date"
-                                                th:value="${coachEmbedded?.end_date}"
-                                                th:readonly="${coachEmbedded?.end_date != null}"
-                                                class="input-date">
+                                            <input type="date" name="end_date" th:value="${coachEmbedded?.end_date}" th:readonly="${coachEmbedded?.end_date != null}" class="i-date">
                                         </div>
-                                        
-                                        <input type="text" id="reason" name="reason" placeholder="정지 사유 입력"
-                                               class="w-full bg-white border border-gray-200 rounded px-2 py-1 text-xs outline-none focus:border-mint-dark"
-                                               th:value="${coachEmbedded?.reason}">
+                                        <input type="text" id="reason" name="reason" placeholder="정지 사유 입력" class="i-reason" th:value="${coachEmbedded?.reason}">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="flex justify-end mt-auto">
-                        <button type="submit" class="btn-save-sm">계정 상태 저장</button>
+                        <button type="submit" class="btn-s">계정 상태 저장</button>
                     </div>
                 </form>
             </div>
 
-            <div class="info-card flex flex-col min-h-[350px]">
+            <div class="i-card flex flex-col min-h-[350px]">
                 <form th:action="@{/admin/coach/updateCertStatus}" method="post" class="flex-1 flex flex-col">
                     <div>
-                        <h2 class="section-badge">자격증</h2>
-						<input type="hidden" name="coach_idx" th:value="${param.coach_idx}">
-						<input type="hidden" name="user_idx" th:value="${param.user_idx}">
+                        <h2 class="s-badge">자격증</h2>
+                        <input type="hidden" name="coach_idx" th:value="${param.coach_idx}">
+                        <input type="hidden" name="user_idx" th:value="${param.user_idx}">
 
-						<div class="overflow-hidden rounded-lg border border-gray-200 min-h-[120px]">
+                        <div class="overflow-hidden rounded-lg border border-gray-200 min-h-[120px]">
                             <table class="w-full text-center text-xs border-collapse">
-                                <thead class="cert-thead">
+                                <thead class="c-th">
                                     <tr>
-                                        <th class="border-r border-white/20">발급일자</th>
-                                        <th class="border-r border-white/20">자격명</th>
-                                        <th class="border-r border-white/20">발급기관</th>
-                                        <th style="min-width: 40px;">파일</th>
+                                        <th class="br-w w-10">체크</th>
+                                        <th class="br-w">발급일자</th>
+                                        <th class="br-w">자격명</th>
+                                        <th class="br-w">발급기관</th>
+                                        <th class="br-w" style="min-width: 40px;">파일</th>
+                                        <th style="min-width: 60px;">상태변경</th>
                                     </tr>
                                 </thead>
-								<tbody class="cert-tbody">
-									<tr th:if="${certList == null or certList.isEmpty()}"
-										class="h-10 border-t border-white text-gray-400">
-										<td colspan="4" class="py-10 text-center">대기 중인 자격증이
-											없습니다.</td>
-									</tr>
+                                <tbody class="c-tb">
+                                    <tr th:if="${certList == null or certList.isEmpty()}" class="h-10 border-t border-white text-gray-400">
+                                        <td colspan="6" class="py-10 text-center">대기 중인 자격증이 없습니다.</td>
+                                    </tr>
 
-									<tr th:unless="${certList == null or certList.isEmpty()}"
-										th:each="cert : ${certList}"
-										class="h-10 border-t border-gray-100 text-gray-700">
-
-										<input type="hidden" name="cert_idx" th:value="${cert.cert_idx}">
-
-										<td class="border-r border-gray-100"><input type="date"
-											name="get_date"
-											class="w-full bg-transparent text-center focus:outline-none">
-										</td>
-
-										<td class="border-r border-gray-100 font-semibold"><input
-											type="text" name="cert_name" th:value="${cert.cert_name}"
-											class="w-full bg-transparent text-center focus:outline-none font-semibold">
-										</td>
-
-										<td class="border-r border-gray-100"><input type="text"
-											name="cert_from"
-											class="w-full bg-transparent text-center focus:outline-none"
-											placeholder="기관 입력"></td>
-
-										<td><th:block
-												th:if="${cert.cert_file != null and cert.cert_file != ''}">
-												<a href="javascript:void(0)"
-													th:onclick="viewCert([[${cert.cert_file}]])"
-													class="hover:opacity-70"> <i
-													class="fa-solid fa-folder-open"
-													style="color: #7a948f; font-size: 16px;"></i>
-												</a>
-											</th:block> <span
-											th:unless="${cert.cert_file != null and cert.cert_file != ''}"
-											class="text-gray-300">-</span></td>
-									</tr>
-								</tbody>
-							</table>
+                                    <tr th:unless="${certList == null or certList.isEmpty()}" th:each="cert, i : ${certList}" class="h-10 border-t border-gray-100 text-gray-700">
+                                        <td class="br-g">
+                                            <input type="checkbox" name="checked" th:value="${i.index}" class="c-item">
+                                            <input type="hidden" name="cert_idx" th:value="${cert.cert_idx}">
+                                        </td>
+                                        <td class="br-g">
+                                            <input type="date" name="get_date" class="i-txt-c" th:value="${cert.get_date}">
+                                        </td>
+                                        <td class="br-g f-bold">
+                                            <input type="text" name="cert_name" th:value="${cert.cert_name}" class="i-txt-c f-bold">
+                                        </td>
+                                        <td class="br-g">
+                                            <input type="text" name="cert_from" th:value="${cert.cert_from}" class="i-txt-c" placeholder="기관 입력">
+                                        </td>
+                                        <td class="br-g">
+                                            <th:block th:if="${cert.cert_file != null and cert.cert_file != ''}">
+                                                <a href="javascript:void(0)" th:onclick="viewCert([[${cert.cert_file}]])" class="hover:opacity-70">
+                                                    <i class="fa-solid fa-folder-open" style="color: #7a948f; font-size: 16px;"></i>
+                                                </a>
+                                            </th:block>
+                                            <span th:unless="${cert.cert_file != null and cert.cert_file != ''}" class="text-gray-300">-</span>
+                                        </td>
+                                        <td><select name="cert_status" class="s-status">
+												<option value="승인">승인</option>
+												<option value="반려">반려</option>
+										</select></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="flex justify-end mt-auto gap-2">
-                        <button type="button" onclick="location.href='/admin/coach/certList'" class="btn-list-sm">자격증 목록</button>
-                        <button type="submit" class="btn-save-sm">자격증 정보 저장</button>
+                        <button type="button" onclick="openCertModal()" class="btn-l">자격증 목록</button>
+                        <button type="submit" class="btn-s">자격증 정보 저장</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <div class="flex justify-end mt-8">
-            <button type="button" onclick="location.href='/admin/coach/coachList'" class="bg-gray-400 text-white px-12 py-3 rounded-xl font-bold hover:bg-gray-500 transition-all shadow-sm">목록으로 돌아가기</button>
+            <button type="button" onclick="location.href='/admin/coach/coachList'" class="btn-back">목록으로 돌아가기</button>
         </div>
     </div>
 
-    <script>
+    <div class="modal" id="certModal" onclick="closeOnBackdrop(event)">
+        <div class="modal-box">
+            <div class="modal-title">🪪 전체 자격증 목록</div>
+            <div id="modalContent" class="bg-gray-50 rounded-xl p-4 min-h-[300px] max-h-[500px] overflow-y-auto f-main">
+                <p class="text-center text-gray-400 py-20">등록된 자격증 내역을 불러오고 있습니다...</p>
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn-l" onclick="closeCertModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
     window.onload = function() {
         const msg = document.getElementById('serverMsg').value;
         const uIdx = document.getElementById('serverUIdx').value;
         const cIdx = document.getElementById('serverCIdx').value;
-
         if (msg && msg.trim() !== "") {
             alert(msg);
-            
             if (uIdx && cIdx) {
                 location.href = "/admin/coach/coachDetail?user_idx=" + uIdx + "&coach_idx=" + cIdx;
             }
         }
     };
-    
+
     function toggleDateInput(show) {
         const dateArea = document.getElementById('dateArea');
         if (dateArea) {
-            dateArea.style.display = show ? 'flex' : 'none';
+            if (show) {
+                dateArea.style.visibility = 'visible';
+                dateArea.style.pointerEvents = 'auto';
+            } else {
+                dateArea.style.visibility = 'hidden';
+                dateArea.style.pointerEvents = 'none';
+            }
         }
     }
-    
+
     function viewCert(fileName) {
-        if (!fileName || fileName === '') {
-            alert("등록된 파일이 없습니다.");
-            return;
-        }
-
-        // 서버의 가상 경로(/uploads/)와 DB의 파일명을 합칩니다.
+        if (!fileName) { alert("등록된 파일이 없습니다."); return; }
         const fileUrl = '/uploads/' + fileName;
-
-        // 새 창으로 이미지 열기
         window.open(fileUrl, '_blank', 'width=600, height=800, resizable=yes, scrollbars=yes');
+    }
+
+    async function openCertModal() {
+        const modal = document.getElementById('certModal');
+        const modalBody = document.getElementById('modalContent');
+        const userIdx = document.querySelector('input[name="user_idx"]').value;
+        if (modal) modal.classList.add('show');
+        try {
+            const response = await fetch(`/admin/coach/getCertList?user_idx=${userIdx}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                let html = `<table class="w-full text-center text-xs border-collapse"><thead class="c-th"><tr><th class="br-w py-2">자격명</th><th class="br-w">발급기관</th><th class="br-w">발급일자</th><th>상태</th></tr></thead><tbody class="bg-white">`;
+                data.forEach(cert => {
+                    html += `<tr class="border-t border-gray-100 h-10"><td class="f-bold px-2">${cert.cert_name}</td><td>${cert.cert_from || '-'}</td><td>${cert.get_date ? cert.get_date.substring(0, 10) : '-'}</td><td class="font-bold">${cert.cert_status}</td></tr>`;
+                });
+                html += `</tbody></table>`;
+                modalBody.innerHTML = html;
+            } else {
+                modalBody.innerHTML = '<p class="text-center text-gray-400 py-20">등록된 자격증 내역이 없습니다.</p>';
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            modalBody.innerHTML = '<p class="text-center text-red-400 py-20">데이터를 불러오는 중 오류가 발생했습니다.</p>';
+        }
+    }
+
+    function closeCertModal() {
+        document.getElementById('certModal').classList.remove('show');
+    }
+
+    function closeOnBackdrop(e) {
+        if (e.target.id === 'certModal') closeCertModal();
     }
     </script>
 </div>
