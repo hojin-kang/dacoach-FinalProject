@@ -8,4 +8,16 @@
         where login_id = #{login_id}
         and user_type = #{user_type}
     </select>
+    <select id="getSuspendedLogs" parameterType="int" resultType="com.dacoach.model.users.UsersDTO">
+        select U.*, EU.start_date, EU.end_date, EU.reason
+        from users U
+        join embedded_user EU on U.user_idx = EU.user_idx
+        where U.status = 'SUSPENDED'
+        and U.user_idx = #{user_idx}
+        and sysdate between EU.start_date and EU.end_date
+    </select>
+    <delete id="deleteUser" parameterType="int">
+        delete from users
+        where user_idx = #{user_idx}
+    </delete>
 </mapper>

@@ -72,11 +72,25 @@ public class UserController {
 			CoachDTO coach = coachService.getCoachByKakaoKey(kakaoKey);
 
 			if (coach != null && session.getAttribute("user_idx") == null) {
-				// 이미 가입된 회원이면 세션 저장 후 메인으로
-				session.setAttribute("user_idx", coach.getUser_idx());
+				// 이미 가입된 회원인 경우
+				List<UsersDTO> suspendedLogs = usersService.getSuspendedLogs(coach.getUser_idx());
+				//정지여부 확인
+				if(suspendedLogs!=null&&suspendedLogs.size()>0) {
+					StringBuilder reasons=new StringBuilder();
+					for(UsersDTO log:suspendedLogs) {
+						reasons.append("정지사유: "+log.getReason()+" / 기간: "+log.getStart_date()+" ~ "+log.getEnd_date()+"\n");
+					}
+					mav.addObject("msg", "현재 정지된 회원입니다.\n"+reasons.toString()+"로그인 불가합니다.");
+					mav.addObject("url", "/login");
+					mav.setViewName("alert");
+					return mav;
+				}
 				if (coach.getPhoto() != null) {
 					session.setAttribute("photo", coach.getPhoto().equals("") ? null : coach.getPhoto());
 				}
+				
+				
+				session.setAttribute("user_idx", coach.getUser_idx());
 				session.setAttribute("kakao", coach.getKakao_key());
 				mav.addObject("msg", "카카오 연동 로그인 성공!\n메인페이지로 이동합니다.");
 				mav.addObject("url", "/");
@@ -155,6 +169,9 @@ public class UserController {
 			mav.setViewName("alert");
 			return mav;
 		}
+		
+
+		
 		if(user_type.equalsIgnoreCase("coach")) {
 		try {
 			
@@ -166,6 +183,30 @@ public class UserController {
 				mav.setViewName("alert");
 				return mav;
 			}
+			try {
+				List<UsersDTO> suspendedLogs = usersService.getSuspendedLogs(loginUser.getUser_idx());
+				if(suspendedLogs!=null&&suspendedLogs.size()>0) {
+					StringBuilder reasons=new StringBuilder();
+					for(UsersDTO log:suspendedLogs) {
+						reasons.append("정지사유: "+log.getReason()+" / 기간: "+log.getStart_date()+" ~ "+log.getEnd_date()+"\n");
+					}
+					mav.addObject("msg", "현재 정지된 회원입니다.\n"+reasons.toString()+"로그인 불가합니다.");
+					mav.addObject("url", "/login");
+					mav.setViewName("alert");
+					return mav;
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(loginUser.getStatus().equals("INACTIVE")) {
+				usersService.deleteUser(loginUser.getUser_idx());
+				mav.addObject("msg", "회원가입 절차가 비정상적으로 종료되었습니다. 회원가입을 다시 진행해주세요.");
+				mav.addObject("url", "/coachJoin");
+				mav.setViewName("alert");
+				return mav;
+			}
+			
 			session.setAttribute("user_idx", loginUser.getUser_idx());
 
 			CoachDTO coachInfo = coachService.getCoachInfo(loginUser.getUser_idx());
@@ -214,6 +255,24 @@ public class UserController {
 						return mav;
 					}
 				}
+				
+				try {
+					List<UsersDTO> suspendedLogs = usersService.getSuspendedLogs(udto.getUser_idx());
+					if(suspendedLogs!=null&&suspendedLogs.size()>0) {
+						StringBuilder reasons=new StringBuilder();
+						for(UsersDTO log:suspendedLogs) {
+							reasons.append("정지사유: "+log.getReason()+" / 기간: "+log.getStart_date()+" ~ "+log.getEnd_date()+"\n");
+						}
+						mav.addObject("msg", "현재 정지된 회원입니다.\n"+reasons.toString()+"로그인 불가합니다.");
+						mav.addObject("url", "/login");
+						mav.setViewName("alert");
+						return mav;
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				session.setAttribute("user_idx", loginUser.getUser_idx());
 				session.setAttribute("user_type", loginUser.getUser_type());
 				session.setAttribute("user_name", loginUser.getUser_name());
