@@ -6,17 +6,174 @@
    <title>dacoach</title>
 
    <link rel="stylesheet" th:href="@{/css/main.css}" />
+   <style type="text/css">
+   	.regionClass{
+		border: 1px solid ;   	
+   	}
+   </style>
 </head>
 <body>
-   <div th:replace="layout/header :: siteHeader"></div>
+   <div th:replace="~{layout/header :: siteHeader}"></div>
 
    <main class="main">
    <div class="container">
-      
+  	<form name="companyForm" id="companyForm" action="">
+   		<img th:src="${company.photo}">
+   		<input type="file" name="photo">
+   		<input type="text" name="intro" th:value="${company.intro}">
+   		<input type="text" name="email" th:value="${company.email}">	   	
+     	<input type="text" name="phone" th:value="${company.phone}">
+     	<input type="text" name="address" th:value="${company.address}">
+     	<input type="text" name="company_num" th:value="${company.company_num}" readonly>   
+    
+     	<div class="provide">
+     	<span id="userProvide">[[${provide.MAJOR_FIELD_CD}]] [[${provide.MINOR_FIELD_NM}]]</span>
+     	<p id="regionResultTag"></p>
+     	<select name="fieldIdx" id="fieldIdx" >
+     		<option value="">변경하실 분야의 대분류를 선택해주세요</option>
+     		<option th:each="fieldTag:${fieldTag}" th:value="${fieldTag.MAJOR_FIELD_IDX}">[[${fieldTag.MAJOR_FIELD_CD}]]</option>
+     	</select>
+     	<select name="minor_field_idx" id="minorFieldSelect">
+     		<option>소분류</option>
+     	</select>
+     	</div>
+     	
+     	<div class="region">
+     	<fieldset>   	
+     		<span th:each="region:${regions}" class="regionClass">
+     			[[${region.REGION_NM}]][[${region.DISTRICT_NM}]] [[${region.REGION_DETAIL}]] [[${region.BRANCH_NAME}]] [[${region.BRANCH_TEL}]]
+     		</span>
+     			<select name="major_region_idx" id="majorSelect">
+					<option>추가하실 지역 대분류를 선택 해주세요</option>
+					<option th:each="region:${regionTag}"
+							th:value="${region.MAJOR_REGION_IDX}">[[${region.REGION_NM}]]</option>
+					</select>		
+					<select name="minor_region_idx" id="MinorRegion">
+						<option value="">소분류</option>
+					</select>
+					<input type="text" name="region_detail" placeholder="상세주소를 입력해주세요" id="region_detail_text">
+					<input type="text" name="branch_name" placeholder="지점 명을 입력해주세요" id="branch_name_text">
+					<input type="text" name="branch_tel" placeholder="지점 전화번호를 입력해주세요" id="branch_tel_text">
+     		<input type="button" value="주소 추가하기" id="addRegion">
+     	</fieldset>
+     	</div>
+     	
+     	<input type="submit" value="저장">
+     	
+     </form>	
+     
    </div>
    </main>
   
-   <div th:replace="layout/footer :: siteFooter"></div>
+   <div th:replace="~{layout/footer :: siteFooter}"></div>
 
+<script>
+	var majorFieldSelect=document.getElementById('fieldIdx');
+	var majorRegionSelect=document.getElementById('majorSelect');
+	var addRegionBtn=document.getElementById('addRegion');
+	
+	
+	majorFieldSelect.onchange=function(){
+		var select=document.getElementById('minorFieldSelect');
+		var major_field_idx=this.value;
+		
+		fetch('/api/company/getMinorField?fieldIdx=' + major_field_idx)
+        .then(resp => resp.ok ? resp.json() : Promise.reject('에러'))
+        .then(data => {
+            var html = '';
+            data.forEach(item => {
+                html += `<option value="${item.MINOR_FIELD_IDX}">${item.MINOR_FIELD_NM}</option>`;
+            });
+            select.innerHTML = html;
+            
+        })
+        .catch(err => alert("데이터를 불러오지 못했습니다."));
+	}
+	
+	majorRegionSelect.onchange=function(){
+		var regionIdx = this.value; 
+	    var minorRegionSelect = document.getElementById('MinorRegion');
+	    
+		fetch('/api/company/getMinorRegion?regionIdx=' + regionIdx)
+        .then(resp => resp.ok ? resp.json() : Promise.reject('에러'))
+        .then(data => {
+            var html = '<option value="">소분류</option>';
+            data.forEach(val => {
+                html += `<option value="${val.MINOR_REGION_IDX}">${val.DISTRICT_NM}</option>`;
+            });
+            minorRegionSelect.innerHTML = html;
+        })
+        .catch(error => alert("서버 통신에 실패했습니다."));
+	  	 
+	}
+	
+	function addRegionFun() {
+		
+		var region_text=document.getElementById('region_detail_text');
+		var b_name=document.getElementById('branch_name_text');
+		var b_tel=document.getElementById('branch_tel_text');
+		
+	    var majorSelect = document.getElementById('majorSelect');
+	    var minorSelect = document.getElementById('MinorRegion');
+	    var majorIdx = majorSelect.value;
+	    var minorIdx = minorSelect.value;
+	    var detail = document.companyForm.region_detail.value;
+	    var companyIdx = document.companyForm.company_num.value;
+
+	    //  유효성 검사
+	    if (majorIdx === "대분류" || minorIdx === "소분류" || !minorIdx) {
+	        alert("지역을 정확히 선택해주세요.");
+	        return;
+	    }
+
+
+	    var minorName = minorSelect.options[minorSelect.selectedIndex].text;
+	    var data = {
+	        company_idx: companyIdx,
+	        major_region_idx: majorIdx,
+	        minor_region_idx: minorIdx,
+	        region_detail: detail,
+	        branch_name:b_name.value,
+	        branch_tel:b_tel.value
+	    };
+
+	    fetch('/api/company/addRegion?minorName=' + encodeURIComponent(minorName), {
+	        method: 'POST',
+	        headers: { 'Content-type': 'application/json' },
+	        body: JSON.stringify(data)
+	    })
+	    .then(resp => resp.ok ? resp.text() : Promise.reject('실패'))
+	    .then(resultText => {
+	        var ResultTag = document.getElementById('regionResultTag');
+	        if (resultText && resultText !== "실패" && resultText !== "중복") {
+	            // 주소 표시 상세주소 포함
+	            ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail} ${b_name.value} ${b_tel.value}</span>`;
+	            
+	            // 중복 방지용 저장 성공하면 배열에 추가
+	            addedRegionIds.push(minorIdx);
+	            
+	            // 입력값 초기화
+	            document.regionForm.region_detail.value = "";
+	            majorSelect.selectedIndex = 0;
+	            minorSelect.innerHTML = '<option id="m_intro">소분류</option>';
+	            document.regionForm.branch_name.value='' ;
+	            document.regionForm.branch_tel.value='' ;
+	            addRegionCount++;
+	            checkSubmitVaild();
+	            addRegionVaild();
+	        }else if(resultText ==="중복"){
+	        	alert('중복된 주소는 추가하실 수 없습니다');
+	        
+	        } else {
+	            alert('주소 추가 중 오류가 발생하였습니다.');
+	        }
+	    })
+	    .catch(error => alert("서버 통신에 실패했습니다."));
+	}
+	
+	addRegionBtn.onclick=function(){
+		addRegionFun();
+	}
+</script>
 </body>
 </html>

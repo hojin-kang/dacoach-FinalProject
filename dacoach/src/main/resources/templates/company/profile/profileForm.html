@@ -181,7 +181,7 @@ function addRegionFun() {
     .then(resp => resp.ok ? resp.text() : Promise.reject('실패'))
     .then(resultText => {
         var ResultTag = document.getElementById('regionResultTag');
-        if (resultText && resultText !== "실패") {
+        if (resultText && resultText !== "실패" && resultText !== "중복") {
             // 주소 표시 상세주소 포함
             ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail} ${b_name.value} ${b_tel.value}</span>`;
             
@@ -196,6 +196,10 @@ function addRegionFun() {
             document.regionForm.branch_tel.value='' ;
             addRegionCount++;
             checkSubmitVaild();
+            addRegionVaild();
+        }else if(resultText ==="중복"){
+        	alert('중복된 주소는 추가하실 수 없습니다');
+        
         } else {
             alert('주소 추가 중 오류가 발생하였습니다.');
         }
