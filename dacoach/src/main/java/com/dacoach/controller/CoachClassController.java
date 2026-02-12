@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.coachClasses.CoachClassDTO;
+import com.dacoach.model.review.ReviewClassDTO;
 import com.dacoach.service.coachClasses.CoachClassService;
 import com.dacoach.service.likes.LikesService;
 
@@ -110,6 +111,20 @@ public class CoachClassController {
 		}
 		mav.addObject("isEnrolled", isEnrolled);
 
+		// 2-2. 후기 작성 여부 확인
+		boolean hasReviewed = false;
+		if (userIdx != null) {
+			hasReviewed = classService.hasUserReviewedClass(id, userIdx);
+		}
+		mav.addObject("hasReviewed", hasReviewed);
+
+		// 2-3. 수강 완료 여부 확인 (수강 날짜가 오늘이거나 과거인지)
+		boolean hasCompleted = false;
+		if (userIdx != null) {
+			hasCompleted = classService.hasUserCompletedEnrollment(id, userIdx);
+		}
+		mav.addObject("hasCompleted", hasCompleted);
+
 		// 3. 해시태그 목록 조회
 		List<String> hashtagList = classService.getHashtagsByClass(id);
 		mav.addObject("hashtagList", hashtagList);
@@ -139,7 +154,7 @@ public class CoachClassController {
 		return mav;
 	}
 
-	// ===== 수강신청 관련 메서드 추가 =====
+	// ===== 수강신청 관련 메서드 =====
 
 	/**
 	 * 수강신청 페이지
@@ -271,5 +286,99 @@ public class CoachClassController {
 		}
 
 		return "redirect:/coach/myEnrollment";
+	}
+
+	// ===== 후기 관련 메서드 추가 =====
+
+	/**
+	 * 후기 작성 페이지
+	 */
+	@GetMapping("/coach/reviewWrite")
+	public ModelAndView writeReviewPage(@RequestParam("classId") int classId, HttpSession session) throws Exception {
+		ModelAndView mav = new ModelAndView();
+
+		// 로그인 확인
+		Integer userIdx = (Integer) session.getAttribute("user_idx");
+		if (userIdx == null) {
+			mav.setViewName("redirect:/login");
+			return mav;
+		}
+
+		// 수강 완료 여부 확인 (수강 날짜가 오늘이거나 과거인지)
+		if (!classService.hasUserCompletedEnrollment(classId, userIdx)) {
+			mav.setViewName("redirect:/coach/classDetail?id=" + classId);
+			return mav;
+		}
+
+		// 이미 후기를 작성했는지 확인
+		if (classService.hasUserReviewedClass(classId, userIdx)) {
+			mav.setViewName("redirect:/coach/classDetail?id=" + classId);
+			return mav;
+		}
+
+		// 클래스 정보 조회
+		CoachClassDTO classDTO = classService.getClassDetail(classId);
+		if (classDTO == null) {
+			mav.setViewName("redirect:/coach/classList");
+			return mav;
+		}
+
+		// 후기 태그 목록 조회 (REVIEW_TAG 테이블에서 CLASS 타입)
+		List<String> reviewTags = classService.getClassReviewTags();
+
+		mav.addObject("classDTO", classDTO);
+		mav.addObject("reviewTags", reviewTags);
+		mav.setViewName("coach/classes/reviewWrite");
+		return mav;
+	}
+
+	/**
+	 * 후기 작성 처리 (POST)
+	 */
+	@PostMapping("/coach/submitReview")
+	public String submitReview(@RequestParam("classId") int classId, @RequestParam("rating") double rating,
+			@RequestParam(value = "tags", required = false) List<String> tags,
+			@RequestParam(value = "content", required = false) String content, HttpSession session,
+			RedirectAttributes redirectAttributes) throws Exception {
+
+		Integer userIdx = (Integer) session.getAttribute("user_idx");
+		if (userIdx == null) {
+			return "redirect:/login";
+		}
+
+		try {
+			// ReviewClassDTO 생성
+			ReviewClassDTO review = new ReviewClassDTO();
+			review.setClass_idx(classId);
+			review.setReviewer_idx(userIdx);
+			review.setRating(rating);
+			review.setContent(content != null ? content : "");
+
+			// 태그들을 하나의 문자열로 합치기 (예: "#친절해요 #재미있어요")
+			if (tags != null && !tags.isEmpty()) {
+				String tagString = String.join(" ", tags);
+				review.setTag(tagString);
+			} else {
+				review.setTag("");
+			}
+
+			boolean success = classService.writeClassReview(review);
+
+			if (success) {
+				redirectAttributes.addFlashAttribute("message", "후기가 등록되었습니다.");
+				redirectAttributes.addFlashAttribute("messageType", "success");
+			} else {
+				redirectAttributes.addFlashAttribute("message", "후기 등록에 실패했습니다.");
+				redirectAttributes.addFlashAttribute("messageType", "error");
+			}
+		} catch (IllegalStateException e) {
+			redirectAttributes.addFlashAttribute("message", e.getMessage());
+			redirectAttributes.addFlashAttribute("messageType", "error");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("message", "오류가 발생했습니다: " + e.getMessage());
+			redirectAttributes.addFlashAttribute("messageType", "error");
+		}
+
+		return "redirect:/coach/classDetail?id=" + classId;
 	}
 }

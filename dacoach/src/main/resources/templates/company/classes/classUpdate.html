@@ -75,8 +75,8 @@
 								<h3 class="required">상세 주소</h3>
 								<input type="text" id="regionDetail" name="region_detail"
 									th:value="${classDTO.region_detail}"
-									placeholder="상세 주소를 입력하세요 (예: 도로명 + 번호 등)"
-									maxlength="200" required>
+									placeholder="상세 주소를 입력하세요 (예: 도로명 + 번호 등)" maxlength="200"
+									required>
 							</div>
 
 							<!-- 가격 (수정 불가) -->
@@ -170,12 +170,11 @@
 								<h3 class="required">수강 가능 기간</h3>
 								<div class="date-time-group">
 									<div class="date-time-input">
-										<label for="startDate">시작일</label> <input
-											type="datetime-local" id="startDate" name="start_date"
-											required>
+										<label for="startDate">시작일</label> <input type="date"
+											id="startDate" name="start_date" required>
 									</div>
 									<div class="date-time-input">
-										<label for="endDate">종료일</label> <input type="datetime-local"
+										<label for="endDate">종료일</label> <input type="date"
 											id="endDate" name="end_date" required>
 									</div>
 								</div>
@@ -188,8 +187,7 @@
 									<input type="range" id="participantLimit" name="max_user_cnt"
 										min="1" max="50" th:value="${classDTO.max_user_cnt}">
 									<output id="participantOutput"
-										th:text="${classDTO.max_user_cnt} + '명'">
-										</output>
+										th:text="${classDTO.max_user_cnt} + '명'"> </output>
 								</div>
 							</div>
 
@@ -210,6 +208,7 @@
 		let selectedPhoto = null;
 		let selectedVideo = null;
 		let hashtags = /*[[${hashtagList}]]*/ [];
+		let originalStartDate = null; // 기존 시작일 저장용
 		
 		// 기존 지역 정보
 		const existingMinorRegionIdx = /*[[${classDTO.minor_region_idx}]]*/ null;
@@ -252,21 +251,21 @@
 			const endDate = /*[[${classDTO.end_date}]]*/ null;
 			
 			if (startDate) {
-				document.getElementById('startDate').value = formatDateForInput(new Date(startDate));
+				const startDateObj = new Date(startDate);
+				originalStartDate = formatDateForInput(startDateObj); // 원래 시작일 저장
+				document.getElementById('startDate').value = originalStartDate;
 			}
 			if (endDate) {
 				document.getElementById('endDate').value = formatDateForInput(new Date(endDate));
 			}
 		}
 
-		// 날짜를 input[type=datetime-local] 형식으로 변환
+		// 날짜를 input[type=date] 형식으로 변환
 		function formatDateForInput(date) {
 			const year = date.getFullYear();
 			const month = String(date.getMonth() + 1).padStart(2, '0');
 			const day = String(date.getDate()).padStart(2, '0');
-			const hours = String(date.getHours()).padStart(2, '0');
-			const minutes = String(date.getMinutes()).padStart(2, '0');
-			return `${year}-${month}-${day}T${hours}:${minutes}`;
+			return `${year}-${month}-${day}`;
 		}
 
 		// 날짜 유효성 검사
@@ -281,8 +280,20 @@
 			
 			const start = new Date(startDate);
 			const end = new Date(endDate);
+			const today = new Date();
+			today.setHours(0, 0, 0, 0); // 오늘 날짜의 00:00:00으로 설정
 			
-			// 종료일이 시작일보다 이전인지 체크 (수정 시에는 과거 시작일 허용)
+			// 시작일이 변경되었는지 확인
+			const startDateChanged = (startDate !== originalStartDate);
+			
+			// 시작일이 변경된 경우에만 오늘 이후인지 체크
+			if (startDateChanged && start < today) {
+				alert('시작일을 변경하려면 오늘 이후여야 합니다.');
+				document.getElementById('startDate').focus();
+				return false;
+			}
+			
+			// 종료일이 시작일보다 이전이거나 같은지 체크
 			if (end <= start) {
 				alert('종료일은 시작일 이후여야 합니다.');
 				document.getElementById('endDate').focus();

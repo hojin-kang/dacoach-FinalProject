@@ -72,8 +72,8 @@
 								<h3 class="required">상세 주소</h3>
 								<input type="text" id="regionDetail" name="region_detail"
 									th:value="${classDTO?.region_detail}"
-									placeholder="상세 주소를 입력하세요 (예: 도로명 + 번호 등)"
-									maxlength="200" required>
+									placeholder="상세 주소를 입력하세요 (예: 도로명 + 번호 등)" maxlength="200"
+									required>
 							</div>
 
 							<div class="form-group">
@@ -128,12 +128,11 @@
 								<h3 class="required">수강 가능 기간</h3>
 								<div class="date-time-group">
 									<div class="date-time-input">
-										<label for="startDate">시작일</label> <input
-											type="datetime-local" id="startDate" name="start_date"
-											required>
+										<label for="startDate">시작일</label> <input type="date"
+											id="startDate" name="start_date" required>
 									</div>
 									<div class="date-time-input">
-										<label for="endDate">종료일</label> <input type="datetime-local"
+										<label for="endDate">종료일</label> <input type="date"
 											id="endDate" name="end_date" required>
 									</div>
 								</div>
@@ -144,8 +143,7 @@
 								<div class="range-group">
 									<input type="range" id="participantLimit" name="max_user_cnt"
 										min="1" max="50" value="10">
-									<output id="participantOutput" th:text="'10명'">
-										</output>
+									<output id="participantOutput" th:text="'10명'"> </output>
 								</div>
 							</div>
 
@@ -205,16 +203,17 @@
 			
 			const start = new Date(startDate);
 			const end = new Date(endDate);
-			const now = new Date();
+			const today = new Date();
+			today.setHours(0, 0, 0, 0); // 오늘 날짜의 00:00:00으로 설정
 			
-			// 시작일이 현재 시간보다 이전인지 체크
-			if (start < now) {
-				alert('시작일은 현재 시간 이후여야 합니다.');
+			// 시작일이 오늘보다 이전인지 체크
+			if (start < today) {
+				alert('시작일은 어제 이후여야 합니다.');
 				document.getElementById('startDate').focus();
 				return false;
 			}
 			
-			// 종료일이 시작일보다 이전인지 체크
+			// 종료일이 시작일보다 이전이거나 같은지 체크
 			if (end <= start) {
 				alert('종료일은 시작일 이후여야 합니다.');
 				document.getElementById('endDate').focus();

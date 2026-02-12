@@ -103,11 +103,24 @@ public class ClassServiceImple implements ClassService {
 			throw new IllegalArgumentException("수강 인원을 올바르게 입력해주세요.");
 		}
 
-		// 날짜 검증
-		Date now = new Date();
-		if (classDTO.getStart_date().before(now)) {
-			throw new IllegalArgumentException("시작일은 현재 시간 이후여야 합니다.");
+		// 날짜 검증 (오늘 날짜도 허용)
+		java.util.Calendar cal = java.util.Calendar.getInstance();
+		cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+		cal.set(java.util.Calendar.MINUTE, 0);
+		cal.set(java.util.Calendar.SECOND, 0);
+		cal.set(java.util.Calendar.MILLISECOND, 0);
+		Date today = cal.getTime();
+
+		// 어제 날짜 계산
+		cal.add(java.util.Calendar.DATE, -1);
+		Date yesterday = cal.getTime();
+
+		// 시작일이 어제보다 이전인지 확인 (오늘은 허용)
+		if (classDTO.getStart_date().before(yesterday)) {
+			throw new IllegalArgumentException("시작일은 오늘 이후여야 합니다.");
 		}
+
+		// 종료일이 시작일보다 이전이거나 같은지 확인
 		if (classDTO.getEnd_date().before(classDTO.getStart_date())
 				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
 			throw new IllegalArgumentException("종료일은 시작일보다 이후여야 합니다.");
@@ -242,21 +255,27 @@ public class ClassServiceImple implements ClassService {
 	@Transactional
 	public int classUpdate(ClassDTO classDTO, String hashtags) throws Exception {
 		try {
-			// 1. 유효성 검증 (수정용)
-			validateClassUpdateDTO(classDTO);
+			// 1. 기존 클래스 정보 조회 (시작일 변경 여부 확인용)
+			ClassDTO existingClass = classMapper.getClassDetail(classDTO.getClass_idx());
+			if (existingClass == null) {
+				throw new IllegalArgumentException("존재하지 않는 클래스입니다.");
+			}
 
-			// 2. 클래스 기본 정보 수정
+			// 2. 유효성 검증 (수정용 - 기존 정보 전달)
+			validateClassUpdateDTO(classDTO, existingClass);
+
+			// 3. 클래스 기본 정보 수정
 			int result = classMapper.updateClass(classDTO);
 
 			if (result <= 0) {
 				throw new RuntimeException("클래스 수정에 실패했습니다.");
 			}
 
-			// 3. 해시태그 처리
-			// 3-1. 기존 해시태그 매핑 모두 삭제
+			// 4. 해시태그 처리
+			// 4-1. 기존 해시태그 매핑 모두 삭제
 			classMapper.deleteClassHashtags(classDTO.getClass_idx());
 
-			// 3-2. 새로운 해시태그 등록
+			// 4-2. 새로운 해시태그 등록
 			if (hashtags != null && !hashtags.trim().isEmpty()) {
 				String[] tagArray = hashtags.split(",");
 
@@ -293,7 +312,7 @@ public class ClassServiceImple implements ClassService {
 	/**
 	 * 클래스 수정 시 유효성 검증 (제목, 분야, 가격은 수정 불가이므로 검증에서 제외)
 	 */
-	private void validateClassUpdateDTO(ClassDTO classDTO) throws Exception {
+	private void validateClassUpdateDTO(ClassDTO classDTO, ClassDTO existingClass) throws Exception {
 		// 필수 입력 확인
 		if (classDTO.getClass_idx() == null) {
 			throw new IllegalArgumentException("클래스 IDX가 필요합니다.");
@@ -317,7 +336,27 @@ public class ClassServiceImple implements ClassService {
 			throw new IllegalArgumentException("수강 인원을 올바르게 입력해주세요.");
 		}
 
-		// 날짜 검증 (과거 날짜도 허용 - 이미 진행 중인 클래스일 수 있음)
+		// 날짜 검증
+		java.util.Calendar cal = java.util.Calendar.getInstance();
+		cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+		cal.set(java.util.Calendar.MINUTE, 0);
+		cal.set(java.util.Calendar.SECOND, 0);
+		cal.set(java.util.Calendar.MILLISECOND, 0);
+		Date today = cal.getTime();
+
+		// 어제 날짜 계산
+		cal.add(java.util.Calendar.DATE, -1);
+		Date yesterday = cal.getTime();
+
+		// 시작일이 변경되었는지 확인
+		boolean startDateChanged = !isSameDate(classDTO.getStart_date(), existingClass.getStart_date());
+
+		// 시작일이 변경된 경우에만 오늘 이후인지 검증
+		if (startDateChanged && classDTO.getStart_date().before(yesterday)) {
+			throw new IllegalArgumentException("시작일은 오늘 이후여야 합니다.");
+		}
+
+		// 종료일이 시작일보다 이전이거나 같은지 확인
 		if (classDTO.getEnd_date().before(classDTO.getStart_date())
 				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
 			throw new IllegalArgumentException("종료일은 시작일보다 이후여야 합니다.");
@@ -327,6 +366,25 @@ public class ClassServiceImple implements ClassService {
 		if (classDTO.getIntro().length() > 3000) {
 			throw new IllegalArgumentException("내용은 3000자 이내로 입력해주세요.");
 		}
+	}
+
+	/**
+	 * 두 날짜가 같은 날인지 비교 (시간 무시)
+	 */
+	private boolean isSameDate(Date date1, Date date2) {
+		if (date1 == null || date2 == null) {
+			return false;
+		}
+
+		java.util.Calendar cal1 = java.util.Calendar.getInstance();
+		cal1.setTime(date1);
+
+		java.util.Calendar cal2 = java.util.Calendar.getInstance();
+		cal2.setTime(date2);
+
+		return cal1.get(java.util.Calendar.YEAR) == cal2.get(java.util.Calendar.YEAR)
+				&& cal1.get(java.util.Calendar.MONTH) == cal2.get(java.util.Calendar.MONTH)
+				&& cal1.get(java.util.Calendar.DAY_OF_MONTH) == cal2.get(java.util.Calendar.DAY_OF_MONTH);
 	}
 
 	@Override
