@@ -306,8 +306,9 @@ hr {
    Notification
 ====================== */
 
+.notiIcon { position: relative; }
 
-.notiIcon .notiDot {
+.notiDot {
   position: absolute;
   top: 1px;
   right: 1px;
