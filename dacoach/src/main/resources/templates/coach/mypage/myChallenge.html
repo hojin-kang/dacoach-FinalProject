@@ -26,11 +26,8 @@
       	<li th:each="dto : ${achievedList}">
       	[[${dto.name}]]/달성여부:[[${dto.achieve}]]/
       	보상 : 닭꼬치 [[${dto.prize}]]/
-      	기준 : [[${dto.type}]] - [[${dto.quantity}]]개</li>
-      </ul>      
-      <ul>
-      	<li></li>
-      </ul>     
+      	기준 : [[${dto.type}]] - [[${dto.quantity}]]개/달성 일자 : [[${dto.achieved_date}]]</li>
+      </ul>          
       <div id="notAchieved">진행 중인 과제</div>
       <ul th:unless="${#lists.isEmpty(notAchievedList)}">
       	<li th:each="dto : ${notAchievedList}">
