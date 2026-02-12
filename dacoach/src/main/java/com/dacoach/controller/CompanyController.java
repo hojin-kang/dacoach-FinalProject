@@ -84,11 +84,20 @@ public class CompanyController {
 		int companyIdx=(int)session.getAttribute("company_idx");
 		try {
 			CompanyDTO companyDto=companyService.getCompanyInfo(userIdx);
+			if(companyDto.getPhoto()==null) {
+				companyDto.setPhoto("/img/profile/defaultProfile.jpg");
+			}else {
+				String newPhoto="/uploads/"+companyDto.getPhoto();
+				companyDto.setPhoto(newPhoto);
+			}
 			List<Map<String,Object>> regionList=companyService.getCompanyRegion(companyIdx);
 			Map<String,Object> provideDto=companyService.getCompanyProvide(companyIdx);
 			
+			mav.addObject("fieldTag", companyService.fieldTeg());
+			mav.addObject("regionTag",companyService.regionTeg());
+			
 			mav.addObject("company",companyDto);
-			mav.addObject("region", regionList);
+			mav.addObject("regions", regionList);
 			mav.addObject("provide", provideDto);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -172,7 +181,7 @@ public class CompanyController {
 			int companyNum=companyService.getCompanyNum(userIdx);
 			field = companyService.fieldTeg();
 			region = companyService.regionTeg();
-			System.out.println(companyService.getCompanyRegion(companyNum));
+			
 			if(companyService.regionCheck(companyNum))
 			mav.addObject("regionList",companyService.getCompanyRegion(companyNum));
 			
@@ -218,10 +227,24 @@ public class CompanyController {
 	
 	@PostMapping("/api/company/addRegion")
 	public ResponseEntity<String> addRegion(@RequestBody CompanyRegionDTO dto,String minorName){
-		String msg=null;
+		String msg="";
 		try {
-			int addRegionVal=companyService.addRegion(dto);
-			msg=addRegionVal>0?minorName:null;
+			
+			
+			List<CompanyRegionDTO> checkDtos=companyService.getCompanyAllRegion(dto.getCompany_idx());
+			CompanyRegionDTO  checkDto=new CompanyRegionDTO();
+			for(int i=0;i<checkDtos.size();i++) {
+				checkDto=checkDtos.get(i);
+				if(checkDto.getMajor_region_idx()==dto.getMajor_region_idx()
+						&&checkDto.getMinor_region_idx()==dto.getMinor_region_idx()) {
+					msg="중복";
+				}
+			}
+			if(!msg.equals("중복")) {
+				int addRegionVal=companyService.addRegion(dto);
+				msg=addRegionVal>0?minorName:null;
+				}
+				
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -263,7 +286,7 @@ public class CompanyController {
 			int companyIdx=Integer.parseInt(String.valueOf(map.get("COMPANY_IDX")));
 			List<Map<String,Object>> classList=companyService.getProfileClass(classMap);
 			List<Map<String,Object>> region=companyService.getCompanyRegion(companyIdx);
-			System.out.println(classList);
+			;
 			mav.addObject("classList",classList);
 			mav.addObject("profile",map);
 			mav.addObject("regionList",region);

@@ -117,6 +117,10 @@
   	
   	</insert>
   	
+  	<select id="getCompanyAllRegion">
+  		select * from company_region where company_idx=#{company_idx}
+  	</select>
+  	
   	<select id="getCompanyProvide">
   		select major_field_cd,b.*
 		from major_field,
@@ -194,10 +198,8 @@
 		a.*    
 		from minor_field,minor_region,
 		(select * from class 
-		where provider_idx=#{idx} and
-		start_date <![CDATA[<=]]> #{today}
-		or start_date <![CDATA[>=]]> #{today}
-		and end_date <![CDATA[>=]]> #{today} 
+		where provider_idx=#{idx} and	
+		end_date <![CDATA[>=]]> #{today} 
 		) a
 		where minor_field.minor_field_idx=a.minor_field_idx 
 		and minor_region.minor_region_idx=a.minor_region_idx) b

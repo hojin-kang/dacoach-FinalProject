@@ -45,4 +45,6 @@ public interface CompanyMapper {
 	public CertDTO getCompanyCert(int user_idx) throws Exception;
 	
 	public Map<String,Object> getCompanyProvide(int company_idx) throws Exception;
+	
+	public List<CompanyRegionDTO> getCompanyAllRegion(int company_idx) throws Exception;
  }

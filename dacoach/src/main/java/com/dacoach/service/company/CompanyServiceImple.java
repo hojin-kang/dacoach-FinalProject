@@ -102,4 +102,7 @@ public class CompanyServiceImple implements CompanyService {
 	public Map<String,Object> getCompanyProvide(int company_idx) throws Exception{
 		return companyMapper.getCompanyProvide(company_idx);
 	}
+	public List<CompanyRegionDTO> getCompanyAllRegion(int company_idx) throws Exception{
+		return companyMapper.getCompanyAllRegion(company_idx);
+	}
 }
