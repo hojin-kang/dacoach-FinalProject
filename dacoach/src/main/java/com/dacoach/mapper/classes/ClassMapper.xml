@@ -200,6 +200,15 @@
 		COMPANY co ON u.USER_IDX = co.USER_IDX
 		WHERE e.CLASS_IDX =
 		#{class_idx}
+		AND e.ENROLL_IDX IN (
+		-- 각 유저별 가장 최근 신청 건만 선택
+		SELECT
+		MAX(e2.ENROLL_IDX)
+		FROM CLASS_ENROLLMENT e2
+		WHERE e2.CLASS_IDX =
+		#{class_idx}
+		GROUP BY e2.USER_IDX
+		)
 		ORDER BY e.ENROLLED_AT DESC
 	</select>
 
