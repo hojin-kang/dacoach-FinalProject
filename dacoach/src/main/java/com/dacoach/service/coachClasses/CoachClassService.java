@@ -78,4 +78,7 @@ public interface CoachClassService {
 	 * 사용자가 해당 클래스를 이미 신청했는지 확인
 	 */
 	boolean isUserEnrolled(int class_idx, int user_idx) throws Exception;
+	
+	// 현재 인기 클래스 불러오기
+	List<CoachClassDTO> getPopularClass() throws Exception;
 }
