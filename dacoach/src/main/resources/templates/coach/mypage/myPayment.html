@@ -22,30 +22,32 @@
 
 			<div>
 			<table class="paymentTable">
-          <thead>
-            <tr>
-              <th>사용 일시</th>
-              <th>내용</th>
-              <th>사용 개수</th>
-              <th>남은 개수</th>
-            </tr>
-          </thead>
+  <thead>
+    <tr>
+      <th>승인 일시</th>
+      <th>상품명</th>
+      <th>수량</th>
+      <th>결제금액</th>
+      <th>결제종류</th>
+      <th>결제수단</th>
+    </tr>
+  </thead>
 
-          <tbody>
-            <!-- 예시: th:each로 반복 -->
-            <tr th:each="h : ${thdto}">
-              <td th:text="${#dates.format(h.created_at,'yyyy-MM-dd HH:mm:ss')}">시간</td>
-              <td th:text="${h.hist_type}">타입</td>
-              <td th:text="${h.amount}">사용 개수</td>
-              <td th:text="${h.balance_after}">남은 개수</td>
-            </tr>
+  <tbody>
+    <tr th:each="p : ${payList}">
+      <td th:text="${#strings.replace(p.approved_at,'T',' ')}">2026-02-12 14:24:28</td>
+      <td th:text="${p.item_name}">닭꼬치 10개</td>
+      <td th:text="${p.quantity}">10</td>
+      <td th:text="${#numbers.formatInteger(p.total, 0, 'COMMA')} + '원'">9,000원</td>
+      <td th:text="${p.pay_type}">TOKEN</td>
+      <td>카카오페이</td>
+    </tr>
 
-            <!-- 데이터 없을 때 -->
-            <tr th:if="${thdto == null or #lists.isEmpty(thdto)}">
-              <td class="emptyRow" colspan="4">사용 내역이 없습니다.</td>
-            </tr>
-          </tbody>
-        </table>
+    <tr th:if="${payList == null or #lists.isEmpty(payList)}">
+      <td class="emptyRow" colspan="5">결제 내역이 없습니다.</td>
+    </tr>
+  </tbody>
+</table>
 			</div>
 			
 
