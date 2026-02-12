@@ -14,4 +14,6 @@ public interface NotificationMapper {
 	public int countUnread(int user_idx);
 	
 	public int notiDelete(int noti_idx);
+	
+	public int insertNotification(NotificationDTO dto);
 }

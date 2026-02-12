@@ -30,4 +30,10 @@ public class NotificationServiceImple implements NotificationService {
 		int result = notiMapper.notiDelete(noti_idx);
 		return result;
 	}
+
+	@Override
+	public int insertNotification(NotificationDTO dto) {
+		int result = notiMapper.insertNotification(dto);
+		return result;
+	}
 }
