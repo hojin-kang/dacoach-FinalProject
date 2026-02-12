@@ -6,26 +6,34 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.company.CertDTO;
 
 @Mapper
 public interface AdminCompanyMapper {
 
+	//cert 관리
+	int updateCertDetail(Map<String, Object> params);
     // 기업 회원 관리
     List<Map<String, Object>> companyList();
-    Map<String, Object> companyDetail(@Param("usersIdx") int usersIdx);
+    Map<String, Object> companyDetail(@Param("userIdx") int usersIdx);
     String getCertFilePath(@Param("userIdx") int userIdx);
     int insertCert(CertDTO dto);
     int hasCert(@Param("userIdx") int userIdx);
     
     int countCompanyTotal();    
-    int updateUserStatus(@Param("userIdx") int userIdx, @Param("status") String status);
+    //계정상태 관리
+    int updateCompanyStatus(Map<String, Object> params);
+    int insertCompanySuspended(EmbeddedUserDTO dto);
+    int updateEnddateSuspended(int user_idx);
+    
+    
     int insertEmbeddedHistory(Map<String, Object> param);
     int closeLatestEmbeddedHistory(@Param("userIdx") int userIdx);
     
     int countCertByUserAndType(@Param("userIdx") int userIdx, @Param("certType") String certType);
-    int updateCertStatus(@Param("user_idx") int userIdx, @Param("cert_status") String certStatus);
-    int insertCertStatus(@Param("user_idx") int userIdx, @Param("cert_status") String certStatus);
+    
+    int insertCertStatus(@Param("user_idx") int userIdx, @Param("cert_status") String certStatus);	
     
     // 클래스 목록
     List<Map<String, Object>> selectClassPage(Map<String, Object> param);

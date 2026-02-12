@@ -1,526 +1,349 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="contentPage" class="company-detail-page">
-  <style>
-    /* 기존 스타일 유지 */
-    .company-detail-page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 32px;
-      font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
-      color: #374151;
-    }
+	<style>
+/* 클래스 상세 페이지와 통일된 스타일 */
+.company-detail-page {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 32px;
+	font-family: 'Pretendard', sans-serif;
+	font-size: 14px;
+	color: #374151;
+}
 
-    .company-detail-page .info-card {
-      background-color: #ffffff;
-      border: 2px solid #e5e7eb;
-      border-radius: 40px;
-      padding: 2rem;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      position: relative;
-    }
+.company-detail-page .info-card {
+	background-color: #ffffff;
+	border: 2px solid #e5e7eb;
+	border-radius: 40px;
+	padding: 2.5rem;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	margin-bottom: 24px;
+	position: relative;
+}
 
-    .company-detail-page .section-badge {
-      display: inline-block;
-      background-color: #9dbbb5;
-      color: #ffffff;
-      padding: 0.5rem 2rem;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-    }
+.company-detail-page .section-badge {
+	display: inline-block;
+	background-color: #9dbbb5;
+	color: #ffffff;
+	padding: 0.5rem 2rem;
+	border-radius: 9999px;
+	font-weight: 700;
+	font-size: 1rem;
+	margin-bottom: 1.5rem;
+}
 
-    .company-detail-page .sub-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 10px 0 14px;
-      color: #111827;
-    }
+.company-detail-page .sub-title {
+	font-size: 18px;
+	font-weight: 700;
+	margin: 10px 0 20px;
+	color: #111827;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
 
-    .company-detail-page .divider {
-      border: none;
-      border-top: 1px solid #e5e7eb;
-      margin: 18px 0;
-    }
+/* KV 그리드 레이아웃 */
+.company-detail-page .kv-grid {
+	display: grid;
+	grid-template-columns: 160px 1fr;
+	gap: 12px 16px;
+	align-items: stretch;
+}
 
-    .company-detail-page .kv-grid {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 10px 14px;
-      align-items: stretch;
-    }
+.company-detail-page .kv-label {
+	background-color: #9dbbb5;
+	color: #ffffff;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	padding: 10px 12px;
+	min-height: 44px;
+}
 
-    .company-detail-page .kv-label {
-      background-color: #9dbbb5;
-      color: #ffffff;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      padding: 10px 12px;
-      min-height: 40px;
-    }
+.company-detail-page .kv-value {
+	background-color: #f0f8f7;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	padding: 10px 18px;
+	min-height: 44px;
+	border: 1px solid #e5e7eb;
+	color: #4b5563;
+}
 
-    .company-detail-page .kv-value {
-      background-color: #f0f8f7;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      padding: 10px 14px;
-      min-height: 40px;
-      border: 1px solid #e5e7eb;
-    }
+/* 입력 폼 스타일 커스텀 */
+.company-detail-page .form-input {
+	width: 100%;
+	background-color: #ffffff;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-size: 14px;
+	transition: border-color 0.2s;
+}
 
-    .company-detail-page .status-text {
-      font-weight: 800;
-    }
+.company-detail-page .form-input:focus {
+	outline: none;
+	border-color: #9dbbb5;
+	ring: 2px solid #9dbbb5;
+}
 
-    .company-detail-page .account-box {
-      background-color: #f0f8f7;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 14px;
-    }
+.company-detail-page .form-input[readonly] {
+	background-color: #f3f4f6;
+	cursor: not-allowed;
+}
 
-    .company-detail-page .radio-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
+/* 상태 라디오 버튼 그룹 */
+.company-detail-page .status-group {
+	display: flex;
+	gap: 24px;
+	flex-wrap: wrap;
+	padding: 10px;
+}
 
-    .company-detail-page .radio-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+.company-detail-page .radio-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+}
 
-    .company-detail-page .date-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
+.company-detail-page .radio-item input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #9dbbb5;
+	cursor: pointer;
+}
 
-    .company-detail-page .input {
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      padding: 10px 12px;
-      outline: none;
-      background: #ffffff;
-    }
+/* 배지 스타일 */
+.status-badge-inline {
+	padding: 4px 12px;
+	border-radius: 9999px;
+	font-weight: 700;
+	font-size: 12px;
+}
 
-    .company-detail-page .input:focus {
-      border-color: #9dbbb5;
-      box-shadow: 0 0 0 3px rgba(157,187,181,0.25);
-    }
+/* 정지 사유 영역 */
+#suspension_area {
+	background: #fff5f5;
+	padding: 24px;
+	border: 1px solid #fee2e2;
+	border-radius: 20px;
+	margin-top: 15px;
+}
 
-    .company-detail-page .input.readonly {
-      background: #f3f4f6;
-      color: #6b7280;
-    }
+/* 버튼 스타일 */
+.company-detail-page .btn-row {
+	display: flex;
+	gap: 12px;
+	margin-top: 32px;
+	justify-content: center;
+}
 
-    .company-detail-page .w-40 { width: 160px; }
-    .company-detail-page .flex-1 { flex: 1; min-width: 240px; }
+.company-detail-page .btn {
+	border: none;
+	border-radius: 12px;
+	padding: 12px 28px;
+	font-weight: 700;
+	cursor: pointer;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 15px;
+	transition: all 0.2s;
+}
 
-    .company-detail-page .table-wrap {
-      overflow: hidden;
-      border-radius: 16px;
-      border: 1px solid #e5e7eb;
-      margin-top: 10px;
-    }
+.company-detail-page .btn-primary {
+	background-color: #9dbbb5;
+	color: white;
+}
 
-    .company-detail-page table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: center;
-      font-size: 12px;
-    }
+.company-detail-page .btn-secondary {
+	background-color: #6b7280;
+	color: white;
+}
 
-    .company-detail-page thead {
-      background-color: #9dbbb5;
-      color: #ffffff;
-      height: 40px;
-    }
+.company-detail-page .btn-outline {
+	background-color: white;
+	color: #6b7280;
+	border: 1px solid #e5e7eb;
+}
 
-    .company-detail-page th,
-    .company-detail-page td {
-      padding: 10px 8px;
-      border-top: 1px solid rgba(255,255,255,0.8);
-    }
+.company-detail-page .btn:hover {
+	filter: brightness(90%);
+	transform: translateY(-1px);
+}
 
-    .company-detail-page tbody {
-      background-color: #f0f8f7;
-    }
+.file-link {
+	color: #2563eb;
+	text-decoration: underline;
+	font-weight: 600;
+}
+</style>
 
-    .company-detail-page .file-link {
-      color: #2563eb;
-      text-decoration: underline;
-      font-weight: 700;
-    }
+	<div class="info-card">
+		<div class="section-badge">기업 상세 정보</div>
+		<div class="sub-title">기본 정보</div>
 
-    .company-detail-page .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
+		<div class="kv-grid" th:if="${companyInfo != null}">
+			<div class="kv-label">사용자명/회사명</div>
+			<div class="kv-value" th:text="${companyInfo['USER_NAME']}">-</div>
 
-    .company-detail-page .btn {
-      border: none;
-      border-radius: 12px;
-      padding: 10px 18px;
-      font-weight: 800;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+			<div class="kv-label">아이디</div>
+			<div class="kv-value" th:text="${companyInfo['LOGIN_ID']}">-</div>
 
-    .company-detail-page .btn-approve {
-      background-color: #10b981;
-      color: #ffffff;
-    }
+			<div class="kv-label">이메일</div>
+			<div class="kv-value" th:text="${companyInfo['EMAIL']}">-</div>
 
-    .company-detail-page .btn-save {
-      background-color: #2563eb;
-      color: #ffffff;
-    }
+			<div class="kv-label">전화번호</div>
+			<div class="kv-value" th:text="${companyInfo['PHONE']}">-</div>
 
-    .company-detail-page .btn-list {
-      background-color: #6b7280;
-      color: #ffffff;
-    }
+			<div class="kv-label">사업자번호</div>
+			<div class="kv-value" th:text="${companyInfo['COMPANY_NUM']}">-</div>
 
-    .company-detail-page .btn:hover {
-      filter: brightness(92%);
-    }
-  </style>
+			<div class="kv-label">주소</div>
+			<div class="kv-value" th:text="${companyInfo['ADDRESS']}">-</div>
 
-    <div class="info-card">
-      <form id="companyForm" th:action="@{/admin/companyDetail/save}" method="post" onsubmit="return validateForm()">
-        <input type="hidden" name="usersIdx" th:value="${row['USER_IDX']}">
-        <input type="hidden" id="certStatus" th:value="${row['CERT_STATUS']}">
-        
-        <input type="hidden" name="status" 
-               th:if="${row['CERT_STATUS'] == null || row['CERT_STATUS'] != '확인'}"
-               value="ACTIVE">
+			<div class="kv-label">현재 상태</div>
+			<div class="kv-value">
+				<span class="status-badge-inline"
+					th:style="${companyInfo['STATUS'] == 'INACTIVE' ? 'background:#fef3c7; color:#92400e;' : 'background:#d1fae5; color:#065f46;'}"
+					th:text="${companyInfo['STATUS'] == 'INACTIVE' ? '대기' : '승인'}">
+				</span>
+			</div>
+		</div>
+	</div>
 
-        <div class="section-badge">기업 상세</div>
+	<form th:action="@{/admin/company/updateStatus}" method="post">
+		<input type="hidden" name="user_idx"
+			th:value="${companyInfo['USER_IDX'] != null ? companyInfo['USER_IDX'] : companyInfo['IDX']}">
+		<input type="hidden" name="company_idx"
+			th:value="${companyInfo['COMPANY_IDX'] != null ? companyInfo['COMPANY_IDX'] : companyInfo['IDX']}">
 
-        <div class="sub-title">컴퍼니 정보</div>
+		<div class="info-card" th:if="${companyInfo['STATUS'] != 'INACTIVE'}">
+			<div class="section-badge" style="background-color: #6b7280;">계정
+				상태 관리</div>
 
-        <div class="kv-grid">
-          <div class="kv-label">컴퍼니 이름</div>
-          <div class="kv-value" th:text="${row['USER_NAME'] != null ? row['USER_NAME'] : '-'}">-</div>
+			<div class="sub-title">상태 변경 설정</div>
+			<div class="status-group">
+				<label class="radio-item"> <input type="radio" name="status"
+					value="ACTIVE" th:checked="${companyInfo['STATUS'] == 'ACTIVE'}"
+					onclick="toggleSuspension(false)"> <span>사용 (ACTIVE)</span>
+				</label> <label class="radio-item"> <input type="radio"
+					name="status" value="WARNING"
+					th:checked="${companyInfo['STATUS'] == 'WARNING'}"
+					onclick="toggleSuspension(false)"> <span>주의
+						(WARNING)</span>
+				</label> <label class="radio-item"> <input type="radio"
+					name="status" value="DANGER"
+					th:checked="${companyInfo['STATUS'] == 'DANGER'}"
+					onclick="toggleSuspension(false)"> <span>위험 (DANGER)</span>
+				</label> <label class="radio-item"> <input type="radio"
+					name="status" id="status_suspended" value="SUSPENDED"
+					th:checked="${companyInfo['STATUS'] == 'SUSPENDED'}"
+					onclick="toggleSuspension(true)"> <span>정지
+						(SUSPENDED)</span>
+				</label>
+			</div>
 
-          <div class="kv-label">사업자번호</div>
-          <div class="kv-value" th:text="${row['COMPANY_NUM'] != null ? row['COMPANY_NUM'] : '-'}">-</div>
+			<div id="suspension_area"
+				th:style="${companyInfo['STATUS'] == 'SUSPENDED' ? 'display:block' : 'display:none'}">
+				<div style="margin-bottom: 15px;">
+					<label class="sub-title" style="color: #dc2626; font-size: 15px;">정지
+						사유 입력</label> <input type="text" name="reason" id="reason"
+						class="form-input" th:value="${companyInfo['REASON']}"
+						placeholder="정지 사유를 상세히 입력하세요">
+				</div>
+				<div style="display: flex; gap: 20px;">
+					<div style="flex: 1;">
+						<label
+							style="display: block; margin-bottom: 5px; font-weight: 700;">정지
+							시작일</label> <input type="text" class="form-input"
+							th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
+							readonly>
+					</div>
+					<div style="flex: 1;">
+						<label
+							style="display: block; margin-bottom: 5px; font-weight: 700;">정지
+							종료일</label> <input type="date" name="end_date" id="end_date"
+							class="form-input" th:value="${companyInfo['END_DATE']}">
+					</div>
+				</div>
+			</div>
+		</div>
 
-          <div class="kv-label">전화번호</div>
-          <div class="kv-value" th:text="${row['PHONE'] != null ? row['PHONE'] : '-'}">-</div>
+		<div class="info-card">
+			<div class="sub-title">사업자 등록 상세 증빙</div>
+			<div class="kv-grid">
+				<div class="kv-label">발급일자</div>
+				<div class="kv-value">
+					<input type="text" name="get_date" class="form-input"
+						style="border: none; background: transparent;"
+						th:value="${companyInfo['GET_DATE'] != null ? #dates.format(companyInfo['GET_DATE'], 'yyyy-MM-dd') : ''}"
+						placeholder="YYYY-MM-DD">
+				</div>
 
-          <div class="kv-label">주소</div>
-          <div class="kv-value" th:text="${row['ADDRESS'] != null ? row['ADDRESS'] : '-'}">-</div>
+				<div class="kv-label">발급업종</div>
+				<div class="kv-value">
+					<input type="text" name="cert_type" class="form-input"
+						style="border: none; background: transparent;"
+						th:value="${companyInfo['CERT_TYPE']}">
+				</div>
 
-          <div class="kv-label">아이디</div>
-          <div class="kv-value" th:text="${row['LOGIN_ID'] != null ? row['LOGIN_ID'] : '-'}">-</div>
+				<div class="kv-label">발급기관</div>
+				<div class="kv-value">
+					<input type="text" name="cert_from" class="form-input"
+						style="border: none; background: transparent;"
+						th:value="${companyInfo['CERT_FROM']}">
+				</div>
 
-          <div class="kv-label">이메일</div>
-          <div class="kv-value" th:text="${row['EMAIL'] != null ? row['EMAIL'] : '-'}">-</div>
+				<div class="kv-label">첨부파일</div>
+				<div class="kv-value">
+					<span th:if="${companyInfo['CERT_FILE'] != null}"> <a
+						th:href="@{|/uploads/${companyInfo['CERT_FILE']}|}"
+						target="_blank" class="file-link">📁 원본 파일 보기</a>
+					</span> <span th:unless="${companyInfo['CERT_FILE'] != null}"
+						style="color: #9ca3af;">등록된 파일이 없습니다.</span>
+				</div>
+			</div>
+		</div>
 
-          <div class="kv-label">승인여부</div>
-          <div class="kv-value">
-            <span id="certStatusText"
-                  class="status-text"
-                  th:text="${row['CERT_STATUS'] != null ? row['CERT_STATUS'] : '-'}"
-                  th:style="${row['CERT_STATUS'] == '확인' ? 'color:#2563eb;' : 'color:#dc2626;'}">-</span>
-          </div>
-        </div>
+		<div class="btn-row">
+			<button type="submit" name="status" value="ACTIVE"
+				class="btn btn-primary"
+				th:if="${companyInfo['STATUS'] == 'INACTIVE'}">승인 완료</button>
+			<button type="submit" class="btn btn-primary"
+				th:if="${companyInfo['STATUS'] != 'INACTIVE'}">설정 저장</button>
+			<a th:href="@{/admin/companyList}" class="btn btn-outline">목록으로
+				돌아가기</a>
+		</div>
+	</form>
 
-        <div id="accountManageSection" th:style="${row['CERT_STATUS'] == '확인' ? '' : 'display:none;'}">
-          <hr class="divider">
-
-          <div class="sub-title">계정관리</div>
-
-          <div class="account-box">
-            <div class="radio-row">
-              <div class="kv-label" style="border-radius: 12px; min-height: 36px;">계정상태</div>
-
-              <label class="radio-pill">
-                <input type="radio" name="status" value="ACTIVE"
-                       onclick="handleStatusChange('ACTIVE')"
-                       th:checked="${row['STATUS'] == 'ACTIVE'}">
-                사용
-              </label>
-
-              <label class="radio-pill">
-                <input type="radio" name="status" value="SUSPENDED"
-                       onclick="handleStatusChange('SUSPENDED')"
-                       th:checked="${row['STATUS'] == 'SUSPENDED'}">
-                정지
-              </label>
-            </div>
-
-            <div class="date-row">
-              <div style="font-weight:800; color:#1e3a8a; margin-right:6px;">
-                정지기간
-                <span id="requiredIndicator" style="color:#dc2626; display:none;">*</span>
-              </div>
-
-              <input type="date" id="suspendFrom" name="suspendFrom" readonly
-                     th:value="${row['START_DATE'] != null
-                               ? #strings.substring(row['START_DATE'].toString(), 0, 10)
-                               : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
-                     class="input readonly w-40"
-                     title="정지 시작일 (자동)">
-
-              <span>~</span>
-
-              <input type="date" name="suspendUntil" id="suspendUntil"
-                     th:value="${row['END_DATE'] != null
-                               ? #strings.substring(row['END_DATE'].toString(), 0, 10) : ''}"
-                     class="input w-40"
-                     title="정지 종료일 (필수)">
-
-              <input type="text" name="reason" id="reason" 
-                     placeholder="정지 사유를 입력하세요 (예: 허위 광고, 욕설 등)"
-                     th:value="${row['REASON'] != null ? row['REASON'] : ''}"
-                     class="input flex-1"
-                     maxlength="500"
-                     title="정지 사유 (필수)">
-            </div>
-          </div>
-        </div>
-
-        <hr class="divider">
-
-        <div class="sub-title">사업자등록증</div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>발급일자</th>
-                <th>업종/업태</th>
-                <th>발급기관</th>
-                <th>첨부파일</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td><a th:if="${certFilePath != null}" th:href="${certFilePath}" target="_blank">파일보기</a>
-					<span th:if="${certFilePath == null}">파일 없음</span>
-				</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="btn-row">
-          <button id="approveBtn"
-                  type="button"
-                  onclick="approveNow()"
-                  class="btn btn-approve"
-                  th:if="${row['CERT_STATUS'] == null || row['CERT_STATUS'] != '확인'}">
-            승인
-          </button>
-
-          <button type="submit" 
-                  id="saveBtn" 
-                  class="btn btn-save"
-                  th:style="${row['CERT_STATUS'] == '확인' ? '' : 'display:none;'}">
-            저장
-          </button>
-          
-          <a th:href="@{/admin/companyList}" class="btn btn-list">목록</a>
-        </div>
-      </form>
-    </div>
-
-    <script>
-      /**
-       * 폼 전송 전 유효성 검사
-       */
-      function validateForm() {
-        const certStatus = document.getElementById('certStatus')?.value;
-        
-        // 아직 승인('확인') 상태가 아니면 폼 검증 없이 통과 (어차피 저장버튼이 안 보임)
-        if (certStatus !== '확인') {
-          return true;
-        }
-        
-        const statusRadio = document.querySelector('input[name="status"]:checked');
-        
-        if (!statusRadio) {
-          alert('계정 상태를 선택해주세요.');
-          return false;
-        }
-
-        const status = statusRadio.value;
-        
-        // '정지(SUSPENDED)' 상태 선택 시 필수값 검사
-        if (status === 'SUSPENDED') {
-          const suspendUntil = document.getElementById('suspendUntil');
-          const reason = document.getElementById('reason');
-          
-          if (!suspendUntil.value) {
-            alert('정지 종료일을 입력해주세요.');
-            suspendUntil.style.borderColor = '#dc2626';
-            suspendUntil.focus();
-            return false;
-          }
-          
-          if (!reason.value.trim()) {
-            alert('정지 사유를 입력해주세요.');
-            reason.style.borderColor = '#dc2626';
-            reason.focus();
-            return false;
-          }
-          
-          // 날짜 비교 (종료일 > 시작일)
-          const suspendFrom = document.getElementById('suspendFrom').value;
-          if (suspendFrom && suspendUntil.value) {
-            const fromDate = new Date(suspendFrom);
-            const untilDate = new Date(suspendUntil.value);
+	<script th:inline="javascript">
+        function toggleSuspension(show) {
+            const area = document.getElementById('suspension_area');
+            const reasonInput = document.getElementById('reason');
+            const endDateInput = document.getElementById('end_date');
             
-            if (untilDate <= fromDate) {
-              alert('정지 종료일은 시작일보다 이후여야 합니다.');
-              suspendUntil.style.borderColor = '#dc2626';
-              suspendUntil.focus();
-              return false;
+            if (show) {
+                area.style.display = 'block';
+                reasonInput.setAttribute('required', 'required');
+                endDateInput.setAttribute('required', 'required');
+            } else {
+                area.style.display = 'none';
+                reasonInput.removeAttribute('required');
+                endDateInput.removeAttribute('required');
             }
-          }
         }
-        
-        return true;
-      }
 
-      /**
-       * 승인 버튼 클릭 시 AJAX 처리
-       */
-      function approveNow() {
-        const usersIdx = document.querySelector('input[name="usersIdx"]').value;
-
-        // DOM 요소 가져오기
-        const certStatusInput = document.getElementById('certStatus');
-        const certStatusText  = document.getElementById('certStatusText');
-        const approveBtn      = document.getElementById('approveBtn');
-        const saveBtn         = document.getElementById('saveBtn'); // 저장 버튼
-        const accountSection  = document.getElementById('accountManageSection');
-
-        const activeRadio = document.querySelector('input[name="status"][value="ACTIVE"]');
-        const suspendRadio = document.querySelector('input[name="status"][value="SUSPENDED"]');
-
-        if(!confirm('정말 승인하시겠습니까?')) return;
-
-        fetch(`/admin/companyDetail/${usersIdx}/approve`, { method: 'POST' })
-          .then(resp => {
-            if (!resp.ok) {
-              throw new Error('승인 실패: 상태 코드 ' + resp.status);
-            }
-            return resp.text();
-          })
-          .then(() => {
-            // 1. 상태값 변경
-            if (certStatusInput) certStatusInput.value = '확인';
-            if (certStatusText) {
-              certStatusText.innerText = '확인';
-              certStatusText.style.color = '#2563eb';
-              certStatusText.style.fontWeight = '800';
-            }
-            
-            // 2. 버튼 교체 (승인 숨김 -> 저장 보임)
-            if (approveBtn) approveBtn.style.display = 'none';
-            if (saveBtn)    saveBtn.style.display = 'inline-flex';
-
-            // 3. 계정관리 영역 노출
-            if (accountSection) accountSection.style.display = 'block';
-
-            // 4. 라디오 버튼 초기화 (사용/ACTIVE)
-            if (activeRadio) activeRadio.checked = true;
-            if (suspendRadio) suspendRadio.checked = false;
-
-            // 5. 인풋박스 상태 초기화
-            handleStatusChange('ACTIVE');
-
-            alert('정상적으로 승인되었습니다. \n이제 계정 상태를 변경하고 저장할 수 있습니다.');
-          })
-          .catch(error => {
-            alert('승인 처리 중 오류 발생: ' + error.message);
-          });
-      }
-	  
-      /**
-       * 라디오 버튼 변경 시 UI 제어
-       */
-	  function handleStatusChange(status) {
-	     const suspendUntil = document.getElementById('suspendUntil');
-	     const reason = document.getElementById('reason');
-	     const requiredIndicator = document.getElementById('requiredIndicator');
-
-	     if (!suspendUntil || !reason) return;
-
-	     if (status === 'SUSPENDED') {
-           // 정지 선택 시: 입력 활성화
-	       suspendUntil.disabled = false;
-	       suspendUntil.classList.remove('readonly');
-	       suspendUntil.style.backgroundColor = 'white';
-	       suspendUntil.required = true;
-
-	       reason.disabled = false;
-	       reason.style.backgroundColor = 'white';
-	       reason.required = true;
-	       reason.focus();
-	       
-	       if (requiredIndicator) {
-	         requiredIndicator.style.display = 'inline';
-	       }
-	       
-           // 에러 스타일 초기화 리스너
-	       suspendUntil.addEventListener('change', function() {
-	         this.style.borderColor = '#d1d5db';
-	       });
-	       reason.addEventListener('input', function() {
-	         this.style.borderColor = '#d1d5db';
-	       });
-
-	     } else {
-           // 사용(ACTIVE) 선택 시: 입력 비활성화 및 초기화
-	       suspendUntil.disabled = true;
-	       suspendUntil.value = '';
-	       suspendUntil.style.backgroundColor = '#f3f4f6';
-	       suspendUntil.style.borderColor = '#d1d5db';
-	       suspendUntil.required = false;
-
-	       reason.disabled = true;
-	       reason.value = '';
-	       reason.style.backgroundColor = '#f3f4f6';
-	       reason.style.borderColor = '#d1d5db';
-	       reason.required = false;
-	       
-	       if (requiredIndicator) {
-	         requiredIndicator.style.display = 'none';
-	       }
-	     }
-	   }
-
-      // 페이지 로드 시 초기 상태 반영
-      window.onload = function() {
-        const currentStatus = document.querySelector('input[name="status"]:checked')?.value;
-        if (currentStatus) handleStatusChange(currentStatus);
-      };
+        window.onload = function() {
+            const isSuspended = document.getElementById('status_suspended')?.checked;
+            if (isSuspended) toggleSuspension(true);
+        }
     </script>
-  </div>
+</div>
 </html>
