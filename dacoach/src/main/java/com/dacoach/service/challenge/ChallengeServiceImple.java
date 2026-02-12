@@ -34,6 +34,7 @@ public class ChallengeServiceImple implements ChallengeService {
 	@Override
 	public int achieveChallenge(ChallengeDTO challenge) throws Exception {
 		int result=challengeMapper.achieveChallenge(challenge);
+		challengeMapper.addPoints(challenge);
 		return result;
 	}
 

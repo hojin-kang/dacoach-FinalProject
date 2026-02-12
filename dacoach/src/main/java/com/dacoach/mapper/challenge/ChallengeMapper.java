@@ -10,4 +10,5 @@ public interface ChallengeMapper {
 	public int insertDefaultChallenges(int user_idx);
 	public HashMap<String, Object> getScores(int user_idx);
 	public int achieveChallenge(ChallengeDTO challenge);
+	public void addPoints(ChallengeDTO challenge);
 }

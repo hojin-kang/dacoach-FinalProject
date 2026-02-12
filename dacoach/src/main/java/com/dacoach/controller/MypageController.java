@@ -59,6 +59,8 @@ public class MypageController {
 	
 	@Autowired
 	private ChallengeService challengeService;
+	
+	
 
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
@@ -476,15 +478,35 @@ public class MypageController {
 				if(challengeList.get(i).getType().equals("POINT")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=points) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
+					
+					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
+					mav.addObject("url", "/myChallenge");
+					mav.setViewName("/alert");
+					return mav;
 				}else if(challengeList.get(i).getType().equals("LIKE")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=likes) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
+					
+					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
+					mav.addObject("url", "/myChallenge");
+					mav.setViewName("/alert");
+					return mav;
 				}else if(challengeList.get(i).getType().equals("REVIEW")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=reviews) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
+					
+					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
+					mav.addObject("url", "/myChallenge");
+					mav.setViewName("/alert");
+					return mav;
 				}else if(challengeList.get(i).getType().equals("MATCH")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=matches) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
+					
+					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
+					mav.addObject("url", "/myChallenge");
+					mav.setViewName("/alert");
+					return mav;
 				}
 			}	
 			

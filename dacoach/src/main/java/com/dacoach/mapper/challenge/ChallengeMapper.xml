@@ -27,4 +27,9 @@
     	set achieve = 'Y', achieved_date=sysdate
     	where user_idx = #{user_idx} and challenge_idx = #{challenge_idx}
     </update>
+    <update id="addPoints" parameterType="com.dacoach.model.challenge.ChallengeDTO">
+    	update coach
+    	set point_score = point_score + #{prize}
+    	where user_idx = #{user_idx}
+    </update>
   </mapper>
