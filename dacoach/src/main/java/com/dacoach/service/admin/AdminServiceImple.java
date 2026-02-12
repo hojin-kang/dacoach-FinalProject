@@ -75,6 +75,11 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
+	public List<CertDTO> getCertList(int user_idx) throws Exception {
+		return adminMapper.getCertList(user_idx);
+	}
+	
+	@Override
 	public List<Map<String, Object>> getKeywordType() throws Exception {
 		return adminMapper.getKeywordType();
 	}

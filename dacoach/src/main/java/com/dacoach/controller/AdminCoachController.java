@@ -143,29 +143,40 @@ public class AdminCoachController {
 			@RequestParam(value="cert_idx", required=false) List<Integer> certIdxList,
 			@RequestParam(value="cert_name", required=false) List<String> certNameList,
 			@RequestParam(value="get_date", required=false) List<String> getDateList,
-			@RequestParam(value="cert_from", required=false) List<String> certFromList
+			@RequestParam(value="cert_from", required=false) List<String> certFromList,
+			@RequestParam(value="cert_status", required=false) List<String> certStatusList,
+			@RequestParam(value="checked", required=false) List<Integer> checkedList
 			) {
 		
 		try {
-			if(certIdxList != null && !certIdxList.isEmpty()) {
-				for(int i=0;i<certIdxList.size();i++) {
+			
+			if(checkedList != null && !checkedList.isEmpty()) {
+				for(int i : checkedList) {
 					CertDTO dto = new CertDTO();
-					dto.setCert_idx(certIdxList.get(i));
-					dto.setCert_name(certNameList.get(i));
 					
-					String dateStr = getDateList.get(i);
-	                if (dateStr != null && !dateStr.trim().isEmpty()) {
-	                    dto.setGet_date(java.sql.Date.valueOf(dateStr));
-	                }
-				
-					dto.setCert_from(certFromList.get(i));
-					
-					adminService.updateCertStatus(dto);
+					if (certIdxList != null && certIdxList.size() > i)
+						dto.setCert_idx(certIdxList.get(i));
+					if (certNameList != null && certNameList.size() > i)
+						dto.setCert_name(certNameList.get(i));
+
+					if (getDateList != null && getDateList.size() > i) {
+						String dateStr = getDateList.get(i);
+						if (dateStr != null && !dateStr.trim().isEmpty()) {
+							dto.setGet_date(java.sql.Date.valueOf(dateStr));
+						}
+					}
+
+					if (certFromList != null && certFromList.size() > i)
+						dto.setCert_from(certFromList.get(i));
+					if (certStatusList != null && certStatusList.size() > i)
+						dto.setCert_status(certStatusList.get(i));
+	                
+	                adminService.updateCertStatus(dto);
 				}
 				
-				model.addAttribute("msg", "자격증 심사가 완료되었습니다.");
+				model.addAttribute("msg", "자격증 정보가 성공적으로 업데이트되었습니다.");
 			}else {
-				model.addAttribute("msg", "심사할 자격증이 없습니다.");
+				model.addAttribute("msg", "처리할 자격증을 선택해주세요.");
 			}
 			
 		}catch (Exception e) {
@@ -181,6 +192,24 @@ public class AdminCoachController {
 	    
 	    return "admin/dashboard";
 		
+	}
+	
+	@GetMapping("/coach/getCertList")
+	@ResponseBody
+	public List<CertDTO> getCertList(@RequestParam int user_idx) {
+		
+		List<CertDTO> certList = new ArrayList<>();
+		
+		try {
+			certList = adminService.getCertList(user_idx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return certList;
+	
+
 	}
 	
 	

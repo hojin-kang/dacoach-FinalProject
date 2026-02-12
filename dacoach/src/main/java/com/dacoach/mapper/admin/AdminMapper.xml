@@ -88,12 +88,18 @@
 	
 	<update id="updateCertStatus" parameterType="com.dacoach.model.company.CertDTO">
 	update cert 
-	set cert_name=#{cert_name}, 
+	set cert_name=#{cert_name, jdbcType=VARCHAR}, 
 	get_date = #{get_date, jdbcType=DATE}, 
-	cert_from=#{cert_from}, 
-	cert_status='확인'
-	where  cert_idx=#{cert_idx}
+	cert_from=#{cert_from, jdbcType=VARCHAR}, 
+	cert_status=#{cert_status, jdbcType=VARCHAR}
+	where cert_idx=#{cert_idx}
 	</update>
+	
+	<select id="getCertList" parameterType="int" resultType="com.dacoach.model.company.CertDTO">
+	select cert_name,cert_from,get_date,cert_status from cert 
+	where user_idx=#{user_idx} and (cert_status='승인' or cert_status='반려')
+	order by cert_status desc
+	</select>
 	
 	<select id="getKeywordType" resultType="map">
 	select keyword_type,count(*) as cnt
