@@ -178,7 +178,11 @@ public class CoachClassController {
 			return mav;
 		}
 
+		// 이미 신청한 날짜 목록 조회
+		List<String> enrolledDates = classService.getUserEnrolledDates(classId, userIdx);
+
 		mav.addObject("classDTO", classDTO);
+		mav.addObject("enrolledDates", enrolledDates);
 		mav.setViewName("coach/classes/classEnrollment");
 		return mav;
 	}
@@ -258,7 +262,49 @@ public class CoachClassController {
 
 		// 내 수강 신청 목록 조회
 		var enrollmentList = classService.getEnrollmentsByUser(userIdx);
+
+		// 각 enrollment의 취소 가능 여부를 Map으로 저장
+		Map<Integer, Boolean> cancelMap = new HashMap<>();
+
+		// 오늘 날짜 (00:00:00)
+		java.util.Date today = new java.util.Date();
+		java.util.Calendar cal = java.util.Calendar.getInstance();
+		cal.setTime(today);
+		cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+		cal.set(java.util.Calendar.MINUTE, 0);
+		cal.set(java.util.Calendar.SECOND, 0);
+		cal.set(java.util.Calendar.MILLISECOND, 0);
+		java.util.Date todayStart = cal.getTime();
+
+		for (var enrollment : enrollmentList) {
+			boolean canCancel = true;
+
+			// 1. 이미 취소되었거나 완료된 경우
+			if ("CANCELLED".equals(enrollment.getStatus()) || "COMPLETED".equals(enrollment.getStatus())) {
+				canCancel = false;
+			}
+			// 2. 수강 예정일이 오늘이거나 과거인 경우
+			else if (enrollment.getCompleted_at() != null) {
+				java.util.Calendar completedCal = java.util.Calendar.getInstance();
+				completedCal.setTime(enrollment.getCompleted_at());
+				completedCal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+				completedCal.set(java.util.Calendar.MINUTE, 0);
+				completedCal.set(java.util.Calendar.SECOND, 0);
+				completedCal.set(java.util.Calendar.MILLISECOND, 0);
+				java.util.Date completedDateOnly = completedCal.getTime();
+
+				// 수강 예정일이 오늘이거나 과거면 취소 불가
+				if (!completedDateOnly.after(todayStart)) {
+					canCancel = false;
+				}
+			}
+
+			// Map에 저장 (key: enroll_idx, value: canCancel)
+			cancelMap.put(enrollment.getEnroll_idx(), canCancel);
+		}
+
 		mav.addObject("enrollmentList", enrollmentList);
+		mav.addObject("cancelMap", cancelMap); // Map 전달
 		mav.setViewName("coach/classes/myEnrollment");
 		return mav;
 	}

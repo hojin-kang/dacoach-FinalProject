@@ -37,7 +37,7 @@
 								<div class="cardValue" id="totalEnrollments">0</div>
 							</div>
 							<div class="summaryCard green">
-								<div class="cardLabel">현재 수강 중</div>
+								<div class="cardLabel">확정된 신청</div>
 								<div class="cardValue" id="activeStudents">0</div>
 							</div>
 							<div class="summaryCard orange">
@@ -55,7 +55,8 @@
 										<tr>
 											<th>이름</th>
 											<th>전화번호</th>
-											<th>등록 일시</th>
+											<th>신청일시</th>
+											<th>수강예정일</th>
 											<th>상태</th>
 										</tr>
 									</thead>
@@ -185,30 +186,45 @@
 			tbody.innerHTML = '';
 
 			if (!students || students.length === 0) {
-				tbody.innerHTML = '<tr><td colspan="4" class="noData">수강생이 없습니다.</td></tr>';
+				tbody.innerHTML = '<tr><td colspan="5" class="noData">수강생이 없습니다.</td></tr>';
 				return;
 			}
+
+			// 오늘 날짜 (시간 제거)
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
 
 			students.forEach(student => {
 				const tr = document.createElement('tr');
 				
 				let statusClass = '';
 				let statusText = '';
-				if (student.STATUS === 'CONFIRMED') {
-					statusClass = 'confirmed';
-					statusText = '수강 중';
-				} else if (student.STATUS === 'COMPLETED') {
-					statusClass = 'completed';
-					statusText = '수강 완료';
-				} else if (student.STATUS === 'CANCELLED') {
+
+				if (student.STATUS === 'CANCELLED') {
+					// 취소된 경우
 					statusClass = 'cancelled';
 					statusText = '취소';
+				} else if (student.STATUS === 'CONFIRMED') {
+					// CONFIRMED 상태일 때 날짜로 완료 여부 판단
+					const completedDate = new Date(student.COMPLETED_AT);
+					completedDate.setHours(0, 0, 0, 0);
+
+					if (completedDate < today) {
+						// 수강 예정일이 과거 → 수강 완료
+						statusClass = 'completed';
+						statusText = '수강 완료';
+					} else {
+						// 수강 예정일이 오늘이거나 미래 → 확정
+						statusClass = 'confirmed';
+						statusText = '확정';
+					}
 				}
 
 				tr.innerHTML = `
 					<td>${student.USER_NAME}</td>
 					<td>${student.PHONE || '-'}</td>
-					<td>${formatDate(student.ENROLLED_AT)}</td>
+					<td>${formatDateTime(student.ENROLLED_AT)}</td>
+					<td>${formatDateOnly(student.COMPLETED_AT)}</td>
 					<td><span class="statusBadge ${statusClass}">${statusText}</span></td>
 				`;
 				tbody.appendChild(tr);
@@ -315,8 +331,8 @@
 			});
 		}
 
-		// 날짜 포맷팅
-		function formatDate(dateString) {
+		// 날짜+시간 포맷팅 (신청일시용)
+		function formatDateTime(dateString) {
 			if (!dateString) return '-';
 			const date = new Date(dateString);
 			return date.toLocaleDateString('ko-KR', {
@@ -325,6 +341,17 @@
 				day: '2-digit',
 				hour: '2-digit',
 				minute: '2-digit'
+			});
+		}
+
+		// 날짜만 포맷팅 (수강예정일용)
+		function formatDateOnly(dateString) {
+			if (!dateString) return '-';
+			const date = new Date(dateString);
+			return date.toLocaleDateString('ko-KR', {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit'
 			});
 		}
 

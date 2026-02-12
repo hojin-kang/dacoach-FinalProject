@@ -74,8 +74,8 @@
 							<input type="hidden" name="enrollIdx"
 								th:value="${enrollment.enroll_idx}" />
 							<button type="submit" class="btn-small btn-cancel"
-								th:disabled="${enrollment.status == 'CANCELLED' or enrollment.status == 'COMPLETED'}">
-								신청 취소</button>
+								th:disabled="${!cancelMap[enrollment.enroll_idx]}">신청
+								취소</button>
 						</form>
 					</div>
 				</div>

@@ -85,6 +85,10 @@
 						<span>선택됨</span>
 					</div>
 					<div class="legend-item">
+						<div class="legend-color enrolled"></div>
+						<span>신청완료</span>
+					</div>
+					<div class="legend-item">
 						<div class="legend-color full"></div>
 						<span>정원 마감</span>
 					</div>
@@ -123,6 +127,7 @@
 	const startDate = new Date(/*[[${classDTO.start_date}]]*/ '2024-01-01');
 	const endDate = new Date(/*[[${classDTO.end_date}]]*/ '2024-12-31');
 	const maxUserCnt = /*[[${classDTO.max_user_cnt}]]*/ 10;
+	const enrolledDates = /*[[${enrolledDates}]]*/ []; // 이미 신청한 날짜 목록
 
 	let currentDate = new Date();
 	let selectedDate = null;
@@ -233,14 +238,24 @@
 			return dayEl;
 		}
 
-		// 정원 확인을 위한 Ajax 호출
+		// 날짜 문자열로 변환
 		const dateStr = formatDate(date);
+
+		// 이미 신청한 날짜인지 확인
+		if (enrolledDates.includes(dateStr)) {
+			dayEl.classList.add('enrolled');
+			dayStatus.textContent = '신청완료';
+			return dayEl;
+		}
+
+		// 정원 확인을 위한 Ajax 호출
 		fetchEnrollmentCount(dateStr, dayEl, dayStatus);
 
 		// 클릭 이벤트
 		dayEl.addEventListener('click', function() {
 			if (this.classList.contains('disabled') || 
 				this.classList.contains('full') || 
+				this.classList.contains('enrolled') || 
 				this.classList.contains('other-month')) {
 				return;
 			}
