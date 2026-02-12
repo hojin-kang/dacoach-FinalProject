@@ -17,4 +17,6 @@ public interface TokenService {
     List<TokenHistoryDTO> getChargeHistory(Integer user_idx) throws Exception;
     
     List<PayDTO> getPayHistory(Integer user_idx) throws Exception;
+    
+    public int giftToken(int user_idx, int qty) throws Exception;
 }
