@@ -113,7 +113,13 @@
   color: #777 !important;
 }
 
+.plus {
+  color: #2F80ED !important;
+}
 
+.minus {
+  color: #EB5757 !important;
+}
 
 .pageTitle {
   margin: 6px 0 14px;
