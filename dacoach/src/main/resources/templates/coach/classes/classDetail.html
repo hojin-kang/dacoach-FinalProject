@@ -39,44 +39,47 @@
 						<div class="classTitle" th:text="${classDTO.title}">클래스명</div>
 					</div>
 				</div>
+				<th:block
+					th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+					<div class="topRight">
+						<div class="topIcons">
 
-				<div class="topRight">
-					<div class="topIcons">
-
-						<a class="iconBtn likeBtn" aria-label="찜"
-							th:href="${isLiked} ? @{/delLikesClass(class_idx=${classDTO.class_idx})}
+							<a class="iconBtn likeBtn" aria-label="찜"
+								th:href="${isLiked} ? @{/delLikesClass(class_idx=${classDTO.class_idx})}
 			                      : @{/addLikesClass(class_idx=${classDTO.class_idx})}">
-							<img class="icon"
-							th:src="${isLiked} ? @{/img/icon/heart_fill.png} : @{/img/icon/heart.png}"
-							alt="heart">
-						</a>
+								<img class="icon"
+								th:src="${isLiked} ? @{/img/icon/heart_fill.png} : @{/img/icon/heart.png}"
+								alt="heart">
+							</a>
 
-						<form th:action="@{/report/form}" method="post"
-							style="display: inline;">
-							<input type="hidden" name="reported_idx"
-								th:value="${classDTO.provider_idx}"> <input
-								type="hidden" name="returnUrl"
-								th:value="@{/coach/classDetail(id=${classDTO.class_idx})}">
-							<button type="submit" class="iconBtn">
-								<img src="/img/icon/siren.png">
-							</button>
-						</form>
+							<form th:action="@{/report/form}" method="post"
+								style="display: inline;">
+								<input type="hidden" name="reported_idx"
+									th:value="${classDTO.provider_idx}"> <input
+									type="hidden" name="returnUrl"
+									th:value="@{/coach/classDetail(id=${classDTO.class_idx})}">
+								<button type="submit" class="iconBtn">
+									<img src="/img/icon/siren.png">
+								</button>
+							</form>
+						</div>
+
+						<div class="topActions">
+							<a class="actionBtn outline"
+								th:if="${classDTO != null and classDTO.provider_idx != null}"
+								th:href="@{/chat/start(targetIdx=${classDTO.provider_idx}, tab='COMPANY')}">
+								문의하기 </a>
+
+							<!-- 수강 신청 여부에 따라 버튼 변경 -->
+							<a class="actionBtn solid" th:if="${!isEnrolled}"
+								th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
+								신청하기 </a>
+							<button class="actionBtn solid" th:if="${isEnrolled}" disabled
+								style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
+						</div>
+
 					</div>
-
-					<div class="topActions">
-						<a class="actionBtn outline"
-							th:if="${classDTO != null and classDTO.provider_idx != null}"
-							th:href="@{/chat/start(targetIdx=${classDTO.provider_idx}, tab='COMPANY')}">
-							문의하기 </a>
-
-						<!-- 수강 신청 여부에 따라 버튼 변경 -->
-						<a class="actionBtn solid" th:if="${!isEnrolled}"
-							th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
-							신청하기 </a>
-						<button class="actionBtn solid" th:if="${isEnrolled}" disabled
-							style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
-					</div>
-				</div>
+				</th:block>
 			</section>
 
 			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
@@ -235,7 +238,8 @@
 
 				</section>
 
-				<!-- ===== RIGHT: (원하면) 고정 사이드 요약 박스 ===== -->
+				<!-- ===== RIGHT: (원하면) 고정 사이드 요약 박스(컴퍼니면 제한 ===== -->
+
 				<aside class="sideArea">
 					<div class="sideCard">
 						<div class="sideTitle">클래스 정보</div>
@@ -255,17 +259,20 @@
 							<span class="sideLabel">하루 수강 정원</span> <span class="sideValue"
 								th:text="|${classDTO.max_user_cnt}명|"></span>
 						</div>
-
-						<div class="sideBtns">
-							<!-- 수강 신청 여부에 따라 버튼 변경 -->
-							<a class="actionBtn solid" th:if="${!isEnrolled}"
-								th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
-								신청하기 </a>
-							<button class="actionBtn solid" th:if="${isEnrolled}" disabled
-								style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
-						</div>
+						<th:block
+							th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+							<div class="sideBtns">
+								<!-- 수강 신청 여부에 따라 버튼 변경 -->
+								<a class="actionBtn solid" th:if="${!isEnrolled}"
+									th:href="@{/coach/classEnrollment(classId=${classDTO.class_idx})}">
+									신청하기 </a>
+								<button class="actionBtn solid" th:if="${isEnrolled}" disabled
+									style="opacity: 0.5; cursor: not-allowed;">신청완료</button>
+							</div>
+						</th:block>
 					</div>
 				</aside>
+
 
 			</div>
 		</div>
