@@ -77,4 +77,7 @@ public interface CoachClassMapper {
 
 	// 사용자가 해당 클래스를 이미 신청했는지 확인
 	Integer checkUserEnrollment(Map<String, Object> param) throws Exception;
+	
+	// 현재 인기 클래스 불러오기
+	List<CoachClassDTO> getPopularClass() throws Exception;
 }

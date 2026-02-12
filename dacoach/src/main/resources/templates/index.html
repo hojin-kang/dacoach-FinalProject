@@ -152,6 +152,32 @@
       	<div class="wrap">
     <div class="viewport">
       <div class="track" id="popularClassTrack">
+      <div class="popularCard" th:each="pc : ${popularClasses}">
+          <a class="popularCardInner" th:href="@{/coach/classDetail(id=${pc.class_idx})}">
+            
+            <!-- 왼쪽: 프로필 영역 -->
+            <div class="top">
+              <div>
+                <img th:src="${pc.photo != null and pc.photo != ''} ? @{/uploads/{p}(p=${pc.photo})} : @{/img/profile/default_company.jpg}"
+                     alt="class">
+              </div>
+            </div>
+            <div class="middle">
+	            <div class="rating">
+	                <span class="star">★</span>
+	                <span th:text="${#numbers.formatDecimal(pc.avg_rating, 1, 1)}">4.7</span>
+	                <span class="cnt" th:text="'(' + ${pc.review_cnt} + ')'">(54)</span>
+	            </div>
+            	<div th:text="${pc.user_name}">기업 이름</div>
+            
+            </div>
+            <div class="bottom">
+            	<div class="name" th:text="${pc.title}">클래스 이름</div>
+            </div>
+              
+
+          </a>
+        </div>
       </div>
       </div>
       </div>
