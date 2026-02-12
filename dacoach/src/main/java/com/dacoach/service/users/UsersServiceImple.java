@@ -1,5 +1,7 @@
 package com.dacoach.service.users;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,18 @@ public class UsersServiceImple implements UsersService {
 	    } else {
 	        return null;
 	    }
+	}
+
+	@Override
+	public List<UsersDTO> getSuspendedLogs(int user_idx) throws Exception {
+		List<UsersDTO> logs=usersMapper.getSuspendedLogs(user_idx);
+		return logs;
+	}
+
+	@Override
+	public int deleteUser(int user_idx) throws Exception {
+		int result=usersMapper.deleteUser(user_idx);
+		return result;
 	}
 
 }

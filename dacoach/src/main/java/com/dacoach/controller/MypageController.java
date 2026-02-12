@@ -477,7 +477,6 @@ public class MypageController {
 			int points=((Number) scores.get("POINT_SCORE")).intValue();
 			int reviews=((Number) scores.get("REVIEWS")).intValue();
 			int matches=((Number) scores.get("MATCHES")).intValue();
-			System.out.println("likes: "+likes+", points: "+points+", reviews: "+reviews+", matches: "+matches);
 			//과제 달성여부 체크 및 db업데이트
 			for(int i=0;i<challengeList.size();i++) {
 				if(challengeList.get(i).getType().equals("POINT")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=points) {
@@ -491,7 +490,7 @@ public class MypageController {
 						dto.setProvider_idx(1);
 						dto.setReceiver_idx(user_idx);
 						dto.setNoti_type("CHALLENGE");
-						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다! 닭꼬치 "+(challengeList.get(i).getPrize())/10+"개 지급 완료");
 						notificationService.insertNotification(dto);
 					}
 					
@@ -510,7 +509,7 @@ public class MypageController {
 						dto.setProvider_idx(1);
 						dto.setReceiver_idx(user_idx);
 						dto.setNoti_type("CHALLENGE");
-						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다! 닭꼬치 "+(challengeList.get(i).getPrize())/10+"개 지급 완료");
 						notificationService.insertNotification(dto);
 					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
@@ -528,7 +527,7 @@ public class MypageController {
 						dto.setProvider_idx(1);
 						dto.setReceiver_idx(user_idx);
 						dto.setNoti_type("CHALLENGE");
-						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다! 닭꼬치 "+(challengeList.get(i).getPrize())/10+"개 지급 완료");
 						notificationService.insertNotification(dto);
 					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
@@ -546,7 +545,7 @@ public class MypageController {
 						dto.setProvider_idx(1);
 						dto.setReceiver_idx(user_idx);
 						dto.setNoti_type("CHALLENGE");
-						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다! 닭꼬치 "+(challengeList.get(i).getPrize())/10+"개 지급 완료");
 						notificationService.insertNotification(dto);
 					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
@@ -570,6 +569,7 @@ public class MypageController {
 					notAchievedList.add(challengeList.get(i));
 				}
 			}
+			mav.addObject("scores", scores);
 			mav.addObject("challengeList", challengeList);
 			mav.addObject("achievedList", achievedList);
 			mav.addObject("notAchievedList", notAchievedList);

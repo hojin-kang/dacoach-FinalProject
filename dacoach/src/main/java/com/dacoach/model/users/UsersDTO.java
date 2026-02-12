@@ -20,4 +20,8 @@ public class UsersDTO {
 	private String password;
 	private String status;
 	private Date created_at;
+	
+	private String reason;
+	private Date start_date;
+	private Date end_date;
 }
