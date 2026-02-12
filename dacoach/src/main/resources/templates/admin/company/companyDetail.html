@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="contentPage" class="company-detail-page">
 	<style>
-/* 클래스 상세 페이지와 통일된 스타일 */
+/* [기본 레이아웃 및 폰트] */
 .company-detail-page {
 	max-width: 1100px;
 	margin: 0 auto;
@@ -12,6 +12,7 @@
 	color: #374151;
 }
 
+/* [카드 스타일] */
 .company-detail-page .info-card {
 	background-color: #ffffff;
 	border: 2px solid #e5e7eb;
@@ -22,6 +23,7 @@
 	position: relative;
 }
 
+/* [배지 및 타이틀] */
 .company-detail-page .section-badge {
 	display: inline-block;
 	background-color: #9dbbb5;
@@ -43,10 +45,26 @@
 	gap: 8px;
 }
 
-/* KV 그리드 레이아웃 */
+/* [상단 섹션: 텍스트+사진 레이아웃] */
+.company-detail-page .header-flex {
+	display: flex;
+	gap: 40px;
+	align-items: center; /* 사진을 텍스트 높이 중앙에 맞춤 */
+}
+
+.company-detail-page .info-text-side {
+	flex: 1;
+}
+
+.company-detail-page .info-photo-side {
+	width: 220px;
+	flex-shrink: 0;
+}
+
+/* [그리드 시스템] */
 .company-detail-page .kv-grid {
 	display: grid;
-	grid-template-columns: 160px 1fr;
+	grid-template-columns: 140px 1fr;
 	gap: 12px 16px;
 	align-items: stretch;
 }
@@ -74,34 +92,31 @@
 	color: #4b5563;
 }
 
-/* 입력 폼 스타일 커스텀 */
-.company-detail-page .form-input {
+/* [프로필 사진 박스] */
+.company-detail-page .photo-box {
+	width: 220px;
+	height: 220px;
+	background-color: #f0f8f7;
+	border-radius: 32px;
+	border: 1px solid #9dbbb5;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.company-detail-page .photo-box img {
 	width: 100%;
-	background-color: #ffffff;
-	border: 1px solid #d1d5db;
-	border-radius: 8px;
-	padding: 10px 14px;
-	font-size: 14px;
-	transition: border-color 0.2s;
+	height: 100%;
+	object-fit: cover;
 }
 
-.company-detail-page .form-input:focus {
-	outline: none;
-	border-color: #9dbbb5;
-	ring: 2px solid #9dbbb5;
-}
-
-.company-detail-page .form-input[readonly] {
-	background-color: #f3f4f6;
-	cursor: not-allowed;
-}
-
-/* 상태 라디오 버튼 그룹 */
+/* [상태 관리 및 라디오] */
 .company-detail-page .status-group {
 	display: flex;
 	gap: 24px;
-	flex-wrap: wrap;
 	padding: 10px;
+	flex-wrap: wrap;
 }
 
 .company-detail-page .radio-item {
@@ -109,6 +124,7 @@
 	align-items: center;
 	gap: 8px;
 	cursor: pointer;
+	font-weight: 600;
 }
 
 .company-detail-page .radio-item input[type="radio"] {
@@ -118,7 +134,7 @@
 	cursor: pointer;
 }
 
-/* 배지 스타일 */
+/* [상태 배지] */
 .status-badge-inline {
 	padding: 4px 12px;
 	border-radius: 9999px;
@@ -126,7 +142,7 @@
 	font-size: 12px;
 }
 
-/* 정지 사유 영역 */
+/* [정지 영역] */
 #suspension_area {
 	background: #fff5f5;
 	padding: 24px;
@@ -135,7 +151,16 @@
 	margin-top: 15px;
 }
 
-/* 버튼 스타일 */
+.company-detail-page .form-input {
+	width: 100%;
+	background-color: #ffffff;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-size: 14px;
+}
+
+/* [하단 버튼] */
 .company-detail-page .btn-row {
 	display: flex;
 	gap: 12px;
@@ -162,20 +187,10 @@
 	color: white;
 }
 
-.company-detail-page .btn-secondary {
-	background-color: #6b7280;
-	color: white;
-}
-
 .company-detail-page .btn-outline {
 	background-color: white;
 	color: #6b7280;
 	border: 1px solid #e5e7eb;
-}
-
-.company-detail-page .btn:hover {
-	filter: brightness(90%);
-	transform: translateY(-1px);
 }
 
 .file-link {
@@ -187,33 +202,41 @@
 
 	<div class="info-card">
 		<div class="section-badge">기업 상세 정보</div>
-		<div class="sub-title">기본 정보</div>
-
-		<div class="kv-grid" th:if="${companyInfo != null}">
-			<div class="kv-label">사용자명/회사명</div>
-			<div class="kv-value" th:text="${companyInfo['USER_NAME']}">-</div>
-
-			<div class="kv-label">아이디</div>
-			<div class="kv-value" th:text="${companyInfo['LOGIN_ID']}">-</div>
-
-			<div class="kv-label">이메일</div>
-			<div class="kv-value" th:text="${companyInfo['EMAIL']}">-</div>
-
-			<div class="kv-label">전화번호</div>
-			<div class="kv-value" th:text="${companyInfo['PHONE']}">-</div>
-
-			<div class="kv-label">사업자번호</div>
-			<div class="kv-value" th:text="${companyInfo['COMPANY_NUM']}">-</div>
-
-			<div class="kv-label">주소</div>
-			<div class="kv-value" th:text="${companyInfo['ADDRESS']}">-</div>
-
-			<div class="kv-label">현재 상태</div>
-			<div class="kv-value">
-				<span class="status-badge-inline"
-					th:style="${companyInfo['STATUS'] == 'INACTIVE' ? 'background:#fef3c7; color:#92400e;' : 'background:#d1fae5; color:#065f46;'}"
-					th:text="${companyInfo['STATUS'] == 'INACTIVE' ? '대기' : '승인'}">
-				</span>
+		<div class="header-flex" th:if="${companyInfo != null}">
+			<div class="info-text-side">
+				<div class="sub-title">기본 정보</div>
+				<div class="kv-grid">
+					<div class="kv-label">회사명</div>
+					<div class="kv-value" th:text="${companyInfo['USER_NAME']}">-</div>
+					<div class="kv-label">아이디</div>
+					<div class="kv-value" th:text="${companyInfo['LOGIN_ID']}">-</div>
+					<div class="kv-label">이메일</div>
+					<div class="kv-value" th:text="${companyInfo['EMAIL']}">-</div>
+					<div class="kv-label">전화번호</div>
+					<div class="kv-value" th:text="${companyInfo['PHONE']}">-</div>
+					<div class="kv-label">현재 상태</div>
+					<div class="kv-value">
+						<span class="status-badge-inline"
+							th:style="${companyInfo['STATUS'] == 'INACTIVE' ? 'background:#fef3c7; color:#92400e;' : 'background:#d1fae5; color:#065f46;'}"
+							th:text="${companyInfo['STATUS'] == 'INACTIVE' ? '대기' : '승인'}">
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="info-photo-side">
+				<div class="photo-box">
+					<img
+						th:if="${companyInfo['PHOTO'] != null and companyInfo['PHOTO'] != ''}"
+						th:src="@{|/uploads/${companyInfo['PHOTO']}|}" alt="기업 로고">
+					<svg
+						th:unless="${companyInfo['PHOTO'] != null and companyInfo['PHOTO'] != ''}"
+						style="width: 80px; height: 80px; color: #d1d5db;" fill="none"
+						stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round"
+							stroke-linejoin="round" stroke-width="1"
+							d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -227,26 +250,23 @@
 		<div class="info-card" th:if="${companyInfo['STATUS'] != 'INACTIVE'}">
 			<div class="section-badge" style="background-color: #6b7280;">계정
 				상태 관리</div>
-
 			<div class="sub-title">상태 변경 설정</div>
 			<div class="status-group">
 				<label class="radio-item"> <input type="radio" name="status"
 					value="ACTIVE" th:checked="${companyInfo['STATUS'] == 'ACTIVE'}"
-					onclick="toggleSuspension(false)"> <span>사용 (ACTIVE)</span>
+					onclick="toggleSuspension(false)"> 사용
 				</label> <label class="radio-item"> <input type="radio"
 					name="status" value="WARNING"
 					th:checked="${companyInfo['STATUS'] == 'WARNING'}"
-					onclick="toggleSuspension(false)"> <span>주의
-						(WARNING)</span>
+					onclick="toggleSuspension(false)"> 주의
 				</label> <label class="radio-item"> <input type="radio"
 					name="status" value="DANGER"
 					th:checked="${companyInfo['STATUS'] == 'DANGER'}"
-					onclick="toggleSuspension(false)"> <span>위험 (DANGER)</span>
+					onclick="toggleSuspension(false)"> 위험
 				</label> <label class="radio-item"> <input type="radio"
 					name="status" id="status_suspended" value="SUSPENDED"
 					th:checked="${companyInfo['STATUS'] == 'SUSPENDED'}"
-					onclick="toggleSuspension(true)"> <span>정지
-						(SUSPENDED)</span>
+					onclick="toggleSuspension(true)"> 정지
 				</label>
 			</div>
 
@@ -254,23 +274,23 @@
 				th:style="${companyInfo['STATUS'] == 'SUSPENDED' ? 'display:block' : 'display:none'}">
 				<div style="margin-bottom: 15px;">
 					<label class="sub-title" style="color: #dc2626; font-size: 15px;">정지
-						사유 입력</label> <input type="text" name="reason" id="reason"
-						class="form-input" th:value="${companyInfo['REASON']}"
-						placeholder="정지 사유를 상세히 입력하세요">
+						사유</label> <input type="text" name="reason" id="reason" class="form-input"
+						th:value="${companyInfo['REASON']}" placeholder="사유를 상세히 입력하세요">
 				</div>
 				<div style="display: flex; gap: 20px;">
 					<div style="flex: 1;">
 						<label
 							style="display: block; margin-bottom: 5px; font-weight: 700;">정지
-							시작일</label> <input type="text" class="form-input"
-							th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
+							시작일</label> <input type="date" name="start_date" class="form-input"
+							th:value="${companyInfo['START_DATE'] != null ? #dates.format(companyInfo['START_DATE'], 'yyyy-MM-dd') : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
 							readonly>
 					</div>
 					<div style="flex: 1;">
 						<label
 							style="display: block; margin-bottom: 5px; font-weight: 700;">정지
 							종료일</label> <input type="date" name="end_date" id="end_date"
-							class="form-input" th:value="${companyInfo['END_DATE']}">
+							class="form-input"
+							th:value="${companyInfo['END_DATE'] != null ? #dates.format(companyInfo['END_DATE'], 'yyyy-MM-dd') : ''}">
 					</div>
 				</div>
 			</div>
@@ -281,32 +301,32 @@
 			<div class="kv-grid">
 				<div class="kv-label">발급일자</div>
 				<div class="kv-value">
-					<input type="text" name="get_date" class="form-input"
+					<input type="date" name="get_date" class="form-input"
 						style="border: none; background: transparent;"
-						th:value="${companyInfo['GET_DATE'] != null ? #dates.format(companyInfo['GET_DATE'], 'yyyy-MM-dd') : ''}"
-						placeholder="YYYY-MM-DD">
+						th:value="${companyInfo['GET_DATE'] != null ? #dates.format(companyInfo['GET_DATE'], 'yyyy-MM-dd') : ''}">
 				</div>
-
 				<div class="kv-label">발급업종</div>
 				<div class="kv-value">
-					<input type="text" name="cert_type" class="form-input"
+					<input type="text" name="cert_name" class="form-input"
 						style="border: none; background: transparent;"
-						th:value="${companyInfo['CERT_TYPE']}">
+						th:value="${companyInfo['CERT_NAME']}">
 				</div>
-
 				<div class="kv-label">발급기관</div>
 				<div class="kv-value">
 					<input type="text" name="cert_from" class="form-input"
 						style="border: none; background: transparent;"
 						th:value="${companyInfo['CERT_FROM']}">
 				</div>
-
 				<div class="kv-label">첨부파일</div>
 				<div class="kv-value">
-					<span th:if="${companyInfo['CERT_FILE'] != null}"> <a
-						th:href="@{|/uploads/${companyInfo['CERT_FILE']}|}"
-						target="_blank" class="file-link">📁 원본 파일 보기</a>
-					</span> <span th:unless="${companyInfo['CERT_FILE'] != null}"
+					<th:block
+						th:if="${companyInfo['CERT_FILE'] != null and companyInfo['CERT_FILE'] != ''}">
+						<a th:href="@{|/uploads/${companyInfo['CERT_FILE']}|}"
+							target="_blank" class="file-link">📁 원본 파일 보기</a>
+					</th:block>
+
+					<span
+						th:unless="${companyInfo['CERT_FILE'] != null and companyInfo['CERT_FILE'] != ''}"
 						style="color: #9ca3af;">등록된 파일이 없습니다.</span>
 				</div>
 			</div>
@@ -324,25 +344,28 @@
 	</form>
 
 	<script th:inline="javascript">
+        // 정지 영역 토글 함수
         function toggleSuspension(show) {
             const area = document.getElementById('suspension_area');
-            const reasonInput = document.getElementById('reason');
-            const endDateInput = document.getElementById('end_date');
+            const reason = document.getElementById('reason');
+            const endDate = document.getElementById('end_date');
             
+            area.style.display = show ? 'block' : 'none';
             if (show) {
-                area.style.display = 'block';
-                reasonInput.setAttribute('required', 'required');
-                endDateInput.setAttribute('required', 'required');
+                reason.setAttribute('required', 'required');
+                endDate.setAttribute('required', 'required');
             } else {
-                area.style.display = 'none';
-                reasonInput.removeAttribute('required');
-                endDateInput.removeAttribute('required');
-            }
+                reason.removeAttribute('required');
+                endDate.removeAttribute('required');
+            }	
         }
 
+        // 페이지 로드 시 정지 상태면 영역 표시
         window.onload = function() {
             const isSuspended = document.getElementById('status_suspended')?.checked;
-            if (isSuspended) toggleSuspension(true);
+            if (isSuspended) {
+                toggleSuspension(true);
+            }
         }
     </script>
 </div>

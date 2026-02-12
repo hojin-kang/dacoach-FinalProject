@@ -25,7 +25,7 @@ public interface AdminCompanyMapper {
     //계정상태 관리
     int updateCompanyStatus(Map<String, Object> params);
     int insertCompanySuspended(EmbeddedUserDTO dto);
-    int updateEnddateSuspended(int user_idx);
+    int updateEnddateSuspended(@Param("userIdx")int user_idx);
     
     
     int insertEmbeddedHistory(Map<String, Object> param);

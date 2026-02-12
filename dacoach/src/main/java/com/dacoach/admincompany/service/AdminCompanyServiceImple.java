@@ -118,22 +118,19 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
 	    String status = (String) params.get("status");
 	    int userIdx = Integer.parseInt(params.get("user_idx").toString());
 
-	    // 1. 공통: 유저 상태 업데이트 (ACTIVE, SUSPENDED, WARNING, DANGER 모두 수행)
+	    // 1. 유저 상태 업데이트
 	    mapper.updateCompanyStatus(params);
+	    
+	    // 2. cert 정보는 상태와 관계없이 항상 업데이트
+	    mapper.updateCertDetail(params);
 
-	    // 2. 상태별 분기 처리
-	    if ("ACTIVE".equals(status)) {
-	        // 승인 시: 사업자 정보(날짜, 기관 등) 업데이트 + 정지 이력 종료
-	        mapper.updateCertDetail(params); 
-	        mapper.updateEnddateSuspended(userIdx);
-	        
-	    } else if ("SUSPENDED".equals(status)) {
+	    // 3. 상태별 분기 처리
+	    if ("SUSPENDED".equals(status)) {
 	        // 정지 시: 정지 이력 테이블 INSERT
 	        dto.setUser_idx(userIdx);
 	        mapper.insertCompanySuspended(dto);
-	        
 	    } else {
-	        // WARNING, DANGER 등: 기존 정지 이력이 있다면 종료 처리
+	        // ACTIVE, WARNING, DANGER: 기존 정지 이력 종료 처리
 	        mapper.updateEnddateSuspended(userIdx);
 	    }
 	}
