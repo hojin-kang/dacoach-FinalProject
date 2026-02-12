@@ -53,12 +53,53 @@
     			<div class="menuUnit">
     				<span class="titleSpan">도전과제</span>
     				<a href="/myChallenge">도전과제 현황</a>
-    			</div>   			
-    			
-    			<a href="/myWithdraw" style="color:#6A6A6A;">회원 탈퇴</a>
-    		</div>
+    			</div>
+
+				<!-- 변경: 모달 열기 -->
+				<a href="javascript:void(0)" id="openWithdraw"
+					style="color: #6A6A6A;">회원 탈퇴</a>
+
+				<!-- 탈퇴 모달 -->
+				<div id="withdrawModal" class="modal" style="display: none;">
+					<div class="modalBackdrop"></div>
+
+					<div class="modalBox">
+						<h3 class="modalTitle">회원 탈퇴</h3>
+						<p class="modalDesc">탈퇴 시 계정은 비활성화되며, 일부 기록은 법령/운영 정책에 따라 보관될
+							수 있습니다.</p>
+
+						<form method="post" action="/withdraw" id="withdrawForm">
+							<div class="reasonList">
+								<label th:each="r, iter : ${withdrawReasons}" class="reasonItem">
+									<input type="radio" name="reason_type_idx"
+									th:value="${r['REASON_TYPE_IDX']}"
+									th:checked="${iter.index == 0}" required> <span
+									th:text="${r['CONTENT']}">사유</span>
+								</label>
+							</div>
+
+							<div class="modalBtns">
+								<button type="button" id="closeWithdraw" class="btnCancel">취소</button>
+								<button type="submit" class="btnDanger">탈퇴하기</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
     	</div>
     </main>
 	<div th:replace="~{layout/footer :: siteFooter}"></div>
+	
+<script>
+  const openBtn = document.getElementById('openWithdraw');
+  const closeBtn = document.getElementById('closeWithdraw');
+  const modal = document.getElementById('withdrawModal');
+
+  openBtn.addEventListener('click', () => modal.style.display = 'block');
+  closeBtn.addEventListener('click', () => modal.style.display = 'none');
+
+  // 바깥 클릭 시 닫기
+  modal.querySelector('.modalBackdrop').addEventListener('click', () => modal.style.display = 'none');
+</script>
 </body>
 </html>

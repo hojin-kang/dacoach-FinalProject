@@ -18,7 +18,7 @@
       balance_after,
       created_at
     FROM token_history
-    WHERE user_idx = #{user_idx} AND (hist_type='채팅 신청' OR hist_type='매칭 신청')
+    WHERE user_idx = #{user_idx}
     ORDER BY created_at DESC
   </select>
   

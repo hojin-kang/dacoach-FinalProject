@@ -16,4 +16,65 @@
 			WHERE C.USER_IDX = #{user_idx}
 		]]>
 	</select>
+	
+<select id="getWithdrawReasons" resultType="map">
+  SELECT
+    reason_type_idx AS reason_type_idx,
+    type_name       AS type_name,
+    content         AS content
+  FROM reason_type
+  WHERE type_name = '탈퇴'
+  ORDER BY reason_type_idx
+</select>
+
+<select id="getUserType" resultType="string">
+  SELECT user_type
+  FROM users
+  WHERE user_idx = #{user_idx}
+</select>
+
+<insert id="insertReasonLog">
+  INSERT INTO reason_log (
+    reason_log_idx, user_idx, reason_type_idx, created_at
+  ) VALUES (
+    SEQ_REASON_LOG.NEXTVAL,
+    #{user_idx},
+    #{reason_type_idx},
+    SYSDATE
+  )
+</insert>
+
+<update id="maskUsers">
+  UPDATE users
+  SET status = 'DELETED',
+      user_name = #{user_name},
+      login_id = #{login_id},
+      password = #{password}
+  WHERE user_idx = #{user_idx}
+</update>
+
+<update id="maskCoach">
+  UPDATE coach
+  SET nickname = #{nickname},
+      mail = #{mail},
+      phone = NULL,
+      intro = NULL,
+      photo = NULL,
+      video = NULL,
+      kakao_key = NULL
+  WHERE user_idx = #{user_idx}
+</update>
+
+<update id="maskCompany">
+  UPDATE company
+  SET phone = #{phone},
+      address = #{address},
+      company_num = NULL,
+      email = NULL,
+      intro = NULL,
+      photo = NULL,
+      kakao_key = NULL
+  WHERE user_idx = #{user_idx}
+</update>
+	
 </mapper>
