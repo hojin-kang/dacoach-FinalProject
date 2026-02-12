@@ -35,8 +35,8 @@ public class AdminCompanyController {
         return "admin/dashboard";
     }
 
-    @GetMapping("/companyDetail/{usersIdx}") // URL 경로에 있는 변수명과
-    public String companyDetail(@PathVariable("usersIdx") int usersIdx, Model model) { // 이름이 일치해야 합니다.
+    @GetMapping("/companyDetail/{usersIdx}")
+    public String companyDetail(@PathVariable("usersIdx") int usersIdx, Model model) { 
 
         Map<String, Object> companyInfo = service.getCompanyDetail(usersIdx);
         
@@ -55,7 +55,6 @@ public class AdminCompanyController {
             EmbeddedUserDTO dto) {
 
         try {
-            // 서비스 호출
             service.updateCompanyFullStatus(params, dto);
             System.out.println("전달된 파라미터: " + params);
             model.addAttribute("msg", "정보가 성공적으로 반영되었습니다.");
@@ -64,7 +63,6 @@ public class AdminCompanyController {
             model.addAttribute("msg", "오류가 발생했습니다.");
         }
 
-        // 결과 화면 구성을 위해 데이터를 다시 세팅
         model.addAttribute("companyInfo", service.getCompanyDetail(user_idx));
         model.addAttribute("user_idx", user_idx);
         model.addAttribute("company_idx", company_idx);

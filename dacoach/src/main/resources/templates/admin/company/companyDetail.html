@@ -1,333 +1,327 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="contentPage">
-
+<div th:fragment="contentPage" class="company-detail-page">
 	<style>
-.detail-container {
-	max-width: 1000px;
+/* 클래스 상세 페이지와 통일된 스타일 */
+.company-detail-page {
+	max-width: 1100px;
 	margin: 0 auto;
-	padding: 20px;
+	padding: 32px;
+	font-family: 'Pretendard', sans-serif;
+	font-size: 14px;
+	color: #374151;
 }
 
-.page-title {
-	font-size: 24px;
-	font-weight: 600;
-	color: #333;
-	margin-bottom: 30px;
-	padding-bottom: 15px;
-	border-bottom: 2px solid #4CAF50;
+.company-detail-page .info-card {
+	background-color: #ffffff;
+	border: 2px solid #e5e7eb;
+	border-radius: 40px;
+	padding: 2.5rem;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	margin-bottom: 24px;
+	position: relative;
 }
 
-.info-card {
-	background: #fff;
-	border-radius: 8px;
-	padding: 25px;
-	margin-bottom: 20px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.company-detail-page .section-badge {
+	display: inline-block;
+	background-color: #9dbbb5;
+	color: #ffffff;
+	padding: 0.5rem 2rem;
+	border-radius: 9999px;
+	font-weight: 700;
+	font-size: 1rem;
+	margin-bottom: 1.5rem;
 }
 
-.card-title {
+.company-detail-page .sub-title {
 	font-size: 18px;
-	font-weight: 600;
-	color: #333;
-	margin-bottom: 20px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid #e0e0e0;
-}
-
-.info-row {
-	display: flex;
-	padding: 12px 0;
-	border-bottom: 1px solid #f5f5f5;
-}
-
-.info-row:last-child {
-	border-bottom: none;
-}
-
-.info-label {
-	width: 150px;
-	font-weight: 600;
-	color: #666;
-}
-
-.info-value {
-	flex: 1;
-	color: #333;
-}
-
-.status-group {
-	display: flex;
-	gap: 20px;
-	flex-wrap: wrap;
-}
-
-.radio-item {
+	font-weight: 700;
+	margin: 10px 0 20px;
+	color: #111827;
 	display: flex;
 	align-items: center;
 	gap: 8px;
 }
 
-.radio-item input[type="radio"] {
-	width: 18px;
-	height: 18px;
-	cursor: pointer;
+/* KV 그리드 레이아웃 */
+.company-detail-page .kv-grid {
+	display: grid;
+	grid-template-columns: 160px 1fr;
+	gap: 12px 16px;
+	align-items: stretch;
 }
 
-.radio-item label {
-	cursor: pointer;
-	font-size: 15px;
+.company-detail-page .kv-label {
+	background-color: #9dbbb5;
+	color: #ffffff;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	padding: 10px 12px;
+	min-height: 44px;
 }
 
-.form-group {
-	margin-bottom: 20px;
+.company-detail-page .kv-value {
+	background-color: #f0f8f7;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	padding: 10px 18px;
+	min-height: 44px;
+	border: 1px solid #e5e7eb;
+	color: #4b5563;
 }
 
-.form-label {
-	display: block;
-	font-weight: 600;
-	color: #666;
-	margin-bottom: 8px;
-}
-
-.form-input {
+/* 입력 폼 스타일 커스텀 */
+.company-detail-page .form-input {
 	width: 100%;
-	padding: 10px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
+	background-color: #ffffff;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	padding: 10px 14px;
 	font-size: 14px;
-	box-sizing: border-box;
+	transition: border-color 0.2s;
 }
 
-.form-input:focus {
+.company-detail-page .form-input:focus {
 	outline: none;
-	border-color: #4CAF50;
+	border-color: #9dbbb5;
+	ring: 2px solid #9dbbb5;
 }
 
-.form-input[readonly] {
-	background-color: #f9f9f9;
+.company-detail-page .form-input[readonly] {
+	background-color: #f3f4f6;
 	cursor: not-allowed;
 }
 
-.file-link {
-	color: #4CAF50;
-	text-decoration: none;
-	font-weight: 500;
-}
-
-.file-link:hover {
-	text-decoration: underline;
-}
-
-.button-group {
+/* 상태 라디오 버튼 그룹 */
+.company-detail-page .status-group {
 	display: flex;
-	gap: 10px;
-	margin-top: 30px;
+	gap: 24px;
+	flex-wrap: wrap;
+	padding: 10px;
 }
 
-.btn {
-	padding: 12px 24px;
-	border: none;
-	border-radius: 4px;
-	font-size: 15px;
-	font-weight: 500;
+.company-detail-page .radio-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
 	cursor: pointer;
-	transition: all 0.3s;
 }
 
-.btn-primary {
-	background: #4CAF50;
-	color: white;
+.company-detail-page .radio-item input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #9dbbb5;
+	cursor: pointer;
 }
 
-.btn-primary:hover {
-	background: #45a049;
+/* 배지 스타일 */
+.status-badge-inline {
+	padding: 4px 12px;
+	border-radius: 9999px;
+	font-weight: 700;
+	font-size: 12px;
 }
 
-.btn-secondary {
-	background: #2196F3;
-	color: white;
-}
-
-.btn-secondary:hover {
-	background: #0b7dda;
-}
-
-.btn-outline {
-	background: white;
-	color: #666;
-	border: 1px solid #ddd;
-	text-decoration: none;
-	display: inline-block;
-	text-align: center;
-}
-
-.btn-outline:hover {
-	background: #f5f5f5;
-}
-
-/* 정지 사유 영역 스타일 */
+/* 정지 사유 영역 */
 #suspension_area {
-	background: #fffafa;
-	padding: 20px;
-	border: 1px solid #ffdada;
-	border-radius: 8px;
+	background: #fff5f5;
+	padding: 24px;
+	border: 1px solid #fee2e2;
+	border-radius: 20px;
 	margin-top: 15px;
-	display: none;
 }
 
-.status-text {
-	font-weight: bold;
+/* 버튼 스타일 */
+.company-detail-page .btn-row {
+	display: flex;
+	gap: 12px;
+	margin-top: 32px;
+	justify-content: center;
+}
+
+.company-detail-page .btn {
+	border: none;
+	border-radius: 12px;
+	padding: 12px 28px;
+	font-weight: 700;
+	cursor: pointer;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 15px;
+	transition: all 0.2s;
+}
+
+.company-detail-page .btn-primary {
+	background-color: #9dbbb5;
+	color: white;
+}
+
+.company-detail-page .btn-secondary {
+	background-color: #6b7280;
+	color: white;
+}
+
+.company-detail-page .btn-outline {
+	background-color: white;
+	color: #6b7280;
+	border: 1px solid #e5e7eb;
+}
+
+.company-detail-page .btn:hover {
+	filter: brightness(90%);
+	transform: translateY(-1px);
+}
+
+.file-link {
+	color: #2563eb;
+	text-decoration: underline;
+	font-weight: 600;
 }
 </style>
 
-	<div class="detail-container">
-		<h2 class="page-title">기업 상세 정보</h2>
+	<div class="info-card">
+		<div class="section-badge">기업 상세 정보</div>
+		<div class="sub-title">기본 정보</div>
 
-		<div class="info-card" th:if="${companyInfo != null}">
-			<h3 class="card-title">기본 정보</h3>
-			<div class="info-row">
-				<div class="info-label">사용자명</div>
-				<div class="info-value" th:text="${companyInfo['USER_NAME']}">-</div>
+		<div class="kv-grid" th:if="${companyInfo != null}">
+			<div class="kv-label">사용자명/회사명</div>
+			<div class="kv-value" th:text="${companyInfo['USER_NAME']}">-</div>
+
+			<div class="kv-label">아이디</div>
+			<div class="kv-value" th:text="${companyInfo['LOGIN_ID']}">-</div>
+
+			<div class="kv-label">이메일</div>
+			<div class="kv-value" th:text="${companyInfo['EMAIL']}">-</div>
+
+			<div class="kv-label">전화번호</div>
+			<div class="kv-value" th:text="${companyInfo['PHONE']}">-</div>
+
+			<div class="kv-label">사업자번호</div>
+			<div class="kv-value" th:text="${companyInfo['COMPANY_NUM']}">-</div>
+
+			<div class="kv-label">주소</div>
+			<div class="kv-value" th:text="${companyInfo['ADDRESS']}">-</div>
+
+			<div class="kv-label">현재 상태</div>
+			<div class="kv-value">
+				<span class="status-badge-inline"
+					th:style="${companyInfo['STATUS'] == 'INACTIVE' ? 'background:#fef3c7; color:#92400e;' : 'background:#d1fae5; color:#065f46;'}"
+					th:text="${companyInfo['STATUS'] == 'INACTIVE' ? '대기' : '승인'}">
+				</span>
 			</div>
-			<div class="info-row">
-				<div class="info-label">아이디</div>
-				<div class="info-value" th:text="${companyInfo['LOGIN_ID']}">-</div>
+		</div>
+	</div>
+
+	<form th:action="@{/admin/company/updateStatus}" method="post">
+		<input type="hidden" name="user_idx"
+			th:value="${companyInfo['USER_IDX'] != null ? companyInfo['USER_IDX'] : companyInfo['IDX']}">
+		<input type="hidden" name="company_idx"
+			th:value="${companyInfo['COMPANY_IDX'] != null ? companyInfo['COMPANY_IDX'] : companyInfo['IDX']}">
+
+		<div class="info-card" th:if="${companyInfo['STATUS'] != 'INACTIVE'}">
+			<div class="section-badge" style="background-color: #6b7280;">계정
+				상태 관리</div>
+
+			<div class="sub-title">상태 변경 설정</div>
+			<div class="status-group">
+				<label class="radio-item"> <input type="radio" name="status"
+					value="ACTIVE" th:checked="${companyInfo['STATUS'] == 'ACTIVE'}"
+					onclick="toggleSuspension(false)"> <span>사용 (ACTIVE)</span>
+				</label> <label class="radio-item"> <input type="radio"
+					name="status" value="WARNING"
+					th:checked="${companyInfo['STATUS'] == 'WARNING'}"
+					onclick="toggleSuspension(false)"> <span>주의
+						(WARNING)</span>
+				</label> <label class="radio-item"> <input type="radio"
+					name="status" value="DANGER"
+					th:checked="${companyInfo['STATUS'] == 'DANGER'}"
+					onclick="toggleSuspension(false)"> <span>위험 (DANGER)</span>
+				</label> <label class="radio-item"> <input type="radio"
+					name="status" id="status_suspended" value="SUSPENDED"
+					th:checked="${companyInfo['STATUS'] == 'SUSPENDED'}"
+					onclick="toggleSuspension(true)"> <span>정지
+						(SUSPENDED)</span>
+				</label>
 			</div>
-			<div class="info-row">
-				<div class="info-label">이메일</div>
-				<div class="info-value" th:text="${companyInfo['EMAIL']}">-</div>
-			</div>
-			<div class="info-row">
-				<div class="info-label">전화번호</div>
-				<div class="info-value" th:text="${companyInfo['PHONE']}">-</div>
-			</div>
-			<div class="info-row">
-				<div class="info-label">회사명</div>
-				<div class="info-value" th:text="${companyInfo['USER_NAME']}">-</div>
-			</div>
-			<div class="info-row">
-				<div class="info-label">사업자번호</div>
-				<div class="info-value" th:text="${companyInfo['COMPANY_NUM']}">-</div>
-			</div>
-			<div class="info-row">
-				<div class="info-label">주소</div>
-				<div class="info-value" th:text="${companyInfo['ADDRESS']}">-</div>
-			</div>
-			<div class="info-row">
-				<div class="info-label">현재 상태</div>
-				<div class="info-value">
-					<span class="status-text"
-						th:style="${companyInfo['STATUS'] == 'INACTIVE' ? 'color:#f39c12' : (companyInfo['STATUS'] == 'ACTIVE' ? 'color:#27ae60' : 'color:#e74c3c')}"
-						th:text="${companyInfo['STATUS'] == 'INACTIVE' ? '대기' : (companyInfo['STATUS'] == 'ACTIVE' ? '승인' : companyInfo['STATUS'])}">
-					</span>
+
+			<div id="suspension_area"
+				th:style="${companyInfo['STATUS'] == 'SUSPENDED' ? 'display:block' : 'display:none'}">
+				<div style="margin-bottom: 15px;">
+					<label class="sub-title" style="color: #dc2626; font-size: 15px;">정지
+						사유 입력</label> <input type="text" name="reason" id="reason"
+						class="form-input" th:value="${companyInfo['REASON']}"
+						placeholder="정지 사유를 상세히 입력하세요">
+				</div>
+				<div style="display: flex; gap: 20px;">
+					<div style="flex: 1;">
+						<label
+							style="display: block; margin-bottom: 5px; font-weight: 700;">정지
+							시작일</label> <input type="text" class="form-input"
+							th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
+							readonly>
+					</div>
+					<div style="flex: 1;">
+						<label
+							style="display: block; margin-bottom: 5px; font-weight: 700;">정지
+							종료일</label> <input type="date" name="end_date" id="end_date"
+							class="form-input" th:value="${companyInfo['END_DATE']}">
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<form th:action="@{/admin/company/updateStatus}" method="post">
-			<input type="hidden" name="user_idx"
-				th:value="${companyInfo['USER_IDX'] != null ? companyInfo['USER_IDX'] : companyInfo['IDX']}">
-			<input type="hidden" name="company_idx"
-				th:value="${companyInfo['COMPANY_IDX'] != null ? companyInfo['COMPANY_IDX'] : companyInfo['IDX']}">
-
-			<div class="info-card" th:if="${companyInfo['STATUS'] != 'INACTIVE'}">
-				<h3 class="card-title">계정 상태 관리</h3>
-				<div class="form-group">
-					<div class="form-label">상태 변경</div>
-					<div class="status-group">
-						<div class="radio-item">
-							<input type="radio" name="status" id="status_active"
-								value="ACTIVE" th:checked="${companyInfo['STATUS'] == 'ACTIVE'}"
-								onclick="toggleSuspension(false)"> <label
-								for="status_active">사용</label>
-						</div>
-						<div class="radio-item">
-							<input type="radio" name="status" id="status_warning"
-								value="WARNING"
-								th:checked="${companyInfo['STATUS'] == 'WARNING'}"
-								onclick="toggleSuspension(false)"> <label
-								for="status_warning">주의</label>
-						</div>
-						<div class="radio-item">
-							<input type="radio" name="status" id="status_danger"
-								value="DANGER" th:checked="${companyInfo['STATUS'] == 'DANGER'}"
-								onclick="toggleSuspension(false)"> <label
-								for="status_danger">위험</label>
-						</div>
-						<div class="radio-item">
-							<input type="radio" name="status" id="status_suspended"
-								value="SUSPENDED"
-								th:checked="${companyInfo['STATUS'] == 'SUSPENDED'}"
-								onclick="toggleSuspension(true)"> <label
-								for="status_suspended">정지</label>
-						</div>
-					</div>
-				</div>
-
-				<div id="suspension_area"
-					th:style="${companyInfo['STATUS'] == 'SUSPENDED' ? 'display:block' : 'display:none'}">
-					<div class="form-group">
-						<label class="form-label" style="color: #e74c3c;">정지 사유</label> <input
-							type="text" name="reason" id="reason" class="form-input"
-							th:value="${companyInfo['REASON']}"
-							placeholder="정지 사유를 상세히 입력하세요">
-					</div>
-					<div style="display: flex; gap: 20px;">
-						<div class="form-group" style="flex: 1;">
-							<label class="form-label">정지 시작일 (오늘)</label> <input type="text"
-								name="start_date" class="form-input"
-								th:value="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
-								readonly>
-						</div>
-						<div class="form-group" style="flex: 1;">
-							<label class="form-label">정지 종료일</label> <input type="date"
-								name="end_date" id="end_date" class="form-input"
-								th:value="${companyInfo['END_DATE']}">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="info-card">
-				<h3 class="card-title">사업자 등록 상세</h3>
-				<div class="form-group">
-					<label class="form-label">발급일자</label> <input type="text"
-						name="get_date" class="form-input"
+		<div class="info-card">
+			<div class="sub-title">사업자 등록 상세 증빙</div>
+			<div class="kv-grid">
+				<div class="kv-label">발급일자</div>
+				<div class="kv-value">
+					<input type="text" name="get_date" class="form-input"
+						style="border: none; background: transparent;"
 						th:value="${companyInfo['GET_DATE'] != null ? #dates.format(companyInfo['GET_DATE'], 'yyyy-MM-dd') : ''}"
 						placeholder="YYYY-MM-DD">
 				</div>
-				<div class="form-group">
-					<label class="form-label">발급업종</label> <input type="text"
-						name="cert_type" class="form-input"
+
+				<div class="kv-label">발급업종</div>
+				<div class="kv-value">
+					<input type="text" name="cert_type" class="form-input"
+						style="border: none; background: transparent;"
 						th:value="${companyInfo['CERT_TYPE']}">
 				</div>
-				<div class="form-group">
-					<label class="form-label">발급기관</label> <input type="text"
-						name="cert_from" class="form-input"
+
+				<div class="kv-label">발급기관</div>
+				<div class="kv-value">
+					<input type="text" name="cert_from" class="form-input"
+						style="border: none; background: transparent;"
 						th:value="${companyInfo['CERT_FROM']}">
 				</div>
-				<div class="form-group">
-					<strong>첨부파일:</strong><br /> <span
-						th:if="${companyInfo['CERT_FILE'] != null}"> <a
+
+				<div class="kv-label">첨부파일</div>
+				<div class="kv-value">
+					<span th:if="${companyInfo['CERT_FILE'] != null}"> <a
 						th:href="@{|/uploads/${companyInfo['CERT_FILE']}|}"
-						target="_blank" class="file-link">[원본 파일 보기]</a>
+						target="_blank" class="file-link">📁 원본 파일 보기</a>
 					</span> <span th:unless="${companyInfo['CERT_FILE'] != null}"
-						style="color: #999;">등록된 파일이 없습니다.</span>
+						style="color: #9ca3af;">등록된 파일이 없습니다.</span>
 				</div>
 			</div>
+		</div>
 
-			<div class="button-group">
-				<button type="submit" name="status" value="ACTIVE"
-					class="btn btn-primary"
-					th:if="${companyInfo['STATUS'] == 'INACTIVE'}">승인 완료</button>
-				<button type="submit" class="btn btn-secondary"
-					th:if="${companyInfo['STATUS'] != 'INACTIVE'}">설정 저장</button>
-				<a th:href="@{/admin/companyList}" class="btn btn-outline">목록으로
-					돌아가기</a>
-			</div>
-		</form>
-	</div>
+		<div class="btn-row">
+			<button type="submit" name="status" value="ACTIVE"
+				class="btn btn-primary"
+				th:if="${companyInfo['STATUS'] == 'INACTIVE'}">승인 완료</button>
+			<button type="submit" class="btn btn-primary"
+				th:if="${companyInfo['STATUS'] != 'INACTIVE'}">설정 저장</button>
+			<a th:href="@{/admin/companyList}" class="btn btn-outline">목록으로
+				돌아가기</a>
+		</div>
+	</form>
 
 	<script th:inline="javascript">
         function toggleSuspension(show) {
@@ -346,7 +340,6 @@
             }
         }
 
-        // 페이지 로드 시 상태 확인
         window.onload = function() {
             const isSuspended = document.getElementById('status_suspended')?.checked;
             if (isSuspended) toggleSuspension(true);

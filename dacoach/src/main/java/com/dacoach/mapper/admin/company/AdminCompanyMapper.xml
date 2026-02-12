@@ -198,10 +198,10 @@
 		reason
         )
 		values(seq_embed_user.nextval,
-		#{user_idx},
-		#{start_date},
-		#{end_date},
-		#{reason}
+		#{user_idx,jdbcType=NUMERIC},
+		#{start_date,jdbcType=DATE},
+		#{end_date,jdbcType=DATE},
+		#{reason,jdbcType=VARCHAR}
 		)
 	</insert>
 
