@@ -86,4 +86,26 @@ public class TokenServiceImple implements TokenService {
     public List<PayDTO> getPayHistory(Integer user_idx) throws Exception {
         return tokenMapper.getPayHistory(String.valueOf(user_idx));
     }
+
+	@Override
+	public int giftToken(int user_idx, int qty) throws Exception {
+		
+        // 1) 토큰 충전(기존 로직)
+        Integer cur = tokenMapper.getMyToken(user_idx);
+        if (cur == null) cur = 0;
+
+        int after = cur + qty;
+        int result = 0;
+        result+=tokenMapper.updateTokenBalance(user_idx, after);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_idx", user_idx);
+        map.put("hist_type", "선물");
+        map.put("amount", qty);
+        map.put("balance_after", after);
+
+        result+=tokenMapper.insertTokenHistory(map);
+        
+		return result;
+	}
 }

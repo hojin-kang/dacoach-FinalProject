@@ -22,6 +22,7 @@ import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.likes.LikesClassDTO;
 import com.dacoach.model.likes.LikesUserDTO;
+import com.dacoach.model.notification.NotificationDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.token.TokenHistoryDTO;
 import com.dacoach.service.challenge.ChallengeService;
@@ -30,6 +31,7 @@ import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.file.FileUpload;
 import com.dacoach.service.likes.LikesService;
 import com.dacoach.service.mypage.MypageService;
+import com.dacoach.service.notification.NotificationService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -59,6 +61,9 @@ public class MypageController {
 	
 	@Autowired
 	private ChallengeService challengeService;
+	
+	@Autowired
+	private NotificationService notificationService;
 	
 	
 
@@ -478,6 +483,17 @@ public class MypageController {
 				if(challengeList.get(i).getType().equals("POINT")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=points) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
+					//토큰 지급
+					int token=tokenService.giftToken(user_idx, (challengeList.get(i).getPrize())/10);
+					if(token>0) {
+						//지급 성공 시 알림
+						NotificationDTO dto = new NotificationDTO();
+						dto.setProvider_idx(1);
+						dto.setReceiver_idx(user_idx);
+						dto.setNoti_type("CHALLENGE");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						notificationService.insertNotification(dto);
+					}
 					
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
@@ -486,7 +502,17 @@ public class MypageController {
 				}else if(challengeList.get(i).getType().equals("LIKE")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=likes) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
-					
+					//토큰 지급
+					int token=tokenService.giftToken(user_idx, (challengeList.get(i).getPrize())/10);
+					if(token>0) {
+						//지급 성공 시 알림
+						NotificationDTO dto = new NotificationDTO();
+						dto.setProvider_idx(1);
+						dto.setReceiver_idx(user_idx);
+						dto.setNoti_type("CHALLENGE");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						notificationService.insertNotification(dto);
+					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
 					mav.setViewName("/alert");
@@ -494,7 +520,17 @@ public class MypageController {
 				}else if(challengeList.get(i).getType().equals("REVIEW")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=reviews) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
-					
+					//토큰 지급
+					int token=tokenService.giftToken(user_idx, (challengeList.get(i).getPrize())/10);
+					if(token>0) {
+						//지급 성공 시 알림
+						NotificationDTO dto = new NotificationDTO();
+						dto.setProvider_idx(1);
+						dto.setReceiver_idx(user_idx);
+						dto.setNoti_type("CHALLENGE");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						notificationService.insertNotification(dto);
+					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
 					mav.setViewName("/alert");
@@ -502,7 +538,17 @@ public class MypageController {
 				}else if(challengeList.get(i).getType().equals("MATCH")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=matches) {
 					challengeList.get(i).setUser_idx(user_idx);
 					challengeService.achieveChallenge(challengeList.get(i));
-					
+					//토큰 지급
+					int token=tokenService.giftToken(user_idx, (challengeList.get(i).getPrize())/10);
+					if(token>0) {
+						//지급 성공 시 알림
+						NotificationDTO dto = new NotificationDTO();
+						dto.setProvider_idx(1);
+						dto.setReceiver_idx(user_idx);
+						dto.setNoti_type("CHALLENGE");
+						dto.setContent(challengeList.get(i).getName()+" 챌린지를 달성하였습니다!"+(challengeList.get(i).getPrize())/10+" 닭꼬치 지급 완료");
+						notificationService.insertNotification(dto);
+					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
 					mav.setViewName("/alert");
