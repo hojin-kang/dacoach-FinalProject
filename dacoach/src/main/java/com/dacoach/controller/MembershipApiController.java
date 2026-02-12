@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dacoach.kakaopay.KakaoApproveResponse;
+import com.dacoach.kakaopay.KakaoCancelResponse;
 import com.dacoach.kakaopay.KakaoPayService;
 import com.dacoach.kakaopay.KakaoReadyResponse;
 import com.dacoach.kakaopay.PayStatusDTO;
@@ -122,4 +123,14 @@ public class MembershipApiController {
 		mav.setViewName("alert");
 		return mav;
 	}
+	
+	/*결제 취소*/
+	
+	//결제취소
+		@PostMapping("cancel")
+		public ResponseEntity<KakaoCancelResponse> cancelKakaoPay(@RequestBody Map<String,Object> parameters) {
+			KakaoCancelResponse kakaocancel=kakaoPayService.cancelResponse(parameters);
+			System.out.println(kakaocancel);
+			return new ResponseEntity<KakaoCancelResponse>(kakaocancel,HttpStatus.OK);
+		}
 }

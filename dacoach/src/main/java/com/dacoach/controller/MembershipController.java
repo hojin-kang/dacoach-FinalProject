@@ -32,6 +32,10 @@ public class MembershipController {
 		session=se;
 	
 	}
+	@GetMapping("/cancelTest")
+	public String test() {
+		return "/membership/cancelTest";
+	}
 	
 	@GetMapping("/membershipForm")
 	public ModelAndView membershipForm() {
