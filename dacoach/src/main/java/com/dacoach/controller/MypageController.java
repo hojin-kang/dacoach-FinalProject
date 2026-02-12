@@ -16,6 +16,7 @@ import java.sql.Date;
 import com.dacoach.service.qna.QnaService;
 import com.dacoach.service.review.ReviewService;
 import com.dacoach.service.token.TokenService;
+import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.likes.LikesClassDTO;
@@ -239,26 +240,36 @@ public class MypageController {
 	
 	@GetMapping("/myPayment")
 	public ModelAndView myPaymentList(HttpSession session) {
-		ModelAndView mav = new ModelAndView();
-		
-		Integer user_idx = (Integer) session.getAttribute("user_idx");
-		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/needLogin");
-			return mav;
-		}
-        
-        List<TokenHistoryDTO> thdtos = null;
-        
-        try {
-        	thdtos = tokenService.getChargeHistory(user_idx);
-        	mav.addObject("thdto", thdtos);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		mav.setViewName("/coach/mypage/myPayment");
-		
-		return mav;
+	    ModelAndView mav = new ModelAndView();
+
+	    Integer user_idx = (Integer) session.getAttribute("user_idx");
+	    if (user_idx == null || user_idx == 0) {
+	        mav.setViewName("/needLogin");
+	        return mav;
+	    }
+
+	    List<PayDTO> payList = null;
+
+	    try {
+	        payList = tokenService.getPayHistory(user_idx);
+	        
+	        for (PayDTO p : payList) {
+	            String label = switch (p.getPay_type()) {
+	                case "TOKEN" -> "닭꼬치";
+	                case "CLASS" -> "클래스";
+	                case "MEMBERSHIP" -> "멤버십";
+	                default -> p.getPay_type();
+	            };
+	            p.setPay_type(label);
+	        }
+	        
+	        mav.addObject("payList", payList);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    mav.setViewName("/coach/mypage/myPayment");
+	    return mav;
 	}
 	
 	@GetMapping("/notice")

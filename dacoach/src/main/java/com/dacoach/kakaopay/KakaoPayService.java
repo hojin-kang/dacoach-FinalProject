@@ -82,11 +82,11 @@ public class KakaoPayService {
 		
 		//파라미터, 헤더
 		HttpEntity<Map<String,String>> requestEntity=new HttpEntity<>(parameters,this.getHeaders());
-		System.out.println();
-		System.out.println();
-		System.out.println(requestEntity);
-		System.out.println();
-		System.out.println();
+//		System.out.println();
+//		System.out.println();
+//		System.out.println(requestEntity);
+//		System.out.println();
+//		System.out.println();
 		
 		//외부에 보낼 url
 		RestTemplate restTemplate=new RestTemplate();
@@ -97,13 +97,13 @@ public class KakaoPayService {
 						requestEntity, 
 						KakaoApproveResponse.class);
 		
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println(approveResponse);
-		System.out.println();
-		System.out.println();
-		System.out.println();
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
+//		System.out.println(approveResponse);
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
 		return approveResponse;
 	}
 }

@@ -56,7 +56,7 @@ public class KakaoPayController {
         if (approve == null) return "redirect:/tokenChargeForm?result=approve_fail";
 
         try {
-            tokenService.chargeTokenAfterPay(user_idx, qty);
+        	tokenService.chargeTokenAfterPay(user_idx, qty, approve);
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/tokenChargeForm?result=db_fail";
