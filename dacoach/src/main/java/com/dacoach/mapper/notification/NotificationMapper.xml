@@ -32,5 +32,8 @@
 			is_read='Y'
 		where noti_idx=#{noti_idx}
 	</update>
-
+	<insert id="insertNotification" parameterType="com.dacoach.model.notification.NotificationDTO">
+        INSERT INTO notification (noti_idx, receiver_idx, provider_idx, noti_type, content, is_read, created_at)
+        VALUES (seq_notification.nextval, #{receiver_idx}, #{provider_idx}, #{noti_type}, #{content}, 'N', sysdate)
+	</insert>
 </mapper>
