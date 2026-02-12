@@ -22,10 +22,10 @@ public class ClassDTO {
 	private String photo;
 	private String video;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date start_date;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date end_date;
 
 	private Date created_at;

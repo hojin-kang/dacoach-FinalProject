@@ -152,26 +152,26 @@
 									<div class="reviewTop">
 										<div class="reviewAvatar">
 											<span
-												th:if="${r.reviewerPhoto == null or r.reviewerPhoto == ''}"
+												th:if="${r.REVIEWER_PHOTO == null or r.REVIEWER_PHOTO == ''}"
 												class="no-media-message"
 												style="width: 48px; height: 48px; border-radius: 50%; font-size: 11px;">👤</span>
 											<img
-												th:if="${r.reviewerPhoto != null and r.reviewerPhoto != ''}"
-												th:src="'/uploads/' + ${r.reviewerPhoto}" alt="reviewer" />
+												th:if="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''}"
+												th:src="'/uploads/' + ${r.REVIEWER_PHOTO}" alt="reviewer" />
 										</div>
 
 										<div class="reviewMeta">
 											<div class="reviewStars">
-												<span class="stars" th:text="|★ ${r.rating}|"></span>
+												<span class="stars" th:text="|★ ${r.RATING}|"></span>
 											</div>
-											<div class="reviewText" th:text="${r.content}"></div>
+											<div class="reviewText" th:text="${r.CONTENT}"></div>
 										</div>
 									</div>
 
 									<div class="reviewBottom">
-										<div class="reviewerName" th:text="${r.reviewerName}"></div>
+										<div class="reviewerName" th:text="${r.REVIEWER_NAME}"></div>
 										<div class="reviewTag"
-											th:if="${r.tag != null and r.tag != ''}" th:text="${r.tag}"></div>
+											th:if="${r.TAG != null and r.TAG != ''}" th:text="${r.TAG}"></div>
 									</div>
 								</div>
 

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dacoach.mapper.coachClasses.CoachClassMapper;
 import com.dacoach.model.coachClasses.CoachClassDTO;
 import com.dacoach.model.coachClasses.ClassEnrollmentDTO;
+import com.dacoach.model.review.ReviewClassDTO;
 
 @Service
 public class CoachClassServiceImple implements CoachClassService {
@@ -145,7 +146,16 @@ public class CoachClassServiceImple implements CoachClassService {
 		enrollment.setClass_idx(class_idx);
 		enrollment.setUser_idx(user_idx);
 		enrollment.setStatus("CONFIRMED"); // 신청완료 상태로 등록
-		enrollment.setEnrolled_at(new Date());
+		enrollment.setEnrolled_at(new Date()); // 신청한 날짜 (오늘)
+
+		// enrollment_date(선택한 수강 날짜)를 Date로 변환하여 COMPLETED_AT에 저장
+		try {
+			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+			Date completedDate = sdf.parse(enrollment_date);
+			enrollment.setCompleted_at(completedDate); // 수강 예정일
+		} catch (Exception e) {
+			throw new IllegalArgumentException("날짜 형식이 올바르지 않습니다.");
+		}
 
 		int result = classMapper.insertEnrollment(enrollment);
 		return result > 0;
@@ -186,10 +196,55 @@ public class CoachClassServiceImple implements CoachClassService {
 		Integer count = classMapper.checkUserEnrollment(param);
 		return count != null && count > 0;
 	}
-	
+
 	// 현재 인기 클래스 불러오기
 	@Override
 	public List<CoachClassDTO> getPopularClass() throws Exception {
 		return classMapper.getPopularClass();
+	}
+
+	// ===== 후기 관련 메서드 구현 =====
+
+	@Override
+	public List<String> getClassReviewTags() throws Exception {
+		return classMapper.selectClassReviewTags();
+	}
+
+	@Override
+	@Transactional
+	public boolean writeClassReview(ReviewClassDTO review) throws Exception {
+		// 1. 이미 후기를 작성했는지 확인
+		if (hasUserReviewedClass(review.getClass_idx(), review.getReviewer_idx())) {
+			throw new IllegalStateException("이미 해당 클래스에 후기를 작성하셨습니다.");
+		}
+
+		// 2. 수강 완료 여부 확인 (수강 날짜가 오늘이거나 과거인지)
+		if (!hasUserCompletedEnrollment(review.getClass_idx(), review.getReviewer_idx())) {
+			throw new IllegalStateException("수강 완료한 클래스에만 후기를 작성할 수 있습니다.");
+		}
+
+		// 3. 후기 등록
+		int result = classMapper.insertClassReview(review);
+		return result > 0;
+	}
+
+	@Override
+	public boolean hasUserReviewedClass(int class_idx, int user_idx) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		param.put("class_idx", class_idx);
+		param.put("user_idx", user_idx);
+
+		Integer count = classMapper.checkUserReview(param);
+		return count != null && count > 0;
+	}
+
+	@Override
+	public boolean hasUserCompletedEnrollment(int class_idx, int user_idx) throws Exception {
+		Map<String, Object> param = new HashMap<>();
+		param.put("class_idx", class_idx);
+		param.put("user_idx", user_idx);
+
+		Integer count = classMapper.checkUserCompletedEnrollment(param);
+		return count != null && count > 0;
 	}
 }
