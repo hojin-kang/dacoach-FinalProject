@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.dacoach.mapper.challenge.ChallengeMapper">
+  	<select id="getAllChallenges" parameterType="int" resultType="com.dacoach.model.challenge.ChallengeDTO">
+  		select C.*, UC.achieve, UC.achieved_date from challenge C
+  		join user_challenge UC on C.challenge_idx = UC.challenge_idx
+  		where user_idx = #{user_idx}
+  		order by C.challenge_idx asc
+  	</select>
+  	<insert id="insertDefaultChallenges" parameterType="int">
+  		insert into user_challenge (user_idx, challenge_idx, achieve, achieved_date)
+  		select #{user_idx}, challenge_idx, 'N', null from challenge
+    </insert>
+    <select id="getScores" parameterType="int" resultType="HashMap">
+    	select C.point_score, count(DISTINCT LU.liked_user_idx) likes, count(DISTINCT RC.reviewer_idx) reviews, count(DISTINCT M.match_idx) matches 
+    	from coach C 	
+    	left join likes_user LU on C.user_idx = LU.liked_user_idx
+    	left join review_coach RC on C.user_idx = RC.reviewer_idx
+    	left join match M on (C.user_idx = M.user1_idx or user2_idx = C.user_idx)
+    	where C.user_idx = #{user_idx}
+        group by C.point_score
+    </select>
+    <update id="achieveChallenge" parameterType="com.dacoach.model.challenge.ChallengeDTO">
+    	update user_challenge
+    	set achieve = 'Y', achieved_date=sysdate
+    	where user_idx = #{user_idx} and challenge_idx = #{challenge_idx}
+    </update>
+  </mapper>

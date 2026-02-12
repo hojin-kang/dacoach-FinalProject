@@ -16,6 +16,7 @@ import java.sql.Date;
 import com.dacoach.service.qna.QnaService;
 import com.dacoach.service.review.ReviewService;
 import com.dacoach.service.token.TokenService;
+import com.dacoach.model.challenge.ChallengeDTO;
 import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
@@ -23,6 +24,7 @@ import com.dacoach.model.likes.LikesClassDTO;
 import com.dacoach.model.likes.LikesUserDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.token.TokenHistoryDTO;
+import com.dacoach.service.challenge.ChallengeService;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.file.FileUpload;
@@ -54,6 +56,9 @@ public class MypageController {
 	
 	@Autowired
 	private CompanyService companyService;
+	
+	@Autowired
+	private ChallengeService challengeService;
 
 	@GetMapping("/mypage")
 	public ModelAndView mypageMain(HttpSession session) {
@@ -420,6 +425,72 @@ public class MypageController {
 		mav.addObject("pendingList", pendingList);
 		mav.addObject("rejectedList", rejectedList);
 		mav.setViewName("/coach/mypage/myCert");
+		return mav;
+	}
+	@GetMapping("/myChallenge")
+	public ModelAndView myChallenge(HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.addObject("msg", "로그인이 필요합니다.");
+			mav.addObject("url", "/login");
+			mav.setViewName("/alert");
+			return mav;
+		}
+		int user_idx = (Integer)session.getAttribute("user_idx");
+		
+		try {
+			List<ChallengeDTO> challengeList = challengeService.getAllChallenges(user_idx);
+			//최초접속 시 기본챌린지 삽입
+			if(challengeList == null || challengeList.size() == 0) {
+				challengeService.insertDefaultChallenges(user_idx);
+				challengeList = challengeService.getAllChallenges(user_idx);
+			}
+			//현재 유저 포인트, 좋아요, 작성한 리뷰, 매칭 수 가져오기
+			HashMap<String, Object> scores=challengeService.getScores(user_idx);
+			int likes=((Number) scores.get("LIKES")).intValue();
+			int points=((Number) scores.get("POINT_SCORE")).intValue();
+			int reviews=((Number) scores.get("REVIEWS")).intValue();
+			int matches=((Number) scores.get("MATCHES")).intValue();
+			System.out.println("likes: "+likes+", points: "+points+", reviews: "+reviews+", matches: "+matches);
+			//과제 달성여부 체크 및 db업데이트
+			for(int i=0;i<challengeList.size();i++) {
+				if(challengeList.get(i).getType().equals("POINT")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=points) {
+					challengeList.get(i).setUser_idx(user_idx);
+					challengeService.achieveChallenge(challengeList.get(i));
+				}else if(challengeList.get(i).getType().equals("LIKE")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=likes) {
+					challengeList.get(i).setUser_idx(user_idx);
+					challengeService.achieveChallenge(challengeList.get(i));
+				}else if(challengeList.get(i).getType().equals("REVIEW")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=reviews) {
+					challengeList.get(i).setUser_idx(user_idx);
+					challengeService.achieveChallenge(challengeList.get(i));
+				}else if(challengeList.get(i).getType().equals("MATCH")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=matches) {
+					challengeList.get(i).setUser_idx(user_idx);
+					challengeService.achieveChallenge(challengeList.get(i));
+				}
+			}	
+			
+			//달성한 과제
+			List<ChallengeDTO> achievedList = new ArrayList<>();
+			for(int i=0; i<challengeList.size(); i++) {
+				if(challengeList.get(i).getAchieve().equals("Y")) {
+					achievedList.add(challengeList.get(i));
+				}
+			}
+			//미달성한 과제
+			List<ChallengeDTO> notAchievedList = new ArrayList<>();
+			for(int i=0; i<challengeList.size(); i++) {
+				if(challengeList.get(i).getAchieve().equals("N")) {
+					notAchievedList.add(challengeList.get(i));
+				}
+			}
+			mav.addObject("challengeList", challengeList);
+			mav.addObject("achievedList", achievedList);
+			mav.addObject("notAchievedList", notAchievedList);
+			mav.setViewName("/coach/mypage/myChallenge");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return mav;
 	}
 }
