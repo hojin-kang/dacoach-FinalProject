@@ -174,8 +174,7 @@
 									<!-- 하단: 태그 -->
 									<div class="reviewBottom">
 										<div class="reviewTag"
-											th:if="${r.TAG != null and r.TAG != ''}"
-											th:text="${r.TAG}"></div>
+											th:if="${r.TAG != null and r.TAG != ''}" th:text="${r.TAG}"></div>
 									</div>
 								</div>
 
@@ -216,13 +215,13 @@
 								th:text="|${classDTO.max_user_cnt}명|"></span>
 						</div>
 
-						<div class="sideBtns">
-							<!-- 종료된 클래스면 비활성화 -->
-							<a class="actionBtn solid" th:if="${now <= classDTO.end_date}"
+						<div class="sideBtns"
+							th:with="today=${#dates.format(#dates.createToday(),'yyyy-MM-dd')}, end=${#dates.format(classDTO.end_date,'yyyy-MM-dd')}">
+							<!-- 종료일까지 수정 가능 (문자열 비교) -->
+							<a class="actionBtn solid" th:if="${today <= end}"
 								th:href="@{/class/company/update(classId=${classDTO.class_idx})}">수정하기</a>
-							<button class="actionBtn solid disabled"
-								th:if="${now > classDTO.end_date}" disabled
-								title="종료된 클래스는 수정할 수 없습니다">수정하기</button>
+							<button class="actionBtn solid disabled" th:if="${today > end}"
+								disabled title="종료된 클래스는 수정할 수 없습니다">수정하기</button>
 						</div>
 					</div>
 				</aside>

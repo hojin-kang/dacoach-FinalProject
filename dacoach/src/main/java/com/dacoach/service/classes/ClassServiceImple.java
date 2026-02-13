@@ -120,10 +120,9 @@ public class ClassServiceImple implements ClassService {
 			throw new IllegalArgumentException("시작일은 오늘 이후여야 합니다.");
 		}
 
-		// 종료일이 시작일보다 이전이거나 같은지 확인
-		if (classDTO.getEnd_date().before(classDTO.getStart_date())
-				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
-			throw new IllegalArgumentException("종료일은 시작일보다 이후여야 합니다.");
+		// 종료일이 시작일보다 이전인지 확인 (같은 날짜는 허용)
+		if (classDTO.getEnd_date().before(classDTO.getStart_date())) {
+			throw new IllegalArgumentException("종료일은 시작일과 같거나 이후여야 합니다.");
 		}
 
 		// 제목/내용 길이 검증
@@ -399,10 +398,9 @@ public class ClassServiceImple implements ClassService {
 			throw new IllegalArgumentException("시작일은 오늘 이후여야 합니다.");
 		}
 
-		// 종료일이 시작일보다 이전이거나 같은지 확인
-		if (classDTO.getEnd_date().before(classDTO.getStart_date())
-				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
-			throw new IllegalArgumentException("종료일은 시작일보다 이후여야 합니다.");
+		// 종료일이 시작일보다 이전인지 확인 (같은 날짜는 허용)
+		if (classDTO.getEnd_date().before(classDTO.getStart_date())) {
+			throw new IllegalArgumentException("종료일은 시작일과 같거나 이후여야 합니다.");
 		}
 
 		// 내용 길이 검증
