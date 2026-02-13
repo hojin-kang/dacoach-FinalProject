@@ -78,6 +78,7 @@
 	text-align: center;
 }
 
+/* [카드 스타일] */
 .ad-item-card {
 	display: flex;
 	align-items: center;
@@ -96,6 +97,7 @@
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
 }
 
+/* [컬럼 너비] */
 .col-idx {
 	width: 60px;
 	font-weight: 800;
@@ -103,7 +105,7 @@
 }
 
 .col-user {
-	width: 150px;
+	width: 180px;
 	font-weight: 700;
 	text-align: left;
 	padding-left: 10px;
@@ -115,15 +117,14 @@
 
 .col-membership {
 	flex: 1;
+	font-weight: 600;
+	color: var(--mint-dark);
 }
 
 .col-date {
 	width: 120px;
 	color: #9ca3af;
-}
-
-.col-status {
-	width: 100px;
+	font-size: 13px;
 }
 
 .col-action {
@@ -133,23 +134,30 @@
 	justify-content: center;
 }
 
+/* [이미지 썸네일] */
 .ad-thumb {
-	width: 140px;
+	width: 90px;
 	height: 60px;
 	object-fit: cover;
 	border-radius: 8px;
 	border: 1px solid #eee;
-	cursor: zoom-in;
+	cursor: pointer;
+	transition: 0.2s;
 }
 
+.ad-thumb:hover {
+	opacity: 0.8;
+}
+
+/* [버튼 스타일] */
 .btn-action {
-	padding: 6px 12px;
-	border-radius: 8px;
+	padding: 8px 16px;
+	border-radius: 10px;
 	font-size: 12px;
 	font-weight: 800;
-	transition: 0.2s;
 	cursor: pointer;
 	border: none;
+	transition: 0.2s;
 }
 
 .btn-approve {
@@ -171,14 +179,6 @@
 	background-color: var(--reject-red);
 	color: white;
 }
-
-.pill-badge {
-	display: inline-block;
-	padding: 4px 10px;
-	border-radius: 8px;
-	font-size: 11px;
-	font-weight: 700;
-}
 </style>
 
 	<div class="max-w-[1200px] mx-auto p-10 ad-admin-container">
@@ -192,83 +192,57 @@
 				<span style="font-size: 20px;">📢</span> <span class="summary-label">신규
 					광고 승인 대기</span>
 				<div class="summary-count">
-					<span th:text="${pendingAdCount}">3</span>건
+					<span th:text="${#lists.size(adList)}">0</span>건
 				</div>
 			</div>
 
 			<div class="list-header">
-				<div class="list-header">
-					<div class="col-idx">번호</div>
-					<div class="col-user">광고주</div>
-					<div class="col-preview">배너 미리보기</div>
-					<div class="col-membership">멤버십</div>
-					<div class="col-date">신청일</div>
-					<div class="col-status">상태</div>
-					<div class="col-action">관리/승인</div>
-				</div>
+				<div class="col-idx">번호</div>
+				<div class="col-user">광고주(이름)</div>
+				<div class="col-preview">배너 미리보기</div>
+				<div class="col-membership">멤버십 타입</div>
+				<div class="col-date">신청일</div>
+				<div class="col-action">승인/반려</div>
 			</div>
 
 			<div th:if="${#lists.isEmpty(adList)}"
-				class="text-center py-20 text-gray-300 italic">현재 승인 대기 중인 광고가
-				없습니다.</div>
+				class="text-center py-20 text-gray-300 italic">현재 승인 대기 중인 광고
+				신청이 없습니다.</div>
 
 			<div th:each="ad : ${adList}" class="ad-item-card">
-				<div class="col-idx" th:text="${ad.AD_IDX}">101</div>
-
-				<div class="col-user">
-					<div style="font-size: 13px;" th:text="${ad.USER_NAME}">필라테스
-						퀸</div>
-					<div style="font-size: 10px; color: #9ca3af;"
-						th:text="${ad.LOGIN_ID}">pilates_q@naver.com</div>
-				</div>
+				<div class="col-idx" th:text="${ad.AD_IDX}"></div>
+				<div class="col-user" th:text="${ad.USER_NAME}"></div>
 
 				<div class="col-preview">
-					<img th:src="${ad.PHOTO}" src="/api/placeholder/140/60"
-						class="ad-thumb" alt="Ad Preview" onclick="openPreview(this.src)">
+					<img th:if="${ad.PHOTO != null and ad.PHOTO != ''}"
+						th:src="@{|/uploads/${ad.PHOTO}|}" alt="배너로고" class="ad-thumb"
+						th:onclick="'window.open(this.src)'">
 				</div>
 
-				<div class="col-membership">
-					<span class="text-xs font-bold" th:text="${ad.MEMBER_TYPE}">PREMIUM</span>
-				</div>
+				<div class="col-membership" th:text="${ad.MEMBER_TYPE}"></div>
 
 				<div class="col-date"
-					th:text="${#dates.format(ad.CREATED_AT, 'yyyy-MM-dd')}">2024-05-20</div>
-
-				<div class="col-status">
-					<span class="pill-badge bg-orange-100 text-orange-600">대기</span>
-				</div>
+					th:text="${#dates.format(ad.CREATED_AT, 'yyyy-MM-dd')}"></div>
 
 				<div class="col-action">
 					<button class="btn-action btn-approve"
-						th:onclick="'approveAd(' + ${ad.AD_IDX} + ')'">승인</button>
+						th:onclick="'processAd(' + ${ad.AD_IDX} + ',' + ${ad.USER_IDX} + ',\'APPROVE\')'">승인</button>
 					<button class="btn-action btn-reject"
-						th:onclick="'rejectAd(' + ${ad.AD_IDX} + ')'">거절</button>
+						th:onclick="'processAd(' + ${ad.AD_IDX} + ',' + ${ad.USER_IDX} + ', \'REJECT\')'">반려</button>
 				</div>
 			</div>
 		</section>
 	</div>
 
 	<script th:inline="javascript">
-        // 승인 로직 (AJAX 활용 권장)
-        function approveAd(adIdx) {
-            if(confirm(adIdx + "번 광고를 승인하시겠습니까?")) {
-                console.log("Approve Ad:", adIdx);
-                // location.href = "/admin/ad/approve?adIdx=" + adIdx;
+         //APPROVE' or REJECT
+         
+        function processAd(adIdx, userIdx, action) {
+            const actionText = (action === 'APPROVE') ? '승인' : '반려';
+            
+            if (confirm(adIdx + "번 광고를 " + actionText + "하시겠습니까?")) {
+                location.href = "/admin/ad/process?ad_idx=" + adIdx + "&user_idx=" + userIdx + "&action=" + action;
             }
-        }
-
-        // 거절 로직 (사유 입력창 포함)
-        function rejectAd(adIdx) {
-            const reason = prompt("거절 사유를 입력해주세요:");
-            if(reason) {
-                console.log("Reject Ad:", adIdx, "Reason:", reason);
-                // location.href = "/admin/ad/reject?adIdx=" + adIdx + "&reason=" + encodeURIComponent(reason);
-            }
-        }
-
-        // 이미지 크게 보기 (심플 모달 등 확장 가능)
-        function openPreview(src) {
-            window.open(src, '_blank', 'width=800,height=400');
         }
     </script>
 </div>
