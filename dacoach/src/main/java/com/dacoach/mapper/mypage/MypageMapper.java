@@ -14,8 +14,6 @@ public interface MypageMapper {
 
 	    int insertReasonLog(Map<String,Object> map);
 
-	    int maskUsers(Map<String,Object> map);
-	    int maskCoach(Map<String,Object> map);
-	    int maskCompany(Map<String,Object> map);
+	    int deleteUser(Integer user_idx);
 
 }

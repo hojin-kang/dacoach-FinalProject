@@ -7,5 +7,5 @@ public interface MypageService {
 	public Map getUserInfo(int user_idx);
 	
 	List<Map<String,Object>> getWithdrawReasons();
-	void withdrawUser(int userIdx, int reasonTypeIdx, String extra);
+	void withdrawUser(int userIdx, int reasonTypeIdx);
 }

@@ -100,13 +100,12 @@ public class MypageController {
 	@PostMapping("/withdraw")
 	public String withdraw(
 	        @RequestParam("reason_type_idx") int reasonTypeIdx,
-	        @RequestParam(value="extra", required=false) String extra,
 	        HttpSession session
 	) {
 	    Integer user_idx = (Integer) session.getAttribute("user_idx");
 	    if (user_idx == null || user_idx == 0) return "redirect:/needLogin";
 
-	    mypageService.withdrawUser(user_idx, reasonTypeIdx, extra);
+	    mypageService.withdrawUser(user_idx, reasonTypeIdx);
 
 	    // 세션 만료(로그아웃)
 	    session.invalidate();
@@ -186,7 +185,6 @@ public class MypageController {
         	}
         	
         	
-        	
             CoachDTO dto = new CoachDTO();
             dto.setUser_idx(user_idx);
             dto.setNickname(nickname);
@@ -197,6 +195,13 @@ public class MypageController {
             // service에서: 기존 파일 유지/교체 + 기본정보 update + 매핑 싹 갱신
             coachService.updateMyInfo(dto, uploadPhoto, uploadVideo,
                     myMinorCate, interMinorCate, myMajorRegion, myMinorRegion, myHashtags, interHashtags);
+            
+            // 여기서 DB 최신값으로 세션 photo 갱신
+            CoachDTO refreshed = coachService.getCoachInfo(user_idx);
+            if (refreshed != null) {
+                session.setAttribute("photo",
+                        (refreshed.getPhoto() == null || refreshed.getPhoto().isBlank()) ? null : refreshed.getPhoto());
+            }
 
             mav.addObject("msg", "개인정보 수정이 완료되었습니다.");
             mav.addObject("url", "/myInfo");

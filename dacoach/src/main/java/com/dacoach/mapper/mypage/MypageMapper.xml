@@ -35,46 +35,18 @@
 
 <insert id="insertReasonLog">
   INSERT INTO reason_log (
-    reason_log_idx, user_idx, reason_type_idx, created_at
+    reason_log_idx, user_type, reason_type_idx, created_at
   ) VALUES (
     SEQ_REASON_LOG.NEXTVAL,
-    #{user_idx},
+    #{user_type},
     #{reason_type_idx},
     SYSDATE
   )
 </insert>
 
-<update id="maskUsers">
-  UPDATE users
-  SET status = 'DELETED',
-      user_name = #{user_name},
-      login_id = #{login_id},
-      password = #{password}
-  WHERE user_idx = #{user_idx}
-</update>
-
-<update id="maskCoach">
-  UPDATE coach
-  SET nickname = #{nickname},
-      mail = #{mail},
-      phone = NULL,
-      intro = NULL,
-      photo = NULL,
-      video = NULL,
-      kakao_key = NULL
-  WHERE user_idx = #{user_idx}
-</update>
-
-<update id="maskCompany">
-  UPDATE company
-  SET phone = #{phone},
-      address = #{address},
-      company_num = NULL,
-      email = NULL,
-      intro = NULL,
-      photo = NULL,
-      kakao_key = NULL
-  WHERE user_idx = #{user_idx}
-</update>
+<delete id="deleteUser">
+	delete from users
+	where user_idx=#{user_idx}
+</delete>
 	
 </mapper>
