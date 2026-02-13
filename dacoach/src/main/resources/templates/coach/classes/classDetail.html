@@ -85,12 +85,13 @@
 			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
 			<nav class="detailTabs">
 				<a class="tab active" href="#detail">상세정보</a>
+				<!-- ✅ 여기 누르면 아래 후기 블록으로 앵커 이동 -->
 				<a class="tab" href="#reviews">클래스 후기</a>
 			</nav>
 
 			<hr class="divider" />
 
-			<div class="classPage classDetailPage">
+			<div class="classDetailPage">
 
 				<!-- ===== LEFT: 상세 ===== -->
 				<section class="detailArea" id="detail">
@@ -132,11 +133,10 @@
 								th:text="${regionInfo.REGION_NM} + ' ' + ${regionInfo.DISTRICT_NM} + ' ' + ${classDTO.region_detail}"></span>
 							<span class="region-empty" th:if="${regionInfo == null}">지역
 								정보 없음</span>
-						</div>
 
-						<!-- 카카오맵 -->
-						<div id="map"
-							style="width: 100%; height: 350px; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
+							<!-- 카카오맵 -->
+							<div id="map"></div>
+						</div>
 
 						<!-- 숨겨진 필드로 주소 정보 전달 -->
 						<input type="hidden" id="addressData"
@@ -173,29 +173,7 @@
 					<!-- ===== 후기 블록 (앵커 목적지) ===== -->
 					<article class="detailBlock" id="reviews">
 						<div class="reviewHead">
-							<div
-								style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-								<h3 class="blockTitle">클래스 후기</h3>
-
-								<!-- 후기 작성 버튼 추가 -->
-								<div th:if="${session.user_idx != null}">
-									<!-- 이미 후기를 작성한 경우 -->
-									<span th:if="${hasReviewed}"
-										style="color: #4CAF50; font-weight: 600; padding: 8px 16px; background-color: #e8f5e9; border-radius: 20px; font-size: 14px;">
-										✓ 후기 작성 완료 </span>
-
-									<!-- 수강 완료했고 후기를 작성하지 않은 경우 -->
-									<a th:if="${!hasReviewed and hasCompleted}"
-										th:href="@{/coach/reviewWrite(classId=${classDTO.class_idx})}"
-										style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.3s;">
-										후기 작성하기 </a>
-
-									<!-- 아직 수강 완료하지 않은 경우 -->
-									<span th:if="${!hasReviewed and !hasCompleted and isEnrolled}"
-										style="color: #999; font-weight: 500; padding: 8px 16px; background-color: #f5f5f5; border-radius: 20px; font-size: 14px;">
-										수강 완료 후 작성 가능 </span>
-								</div>
-							</div>
+							<h3 class="blockTitle">클래스 후기</h3>
 
 							<!-- 요약: 리뷰수/평점 -->
 							<div class="reviewSummary">
@@ -207,28 +185,50 @@
 							</div>
 						</div>
 
+						<!-- 후기 작성 버튼 영역 (reviewHead 밖으로) -->
+						<div class="reviewWriteBtn" th:if="${session.user_idx != null}"
+							style="margin-bottom: 15px;">
+							<!-- 이미 후기를 작성한 경우 -->
+							<span th:if="${hasReviewed}"
+								style="color: #4CAF50; font-weight: 600; padding: 8px 16px; background-color: #e8f5e9; border-radius: 20px; font-size: 14px;">
+								✓ 후기 작성 완료 </span>
+
+							<!-- 수강 완료했고 후기를 작성하지 않은 경우 -->
+							<a th:if="${!hasReviewed and hasCompleted}"
+								th:href="@{/coach/reviewWrite(classId=${classDTO.class_idx})}"
+								style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.3s;">
+								후기 작성하기 </a>
+
+							<!-- 아직 수강 완료하지 않은 경우 -->
+							<span th:if="${!hasReviewed and !hasCompleted and isEnrolled}"
+								style="color: #999; font-weight: 500; padding: 8px 16px; background-color: #f5f5f5; border-radius: 20px; font-size: 14px;">
+								수강 완료 후 작성 가능 </span>
+						</div>
+
 						<!-- 후기 카드 슬라이더 느낌 -->
 						<div class="reviewSlider">
-
-							<button type="button" class="slideArrow left" aria-label="prev">‹</button>
-
 							<div class="reviewCards">
 								<!-- 리뷰 1개 -->
 								<div class="reviewCard" th:each="r : ${reviewList}">
 									<div class="reviewTop">
-										<div class="reviewAvatar">
-											<a class="reviewerLink"
-												th:href="@{/coach/detail(user_idx=${r.REVIEWER_IDX})}">
-												<span
-												th:if="${r.REVIEWER_PHOTO == null or r.REVIEWER_PHOTO == ''}"
-												class="no-media-message"
-												style="width: 48px; height: 48px; border-radius: 50%; font-size: 11px;">👤</span>
-												<img
-												th:if="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''}"
-												th:src="'/uploads/' + ${r.REVIEWER_PHOTO}" alt="reviewer" />
-											</a>
+										<!-- 왼쪽: 프로필 사진 + 이름 -->
+										<div class="reviewAuthor">
+											<div class="reviewAvatar">
+												<a class="reviewerLink"
+													th:href="@{/coach/detail(user_idx=${r.REVIEWER_IDX})}">
+													<span
+													th:if="${r.REVIEWER_PHOTO == null or r.REVIEWER_PHOTO == ''}"
+													class="no-media-message"
+													style="width: 40px; height: 40px; border-radius: 50%; font-size: 11px;">👤</span>
+													<img
+													th:if="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''}"
+													th:src="'/uploads/' + ${r.REVIEWER_PHOTO}" alt="reviewer" />
+												</a>
+											</div>
+											<div class="reviewerName" th:text="${r.REVIEWER_NAME}"></div>
 										</div>
 
+										<!-- 오른쪽: 별점 + 내용 -->
 										<div class="reviewMeta">
 											<div class="reviewStars">
 												<span class="stars" th:text="|★ ${r.RATING}|"></span>
@@ -237,8 +237,8 @@
 										</div>
 									</div>
 
+									<!-- 하단: 태그 -->
 									<div class="reviewBottom">
-										<div class="reviewerName" th:text="${r.REVIEWER_NAME}"></div>
 										<div class="reviewTag"
 											th:if="${r.TAG != null and r.TAG != ''}" th:text="${r.TAG}"></div>
 									</div>
@@ -254,9 +254,6 @@
 									</div>
 								</div>
 							</div>
-
-							<button type="button" class="slideArrow right" aria-label="next">›</button>
-
 						</div>
 					</article>
 
@@ -317,7 +314,7 @@
       });
     });
     
-    // 탭 active 토글
+    // ✅ 탭 active 토글
     const tabs = document.querySelectorAll('.detailTabs .tab');
 
     function setActiveByHash() {
