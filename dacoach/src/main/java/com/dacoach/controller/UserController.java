@@ -206,7 +206,7 @@ public class UserController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//정지기간 지난경우
+			//정지기간 지난 경우
 			List<UsersDTO> expiredLogs = usersService.getExpiredLogs(loginUser.getUser_idx());
 			if(expiredLogs!=null&&expiredLogs.size()>0) {
 				usersService.changeStatusToActive(loginUser.getUser_idx());
