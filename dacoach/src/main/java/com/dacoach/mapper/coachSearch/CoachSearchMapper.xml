@@ -4,10 +4,12 @@
 <mapper namespace="com.dacoach.mapper.coachSearch.CoachSearchMapper">
 
     <select id="coachList" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
+    
         SELECT * FROM (
             SELECT rownum AS rnum, R.* FROM (
                 SELECT 
                     A.user_idx, A.coach_idx, A.nickname, A.photo,
+                    RANK.rank_name AS rank_name,
                     ROUND(NVL(AVG(distinct rt.rating), 0), 1) AS rating,
                     COUNT(distinct rt.content) AS review_count,
                     <choose>
@@ -32,6 +34,10 @@
                         </otherwise>
                     </choose>
                 FROM coach A
+                <![CDATA[
+                LEFT JOIN rank RANK
+					ON A.point_score >= RANK.min_score
+					AND (RANK.max_score IS NULL OR A.point_score < RANK.max_score)]]>
                 LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
                 JOIN minor_field MF ON B.minor_field_idx = MF.minor_field_idx
                 LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
@@ -48,7 +54,7 @@
                     <if test="majorRegion != null and majorRegion != 0">AND C.major_region_idx = #{majorRegion}</if>
                     <if test="minorRegion != null and minorRegion != 0">AND C.minor_region_idx = #{minorRegion}</if>
                 </where>
-                GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo
+                GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo, RANK.rank_name
                 <choose>
                 	<when test="sort == 'rating'">
                 	    ORDER BY rating DESC
@@ -65,6 +71,7 @@
             WHERE rownum &lt;= #{end}
         )
         WHERE rnum &gt;= #{start}
+    
     </select>
 
     <select id="getCoachHashtags" parameterType="int" resultType="string">

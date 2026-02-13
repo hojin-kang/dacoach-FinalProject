@@ -130,10 +130,9 @@
 }
 
 .classCard {
+  border-radius:14px;
+  border:1px solid #eee;
 	display: block;
-	background: #F7F8F7;
-	border: 1none;
-	border-radius: 10px;
 	overflow: hidden;
 	text-decoration: none;
 	color: #111;
