@@ -240,7 +240,7 @@
         })
         .then(response => response.json())
         .then(res => {
-            if (res.status === 'success') { alert("완료되었습니다."); location.reload(); }
+            if (res.status === 'success'|| res.status.includes('accepted')) { alert("완료되었습니다."); location.reload(); }
             else if (res.status === 'login_required') { alert("로그인이 필요합니다."); location.href = '/login'; }
             else if (res.status === 'no_token') { alert("토큰이 부족합니다."); location.href = '/tokenHistory'; }
             else { alert("오류가 발생했습니다."); }
