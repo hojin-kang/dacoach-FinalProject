@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="contentPage">
+	<style>
+:root {
+	--mint-bg: #f0f8f7;
+	--mint-main: #9dbbb5;
+	--mint-dark: #7a9a94;
+	--slate-text: #374151;
+	--reject-red: #ff7675;
+	--approve-blue: #74b9ff;
+}
+
+.ad-admin-container {
+	font-family: 'Pretendard', sans-serif;
+	color: var(--slate-text);
+	background-color: white;
+	min-height: 800px;
+}
+
+/* [상단 헤더 영역] */
+.admin-top-bar {
+	display: flex;
+	align-items: flex-end;
+	gap: 15px;
+	padding-bottom: 20px;
+	border-bottom: 3px solid var(--mint-bg);
+	margin-bottom: 30px;
+}
+
+.admin-top-bar h1 {
+	font-size: 24px;
+	font-weight: 900;
+	color: var(--mint-main);
+	margin: 0;
+}
+
+.current-path {
+	font-size: 14px;
+	color: #9ca3af;
+	font-weight: 500;
+}
+
+/* [요약 박스] */
+.summary-box {
+	display: flex;
+	gap: 15px;
+	padding: 15px 25px;
+	background-color: var(--mint-bg);
+	border-radius: 20px;
+	margin-bottom: 25px;
+	align-items: center;
+}
+
+.summary-label {
+	font-weight: 800;
+	color: var(--mint-dark);
+	font-size: 14px;
+}
+
+.summary-count {
+	background: white;
+	padding: 4px 12px;
+	border-radius: 10px;
+	color: var(--mint-main);
+	font-weight: 900;
+}
+
+/* [리스트 헤더] */
+.list-header {
+	display: flex;
+	padding: 0 15px 10px;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 15px;
+	font-size: 12px;
+	font-weight: 800;
+	color: #9ca3af;
+	text-align: center;
+}
+
+.ad-item-card {
+	display: flex;
+	align-items: center;
+	padding: 15px 20px;
+	background-color: white;
+	border-radius: 15px;
+	border: 1px solid #f3f4f6;
+	margin-bottom: 10px;
+	transition: 0.2s;
+	text-align: center;
+}
+
+.ad-item-card:hover {
+	border-color: var(--mint-main);
+	transform: translateY(-2px);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+.col-idx {
+	width: 60px;
+	font-weight: 800;
+	color: var(--mint-main);
+}
+
+.col-user {
+	width: 150px;
+	font-weight: 700;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.col-preview {
+	width: 180px;
+}
+
+.col-membership {
+	flex: 1;
+}
+
+.col-date {
+	width: 120px;
+	color: #9ca3af;
+}
+
+.col-status {
+	width: 100px;
+}
+
+.col-action {
+	width: 180px;
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+}
+
+.ad-thumb {
+	width: 140px;
+	height: 60px;
+	object-fit: cover;
+	border-radius: 8px;
+	border: 1px solid #eee;
+	cursor: zoom-in;
+}
+
+.btn-action {
+	padding: 6px 12px;
+	border-radius: 8px;
+	font-size: 12px;
+	font-weight: 800;
+	transition: 0.2s;
+	cursor: pointer;
+	border: none;
+}
+
+.btn-approve {
+	background-color: var(--mint-bg);
+	color: var(--mint-dark);
+}
+
+.btn-approve:hover {
+	background-color: var(--mint-main);
+	color: white;
+}
+
+.btn-reject {
+	background-color: #fff0f0;
+	color: var(--reject-red);
+}
+
+.btn-reject:hover {
+	background-color: var(--reject-red);
+	color: white;
+}
+
+.pill-badge {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 8px;
+	font-size: 11px;
+	font-weight: 700;
+}
+</style>
+
+	<div class="max-w-[1200px] mx-auto p-10 ad-admin-container">
+		<div class="admin-top-bar">
+			<h1>Ad Approval Management</h1>
+			<span class="current-path">Marketing / Advertisement Requests</span>
+		</div>
+
+		<section class="control-panel">
+			<div class="summary-box">
+				<span style="font-size: 20px;">📢</span> <span class="summary-label">신규
+					광고 승인 대기</span>
+				<div class="summary-count">
+					<span th:text="${pendingAdCount}">3</span>건
+				</div>
+			</div>
+
+			<div class="list-header">
+				<div class="list-header">
+					<div class="col-idx">번호</div>
+					<div class="col-user">광고주</div>
+					<div class="col-preview">배너 미리보기</div>
+					<div class="col-membership">멤버십</div>
+					<div class="col-date">신청일</div>
+					<div class="col-status">상태</div>
+					<div class="col-action">관리/승인</div>
+				</div>
+			</div>
+
+			<div th:if="${#lists.isEmpty(adList)}"
+				class="text-center py-20 text-gray-300 italic">현재 승인 대기 중인 광고가
+				없습니다.</div>
+
+			<div th:each="ad : ${adList}" class="ad-item-card">
+				<div class="col-idx" th:text="${ad.AD_IDX}">101</div>
+
+				<div class="col-user">
+					<div style="font-size: 13px;" th:text="${ad.USER_NAME}">필라테스
+						퀸</div>
+					<div style="font-size: 10px; color: #9ca3af;"
+						th:text="${ad.LOGIN_ID}">pilates_q@naver.com</div>
+				</div>
+
+				<div class="col-preview">
+					<img th:src="${ad.PHOTO}" src="/api/placeholder/140/60"
+						class="ad-thumb" alt="Ad Preview" onclick="openPreview(this.src)">
+				</div>
+
+				<div class="col-membership">
+					<span class="text-xs font-bold" th:text="${ad.MEMBER_TYPE}">PREMIUM</span>
+				</div>
+
+				<div class="col-date"
+					th:text="${#dates.format(ad.CREATED_AT, 'yyyy-MM-dd')}">2024-05-20</div>
+
+				<div class="col-status">
+					<span class="pill-badge bg-orange-100 text-orange-600">대기</span>
+				</div>
+
+				<div class="col-action">
+					<button class="btn-action btn-approve"
+						th:onclick="'approveAd(' + ${ad.AD_IDX} + ')'">승인</button>
+					<button class="btn-action btn-reject"
+						th:onclick="'rejectAd(' + ${ad.AD_IDX} + ')'">거절</button>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<script th:inline="javascript">
+        // 승인 로직 (AJAX 활용 권장)
+        function approveAd(adIdx) {
+            if(confirm(adIdx + "번 광고를 승인하시겠습니까?")) {
+                console.log("Approve Ad:", adIdx);
+                // location.href = "/admin/ad/approve?adIdx=" + adIdx;
+            }
+        }
+
+        // 거절 로직 (사유 입력창 포함)
+        function rejectAd(adIdx) {
+            const reason = prompt("거절 사유를 입력해주세요:");
+            if(reason) {
+                console.log("Reject Ad:", adIdx, "Reason:", reason);
+                // location.href = "/admin/ad/reject?adIdx=" + adIdx + "&reason=" + encodeURIComponent(reason);
+            }
+        }
+
+        // 이미지 크게 보기 (심플 모달 등 확장 가능)
+        function openPreview(src) {
+            window.open(src, '_blank', 'width=800,height=400');
+        }
+    </script>
+</div>
+</html>
