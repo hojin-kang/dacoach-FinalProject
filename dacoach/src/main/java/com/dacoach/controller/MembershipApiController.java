@@ -131,10 +131,12 @@ public class MembershipApiController {
 		public ResponseEntity<String> cancelKakaoPay(@RequestBody Map<String,Object> cancelData) {
 			//var parameter={cid:"yml에서 받기",tid:"DB에서뺴오기",cancel_amount:총가격,cancel_vat_amount:부과세,cancel_tax_free_amount:면세,payload:"취소사유"};
 			
-			String msg="";
+			String msg="결제 취소요청이 실패하였습니다 관리자에게 문의 부탁드립니다";
 			
 			try {
+				System.out.println((int)cancelData.get("payIdx"));
 				PayDTO payDto=kakaopayMapper.paySelect((int)cancelData.get("payIdx"));
+				System.out.println(payDto);
 				
 				Map<String,Object> parameters=new HashMap<String,Object>();
 				parameters.put("cid", payDto.getCid());
@@ -142,7 +144,7 @@ public class MembershipApiController {
 				parameters.put("cancel_amount",payDto.getTotal());
 				parameters.put("cancel_vat_amount",payDto.getVat() );
 				parameters.put("cancel_tax_free_amount",payDto.getTax_free() );
-				parameters.put("payload", cancelData.get("payload"));
+				parameters.put("payload",cancelData.get("payload"));
 				
 				KakaoCancelResponse kakaocancel=kakaoPayService.cancelResponse(parameters);
 				if(kakaocancel!=null||kakaocancel.getStatus().equalsIgnoreCase("CANCEL_PAYMENT")) {
