@@ -20,11 +20,10 @@
 				<div class="topLeft">
 					<!-- 프로필 이미지 (provider) -->
 					<div class="providerAvatar">
-						<span th:if="${providerPhoto == null or providerPhoto == ''}"
-							class="no-media-message"
-							style="width: 64px; height: 64px; border-radius: 50%; font-size: 11px;">👤</span>
 						<img th:if="${providerPhoto != null and providerPhoto != ''}"
-							th:src="'/uploads/' + ${providerPhoto}" alt="provider" />
+							th:src="'/uploads/' + ${providerPhoto}" alt="provider" /> <img
+							th:unless="${providerPhoto != null and providerPhoto != ''}"
+							th:src="@{/img/profile/defaultProfile.jpg}" alt="provider" />
 					</div>
 
 					<div class="topInfo">
