@@ -130,8 +130,8 @@
 }
 
 .classCard {
-  border-radius:14px;
-  border:1px solid #eee;
+	border-radius: 14px;
+	border: 1px solid #eee;
 	display: block;
 	overflow: hidden;
 	text-decoration: none;
@@ -343,8 +343,7 @@
 	align-items: center;
 	justify-content: center;
 	height: 34px;
-	padding: 0 14px;
-	border-radius: 999px;
+	width: 170px; border-radius : 999px;
 	text-decoration: none;
 	font-weight: 600;
 	font-size: 16px;
@@ -353,6 +352,7 @@
 	transition: transform .12s ease, background .12s ease, border-color .12s
 		ease;
 	white-space: nowrap;
+	border-radius: 999px;
 }
 
 .actionBtn.outline {
@@ -374,10 +374,6 @@
 
 .actionBtn.ghost:hover {
 	background: #f3f4f6;
-}
-
-.topActions .actionBtn {
-	padding: 0 60px;
 }
 
 /* =========================
