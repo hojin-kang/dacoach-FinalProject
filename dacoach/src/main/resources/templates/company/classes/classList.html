@@ -47,8 +47,9 @@
 
 								<!-- 상태 배지 -->
 								<span class="statusBadge"
-									th:classappend="${now > classItem.end_date} ? 'done' : (${now < classItem.start_date} ? 'will' : 'ongoing')"
-									th:text="${now > classItem.end_date} ? '종료' : (${now < classItem.start_date} ? '예정' : '진행중')">
+									th:with="today=${#dates.format(#dates.createToday(),'yyyy-MM-dd')}, start=${#dates.format(classItem.start_date,'yyyy-MM-dd')}, end=${#dates.format(classItem.end_date,'yyyy-MM-dd')}"
+									th:classappend="${today > end} ? 'done' : (${today < start} ? 'will' : 'ongoing')"
+									th:text="${today > end} ? '종료' : (${today < start} ? '예정' : '진행중')">
 								</span>
 							</div>
 
