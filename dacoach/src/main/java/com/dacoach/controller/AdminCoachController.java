@@ -52,7 +52,7 @@ public class AdminCoachController {
 	@GetMapping("/coach/coachDetail")
 	public String coachDetail(Model model,@RequestParam int coach_idx, @RequestParam int user_idx) {
 		
-		List<Map<String, Object>> coachDetail = new ArrayList<>();
+		Map<String, Object> coachDetail = new HashMap<>();
 		String status="";
 		List<CertDTO> certList = new ArrayList<>();
 		
@@ -82,11 +82,12 @@ public class AdminCoachController {
 	}
 	
 	@PostMapping("/coach/updateCoachStatus")
-	public String updateCoachSuspended(Model model,
+	public String updateCoachSuspended(
 			@RequestParam int coach_idx,
 			@RequestParam int user_idx,
 			@RequestParam String status,
-			EmbeddedUserDTO dto) {
+			EmbeddedUserDTO dto,
+			RedirectAttributes ra) {
 		
 		int updateresult = 0;
 		int insertresult = 0;
@@ -104,40 +105,34 @@ public class AdminCoachController {
 					insertresult = adminService.insertCoachSuspended(dto);
 					
 					if(insertresult > 0) {
-						model.addAttribute("msg", "계정이 정지 처리 되었습니다.");
+						ra.addFlashAttribute("msg", "계정이 정지 처리 되었습니다.");
 					}
 				}else if("ACTIVE".equals(status)) {		
 					adminService.updateEnddateSuspended(user_idx);
-					model.addAttribute("msg", "사용 상태로 변경되었습니다.");
+					ra.addFlashAttribute("msg", "사용 상태로 변경되었습니다.");
 				}else if("WARNING".equals(status)) {
 					adminService.updateEnddateSuspended(user_idx);
-					model.addAttribute("msg", "주의 상태로 변경되었습니다.");
+					ra.addFlashAttribute("msg", "주의 상태로 변경되었습니다.");
 				}else if("DANGER".equals(status)) {
 					adminService.updateEnddateSuspended(user_idx);
-					model.addAttribute("msg", "위험 상태로 변경되었습니다.");
+					ra.addFlashAttribute("msg", "위험 상태로 변경되었습니다.");
 				}
 				
 			}else {
-				model.addAttribute("msg", "상태 변경에 실패했습니다.");
+				ra.addFlashAttribute("msg", "상태 변경에 실패했습니다.");
 			}	
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			model.addAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+			ra.addFlashAttribute("msg", "시스템 오류가 발생했습니다.");
 		}
 		
-		model.addAttribute("contentPage", "admin/coach/coachDetail");
-		model.addAttribute("contentFragment", "coachDetail");
-	
-		model.addAttribute("user_idx", user_idx);
-	    model.addAttribute("coach_idx", coach_idx);
-		
-		return "admin/dashboard";
+		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx + "&coach_idx=" + coach_idx;
 	}
 	
 	@PostMapping("/coach/updateCertStatus")
-	public String updateCertStatus(Model model,
+	public String updateCertStatus(
 			@RequestParam int coach_idx,
 			@RequestParam int user_idx,
 			@RequestParam(value="cert_idx", required=false) List<Integer> certIdxList,
@@ -145,8 +140,8 @@ public class AdminCoachController {
 			@RequestParam(value="get_date", required=false) List<String> getDateList,
 			@RequestParam(value="cert_from", required=false) List<String> certFromList,
 			@RequestParam(value="cert_status", required=false) List<String> certStatusList,
-			@RequestParam(value="checked", required=false) List<Integer> checkedList
-			) {
+			@RequestParam(value="checked", required=false) List<Integer> checkedList,
+			RedirectAttributes ra) {
 		
 		try {
 			
@@ -174,23 +169,18 @@ public class AdminCoachController {
 	                adminService.updateCertStatus(dto);
 				}
 				
-				model.addAttribute("msg", "자격증 정보가 성공적으로 업데이트되었습니다.");
+				ra.addFlashAttribute("msg", "자격증 정보가 성공적으로 업데이트되었습니다.");
 			}else {
-				model.addAttribute("msg", "처리할 자격증을 선택해주세요.");
+				ra.addFlashAttribute("msg", "처리할 자격증을 선택해주세요.");
 			}
 			
 		}catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			model.addAttribute("msg", "시스템 오류가 발생했습니다: " + e.getMessage());
+			ra.addFlashAttribute("msg", "시스템 오류가 발생했습니다.");
 		}
 		
-		model.addAttribute("contentPage", "admin/coach/coachDetail");
-		model.addAttribute("contentFragment", "coachDetail");
-		model.addAttribute("user_idx", user_idx);
-	    model.addAttribute("coach_idx", coach_idx);
-	    
-	    return "admin/dashboard";
+		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx + "&coach_idx=" + coach_idx;
 		
 	}
 	
@@ -664,6 +654,46 @@ public class AdminCoachController {
 		}
 	}
 	
+	@GetMapping("/report")
+	public String reportList(Model model) {
+		
+		List<Map<String, Object>> reportList = new ArrayList<>();
+		
+		try {
+			reportList = adminService.reportList();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("reportList",reportList);
+		model.addAttribute("contentPage", "admin/report/reportList");
+		model.addAttribute("contentFragment", "reportList");
+
+		return "admin/dashboard";
+		
+	}
+	
+	@GetMapping("/report/content")
+	public String reportContent(Model model,
+			@RequestParam int report_idx) {
+		
+		Map<String, Object> reportContent = new HashMap<>();
+		
+		try {
+			reportContent=adminService.reportContent(report_idx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("report",reportContent);
+		model.addAttribute("contentPage", "admin/report/reportDetail");
+		model.addAttribute("contentFragment", "reportDetail");
+
+		return "admin/dashboard";
+		
+	}
 	
 	
 }

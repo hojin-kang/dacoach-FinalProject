@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="reportDetail">
+    <style>
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+            --red-warn: #f04438;
+            --red-bg: #fee4e2;
+        }
+
+        .report-admin-container {
+            font-family: 'Pretendard', sans-serif;
+            color: var(--slate-text);
+            background-color: white;
+            min-height: 800px;
+        }
+
+        /* 상단 헤더 */
+        .admin-top-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--mint-bg);
+            margin-bottom: 30px;
+        }
+
+        .admin-top-bar h1 {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--mint-main);
+            margin: 0;
+        }
+
+        .current-path {
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* 상세 정보 카드 */
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #f3f4f6;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            border-bottom: 1px solid #f9fafb;
+            padding: 15px 0;
+        }
+
+        .info-label {
+            width: 150px;
+            font-weight: 800;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .info-value {
+            flex: 1;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* 신고 내용 영역 */
+        .report-content-box {
+            background-color: var(--mint-bg);
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 150px;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        /* 제어판 섹션 */
+        .action-panel {
+            background: #f9fafb;
+            border-radius: 25px;
+            border: 1px solid #edf2f7;
+            padding: 40px;
+            margin-top: 40px;
+        }
+
+        .section-title {
+            font-weight: 900;
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: var(--mint-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group { margin-bottom: 25px; }
+        .form-label { font-weight: 800; font-size: 14px; display: block; margin-bottom: 10px; }
+
+        /* 알림 대상 선택 박스 */
+        .notify-target-box {
+            display: flex;
+            gap: 25px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        .btn-submit {
+            background: var(--mint-main);
+            color: white;
+            padding: 12px 40px;
+            border-radius: 12px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover { background: var(--mint-dark); }
+        
+        .profile-link {
+            color: var(--mint-main);
+            text-decoration: underline;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        /* 유틸리티 클래스 */
+        .ml-2 { margin-left: 8px; }
+        .mt-6 { margin-top: 24px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mt-10 { margin-top: 40px; }
+        .flex { display: flex; }
+        .gap-6 { gap: 24px; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .cursor-pointer { cursor: pointer; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+    </style>
+
+    <div class="max-w-[1000px] mx-auto p-10 report-admin-container">
+        <div class="admin-top-bar">
+            <h1>Report Detail View</h1>
+            <span class="current-path">Safety / Report Detail</span>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <div class="info-label">신고 유형</div>
+                <div class="info-value">
+                    <span style="color: var(--red-warn); font-weight: 800;" 
+                          th:text="${report?.REPORT_TYPE} != null ? '[' + ${report.REPORT_TYPE} + ']' : '[데이터 없음]'">[유형 없음]</span>
+                </div>
+                <div class="info-label">신고 일시</div>
+                <div class="info-value" 
+                      th:text="${report?.CREATED_AT} != null ? ${#strings.substring(report.CREATED_AT, 0, 16)} : '-'">2026-02-13 11:00</div>
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">신고자</div>
+                <div class="info-value" th:text="${report?.REPORTER_NAME} ?: '알 수 없음'">홍길동(user01)</div>
+                <div class="info-label">피신고자</div>
+				<div class="info-value">
+					<span style="color: var(--red-warn);"
+						th:text="${report?.REPORTED_NAME} ?: '알 수 없음'">김철수(badguy)</span>
+
+					<a th:href="@{${report?.USER_TYPE == 'COACH'} ? '/admin/coach/coachDetail' : '/admin/company/companyDetail'}(user_idx=${report?.REPORTED_IDX}, coach_idx=${report?.COACH_IDX})"
+						target="_blank" class="ml-2 profile-link"> [프로필 보기] </a>
+				</div>
+			</div>
+
+            <div class="mt-6">
+                <div class="info-label mb-2">신고 내용</div>
+                <div class="report-content-box" th:text="${report?.CONTENT} ?: '내용이 존재하지 않습니다.'">
+                    여기에 사용자가 작성한 상세 신고 내용이 출력됩니다.
+                </div>
+            </div>
+        </div>
+
+        <section class="action-panel">
+            <h3 class="section-title"><span>⚙️</span> 신고 처리 및 알림 발송</h3>
+            
+            <form th:action="@{/admin/report/execute}" method="post">
+                <input type="hidden" name="report_idx" th:value="${report?.REPORT_IDX}">
+                
+                <div class="form-group">
+                    <label class="form-label">신고 처리 결과</label>
+                    <div class="flex gap-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="REJECTED" checked> 
+                            <span class="font-semibold">신고 반려 (허위/내용부족)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="status" value="RESOLVED"> 
+                            <span class="font-semibold text-[#f04438]">신고 승인 (제재 실행)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">알림 발송 대상 선택</label>
+                    <div class="notify-target-box">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="notify_reporter" value="Y" checked>
+                            <span class="font-bold">신고자 (<span th:text="${report?.REPORTER_NAME} ?: '신고자'">신고자</span>)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="notify_target" value="Y">
+                            <span class="font-bold text-[#f04438]">피신고자 (<span th:text="${report?.REPORTED_NAME} ?: '피신고자'">피신고자</span>)</span>
+                        </label>
+                    </div>
+                    <p style="font-size: 12px; color: #9ca3af; margin-top: 8px;">* 처벌이 확정된 경우에만 피신고자 알림을 선택하세요.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">발송 메시지 내용</label>
+                    <textarea name="admin_message" required
+                              style="width: 100%; height: 120px; padding: 15px; border-radius: 15px; border: 1px solid #eee; outline: none; font-size: 14px; resize: none;"
+                              placeholder="신고자 및 피신고자에게 전송될 공지 메시지를 입력하세요."></textarea>
+                </div>
+
+                <div class="flex justify-between items-center mt-10">
+                    <button type="button" onclick="history.back()" 
+                            style="background: #eee; color: #666; padding: 12px 30px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer;">
+                        뒤로가기
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        최종 처리 및 알림 전송
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+</html>

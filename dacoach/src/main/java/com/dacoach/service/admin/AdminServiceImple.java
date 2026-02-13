@@ -35,7 +35,7 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> getCoachDetail(int coach_idx) throws Exception {
+	public Map<String, Object> getCoachDetail(int coach_idx) throws Exception {
 		return adminMapper.getCoachDetail(coach_idx);
 	}
 	
@@ -196,6 +196,16 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public int updateMinorField(Map<String, Object> params) throws Exception {
 		return adminMapper.updateMinorField(params);
+	}
+	
+	@Override
+	public List<Map<String, Object>> reportList() throws Exception {
+		return adminMapper.reportList();
+	}
+	
+	@Override
+	public Map<String, Object> reportContent(int report_idx) throws Exception {
+		return adminMapper.reportContent(report_idx);
 	}
 
 }
