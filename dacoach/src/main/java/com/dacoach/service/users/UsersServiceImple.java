@@ -45,4 +45,16 @@ public class UsersServiceImple implements UsersService {
 		return result;
 	}
 
+	@Override
+	public List<UsersDTO> getExpiredLogs(int user_idx) throws Exception {
+		List<UsersDTO> logs=usersMapper.getExpiredLogs(user_idx);
+		return logs;
+	}
+
+	@Override
+	public int changeStatusToActive(int user_idx) throws Exception {
+		int result=usersMapper.changeStatusToActive(user_idx);
+		return result;
+	}
+
 }
