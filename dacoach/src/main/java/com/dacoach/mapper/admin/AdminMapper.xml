@@ -280,4 +280,35 @@
 	update minor_field set minor_field_nm =#{minor_field_nm} where minor_field_idx=#{minor_field_idx}
 	</update>
 	
+	<select id="reportList">
+	select
+	r.report_idx,
+	rt.content,
+	u1.user_name as reporter_name,
+	u2.user_name as reported_name,
+	r.status,
+	r.created_at
+	from report r
+	join users u1 on r.reporter_idx=u1.user_idx
+	join users u2 on r.reported_idx=u2.user_idx
+	join reason_type rt on r.reason_type_idx=rt.reason_type_idx
+	order by report_idx desc
+	</select>
+	
+	<select id="reportContent">
+	select
+	r.report_idx,
+	rt.content as report_type,
+	r.created_at,
+	u1.user_name as reporter_name,
+	u2.user_name as reported_name,
+	u2.user_idx,
+	u2.user_type,
+	r.content
+	from report r
+	join users u1 on r.reporter_idx=u1.user_idx
+	join users u2 on r.reported_idx=u2.user_idx
+	join reason_type rt on r.reason_type_idx=rt.reason_type_idx
+	where r.report_idx=#{report_idx}
+	</select>
 </mapper>

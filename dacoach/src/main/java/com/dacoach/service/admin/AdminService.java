@@ -17,7 +17,7 @@ public interface AdminService {
 	// 코치 프로필 및 상태 관리
 	List<Map<String,Object>> getCoachList() throws Exception;
 	public int getCertCount() throws Exception;
-	List<Map<String,Object>> getCoachDetail(int coach_idx) throws Exception;
+	Map<String,Object> getCoachDetail(int coach_idx) throws Exception;
 	public String getCoachStatus(int user_idx) throws Exception;
 	public EmbeddedUserDTO getCoachEmbedded(int user_idx) throws Exception;
 	public int updateCoachStatus(Map<String, Object> params) throws Exception;
@@ -59,4 +59,8 @@ public interface AdminService {
 	List<Map<String, Object>> getMinorField(int major_field_idx) throws Exception;
 	public int insertMinorField(Map<String, Object> params) throws Exception;
 	public int updateMinorField(Map<String, Object> params) throws Exception;
+	
+	//신고관리
+	public List<Map<String,Object>> reportList() throws Exception;
+	public Map<String, Object> reportContent(int report_idx) throws Exception;
 }
