@@ -189,27 +189,28 @@
   
   <div th:replace="~{layout/footer :: siteFooter}"></div>
 <script th:inline="javascript">
+  function showBanner(){
+    const list = /*[[${list}]]*/ [];
+    const banner = document.getElementById('banner');
 
-	function showBanner(){
-		var list= [[${list}]];
-		var banner=document.getElementById('banner');
-		var num=Math.floor(Math.random()* list.length);
-		
-		if(list&&list.length>0){
-		
-		banner.innerHTML='<img src="/uploads/' + list[num].photo +'" onclick="sendForm()"><input type="hidden" name="idx" value="'+list[num].member_idx+'"><input type="hidden" name="fromName" value="banner">';
-		}
-	}
-	
-	window.onload=function(){
-		showBanner();
-		window.setInterval('showBanner()',10000);
-	}
-	
-	function sendForm(){
-		var bannerForm=document.getElementById('bannerForm');
-		bannerForm.submit();
-	}
+    if(!list || list.length === 0) return;
+
+    const num = Math.floor(Math.random() * list.length);
+
+    banner.innerHTML =
+      '<img src="/uploads/' + list[num].photo + '" onclick="sendForm()">' +
+      '<input type="hidden" name="idx" value="'+ list[num].member_idx +'">' +
+      '<input type="hidden" name="fromName" value="banner">';
+  }
+
+  window.onload = function(){
+    showBanner();
+    window.setInterval(showBanner, 10000);
+  }
+
+  function sendForm(){
+    document.getElementById('bannerForm').submit();
+  }
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {

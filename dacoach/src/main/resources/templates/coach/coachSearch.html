@@ -20,25 +20,31 @@
                         <div class="searchHead">검색 조건</div>
                         <div class="filterRow">
                             <div class="filter">
-                                <label>분야</label>
-                                <select class="filterSelect" name="majorField" id="majorField">
-                                    <option value="">대분류</option>
-                                    <option th:each="m : ${majorFields}" th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"></option>
-                                </select> 
-                                <select class="filterSelect" name="minorField" id="minorField" disabled>
-                                    <option value="">소분류</option>
-                                </select>
+                                <label class="filterLabel">분야</label>
+                                <div>
+                                	<select class="filterSelect" name="majorField" id="majorField">
+	                                    <option value="">대분류</option>
+	                                    <option th:each="m : ${majorFields}" th:value="${m.MAJOR_FIELD_IDX}" th:text="${m.MAJOR_FIELD_CD}"></option>
+	                                </select> 
+	                                <select class="filterSelect" name="minorField" id="minorField" disabled>
+	                                    <option value="">소분류</option>
+	                                </select>
+                                </div>
+                                
                             </div>
                             
                             <div class="filter">
-                                <label>지역</label>
-                                <select class="filterSelect" name="majorRegion" id="majorRegion">
-                                    <option value="">대분류</option>
-                                    <option th:each="m : ${majorRegions}" th:value="${m.MAJOR_REGION_IDX}" th:text="${m.REGION_NM}"></option>
-                                </select> 
-                                <select class="filterSelect" name="minorRegion" id="minorRegion" disabled>
-                                    <option value="">소분류</option>
-                                </select>
+                                <label class="filterLabel">지역</label>
+                                <div>
+                                	 <select class="filterSelect" name="majorRegion" id="majorRegion">
+	                                    <option value="">대분류</option>
+	                                    <option th:each="m : ${majorRegions}" th:value="${m.MAJOR_REGION_IDX}" th:text="${m.REGION_NM}"></option>
+	                                </select> 
+	                                <select class="filterSelect" name="minorRegion" id="minorRegion" disabled>
+	                                    <option value="">소분류</option>
+	                                </select>
+                                </div>
+                               
                             </div>
                             
                             <div class="keywordBox">
@@ -62,78 +68,78 @@
                         <div class="cardGrid">
                             <div class="empty-msg" th:if="${#lists.isEmpty(coachList)}">일치하는 코치가 없습니다.</div>
                             
-                            <article class="classCard" th:each="dto : ${coachList}">
-                                <a th:href="@{/coach/detail(user_idx=${dto.user_idx})}" class="card-link">
+                            <article class="classCard coachCard" th:each="dto : ${coachList}" th:attr="data-href=@{/coach/detail(user_idx=${dto.user_idx})}">
                                     <div class="card-body">
                                         <div class="profile-section">
                                             <div class="coach-thumb">
                                                 <img th:src="${dto.photo != null} ? @{/uploads/{path}(path=${dto.photo})} : @{/img/profile/defaultProfile.jpg}" alt="coach">
                                             </div>
                                             <div class="name-rating">
+                                            	<div class="badge" th:text="${dto.rank_name}">베테랑 코치</div>
                                                 <div class="coach-name" th:text="${dto.nickname}">닉네임</div>
                                                 <div class="coach-rating">★[[${dto.rating}]]([[${dto.review_count}]])</div>
                                             </div>
                                         </div>
+                                        <div class="right">
+							              <div class="row">
+							                <div class="label">제공분야</div>
+							                <div class="tags">
+							                  <a th:each="tag : ${dto.hashtags}" 
+											           th:href="@{/coach/search(keyword=${tag})}" 
+											           class="tag stop-card"
+											           style="text-decoration: none; color: inherit;"
+											           th:text="${tag}">
+											        </a>
+							                </div>
+							              </div>
+							
+							              <div class="row">
+							                <div class="label">관심분야</div>
+							                <div class="tags">
+							                  <a th:each="tag : ${dto.interhashtags}" 
+											           th:href="@{/coach/search(keyword=${tag})}" 
+											           class="tag" 
+											           style="text-decoration: none; color: inherit;"
+											           th:text="${tag}">
+											        </a>
+							                </div>
+							              </div>
+							            </div>
                                         
-                                        <div class="tags-section">
-                                            <div class="tag-group">
-                                                <div class="group-label">제공분야</div>
-                                                <div class="tags">
-													<a th:each="tag : ${dto.hashtags}" 
-											           th:href="@{/coach/search(keyword=${tag})}" 
-											           class="detail-tag" 
-											           style="text-decoration: none; color: inherit;">
-											           <span th:text="${tag}">#태그명</span>
-											        </a>
-                                                </div>
-                                            </div>
-                                            <div class="tag-group">
-                                                <div class="group-label">관심분야</div>
-                                                <div class="tags">
-													<a th:each="tag : ${dto.interhashtags}" 
-											           th:href="@{/coach/search(keyword=${tag})}" 
-											           class="detail-tag" 
-											           style="text-decoration: none; color: inherit;">
-											           <span th:text="${tag}">#태그명</span>
-											        </a>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
-                                </a>
 
 								<div class="card-footer" th:if="${dto.user_idx != session.user_idx}">
 								    <th:block th:switch="${dto.chatStatus}">
-								        <button type="button" th:case="'RECEIVED'" class="btn-chat" 
+								        <button type="button" th:case="'RECEIVED'" class="btn-chat stop-card" 
 								                th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">
-								            채팅 수락 <img src="/img/icon/dakcoach.png" class="btn-icon"> x1
+								            채팅수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×1
 								        </button>
-								        <button type="button" th:case="'APPLIED'" class="btn-chat" disabled style="background:#eee; color:#999;">
-								            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon" style="filter: grayscale(1);"> x1
+								        <button type="button" th:case="'APPLIED'" class="btn-chat stop-card" disabled style="background:#eee; color:#999;">
+								            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon" style="filter: grayscale(1);">×1
 								        </button>
-								        <button type="button" th:case="'ACCEPTED'" class="btn-chat" onclick="location.href='/chat'">
-								            채팅방 이동 <img src="/img/icon/dakcoach.png" class="btn-icon">
+								        <button type="button" th:case="'ACCEPTED'" class="btn-cha stop-cardt" onclick="location.href='/chat'">
+								            채팅방이동 <img src="/img/icon/dakcoach.png" class="btn-icon">
 								        </button>
-								        <button type="button" th:case="*" class="btn-chat" 
+								        <button type="button" th:case="*" class="btn-chat stop-card" 
 								                th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">
-								            채팅 신청 <img src="/img/icon/dakcoach.png" class="btn-icon"> x1
+								            채팅신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×1
 								        </button>
 								    </th:block>
 								
 								    <th:block th:switch="${dto.matchStatus}">
-								        <button type="button" th:case="'RECEIVED'" class="btn-match" 
+								        <button type="button" th:case="'RECEIVED'" class="btn-match stop-card" 
 								                th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">
-								            매칭 수락 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
+								            매칭수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
 								        </button>
-								        <button type="button" th:case="'APPLIED'" class="btn-match" disabled style="background:#666; color:#fff;">
-								            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
+								        <button type="button" th:case="'APPLIED'" class="btn-match stop-card" disabled style="background:#666; color:#fff;">
+								            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
 								        </button>
-								        <button type="button" th:case="'ACCEPTED'" class="btn-match" disabled>
-								            매칭 완료 <img src="/img/icon/dakcoach.png" class="btn-icon">
+								        <button type="button" th:case="'ACCEPTED'" class="btn-match stop-card" disabled>
+								            매칭완료 <img src="/img/icon/dakcoach.png" class="btn-icon">
 								        </button>
-								        <button type="button" th:case="*" class="btn-match" 
+								        <button type="button" th:case="*" class="btn-match stop-card" 
 								                th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">
-								            매칭 신청 <img src="/img/icon/dakcoach.png" class="btn-icon"> x3
+								            매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
 								        </button>
 								    </th:block>
 								</div>
@@ -146,6 +152,27 @@
 
     <div th:replace="~{layout/footer :: siteFooter}"></div>
 
+	<script>
+	document.addEventListener('DOMContentLoaded', () => {
+	
+	  // 카드 전체 클릭 시 상세로 이동
+	  document.querySelectorAll('.coachCard').forEach(card => {
+	    card.addEventListener('click', (e) => {
+	      // 내부에서 stop 처리된 요소면 무시
+	      if (e.target.closest('.stop-card')) return;
+	
+	      const href = card.getAttribute('data-href');
+	      if (href) window.location.href = href;
+	    });
+	  });
+	
+	  // 태그/버튼 등은 카드 클릭으로 번지지 않게 확실히 차단
+	  document.querySelectorAll('.stop-card').forEach(el => {
+	    el.addEventListener('click', (e) => e.stopPropagation());
+	  });
+	
+	});
+	</script>
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('filterForm');

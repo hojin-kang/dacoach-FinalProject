@@ -23,7 +23,25 @@ public class CoachSearchServiceImple implements CoachSearchService {
     public List<CoachDTO> coachList(int cp, HashMap<String, Object> map) {
         map.put("start", (cp - 1) * 4 + 1);
         map.put("end", cp * 4);
-        return coachSearchMapper.coachList(map);
+        
+        List<CoachDTO> list = coachSearchMapper.coachList(map);
+
+        if (list != null) {
+            for (CoachDTO c : list) {
+
+                // 해시태그 최대 2개 제한
+                List<String> my = coachSearchMapper.getCoachHashtags(c.getUser_idx());
+                List<String> inter = coachSearchMapper.getInterHashtags(c.getUser_idx());
+
+                if (my != null && my.size() > 2) my = my.subList(0, 2);
+                if (inter != null && inter.size() > 2) inter = inter.subList(0, 2);
+
+                c.setHashtags(my);
+                c.setInterhashtags(inter);
+            }
+        }
+
+        return list;
     }
 
     @Override
