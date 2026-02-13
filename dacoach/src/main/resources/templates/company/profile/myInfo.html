@@ -17,13 +17,16 @@
 
    <main class="main">
    <div class="container">
-  	<form name="companyForm" id="companyForm" action="">
+  	<form name="companyForm" id="companyForm" action="/company/mypage/myinfoUp" method="post" enctype="multipart/form-data">
+   		<div id="imgArea">
    		<img th:src="${company.photo}">
-   		<input type="file" name="photo">
-   		<input type="text" name="intro" th:value="${company.intro}">
-   		<input type="text" name="email" th:value="${company.email}">	   	
-     	<input type="text" name="phone" th:value="${company.phone}">
-     	<input type="text" name="address" th:value="${company.address}">
+   		</div>
+   		<input type="file" name="photoFile" id="fileInput">
+   		<input type="text" name="user_name" th:value="${user}" readonly>
+   		<input type="text" name="intro" th:value="${company.intro}" required>
+   		<input type="text" name="email" th:value="${company.email}" required>	   	
+     	<input type="text" name="phone" th:value="${company.phone}" required>
+     	<input type="text" name="address" th:value="${company.address}" required>
      	<input type="text" name="company_num" th:value="${company.company_num}" readonly>   
     
      	<div class="provide">
@@ -34,17 +37,22 @@
      		<option th:each="fieldTag:${fieldTag}" th:value="${fieldTag.MAJOR_FIELD_IDX}">[[${fieldTag.MAJOR_FIELD_CD}]]</option>
      	</select>
      	<select name="minor_field_idx" id="minorFieldSelect">
-     		<option>소분류</option>
+     		<option value="0">소분류</option>
      	</select>
      	</div>
      	
      	<div class="region">
-     	<fieldset>   	
-     		<span th:each="region:${regions}" class="regionClass">
+     	<fieldset>  
+     	<div th:each="region:${regions}" id="regionDiv"> 	
+     		<span  class="regionClass" th:onclick="|regionDel({company_idx : '${company.company_idx}',
+     															major_region_idx : '${region.MAJOR_REGION_IDX}',
+     															minor_region_idx : '${region.MINOR_REGION_IDX}' })| ">
      			[[${region.REGION_NM}]][[${region.DISTRICT_NM}]] [[${region.REGION_DETAIL}]] [[${region.BRANCH_NAME}]] [[${region.BRANCH_TEL}]]
+     			
      		</span>
+     	</div>
      		<div id="regionResultTag"></div>
-     			<select name="major_region_idx" id="majorSelect">
+     			<select name="major_region_idx" id="majorSelect" >
 					<option>추가하실 지역 대분류를 선택 해주세요</option>
 					<option th:each="region:${regionTag}"
 							th:value="${region.MAJOR_REGION_IDX}">[[${region.REGION_NM}]]</option>
@@ -59,8 +67,8 @@
      	</fieldset>
      	</div>
      	
-     	<input type="hidden" th:value="${company.company_idx}">
-     	<input type="submit" value="저장">
+     	<input type="hidden" id="company_idx" th:value="${company.company_idx}">
+     	<input type="submit" value="저장" >
      	
      </form>	
      
@@ -70,9 +78,52 @@
    <div th:replace="~{layout/footer :: siteFooter}"></div>
 
 <script>
+	var sub=document.getElementById('companyForm');
+
 	var majorFieldSelect=document.getElementById('fieldIdx');
 	var majorRegionSelect=document.getElementById('majorSelect');
 	var addRegionBtn=document.getElementById('addRegion');
+	
+	const fileInput = document.getElementById('fileInput');
+	const imgArea = document.getElementById('imgArea');
+	
+	fileInput.addEventListener('change', function(e) {
+	    const file = e.target.files[0];
+	    if (file) {
+	        const reader = new FileReader();
+	        reader.onload = function(event) {
+	            imgArea.innerHTML = `<img src="${event.target.result}">`;
+	        };
+	        reader.readAsDataURL(file);
+	    }
+	});
+	
+	function regionDel(delData){
+		
+		fetch('/api/company/regionDel',
+				{method:'POST',
+				headers:{'Content-Type':'application/json'},
+				body:JSON.stringify(delData)})
+				
+		.then(function(resp){
+			if(resp.ok){
+				return resp.text();
+			}else{
+				throw new Error('에러');
+			}
+			
+		})
+		
+		.then(function(data){
+			alert(data);
+			location.href='/company/mypage/myInfo';
+		})
+		
+		.catch(function(error){
+			alert(error.message);
+		});
+	}
+	
 	
 	
 	majorFieldSelect.onchange=function(){
@@ -122,12 +173,16 @@
 	    var detail = document.companyForm.region_detail.value;
 	    var companyIdx = document.companyForm.company_idx.value;
 
-	    //  유효성 검사
+	    
 	    if (majorIdx === "대분류" || minorIdx === "소분류" || !minorIdx) {
 	        alert("지역을 정확히 선택해주세요.");
 	        return;
 	    }
-
+		
+	    if(!region_text.value||!b_name.value||!b_tel.value){
+	    	alert("상세주소를 정확히 선택해주세요.");
+	        return;
+	    }
 
 	    var minorName = minorSelect.options[minorSelect.selectedIndex].text;
 	    var data = {
@@ -148,19 +203,19 @@
 	    .then(resultText => {
 	        var ResultTag = document.getElementById('regionResultTag');
 	        if (resultText && resultText !== "실패" && resultText !== "중복") {
-	            // 주소 표시 상세주소 포함
-	            ResultTag.innerHTML += `<span style='display:inline-block; margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail} ${b_name.value} ${b_tel.value}</span>`;
+	            
+	            ResultTag.innerHTML += `<span style='margin-right:10px; padding:5px; background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px;'>${resultText} ${detail} ${b_name.value} ${b_tel.value}</span>`;
 	            
 	            
-	            // 입력값 초기화
-	            document.regionForm.region_detail.value = "";
+	            
+	            document.companyForm.region_detail.value = "";
 	            majorSelect.selectedIndex = 0;
 	            minorSelect.innerHTML = '<option id="m_intro">소분류</option>';
-	            document.regionForm.branch_name.value='' ;
-	            document.regionForm.branch_tel.value='' ;
-	            addRegionCount++;
-	            checkSubmitVaild();
-	            addRegionVaild();
+	            document.companyForm.branch_name.value='' ;
+	            document.companyForm.branch_tel.value='' ;
+	            
+	            
+
 	        }else if(resultText ==="중복"){
 	        	alert('중복된 주소는 추가하실 수 없습니다');
 	        

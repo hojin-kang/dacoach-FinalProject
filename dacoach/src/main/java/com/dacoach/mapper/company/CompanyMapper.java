@@ -47,4 +47,10 @@ public interface CompanyMapper {
 	public Map<String,Object> getCompanyProvide(int company_idx) throws Exception;
 	
 	public List<CompanyRegionDTO> getCompanyAllRegion(int company_idx) throws Exception;
+	
+	public int provideUp(CompanyProvideDTO dto) throws Exception;
+	
+	public int companyUp(CompanyDTO dto) throws Exception;
+	
+	public int regionDel(CompanyRegionDTO dto) throws Exception;
  }

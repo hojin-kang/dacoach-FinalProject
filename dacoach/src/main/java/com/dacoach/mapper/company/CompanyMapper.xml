@@ -137,7 +137,7 @@
   	
   	<select id="getCompanyRegion">
   		select 
-		major_region.region_nm,minor_region.district_nm,region_detail,branch_name,branch_tel
+		major_region.region_nm,minor_region.district_nm,region_detail,branch_name,branch_tel,a.major_region_idx,a.minor_region_idx
 		from major_region,minor_region,
 		(select * from company_region where company_idx=#{idx}) a
 		where
@@ -209,4 +209,32 @@
 
   		
   	</select>
+  	
+  	<update id="provideUp">
+  	
+  		update company_provide
+  		set minor_field_idx=#{minor_field_idx}
+  		where company_idx=#{company_idx}
+  		
+  	</update>
+  	
+  	<update id="companyUp">
+  	
+  		update company
+  		set 
+  		phone= #{phone},
+  		address=#{address},
+  		email=#{email},
+  		intro=#{intro},
+  		photo=#{photo}
+  		where user_idx=#{user_idx}
+  		
+  	</update>
+  	
+  	<delete id="regionDel">
+  		delete from company_region 
+  		where company_idx=#{company_idx} and
+  		major_region_idx=#{major_region_idx} and
+  		minor_region_idx=#{minor_region_idx}
+  	</delete>
   </mapper>

@@ -95,7 +95,7 @@ public class CompanyController {
 			
 			mav.addObject("fieldTag", companyService.fieldTeg());
 			mav.addObject("regionTag",companyService.regionTeg());
-			
+			mav.addObject("user", (String)session.getAttribute("user_name"));
 			mav.addObject("company",companyDto);
 			mav.addObject("regions", regionList);
 			mav.addObject("provide", provideDto);
@@ -105,6 +105,42 @@ public class CompanyController {
 		}
 		
 		mav.setViewName("/company/profile/myInfo");
+		return mav;
+	}
+	
+	@PostMapping("/company/mypage/myinfoUp")
+	public ModelAndView myinfoUp(@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
+			CompanyProvideDTO provideDto,
+			CompanyDTO companyDto,
+			HttpSession session) {
+		ModelAndView mav=new ModelAndView();
+		companyDto.setUser_idx((int)session.getAttribute("user_idx"));
+		provideDto.setCompany_idx((int)session.getAttribute("company_idx"));
+		if (photoFile != null && !photoFile.isEmpty()) {
+			FileUpload.deleteFile(companyDto.getPhoto());
+			String photoPath = FileUpload.saveFile(photoFile, "company/photo");			
+			companyDto.setPhoto(photoPath);								
+		}else {
+			
+			companyDto.setPhoto((String)session.getAttribute("photo"));
+		}
+		try {
+			boolean result=companyService.companyUp(companyDto, provideDto);
+			if(!result) {
+
+				mav.addObject("msg", "변경사항 저장 중 문제가 발생하였습니다.");
+			}else {
+				session.removeAttribute("photo");
+				session.setAttribute("photo", companyDto.getPhoto());
+				mav.addObject("msg", "변경사항 저장이 완료되었습니다.");			
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		mav.addObject("url","/company/mypage/myInfo" );
+		mav.setViewName("alert");
 		return mav;
 	}
 	
@@ -252,6 +288,23 @@ public class CompanyController {
 		return re;
 	}
 	
+	@PostMapping("/api/company/regionDel")
+	public ResponseEntity<String> regionDel(@RequestBody CompanyRegionDTO regionDto){
+		
+		
+		String msg="";
+		try {
+			
+			int result=companyService.regionDel(regionDto);	
+			msg=result>0?"삭제되었습니다":"주소 삭제에 실패했거나 데이터가 없습니다.";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ResponseEntity<String> re =new ResponseEntity<String>(msg,HttpStatus.OK);
+		
+		return re;
+	}
 	@GetMapping("/api/company/getMinorField") 
 	public ResponseEntity<List<Map<String, Object>>> getMinorField(Integer fieldIdx){
 		List<Map<String,Object>> fields=null;
