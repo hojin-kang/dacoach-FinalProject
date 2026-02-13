@@ -19,7 +19,7 @@ public class PayDTO {
     private String approved_at;
     private Integer total;
     private Integer tax_free;
-    private Integer tax;
+    private Integer vat;
     private Integer point;
     private Integer discount;
     private Integer green_deposit;

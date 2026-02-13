@@ -175,7 +175,7 @@
 		from minor_field,
 		(select 
 		company.user_idx,company.company_idx,company.phone,users.user_name,
-		company.address,company.email,company.intro,decode(company.photo,null,'/img/profile/defaultProfile.jpg')as photo,minor_field_idx
+		company.address,company.email,company.intro,company.photo,minor_field_idx
 		from users,company,company_provide,
 		(select user_idx 
 		from membership 
