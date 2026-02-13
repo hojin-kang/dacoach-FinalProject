@@ -85,6 +85,12 @@ public class UserController {
 					mav.setViewName("alert");
 					return mav;
 				}
+				//정지기간 지난경우
+				List<UsersDTO> expiredLogs = usersService.getExpiredLogs(coach.getUser_idx());
+				if(expiredLogs!=null&&expiredLogs.size()>0) {
+					usersService.changeStatusToActive(coach.getUser_idx());
+				}
+				
 				if (coach.getPhoto() != null) {
 					session.setAttribute("photo", coach.getPhoto().equals("") ? null : coach.getPhoto());
 				}
@@ -183,6 +189,7 @@ public class UserController {
 				mav.setViewName("alert");
 				return mav;
 			}
+			//정지여부 확인
 			try {
 				List<UsersDTO> suspendedLogs = usersService.getSuspendedLogs(loginUser.getUser_idx());
 				if(suspendedLogs!=null&&suspendedLogs.size()>0) {
@@ -198,6 +205,11 @@ public class UserController {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			//정지기간 지난경우
+			List<UsersDTO> expiredLogs = usersService.getExpiredLogs(loginUser.getUser_idx());
+			if(expiredLogs!=null&&expiredLogs.size()>0) {
+				usersService.changeStatusToActive(loginUser.getUser_idx());
 			}
 			if(loginUser.getStatus().equals("INACTIVE")) {
 				usersService.deleteUser(loginUser.getUser_idx());
@@ -255,7 +267,7 @@ public class UserController {
 						return mav;
 					}
 				}
-				
+				//정지여부 확인
 				try {
 					List<UsersDTO> suspendedLogs = usersService.getSuspendedLogs(udto.getUser_idx());
 					if(suspendedLogs!=null&&suspendedLogs.size()>0) {
@@ -271,6 +283,11 @@ public class UserController {
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				//정지기간 지난경우
+				List<UsersDTO> expiredLogs = usersService.getExpiredLogs(loginUser.getUser_idx());
+				if(expiredLogs!=null&&expiredLogs.size()>0) {
+					usersService.changeStatusToActive(loginUser.getUser_idx());
 				}
 				
 				session.setAttribute("user_idx", loginUser.getUser_idx());

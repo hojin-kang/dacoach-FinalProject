@@ -20,4 +20,17 @@
         delete from users
         where user_idx = #{user_idx}
     </delete>
+    <select id="getExpiredLogs" parameterType="int" resultType="com.dacoach.model.users.UsersDTO">
+        select U.*, EU.start_date, EU.end_date, EU.reason
+        from users U
+        join embedded_user EU on U.user_idx = EU.user_idx
+        where U.status = 'SUSPENDED'
+        and U.user_idx = #{user_idx}
+        and sysdate > EU.end_date
+    </select>
+    <update id="changeStatusToActive" parameterType="int">
+        update users
+        set status = 'ACTIVE'
+        where user_idx = #{user_idx}
+    </update>
 </mapper>
