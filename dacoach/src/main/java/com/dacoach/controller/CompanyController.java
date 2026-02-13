@@ -331,6 +331,7 @@ public class CompanyController {
 		Map<String,Object> classMap=new HashMap<>();
 		try {
 			Map<String,Object> map=companyService.companyProfile(idx);
+			
 			int userIdx=Integer.parseInt(String.valueOf(map.get("USER_IDX")));
 			classMap.put("idx", userIdx);
 			classMap.put("today", nowDay);

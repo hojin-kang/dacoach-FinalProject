@@ -41,7 +41,7 @@
   		#{approved_at},
   		#{amount.total},
   		#{amount.tax_free},
-  		#{amount.tax},
+  		#{amount.vat},
   		#{amount.point},
   		#{amount.discount},
   		#{amount.green_deposit},

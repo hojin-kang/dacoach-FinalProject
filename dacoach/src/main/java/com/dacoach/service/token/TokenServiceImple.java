@@ -49,7 +49,7 @@ public class TokenServiceImple implements TokenService {
         if (approve.getAmount() != null) {
             pay.setTotal(approve.getAmount().getTotal());
             pay.setTax_free(approve.getAmount().getTax_free());
-            pay.setTax(approve.getAmount().getTax());
+            pay.setVat(approve.getAmount().getVat());
             pay.setPoint(approve.getAmount().getPoint());
             pay.setDiscount(approve.getAmount().getDiscount());
             pay.setGreen_deposit(approve.getAmount().getGreen_deposit());
