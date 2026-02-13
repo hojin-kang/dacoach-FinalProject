@@ -311,4 +311,18 @@
 	join reason_type rt on r.reason_type_idx=rt.reason_type_idx
 	where r.report_idx=#{report_idx}
 	</select>
+	
+	<select id="getCoachIdx">
+	select coach_idx from coach where user_idx=#{user_idx}
+	</select>
+	
+	<select id="getCompanyIdx">
+	select company_idx from company where user_idx=#{user_idx}
+	</select>
+	
+	<update id="updateReport" parameterType="com.dacoach.model.report.ReportDTO">
+	update report set status=#{status},updated_at=sysdate where report_idx=#{report_idx}
+	</update>
+	
+	
 </mapper>
