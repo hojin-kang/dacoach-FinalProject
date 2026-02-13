@@ -31,7 +31,7 @@
   	insert into pay_cancel values (
   		#{tid},
   		#{partner_order_id},
-  		#{partner_user_id}.
+  		#{partner_user_id},
   		#{canceled_at},
   		#{payload},
   		#{approved_cancel_amount.total},

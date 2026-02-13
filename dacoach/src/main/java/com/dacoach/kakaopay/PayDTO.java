@@ -1,5 +1,7 @@
 package com.dacoach.kakaopay;
 
+import java.sql.Date;
+
 import lombok.*;
 
 @Getter @Setter
@@ -15,8 +17,8 @@ public class PayDTO {
     private String item_name;
     private String item_code;
     private Integer quantity;
-    private String created_at;
-    private String approved_at;
+    private Date created_at;
+    private Date approved_at;
     private Integer total;
     private Integer tax_free;
     private Integer vat;
