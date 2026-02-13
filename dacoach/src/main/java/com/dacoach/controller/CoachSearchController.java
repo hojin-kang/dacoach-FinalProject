@@ -150,7 +150,10 @@ public class CoachSearchController {
 	 	            return result;
 	 	        }
 	 	        if (type.equals("A_MATCH")) {
-	 	        	coachSearchService.acceptMatch(me, target_idx);
+	 	        	int matchOk=coachSearchService.acceptMatch(me, target_idx);
+	 	        	if(matchOk>0) {
+	 	        		chatService.getOrCreateRoom(me, target_idx);
+	 	        	}
 	 	            result.put("status", "match_accepted");
 	 	            return result;
 	 	        }				
