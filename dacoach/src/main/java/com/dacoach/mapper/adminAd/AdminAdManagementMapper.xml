@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.dacoach.mapper.adminAd.AdminAdManagementMapper">
+
+	<select id="getAdRequestList" resultType="map">
+		SELECT
+		A.AD_IDX,
+		U.USER_NAME,
+		A.PHOTO,
+		MD.MEMBER_TYPE, A.CREATED_AT, U.USER_IDX
+		FROM AD A
+		JOIN MEMBERSHIP M ON A.MEMBER_IDX = M.MEMBER_IDX
+		JOIN USERS U ON M.USER_IDX = U.USER_IDX
+		JOIN MEMBERSHIP_DETAIL MD ON M.MEMBER_DETAIL_IDX = MD.MEMBER_DETAIL_IDX
+		ORDER BY A.AD_IDX DESC
+	</select>
+	
+	<delete id="deleteAdRequest" parameterType="int">
+		DELETE FROM AD
+		WHERE AD_IDX=#{ad_Idx}
+	</delete>
+</mapper>
