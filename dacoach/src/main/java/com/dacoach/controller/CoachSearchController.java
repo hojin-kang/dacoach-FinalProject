@@ -126,6 +126,30 @@ public class CoachSearchController {
 	 	    } catch (Exception e) { e.printStackTrace(); }
 	 	    return mav;
 	 	}
+	 	
+	 	@GetMapping("/coach/like")
+	 	public String likeCoach(@RequestParam("target_idx") int target_idx, HttpSession session) throws Exception {
+	 	    Integer me = (Integer) session.getAttribute("user_idx");
+	 	    if (me == null) return "redirect:/login";
+
+	 	    coachService.likeCoach(me, target_idx);
+
+	 	    return "redirect:/coach/detail?user_idx=" + target_idx;
+	 	}
+
+	 	@GetMapping("/coach/unlike")
+	 	public String unlikeCoach(@RequestParam("target_idx") int target_idx, HttpSession session) throws Exception {
+	 	    Integer me = (Integer) session.getAttribute("user_idx");
+	 	    if (me == null) return "redirect:/login";
+
+	 	    coachService.unlikeCoach(me, target_idx);
+
+	 	    return "redirect:/coach/detail?user_idx=" + target_idx;
+	 	}
+
+	 	
+	 	
+	 	
 	 	@PostMapping("/match/apply")
 	 	@ResponseBody
 	 	public Map<String, Object> applyMatch(@RequestParam String type, @RequestParam int target_idx, HttpSession session) {

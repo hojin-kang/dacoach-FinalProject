@@ -5,83 +5,8 @@
    <title th:text="|dacoach - ${dto.nickname} 코치 상세정보|">dacoach - 코치 상세정보</title>
 
    <link rel="stylesheet" th:href="@{/css/main.css}" />
-   <style>
-      /* --- 변수 및 기초 설정 --- */
-      :root {
-         --accent: #328889;
-         --accent-dark: #286d6e;
-         --line: #e5e7eb;
-         --bg-light: #F8F9FA;
-         --tag-bg: #e9e9e9;
-         --ink: #111827;
-         --star-color: #FFD700;
-      }
-
-      /* --- 헤더 프로필 영역 --- */
-      .profile-header { display: flex; align-items: center; padding: 40px 0; gap: 30px; position: relative; }
-      .detail-thumb { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; }
-      .profile-main-info { flex: 1; }
-      .coach-title { font-size: 16px; color: var(--ink); margin-bottom: 5px; }
-      .coach-name-row { display: flex; align-items: center; gap: 15px; }
-      .coach-name-row h1 { font-size: 32px; margin: 0; font-weight: 800; }
-      
-      .action-icons { display: flex; gap: 15px; font-size: 24px; cursor: pointer; user-select: none; }
-      
-      .header-buttons { display: flex; flex-direction: column; gap: 10px; }
-      .btn-header { display: flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--accent); min-width: 120px; transition: 0.2s; }
-      .btn-chat-outline { background: #fff; color: #333; }
-      .btn-match-solid { background: var(--accent); color: #fff; border: none; }
-      .btn-header:disabled { background: #eee !important; color: #aaa !important; border-color: #ddd !important; cursor: default; }
-
-      /* --- 탭 메뉴 (Sticky 적용) --- */
-      .detail-tabs { 
-         display: flex; 
-         border-bottom: 2px solid var(--line); 
-         margin-bottom: 40px; 
-         position: sticky; 
-         top: 0; 
-         background: #fff; 
-         z-index: 10;
-      }
-      .tab-item { padding: 15px 30px; font-weight: 700; cursor: pointer; color: #666; transition: 0.3s; }
-      .tab-item.active { color: var(--ink); border-bottom: 4px solid var(--ink); margin-bottom: -2px; }
-
-      /* --- 섹션 공통 --- */
-      .detail-section { 
-         margin-bottom: 50px; 
-         animation: fadeIn 0.4s ease-in-out; 
-         scroll-margin-top: 80px; /* 스크롤 시 탭에 가려지지 않게 여백 설정 */
-      }
-      .section-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
-      .section-content { line-height: 1.6; color: #333; }
-      .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-
-      @keyframes fadeIn {
-         from { opacity: 0; transform: translateY(10px); }
-         to { opacity: 1; transform: translateY(0); }
-      }
-
-      /* --- 태그 및 영상 --- */
-      .tag-list { display: flex; gap: 10px; flex-wrap: wrap; }
-      .detail-tag { background: var(--tag-bg); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; text-decoration: none; color: inherit; }
-      .video-placeholder { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-      .video-placeholder video { width: 100%; height: 100%; }
-
-      /* --- 리뷰 카드 --- */
-      .review-summary { margin-bottom: 25px; font-size: 18px; font-weight: 600; display: block; }
-      .review-summary b { color: var(--accent); }
-      .review-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-      .review-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
-      .review-user { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
-      .review-user-img { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; background: #eee; }
-      .review-user-img img { width: 100%; height: 100%; object-fit: cover; }
-      .review-user-info .name a { font-weight: 700; text-decoration: none; color: inherit; }
-      .review-rating { margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
-      .rating-stars { color: var(--star-color); }
-      .review-text { font-size: 14px; margin-bottom: 12px; line-height: 1.5; color: #4b5563; }
-      .review-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-      .review-hash { background-color: #f3f4f6; padding: 4px 10px; border-radius: 15px; font-size: 0.82rem; color: #4b5563; }
-   </style>
+   <link rel="stylesheet" th:href="@{/css/coach/coachDetail.css}" />
+   
 </head>
 <body>
    <div th:replace="~{layout/header :: siteHeader}"></div>
@@ -90,47 +15,58 @@
    <div class="container">
       
       <section class="profile-header">
+      	<div class="topLeft">
          <img th:src="${dto.photo != null} ? @{/uploads/{path}(path=${dto.photo})} : @{/img/profile/defaultProfile.jpg}" class="detail-thumb" alt="프로필">
          
          <div class="profile-main-info">
-            <p class="coach-title">베테랑 코치</p>
-            <div class="coach-name-row">
-               <h1 th:text="${dto.nickname}">닉네임</h1>
-            </div>
+            <span class="coach-title">베테랑 코치</span>
+            <span th:text="${dto.nickname}" class="coach-name">닉네임</span>
+         </div>
+         </div>
+		<div class="topRight">
+         <div class="topIcons" th:if="${dto.user_idx != session.user_idx}">
+		  <!-- 찜 -->
+		  <a class="iconBtn likeBtn" aria-label="찜"
+		     th:href="${isLiked} 
+		       ? @{/coach/unlike(target_idx=${dto.user_idx})} 
+		       : @{/coach/like(target_idx=${dto.user_idx})}">
+		    <img class="icon"
+		         th:src="${isLiked} ? @{/img/icon/heart_fill.png} : @{/img/icon/heart.png}"
+		         alt="heart">
+		  </a>
+		
+		  <!-- 신고 -->
+		  <form th:action="@{/report/form}" method="post" style="display:inline;">
+		    <input type="hidden" name="reported_idx" th:value="${dto.user_idx}">
+		    <input type="hidden" name="returnUrl" th:value="@{/coach/detail(user_idx=${dto.user_idx})}">
+		    <button type="submit" class="iconBtn" aria-label="신고">
+		      <img src="/img/icon/siren.png" alt="siren">
+		    </button>
+		  </form>
+		</div>
+
+         <div class="header-buttons" th:if="${dto.user_idx != session.user_idx}">
+             <th:block th:switch="${dto.chatStatus}">
+                 <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">채팅 수락</button>
+                 <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled>채팅 신청됨</button>
+                 <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" onclick="location.href='/chat'">채팅방 이동</button>
+                 <button th:case="*" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 신청</button>
+             </th:block>
+         
+             <th:block th:switch="${dto.matchStatus}">
+                 <button th:case="'RECEIVED'" class="btn-header btn-match-solid" th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">매칭 수락</button>
+                 <button th:case="'APPLIED'" class="btn-header btn-match-solid" disabled>매칭 신청됨</button>
+                 <button th:case="'ACCEPTED'" class="btn-header btn-match-solid" disabled>매칭 완료</button>
+                 <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
+             </th:block>
+         </div>
          </div>
 
-         <div class="action-icons" th:if="${dto.user_idx != session.user_idx}">
-             <span id="like" onclick="handleLike(true)" th:style="'display: ' + (${isLiked} ? 'none' : 'inline')">🤍</span>
-             <span id="unlike" onclick="handleLike(false)" th:style="'display: ' + (${isLiked} ? 'inline' : 'none')">❤️</span>
-             <span onclick="report()">🚨</span> 
-         </div>
-
-<div class="header-buttons" th:if="${dto.user_idx != session.user_idx}">
-    <th:block>
-        <button th:if="${dto.matchStatus == 'ACCEPTED'}" 
-                class="btn-header btn-chat-outline" 
-                onclick="location.href='/chat'">채팅방 이동</button>
-
-        <th:block th:unless="${dto.matchStatus == 'ACCEPTED'}" th:switch="${dto.chatStatus}">
-            <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">채팅 수락</button>
-            <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled>채팅 신청됨</button>
-            <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" onclick="location.href='/chat'">채팅방 이동</button>
-            <button th:case="*" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 신청</button>
-        </th:block>
-    </th:block>
-
-    <th:block th:switch="${dto.matchStatus}">
-        <button th:case="'RECEIVED'" class="btn-header btn-match-solid" th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">매칭 수락</button>
-        <button th:case="'APPLIED'" class="btn-header btn-match-solid" disabled>매칭 신청됨</button>
-        <button th:case="'ACCEPTED'" class="btn-header btn-match-solid" disabled>매칭 완료</button>
-        <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
-    </th:block>
-</div>
       </section>
 
       <nav class="detail-tabs">
-         <div id="tab-info" class="tab-item active" onclick="switchTab('info')">상세정보</div>
-         <div id="tab-review" class="tab-item" onclick="switchTab('review')">매칭후기</div>
+         <a id="tab-info" class="tab-item active" href="#detail">상세정보</a>
+         <a id="tab-review" class="tab-item" href="#reviews">매칭후기</a>
       </nav>
 
       <div id="content-info">
@@ -144,17 +80,21 @@
          <div class="info-grid detail-section">
             <div class="info-item">
                <h3 class="section-title">제공분야</h3>
+               <div class="section-content">
                <p th:text="|${dto.major_field_name} - ${dto.minor_field_name}|"></p>
                <div class="tag-list">
                   <a th:each="tag : ${myHashtags}" th:href="@{/coach/search(keyword=${tag})}" class="detail-tag" th:text="${tag}"></a>
                   <span th:if="${#lists.isEmpty(myHashtags)}">등록된 태그가 없습니다.</span>
                </div>
+               </div>
             </div>
             <div class="info-item">
                <h3 class="section-title">관심분야</h3>
+               <div class="section-content">
                <p th:text="|${dto.major_field_name2} - ${dto.minor_field_name2}|"></p>
                <div class="tag-list">
                   <a th:each="tag : ${interHashtags}" th:href="@{/coach/search(keyword=${tag})}" class="detail-tag" th:text="${tag}"></a>
+               </div>
                </div>
             </div>
          </div>
@@ -178,9 +118,7 @@
             </div>
          </div>
 
-         <hr style="border: 0; border-top: 1px solid var(--line); margin: 40px 0;">
-
-         <div id="content-review" class="detail-section">
+         <div id="content-review" class="detail-section" >
             <h3 class="section-title">매칭 후기</h3>
             <span class="review-summary" th:unless="${#lists.isEmpty(reviewList)}">
                <b>[[${dto.review_count}]]</b> 건의 후기 (평균 ⭐[[${dto.rating}]])
