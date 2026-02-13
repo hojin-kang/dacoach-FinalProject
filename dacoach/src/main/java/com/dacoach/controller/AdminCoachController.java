@@ -34,7 +34,7 @@ public class AdminCoachController {
 	public String coachList(Model model,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -61,7 +61,7 @@ public class AdminCoachController {
 	@GetMapping("/coach/coachDetail")
 	public String coachDetail(Model model,HttpSession session, @RequestParam int coach_idx, @RequestParam int user_idx) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -70,7 +70,7 @@ public class AdminCoachController {
 		List<CertDTO> certList = new ArrayList<>();
 		
 		try {
-			coachDetail = adminService.getCoachDetail(coach_idx);
+			coachDetail = adminService.getCoachDetail(user_idx);
 			status = adminService.getCoachStatus(user_idx);
 			certList = adminService.getWaitCertList(user_idx);
 			
@@ -103,7 +103,7 @@ public class AdminCoachController {
 			RedirectAttributes ra,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -161,7 +161,7 @@ public class AdminCoachController {
 			@RequestParam(value="checked", required=false) List<Integer> checkedList,
 			RedirectAttributes ra, HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -210,7 +210,7 @@ public class AdminCoachController {
 	@ResponseBody
 	public List<CertDTO> getCertList(HttpSession session, @RequestParam int user_idx) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return null;
 		}
 		
@@ -224,7 +224,6 @@ public class AdminCoachController {
 		}
 		
 		return certList;
-	
 
 	}
 	
@@ -235,7 +234,7 @@ public class AdminCoachController {
 			@RequestParam (required = false) String keyword_type,
 			HttpSession session) {
 	    
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -268,7 +267,7 @@ public class AdminCoachController {
 			RedirectAttributes rttr,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -302,7 +301,7 @@ public class AdminCoachController {
 	public String deleteKeyword(@RequestParam String keyword_name,
 			RedirectAttributes rttr, HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -329,7 +328,7 @@ public class AdminCoachController {
 	public String deleteReview(@RequestBody Map<String, Object> params,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -359,7 +358,7 @@ public class AdminCoachController {
 			@RequestParam(value="keyword", required=false) String keyword,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -383,7 +382,7 @@ public class AdminCoachController {
 	@GetMapping("/support/notice/write")
 	public String noticeWrite(Model model, HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -397,7 +396,7 @@ public class AdminCoachController {
 	public String noticeInsert(QnaDTO dto,
 			RedirectAttributes rttr, HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -423,7 +422,7 @@ public class AdminCoachController {
 	public String noticeContent(Model model, @RequestParam int qna_idx,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -446,7 +445,7 @@ public class AdminCoachController {
 	public String noticeUpdateForm(Model model, @RequestParam int qna_idx,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -469,7 +468,7 @@ public class AdminCoachController {
 	public String updateNotice(QnaDTO dto,
 			RedirectAttributes rttr, HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -497,7 +496,7 @@ public class AdminCoachController {
 	public String deleteNotice(@RequestParam int qna_idx,
 			RedirectAttributes rttr, HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -525,7 +524,7 @@ public class AdminCoachController {
 			@RequestParam(value="keyword", required=false) String keyword,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -550,7 +549,7 @@ public class AdminCoachController {
 	public String qnaContent(Model model,@RequestParam int qna_idx, 
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -577,7 +576,7 @@ public class AdminCoachController {
 			RedirectAttributes rttr,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -614,7 +613,7 @@ public class AdminCoachController {
 			RedirectAttributes rttr,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -648,7 +647,7 @@ public class AdminCoachController {
 			RedirectAttributes rttr,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -677,7 +676,7 @@ public class AdminCoachController {
 			@RequestParam(required = false, defaultValue = "1") Integer major_field_idx,
 			HttpSession session) {
 
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -719,7 +718,7 @@ public class AdminCoachController {
 			RedirectAttributes rttr,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -750,7 +749,7 @@ public class AdminCoachController {
 	public String updateMinorField(@RequestBody Map<String, Object> params,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -773,7 +772,7 @@ public class AdminCoachController {
 	@GetMapping("/report")
 	public String reportList(Model model, HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -799,7 +798,7 @@ public class AdminCoachController {
 			@RequestParam int report_idx,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
@@ -843,7 +842,7 @@ public class AdminCoachController {
 			@RequestParam String status,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		

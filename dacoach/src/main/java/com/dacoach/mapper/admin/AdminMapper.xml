@@ -46,8 +46,8 @@
 	from 
 	coach c
 	join
-	users u on c.user_idx = u.user_idx
-	where c.coach_idx=#{coach_idx}
+	users u on c.user_idx = u.user_idx	
+	where u.user_idx=#{user_idx}
 	</select>
 	
 	<select id="getCoachStatus" parameterType="int" resultType="String">
