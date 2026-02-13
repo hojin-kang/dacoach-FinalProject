@@ -28,39 +28,19 @@ public class MypageServiceImple implements MypageService {
 	
 	@Transactional
 	@Override
-	public void withdrawUser(int userIdx, int reasonTypeIdx, String extra) {
+	public void withdrawUser(int userIdx, int reasonTypeIdx) {
 
 	    // 1) 유저 타입 조회
 	    String userType = mypageMapper.getUserType(userIdx); // COACH / COMPANY / ADMIN
 
 	    // 2) 탈퇴 사유 로그
 	    Map<String,Object> log = new HashMap<>();
-	    log.put("user_idx", userIdx);
+	    log.put("user_type", userType);
 	    log.put("reason_type_idx", reasonTypeIdx);
-	    log.put("extra", extra);
 	    mypageMapper.insertReasonLog(log);
 
-	    // 3) USERS 마스킹 + STATUS 변경
-	    Map<String,Object> u = new HashMap<>();
-	    u.put("user_idx", userIdx);
-	    u.put("login_id", "deleted_" + userIdx + "@dacoach.local");
-	    u.put("user_name", "탈퇴회원");
-	    u.put("password", "DELETED"); // 너가 쓰는 해시 방식 있으면 그걸로
-	    mypageMapper.maskUsers(u);
+	    // 3) 유저 삭제
+	    mypageMapper.deleteUser(userIdx);
 
-	    // 4) 상세테이블 마스킹
-	    if ("COACH".equals(userType)) {
-	        Map<String,Object> c = new HashMap<>();
-	        c.put("user_idx", userIdx);
-	        c.put("nickname", "탈퇴코치_" + userIdx);
-	        c.put("mail", "deleted_" + userIdx + "@dacoach.local");
-	        mypageMapper.maskCoach(c);
-	    } else if ("COMPANY".equals(userType)) {
-	        Map<String,Object> c = new HashMap<>();
-	        c.put("user_idx", userIdx);
-	        c.put("phone", "000-0000-" + userIdx);
-	        c.put("address", "탈퇴");
-	        mypageMapper.maskCompany(c);
-	    }
 	}
 }
