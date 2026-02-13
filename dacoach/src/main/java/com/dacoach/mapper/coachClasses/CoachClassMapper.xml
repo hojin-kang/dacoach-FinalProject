@@ -418,22 +418,28 @@
 		ce.ENROLL_IDX = #{enroll_idx}
 	</select>
 
-	<!-- 사용자가 해당 클래스의 모든 날짜를 신청했는지 확인 (클래스 기간 내 남은 날짜가 있는지) -->
+	<!-- 사용자가 해당 클래스의 신청 가능한 모든 날짜를 신청했는지 확인 (오늘 이후 남은 날짜가 있는지) -->
 	<select id="checkUserEnrollment" parameterType="map"
 		resultType="int">
 		SELECT
 		CASE
-		-- 클래스 기간 내 총 날짜 수
-		WHEN (SELECT (TRUNC(END_DATE) - TRUNC(START_DATE) + 1)
+		-- 오늘부터 종료일까지 남은 날짜 수
+		WHEN (SELECT GREATEST(0,
+		TRUNC(END_DATE) - TRUNC(SYSDATE) + 1)
 		FROM CLASS
-		WHERE CLASS_IDX = #{class_idx})
-		-- 이미 신청한 날짜 수
+		WHERE CLASS_IDX =
+		#{class_idx})
+		-- 오늘 이후 이미 신청한 날짜 수
 		= (SELECT COUNT(*)
-		FROM CLASS_ENROLLMENT
+		FROM
+		CLASS_ENROLLMENT
 		WHERE CLASS_IDX = #{class_idx}
-		AND USER_IDX = #{user_idx}
-		AND STATUS = 'CONFIRMED')
-		THEN 1 -- 모든 날짜 신청 완료
+		AND USER_IDX =
+		#{user_idx}
+		AND STATUS = 'CONFIRMED'
+		AND TRUNC(COMPLETED_AT) >=
+		TRUNC(SYSDATE))
+		THEN 1 -- 신청 가능한 모든 날짜 신청 완료
 		ELSE 0 -- 아직 신청 가능한 날짜 있음
 		END
 		FROM DUAL
