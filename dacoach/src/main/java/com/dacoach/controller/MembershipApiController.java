@@ -19,6 +19,7 @@ import com.dacoach.kakaopay.KakaoApproveResponse;
 import com.dacoach.kakaopay.KakaoCancelResponse;
 import com.dacoach.kakaopay.KakaoPayService;
 import com.dacoach.kakaopay.KakaoReadyResponse;
+import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.kakaopay.PayStatusDTO;
 import com.dacoach.mapper.kakaopay.KakaopayMapper;
 import com.dacoach.mapper.membership.MembershipMapper;
@@ -80,7 +81,6 @@ public class MembershipApiController {
 		}
 		mav.addObject("msg","결제가 완료되었습니다");
 		mav.addObject("url","/membership/membershipForm");
-		System.out.println(userPath);
 		mav.setViewName("alert");
 		return mav;
 		
@@ -128,9 +128,39 @@ public class MembershipApiController {
 	
 	//결제취소
 		@PostMapping("cancel")
-		public ResponseEntity<KakaoCancelResponse> cancelKakaoPay(@RequestBody Map<String,Object> parameters) {
-			KakaoCancelResponse kakaocancel=kakaoPayService.cancelResponse(parameters);
-			System.out.println(kakaocancel);
-			return new ResponseEntity<KakaoCancelResponse>(kakaocancel,HttpStatus.OK);
+		public ResponseEntity<String> cancelKakaoPay(@RequestBody Map<String,Object> cancelData) {
+			//var parameter={cid:"yml에서 받기",tid:"DB에서뺴오기",cancel_amount:총가격,cancel_vat_amount:부과세,cancel_tax_free_amount:면세,payload:"취소사유"};
+			
+			String msg="";
+			
+			try {
+				PayDTO payDto=kakaopayMapper.paySelect((int)cancelData.get("payIdx"));
+				
+				Map<String,Object> parameters=new HashMap<String,Object>();
+				parameters.put("cid", payDto.getCid());
+				parameters.put("tid", payDto.getTid() );
+				parameters.put("cancel_amount",payDto.getTotal());
+				parameters.put("cancel_vat_amount",payDto.getVat() );
+				parameters.put("cancel_tax_free_amount",payDto.getTax_free() );
+				parameters.put("payload", cancelData.get("payload"));
+				
+				KakaoCancelResponse kakaocancel=kakaoPayService.cancelResponse(parameters);
+				if(kakaocancel!=null||kakaocancel.getStatus().equalsIgnoreCase("CANCEL_PAYMENT")) {
+					int result=kakaopayMapper.cancelOk(kakaocancel);
+					if(result>0) {
+						Map<String,String> map=new HashMap<String,String>();
+						map.put("status", "환불");
+						map.put("tid", kakaoReady.getTid());
+						int upResult=kakaopayMapper.upPayStatus(map);
+						if(result>0&&upResult>0)msg="결제 취소가 성공적으로 진행됬습니다";
+					}else msg="결제 취소 진행중 오류가 발생하였습니다";
+													
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return new ResponseEntity<String>(msg,HttpStatus.OK);
 		}
 }
