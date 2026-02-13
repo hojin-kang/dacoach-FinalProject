@@ -105,4 +105,21 @@ public class CompanyServiceImple implements CompanyService {
 	public List<CompanyRegionDTO> getCompanyAllRegion(int company_idx) throws Exception{
 		return companyMapper.getCompanyAllRegion(company_idx);
 	}
+	
+	public boolean companyUp(CompanyDTO companyDto,CompanyProvideDTO provideDto) throws Exception{
+		boolean check=false;
+		int comResult=companyMapper.companyUp(companyDto);
+		if(comResult>0)check=true;
+		
+		if(provideDto.getMinor_field_idx()!=0) {
+		int proResult=companyMapper.provideUp(provideDto);
+		if(proResult>0)check=true;
+		}
+		
+		return check;
+	}
+	public int regionDel(CompanyRegionDTO dto) throws Exception{
+		return companyMapper.regionDel(dto);
+	}
+	
 }
