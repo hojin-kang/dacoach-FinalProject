@@ -105,21 +105,27 @@
              <span onclick="report()">🚨</span> 
          </div>
 
-         <div class="header-buttons" th:if="${dto.user_idx != session.user_idx}">
-             <th:block th:switch="${dto.chatStatus}">
-                 <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">채팅 수락</button>
-                 <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled>채팅 신청됨</button>
-                 <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" onclick="location.href='/chat'">채팅방 이동</button>
-                 <button th:case="*" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 신청</button>
-             </th:block>
-         
-             <th:block th:switch="${dto.matchStatus}">
-                 <button th:case="'RECEIVED'" class="btn-header btn-match-solid" th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">매칭 수락</button>
-                 <button th:case="'APPLIED'" class="btn-header btn-match-solid" disabled>매칭 신청됨</button>
-                 <button th:case="'ACCEPTED'" class="btn-header btn-match-solid" disabled>매칭 완료</button>
-                 <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
-             </th:block>
-         </div>
+<div class="header-buttons" th:if="${dto.user_idx != session.user_idx}">
+    <th:block>
+        <button th:if="${dto.matchStatus == 'ACCEPTED'}" 
+                class="btn-header btn-chat-outline" 
+                onclick="location.href='/chat'">채팅방 이동</button>
+
+        <th:block th:unless="${dto.matchStatus == 'ACCEPTED'}" th:switch="${dto.chatStatus}">
+            <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">채팅 수락</button>
+            <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled>채팅 신청됨</button>
+            <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" onclick="location.href='/chat'">채팅방 이동</button>
+            <button th:case="*" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 신청</button>
+        </th:block>
+    </th:block>
+
+    <th:block th:switch="${dto.matchStatus}">
+        <button th:case="'RECEIVED'" class="btn-header btn-match-solid" th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">매칭 수락</button>
+        <button th:case="'APPLIED'" class="btn-header btn-match-solid" disabled>매칭 신청됨</button>
+        <button th:case="'ACCEPTED'" class="btn-header btn-match-solid" disabled>매칭 완료</button>
+        <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
+    </th:block>
+</div>
       </section>
 
       <nav class="detail-tabs">
