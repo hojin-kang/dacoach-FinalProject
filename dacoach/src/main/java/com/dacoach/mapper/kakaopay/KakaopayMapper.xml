@@ -26,6 +26,22 @@
   <update id="upPayStatus">
   	update pay_status set status=#{status} where tid= #{tid}
   </update>
+  
+  <insert id="cancelOk">
+  	insert into pay_cancel values (
+  		#{tid},
+  		#{partner_order_id},
+  		#{partner_user_id}.
+  		#{canceled_at},
+  		#{payload},
+  		#{approved_cancel_amount.total},
+  		#{approved_cancel_amount.tax_free},
+  		#{approved_cancel_amount.vat},
+  		#{approved_cancel_amount.point},
+  		#{approved_cancel_amount.discount},
+  		#{approved_cancel_amount.green_deposit}
+  	)
+  </insert>
   <insert id="insertPay">
   	insert into pay values(
   		seq_pay.nextval,
@@ -48,4 +64,9 @@
   		#{payment_method_type}
   	)
   </insert>
+  
+  <select id="paySelect">
+  	select * from pay where pay_idx=#{pay_idx}
+  </select>
+  
   </mapper>
