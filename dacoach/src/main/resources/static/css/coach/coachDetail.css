@@ -35,6 +35,8 @@
 	border: 1px solid var(--line);
 	background: #f9fafb;
 	flex: 0 0 auto;
+	object-fit: cover;
+	display: block;
 }
 
 .profile-main-info {
@@ -89,7 +91,7 @@
 	width: 30px;
 	height: 30px;
 	border: none;
-	background: var(--bg);
+	background: #ffffff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -149,6 +151,11 @@
 }
 
 /* --- 탭 메뉴 (Sticky 적용) --- */
+
+#detail, #reviews {
+	scroll-margin-top: 140px;
+	/* top(헤더)+탭 높이 합친 값으로 조절 */
+}
 .detail-tabs {
 	position: sticky;
 	top: 73px; /* ← 헤더 높이에 맞춰 조절 (ex 70~100px) */
@@ -159,21 +166,21 @@
 	border-bottom: 1px solid var(--line);
 }
 
-.tab-item {
+.tab {
 	position: relative;
 	padding: 13px 10px;
 	font-weight: 400;
 	font-size: 15px;
 	text-decoration: none;
-	color: var(--muted);
+	color: #6b7280;
 }
 
-.tab-item.active {
+.tab.active {
 	font-weight: 700;
 	color: var(--ink);
 }
 
-.tab-item.active::after {
+.tab.active::after {
 	content: "";
 	position: absolute;
 	left: 0;
@@ -186,6 +193,9 @@
 
 #content-info {
 	margin-top: 18px !important;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
 }
 /* --- 섹션 공통 --- */
 .detail-section {
@@ -193,7 +203,7 @@
 }
 
 .section-title {
-	margin-left: 10px;
+	margin: 0 0 10px;
 	font-size: 18px;
 	font-weight: 700;
 	color: var(--ink);

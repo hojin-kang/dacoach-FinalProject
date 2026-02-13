@@ -65,41 +65,34 @@
       </section>
 
       <nav class="detail-tabs">
-         <a id="tab-info" class="tab-item active" href="#detail">상세정보</a>
-         <a id="tab-review" class="tab-item" href="#reviews">매칭후기</a>
+         <a id="tab-info" class="tab active" href="#detail">상세정보</a>
+         <a id="tab-review" class="tab" href="#reviews">매칭후기</a>
       </nav>
 
       <div id="content-info">
-         <section class="detail-section">
+         <section class="detail-section" id="detail">
             <h3 class="section-title">자기소개</h3>
-            <div class="section-content">
-               <p th:text="${dto.intro}">아직 소개글 작성 전입니다.</p>
-            </div>
+            <p class="section-content" th:text="${dto.intro}"></p>
          </section>
 
          <div class="info-grid detail-section">
             <div class="info-item">
                <h3 class="section-title">제공분야</h3>
-               <div class="section-content">
-               <p th:text="|${dto.major_field_name} - ${dto.minor_field_name}|"></p>
+               <p class="section-content" th:text="|${dto.major_field_name} - ${dto.minor_field_name}|"></p>
                <div class="tag-list">
                   <a th:each="tag : ${myHashtags}" th:href="@{/coach/search(keyword=${tag})}" class="detail-tag" th:text="${tag}"></a>
                   <span th:if="${#lists.isEmpty(myHashtags)}">등록된 태그가 없습니다.</span>
                </div>
-               </div>
             </div>
+            
             <div class="info-item">
                <h3 class="section-title">관심분야</h3>
-               <div class="section-content">
-               <p th:text="|${dto.major_field_name2} - ${dto.minor_field_name2}|"></p>
+               <p class="section-content" th:text="|${dto.major_field_name2} - ${dto.minor_field_name2}|"></p>
                <div class="tag-list">
                   <a th:each="tag : ${interHashtags}" th:href="@{/coach/search(keyword=${tag})}" class="detail-tag" th:text="${tag}"></a>
                </div>
-               </div>
             </div>
-         </div>
-
-         <div class="info-grid detail-section">
+            </div><div class="info-grid detail-section">
             <div class="info-item">
                <h3 class="section-title">동영상</h3>
                <div class="video-placeholder">
@@ -109,6 +102,7 @@
                   <p th:unless="${dto?.video != null}">등록된 소개 영상이 없습니다.</p>
                </div>
             </div>
+            
             <div class="info-item">
                <h3 class="section-title">자격증</h3>
                <ul class="section-content">
@@ -118,7 +112,8 @@
             </div>
          </div>
 
-         <div id="content-review" class="detail-section" >
+		<div id="reviews">
+         <div id="content-review" class="detail-section">
             <h3 class="section-title">매칭 후기</h3>
             <span class="review-summary" th:unless="${#lists.isEmpty(reviewList)}">
                <b>[[${dto.review_count}]]</b> 건의 후기 (평균 ⭐[[${dto.rating}]])
@@ -152,6 +147,7 @@
                </article>
             </div>
          </div>
+         </div>
       </div>
 
    </div>
@@ -160,42 +156,47 @@
    <div th:replace="~{layout/footer :: siteFooter}"></div>
    
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   	<script th:inline="javascript">
+    // (선택) 앵커 이동 부드럽게
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    
+    // 탭 active 토글
+    const tabs = document.querySelectorAll('.detail-tabs .tab');
+
+    function setActiveByHash() {
+      const hash = window.location.hash;
+      tabs.forEach(t => t.classList.remove('active'));
+
+      if (hash === '#reviews') {
+        document.querySelector('.detail-tabs .tab[href="#reviews"]')?.classList.add('active');
+      } else {
+        document.querySelector('.detail-tabs .tab[href="#detail"]')?.classList.add('active');
+      }
+    }
+
+    // 클릭 시 active 변경 (앵커 스크롤은 기존 코드가 하니까 여기서는 class만)
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
+    // 새로고침/뒤로가기/직접 #reviews 로 접근했을 때도 맞춰주기
+    window.addEventListener('hashchange', setActiveByHash);
+    document.addEventListener('DOMContentLoaded', setActiveByHash);
+    </script>
    <script th:inline="javascript">
       const TARGET_IDX = [[${dto.user_idx}]];
 
-      // 탭 전환(스크롤 방식) 로직
-      function switchTab(tab) {
-         const infoDiv = document.getElementById('content-info');
-         const reviewDiv = document.getElementById('content-review');
-         const tabInfo = document.getElementById('tab-info');
-         const tabReview = document.getElementById('tab-review');
-
-         if(tab === 'info') {
-            // 상세정보 클릭 시 최상단으로 이동
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-         } else {
-            // 매칭후기 클릭 시 후기 섹션으로 스크롤 이동
-            reviewDiv.scrollIntoView({ behavior: 'smooth' });
-         }
-      }
-
-      // Scroll Spy 기능: 스크롤 위치에 따라 탭 활성화 상태 변경
-      window.addEventListener('scroll', function() {
-         const reviewDiv = document.getElementById('content-review');
-         const tabInfo = document.getElementById('tab-info');
-         const tabReview = document.getElementById('tab-review');
-         
-         const reviewRect = reviewDiv.getBoundingClientRect();
-
-         // 후기 섹션이 화면 상단(80px 기준)에 도달하면 탭 변경
-         if (reviewRect.top <= 100) {
-            tabReview.classList.add('active');
-            tabInfo.classList.remove('active');
-         } else {
-            tabInfo.classList.add('active');
-            tabReview.classList.remove('active');
-         }
-      });
 
       // 기존 기능들 유지
       function handleLike(isLike) {
