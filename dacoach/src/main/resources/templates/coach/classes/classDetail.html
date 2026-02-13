@@ -218,13 +218,16 @@
 								<div class="reviewCard" th:each="r : ${reviewList}">
 									<div class="reviewTop">
 										<div class="reviewAvatar">
-											<span
+											<a class="reviewerLink"
+												th:href="@{/coach/detail(user_idx=${r.REVIEWER_IDX})}">
+												<span
 												th:if="${r.REVIEWER_PHOTO == null or r.REVIEWER_PHOTO == ''}"
 												class="no-media-message"
 												style="width: 48px; height: 48px; border-radius: 50%; font-size: 11px;">👤</span>
-											<img
+												<img
 												th:if="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''}"
 												th:src="'/uploads/' + ${r.REVIEWER_PHOTO}" alt="reviewer" />
+											</a>
 										</div>
 
 										<div class="reviewMeta">

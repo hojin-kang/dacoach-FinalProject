@@ -170,10 +170,12 @@
 				reviewCard.innerHTML = `
 					<div class="reviewCardHeader">
 						<div class="reviewerInfo">
+						<a class="name-link" href="/coach/detail?user_idx=${review.REVIEWER_IDX}">
 							<img src="${profileImg}" 
 								 alt="reviewer" 
 								 class="reviewerAvatar"
 								 onerror="this.src='/images/default_profile.png'">
+							</a>
 							<div class="reviewerMeta">
 								<div class="reviewerName">${review.REVIEWER_NAME}</div>
 								<div class="reviewDate">${formatDate(review.CREATED_AT)}</div>
