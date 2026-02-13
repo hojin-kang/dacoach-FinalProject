@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.review.ReviewCoachDTO;
+import com.dacoach.service.chat.ChatService;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.coachSearch.CoachSearchService;
 import com.dacoach.service.review.ReviewService;
@@ -30,6 +31,8 @@ public class CoachSearchController {
 		private CoachSearchService coachSearchService;
 		@Autowired
 		private ReviewService reviewService;
+		@Autowired
+		private ChatService chatService;
 		
 	 	@GetMapping("/coach/search")
 	public ModelAndView coachSearchForm(@RequestParam(value="cp", defaultValue = "1") int cp,
@@ -162,12 +165,19 @@ public class CoachSearchController {
 	 	    try {
 				CoachDTO coach=coachService.getCoachInfo(me);
 	 	        if (type.equals("A_CHAT")) {
-	 	        	coachSearchService.acceptChat(me, target_idx);
+	 	        	int chatOk=coachSearchService.acceptChat(me, target_idx);
+	 	        	//채팅방 개설
+	 	        	if(chatOk>0) {
+	 	        		chatService.getOrCreateRoom(me, target_idx);
+	 	        	}
 	 	            result.put("status", "chat_accepted");
 	 	            return result;
 	 	        }
 	 	        if (type.equals("A_MATCH")) {
-	 	        	coachSearchService.acceptMatch(me, target_idx);
+	 	        	int matchOk=coachSearchService.acceptMatch(me, target_idx);
+	 	        	if(matchOk>0) {
+	 	        		chatService.getOrCreateRoom(me, target_idx);
+	 	        	}
 	 	            result.put("status", "match_accepted");
 	 	            return result;
 	 	        }				

@@ -221,7 +221,11 @@
 				}
 
 				tr.innerHTML = `
-					<td>${student.USER_NAME}</td>
+					<td>
+					  <a class="name-link" href="/coach/detail?user_idx=${student.USER_IDX}">
+					    ${student.USER_NAME}
+					  </a>
+					</td>
 					<td>${student.PHONE || '-'}</td>
 					<td>${formatDateTime(student.ENROLLED_AT)}</td>
 					<td>${formatDateOnly(student.COMPLETED_AT)}</td>

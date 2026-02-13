@@ -232,24 +232,24 @@
     </style>
 
     <div class="max-w-[1100px] mx-auto p-8 f-main"
-         th:with="hasData=${coachDetail != null and !coachDetail.isEmpty()}, info=${hasData ? coachDetail[0] : null}">
+         th:with="hasData=${coachDetail != null}, info=${coachDetail}">
         
         <div class="i-card">
             <h2 class="s-badge">코치 정보</h2>
             <div class="flex gap-10">
                 <div class="flex-1 grid grid-cols-2 gap-x-6 gap-y-2">
-                    <div class="row-box h-10"><span class="lbl">이름</span><div class="cnt" th:text="${hasData ? info['USER_NAME'] : ''}"></div></div>
-                    <div class="row-box h-10"><span class="lbl">닉네임</span><div class="cnt" th:text="${hasData ? info['NICKNAME'] : ''}"></div></div>
-                    <div class="row-box h-10"><span class="lbl">아이디</span><div class="cnt" th:text="${hasData ? info['LOGIN_ID'] : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">이름</span><div class="cnt" th:text="${info['USER_NAME'] ?: ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">닉네임</span><div class="cnt" th:text="${info['NICKNAME'] ?: ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">아이디</span><div class="cnt" th:text="${info['LOGIN_ID'] ?: ''}"></div></div>
                     <div class="row-box h-10"><span class="lbl">비밀번호</span><div class="cnt">********</div></div>
-                    <div class="row-box h-10"><span class="lbl">카카오ID</span><div class="cnt" th:text="${hasData and info['KAKAO_KEY'] != null ? info['KAKAO_KEY'] : '-'}"></div></div>
-                    <div class="row-box h-10"><span class="lbl">이메일</span><div class="cnt" th:text="${hasData ? info['MAIL'] : ''}"></div></div>
-                    <div class="row-box h-10"><span class="lbl">생년월일</span><div class="cnt" th:text="${hasData and info['BIRTH_DATE'] != null ? #strings.substring(info['BIRTH_DATE'], 0, 10) : ''}"></div></div>
-                    <div class="row-box h-10"><span class="lbl">전화번호</span><div class="cnt" th:text="${hasData ? info['PHONE'] : ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">카카오ID</span><div class="cnt" th:text="${info['KAKAO_KEY'] ?: '-'}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">이메일</span><div class="cnt" th:text="${info['MAIL'] ?: ''}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">생년월일</span><div class="cnt" th:text="${info['BIRTH_DATE']}"></div></div>
+                    <div class="row-box h-10"><span class="lbl">전화번호</span><div class="cnt" th:text="${info['PHONE'] ?: ''}"></div></div>
                 </div>
                 <div class="photo-frame">
-                    <img th:if="${hasData and info['PHOTO'] != null}" th:src="@{|/uploads/${info['PHOTO']}|}" class="w-full h-full object-cover">
-                    <svg th:unless="${hasData and info['PHOTO'] != null}" class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <img th:if="${info['PHOTO'] != null}" th:src="@{|/uploads/${info['PHOTO']}|}" class="w-full h-full object-cover">
+                    <svg th:unless="${info['PHOTO'] != null}" class="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 </div>
             </div>
         </div>

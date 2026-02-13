@@ -107,35 +107,41 @@
                                 </div>
 
                                 <div class="card-footer" th:if="${dto.user_idx != session.user_idx}">
-                                    <th:block th:switch="${dto.chatStatus}">
-                                        <button type="button" th:case="'RECEIVED'" class="btn-chat stop-card" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">
-                                            채팅수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×1
-                                        </button>
-                                        <button type="button" th:case="'APPLIED'" class="btn-chat stop-card" disabled style="background:#eee; color:#999;">
-                                            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon" style="filter: grayscale(1);">×1
-                                        </button>
-                                        <button type="button" th:case="'ACCEPTED'" class="btn-chat stop-card" onclick="location.href='/chat'">
-                                            채팅방이동 <img src="/img/icon/dakcoach.png" class="btn-icon">
-                                        </button>
-                                        <button type="button" th:case="*" class="btn-chat stop-card" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">
-                                            채팅신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×1
-                                        </button>
-                                    </th:block>
-
-                                    <th:block th:switch="${dto.matchStatus}">
-                                        <button type="button" th:case="'RECEIVED'" class="btn-match stop-card" th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">
-                                            매칭수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
-                                        </button>
-                                        <button type="button" th:case="'APPLIED'" class="btn-match stop-card" disabled style="background:#666; color:#fff;">
-                                            신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
-                                        </button>
-                                        <button type="button" th:case="'ACCEPTED'" class="btn-match stop-card" disabled>
-                                            매칭완료 <img src="/img/icon/dakcoach.png" class="btn-icon">
-                                        </button>
-                                        <button type="button" th:case="*" class="btn-match stop-card" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">
-                                            매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
-                                        </button>
-                                    </th:block>
+                                   <th:block th:if="${dto.matchStatus == 'ACCEPTED'}">
+							    <button type="button" class="btn-chat stop-card" onclick="location.href='/chat'">
+							        채팅방이동 <img src="/img/icon/dakcoach.png" class="btn-icon">
+							    </button>
+								</th:block>
+								
+								<th:block th:unless="${dto.matchStatus == 'ACCEPTED'}" th:switch="${dto.chatStatus}">
+								    <button type="button" th:case="'RECEIVED'" class="btn-chat stop-card" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">
+								        채팅수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×1
+								    </button>
+								    <button type="button" th:case="'APPLIED'" class="btn-chat stop-card" disabled style="background:#eee; color:#999;">
+								        신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon" style="filter: grayscale(1);">×1
+								    </button>
+								    <button type="button" th:case="'ACCEPTED'" class="btn-chat stop-card" onclick="location.href='/chat'">
+								        채팅방이동 <img src="/img/icon/dakcoach.png" class="btn-icon">
+								    </button>
+								    <button type="button" th:case="*" class="btn-chat stop-card" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">
+								        채팅신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×1
+								    </button>
+								</th:block>
+								
+								<th:block th:switch="${dto.matchStatus}">
+								    <button type="button" th:case="'RECEIVED'" class="btn-match stop-card" th:onclick="applyAction('A_MATCH', [[${dto.user_idx}]])">
+								        매칭수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+								    </button>
+								    <button type="button" th:case="'APPLIED'" class="btn-match stop-card" disabled style="background:#666; color:#fff;">
+								        신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+								    </button>
+								    <button type="button" th:case="'ACCEPTED'" class="btn-match stop-card" disabled>
+								        매칭완료 <img src="/img/icon/dakcoach.png" class="btn-icon">
+								    </button>
+								    <button type="button" th:case="*" class="btn-match stop-card" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">
+								        매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+								    </button>
+								</th:block>
                                 </div>
                             </article>
                         </div> 
@@ -240,7 +246,7 @@
         })
         .then(response => response.json())
         .then(res => {
-            if (res.status === 'success') { alert("완료되었습니다."); location.reload(); }
+            if (res.status === 'success'|| res.status.includes('accepted')) { alert("완료되었습니다."); location.reload(); }
             else if (res.status === 'login_required') { alert("로그인이 필요합니다."); location.href = '/login'; }
             else if (res.status === 'no_token') { alert("토큰이 부족합니다."); location.href = '/tokenHistory'; }
             else { alert("오류가 발생했습니다."); }
