@@ -1,125 +1,41 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>운영정책</title>
+<div th:fragment="contentPage" class="page-wrap font-main">
   <style>
-    /* 기본 폰트 설정 (Pretendard 추천) */
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-    body {
-      font-family: 'Pretendard', sans-serif;
-      background-color: #f8fafc;
-      margin: 0;
-      padding: 0;
-      color: #334155;
-      line-height: 1.6;
-    }
-
-    /* 컨테이너 */
+    .font-main { font-family: 'Pretendard', sans-serif; color:#334155; line-height:1.6; }
+    .page-wrap { padding: 32px; }
     .policy-container {
       max-width: 800px;
-      margin: 60px auto;
+      margin: 0 auto;
       background: #ffffff;
       padding: 40px;
       border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
     }
-
-    /* 타이틀 */
-    .policy-container h2 {
-      font-size: 28px;
-      font-weight: 800;
-      color: #1e293b;
-      margin-bottom: 40px;
-      text-align: center;
-      border-bottom: 3px solid #9dbbb5; /* 기존 민트색 포인트 */
-      display: inline-block;
-      padding-bottom: 8px;
-    }
-
-    .policy-header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    /* 정책 아이템 박스 */
-    .policy-item {
-      margin-top: 20px;
-    }
-
-    .policy-item h3 {
-      font-size: 20px;
-      color: #0f172a;
-      margin-bottom: 15px;
-      padding-left: 12px;
-      border-left: 4px solid #9dbbb5;
-    }
-
-    /* 본문 내용 */
-    .content {
-      font-size: 15px;
-      color: #475569;
-      white-space: pre-wrap; /* 줄바꿈 유지 */
-      word-break: break-all;
-      background-color: #f1f5f9;
-      padding: 25px;
-      border-radius: 12px;
-      min-height: 300px;
-    }
-
-    hr {
-      border: 0;
-      height: 1px;
-      background: #e2e8f0;
-      margin: 40px 0;
-    }
-
-    /* 푸터 */
-    footer {
-      text-align: center;
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 50px;
-    }
-
-    /* 모바일 대응 */
-    @media (max-width: 768px) {
-      .policy-container {
-        margin: 20px;
-        padding: 20px;
-      }
-      .policy-container h2 {
-        font-size: 22px;
-      }
-    }
+    .policy-container h2 { font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 40px; text-align:center; border-bottom:3px solid #9dbbb5; display:inline-block; padding-bottom:8px; }
+    .policy-header { text-align:center; margin-bottom:50px; }
+    .policy-item { margin-top:20px; }
+    .policy-item h3 { font-size:20px; color:#0f172a; margin-bottom:15px; padding-left:12px; border-left:4px solid #9dbbb5; }
+    .content { font-size:15px; color:#475569; white-space:pre-wrap; word-break:break-all; background:#f1f5f9; padding:25px; border-radius:12px; min-height:300px; }
+    hr { border:0; height:1px; background:#e2e8f0; margin:40px 0; }
+    footer { text-align:center; font-size:13px; color:#94a3b8; margin-bottom:10px; }
   </style>
-</head>
-<body>
 
-<div class="policy-container">
+  <div class="policy-container">
     <div class="policy-header">
-        <h2>이용약관 및 정책</h2>
+      <h2>이용약관 및 정책</h2>
     </div>
-    
+
     <div th:if="${latestPolicy != null}" class="policy-item">
-        <h3 th:text="${latestPolicy.title}">정책 제목</h3>
-        <div class="content" th:text="${latestPolicy.question}">
-            여기에 정책 상세 내용이 출력됩니다.
-        </div>
+      <h3 th:text="${latestPolicy.title}">정책 제목</h3>
+      <div class="content" th:text="${latestPolicy.question}">여기에 정책 상세 내용</div>
     </div>
-    
+
     <div th:if="${latestPolicy == null}" style="text-align:center; padding: 50px; color: #94a3b8;">
-        등록된 정책 데이터가 없습니다.
+      등록된 정책 데이터가 없습니다.
     </div>
 
     <hr>
-    
-    <footer>
-      © 2026 다코치 운영정책. 모든 이용자는 본 정책을 숙지하고 준수해야 합니다.
-    </footer>
+    <footer>© 2026 다코치 운영정책. 모든 이용자는 본 정책을 숙지하고 준수해야 합니다.</footer>
+  </div>
 </div>
-
-</body>
-</html>
