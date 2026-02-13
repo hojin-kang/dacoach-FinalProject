@@ -5,78 +5,118 @@
    <title>dacoach - 도전과제</title>
    <link rel="stylesheet" th:href="@{/css/main.css}" />
    <style>
-      /* --- 공통 레이아웃 및 진척도 --- */
+      /* --- 공통 레이아웃 --- */
+      .main-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+      .page-title { margin-bottom: 30px; font-size: 2rem; color: #1a202c; }
+
+      /* --- 등급 진척도 섹션 --- */
       .progress-section { 
          background: #ffffff; padding: 25px; border-radius: 15px; 
-         margin-bottom: 30px; border: 2px solid #edf2f7;
+         margin-bottom: 20px; border: 2px solid #edf2f7;
       }
-      .progress-wrapper { background: #edf2f7; border-radius: 20px; height: 24px; margin: 15px 0; overflow: hidden; border: 1px solid #e2e8f0; }
-      .progress-fill { background: linear-gradient(90deg, #4c6ef5, #15aabf); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold; }
+      .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+      .progress-header h3 { margin: 0; font-size: 1.25rem; color: #2d3748; }
+      .progress-wrapper { background: #edf2f7; border-radius: 20px; height: 24px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 10px; }
+      .progress-fill { 
+         background: linear-gradient(90deg, #4c6ef5, #15aabf); height: 100%; 
+         display: flex; align-items: center; justify-content: center; 
+         color: white; font-size: 12px; font-weight: bold; transition: width 0.5s ease;
+      }
+      .progress-info { text-align: right; font-weight: bold; color: #4c6ef5; margin: 0; }
+
+      /* --- 활동 현황 통계 섹션 (새로 꾸민 부분) --- */
+      .stats-summary { 
+         display: flex; justify-content: space-around; background: #ffffff; 
+         padding: 20px; border-radius: 15px; margin-bottom: 30px; 
+         border: 2px solid #edf2f7; text-align: center;
+      }
+      .stats-item { flex: 1; }
+      .stats-item:not(:last-child) { border-right: 1px solid #edf2f7; }
+      .stats-label { display: block; font-size: 0.85rem; color: #718096; margin-bottom: 5px; }
+      .stats-value { display: block; font-size: 1.1rem; font-weight: bold; color: #2d3748; }
 
       /* --- 탭 메뉴 스타일 --- */
-      .tab-menu { display: flex; gap: 8px; margin-bottom: 0; padding-bottom: 0; border: none; }
+      .tab-menu { display: flex; gap: 8px; border: none; }
       .tab-btn { 
          padding: 12px 24px; border: 2px solid #edf2f7; border-bottom: none;
          background: #f8f9fa; border-radius: 10px 10px 0 0; cursor: pointer; 
          font-weight: bold; color: #718096; transition: all 0.2s;
       }
-      .tab-btn.active { background: #ffffff; color: #2d3748; border-color: #cbd5e0; border-bottom: 2px solid #ffffff; margin-bottom: -2px; z-index: 2; }
-
-      /* --- 콘텐츠 영역 테두리 --- */
-      .tab-container { 
-         border: 2px solid #cbd5e0; border-radius: 0 15px 15px 15px; padding: 30px; 
-         background: #ffffff; margin-top: -2px; 
+      .tab-btn.active { 
+         background: #ffffff; color: #2d3748; border-color: #cbd5e0; 
+         border-bottom: 2px solid #ffffff; margin-bottom: -2px; z-index: 2; 
       }
 
-      /* --- 3열 카드 그리드 --- */
+      /* --- 콘텐츠 영역 컨테이너 --- */
+      .tab-container { 
+         border: 2px solid #cbd5e0; border-radius: 0 15px 15px 15px; padding: 30px; 
+         background: #ffffff; margin-top: -2px; min-height: 400px;
+      }
+
+      /* --- 카드 그리드 레이아웃 --- */
       .challenge-content { display: none; }
       .challenge-content.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
 
-      /* --- 카드 디자인 --- */
       .card { 
          background: #ffffff; border: 2px solid #e2e8f0; padding: 20px; border-radius: 15px; 
-         position: relative; transition: all 0.3s ease;
-         display: flex; flex-direction: column; justify-content: space-between;
+         position: relative; transition: all 0.3s ease; display: flex; flex-direction: column;
       }
       .card:hover { border-color: #4c6ef5; transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
       
-      /* --- 기준(Criteria) 강조 디자인 --- */
-      .criteria-box {
-         background: #f0f7ff; border-left: 4px solid #339af0; padding: 10px;
-         margin: 12px 0; border-radius: 4px;
-      }
+      .criteria-box { background: #f0f7ff; border-left: 4px solid #339af0; padding: 10px; margin: 15px 0; border-radius: 4px; }
       .criteria-label { display: block; font-size: 11px; color: #339af0; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
       .criteria-text { font-size: 14px; color: #2d3748; font-weight: 600; }
 
-      .card h4 { margin: 10px 0; color: #1a202c; font-size: 1.15rem; line-height: 1.4; }
-      
-      /* --- 보상 정보 (이모티콘 제거) --- */
-      .prize-info { background: #f8f9fa; border: 1px solid #dee2e6; padding: 12px; border-radius: 10px; margin-top: auto; font-size: 0.9rem; color: #495057; }
+      .card h4 { margin: 5px 0; color: #1a202c; font-size: 1.1rem; line-height: 1.4; }
+      .prize-info { background: #f8f9fa; border: 1px solid #dee2e6; padding: 12px; border-radius: 10px; margin-top: auto; font-size: 0.85rem; color: #495057; }
       .prize-label { font-weight: bold; color: #2d3748; }
       
-      .status-badge { 
-         align-self: flex-start; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; border: 1px solid transparent;
-      }
-      .status-y { background: #ebfbee; color: #2b8a3e; border-color: #b2f2bb; }
-      .status-n { background: #f1f3f5; color: #495057; border-color: #dee2e6; }
+      .status-badge { align-self: flex-start; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; margin-bottom: 10px; }
+      .status-y { background: #ebfbee; color: #2b8a3e; border: 1px solid #b2f2bb; }
+      .status-n { background: #f1f3f5; color: #495057; border: 1px solid #dee2e6; }
+      .achieved-date { margin-top: 8px; color: #a0aec0; font-size: 11px; display: block; }
+      .empty-msg { text-align: center; padding: 80px 0; color: #a0aec0; grid-column: span 3; }
 
+      /* --- 반응형 설정 --- */
       @media (max-width: 992px) { .challenge-content.active { grid-template-columns: repeat(2, 1fr); } }
-      @media (max-width: 650px) { .challenge-content.active { grid-template-columns: 1fr; } .tab-container { padding: 15px; } }
+      @media (max-width: 650px) { 
+         .challenge-content.active { grid-template-columns: 1fr; } 
+         .tab-container { padding: 15px; }
+         .stats-summary { flex-direction: column; gap: 15px; }
+         .stats-item:not(:last-child) { border-right: none; border-bottom: 1px solid #edf2f7; padding-bottom: 15px; }
+      }
    </style>
 </head>
 <body>
    <div th:replace="layout/header :: siteHeader"></div>
 
    <main class="main">
-   <div class="container">
-      <h1>도전과제</h1>
+   <div class="container main-container">
+      <h1 class="page-title">도전과제</h1>
 
       <section class="progress-section" th:with="percent=${(scores.POINT_SCORE - scores.MIN_SCORE) * 100 / (scores.MAX_SCORE - scores.MIN_SCORE)}">
-         <h3 style="margin-top:0;"><span th:text="${scores.RANK_NAME}">브론즈</span> 등급 진행도</h3>
+         <div class="progress-header">
+            <h3><span th:text="${scores.RANK_NAME}">등급명</span> 등급 진행도</h3>
+         </div>
          <div class="progress-wrapper">
             <div class="progress-fill" th:style="'width: ' + ${percent} + '%'">[[${percent}]]%</div>
          </div>
-         <p style="text-align: right; font-weight: bold; color: #4c6ef5;">[[${scores.POINT_SCORE}]] / [[${scores.MAX_SCORE}]] P</p>
+         <p class="progress-info">[[${scores.POINT_SCORE}]] / [[${scores.MAX_SCORE}]] P</p>
+      </section>
+
+      <section class="stats-summary">
+         <div class="stats-item">
+            <span class="stats-label">나를 찜한 코치</span>
+            <span class="stats-value">[[${scores.LIKES}]]명</span>
+         </div>
+         <div class="stats-item">
+            <span class="stats-label">나의 매칭 수</span>
+            <span class="stats-value">[[${scores.MATCHES}]]회</span>
+         </div>
+         <div class="stats-item">
+            <span class="stats-label">작성한 리뷰 수</span>
+            <span class="stats-value">[[${scores.REVIEWS}]]개</span>
+         </div>
       </section>
 
       <div class="tab-menu">
@@ -92,52 +132,47 @@
                <span th:classappend="${dto.achieve == 'Y' ? 'status-badge status-y' : 'status-badge status-n'}" 
                      th:text="${dto.achieve == 'Y' ? '완료됨' : '진행중'}"></span>
                <h4 th:text="${dto.name}">과제명</h4>
-               
                <div class="criteria-box">
                   <span class="criteria-label">달성 조건</span>
                   <span class="criteria-text">[[${dto.type}]] [[${dto.quantity}]]개 도달 시</span>
                </div>
-
                <div class="prize-info">
                   <span class="prize-label">보상:</span> 닭꼬치 [[${dto.prize / 10}]]개 | [[${dto.prize}]] P
                </div>
             </div>
+            <div th:if="${#lists.isEmpty(challengeList)}" class="empty-msg">표시할 과제가 없습니다.</div>
          </div>
 
          <div id="achieved" class="challenge-content">
             <div class="card" th:each="dto : ${achievedList}">
                <span class="status-badge status-y">완료됨</span>
                <h4 th:text="${dto.name}">과제명</h4>
-               
                <div class="criteria-box">
                   <span class="criteria-label">달성 조건</span>
                   <span class="criteria-text">[[${dto.type}]] [[${dto.quantity}]]개 도달 시</span>
                </div>
-
                <div class="prize-info">
                   <span class="prize-label">보상:</span> 닭꼬치 [[${dto.prize / 10}]]개 | [[${dto.prize}]] P
                </div>
-               <small style="margin-top:8px; color: #a0aec0; font-size: 11px;">달성일: [[${dto.achieved_date}]]</small>
+               <span class="achieved-date">달성일: [[${dto.achieved_date}]]</span>
             </div>
+            <div th:if="${#lists.isEmpty(achievedList)}" class="empty-msg">달성한 과제가 아직 없습니다.</div>
          </div>
 
          <div id="ongoing" class="challenge-content">
             <div class="card" th:each="dto : ${notAchievedList}">
                <span class="status-badge status-n">진행중</span>
                <h4 th:text="${dto.name}">과제명</h4>
-               
                <div class="criteria-box">
                   <span class="criteria-label">달성 조건</span>
                   <span class="criteria-text">[[${dto.type}]] [[${dto.quantity}]]개 도달 시</span>
                </div>
-
                <div class="prize-info">
                   <span class="prize-label">보상:</span> 닭꼬치 [[${dto.prize / 10}]]개 | [[${dto.prize}]] P
                </div>
             </div>
+            <div th:if="${#lists.isEmpty(notAchievedList)}" class="empty-msg">진행 중인 과제가 없습니다.</div>
          </div>
-
-         <div th:if="${#lists.isEmpty(challengeList)}" style="text-align: center; padding: 50px; color: #a0aec0;">현재 표시할 과제가 없습니다.</div>
 
       </div> 
    </div>
