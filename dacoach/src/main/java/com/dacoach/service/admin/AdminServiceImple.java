@@ -11,6 +11,7 @@ import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
+import com.dacoach.model.report.ReportDTO;
 import com.dacoach.model.users.UsersDTO;
 
 @Service
@@ -206,6 +207,21 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public Map<String, Object> reportContent(int report_idx) throws Exception {
 		return adminMapper.reportContent(report_idx);
+	}
+	
+	@Override
+	public int getCoachIdx(int user_idx) throws Exception {
+		return adminMapper.getCoachIdx(user_idx);
+	}
+	
+	@Override
+	public int getCompanyIdx(int user_idx) throws Exception {
+		return adminMapper.getCompanyIdx(user_idx);
+	}
+	
+	@Override
+	public int updateReport(ReportDTO dto) throws Exception {
+		return adminMapper.updateReport(dto);
 	}
 
 }

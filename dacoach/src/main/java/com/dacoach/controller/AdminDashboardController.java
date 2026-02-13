@@ -42,6 +42,7 @@ public class AdminDashboardController {
 			
 			if(dto != null) {
 				session.setAttribute("loginAdmin", dto);
+				session.setAttribute("user_idx", dto.getUser_idx());
 				
 				if (!"ADMIN".equals(dto.getUser_type())) {
 	                session.invalidate();
@@ -65,7 +66,13 @@ public class AdminDashboardController {
 	}
 	
 	@GetMapping("/admin/mainStats")
-	public String dashboard(Model model) {
+	public String dashboard(Model model,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
+		
         model.addAttribute("contentPage", "admin/mainStats"); // 보여줄 파일
         model.addAttribute("contentFragment", "statsContent"); // 보여줄 조각
         return "admin/dashboard"; 

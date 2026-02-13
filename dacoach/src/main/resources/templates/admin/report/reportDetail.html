@@ -169,10 +169,17 @@
                 <div class="info-label">피신고자</div>
 				<div class="info-value">
 					<span style="color: var(--red-warn);"
-						th:text="${report?.REPORTED_NAME} ?: '알 수 없음'">김철수(badguy)</span>
+						th:text="${report['REPORTED_NAME']} ?: '알 수 없음'">이름</span>
 
-					<a th:href="@{${report?.USER_TYPE == 'COACH'} ? '/admin/coach/coachDetail' : '/admin/company/companyDetail'}(user_idx=${report?.REPORTED_IDX}, coach_idx=${report?.COACH_IDX})"
-						target="_blank" class="ml-2 profile-link"> [프로필 보기] </a>
+					<th:block th:if="${report['USER_TYPE'] == 'COACH' and report['COACH_IDX'] != null}">
+						<a th:href="@{/admin/coach/coachDetail(user_idx=${report['USER_IDX']}, coach_idx=${report['COACH_IDX']})}"
+							target="_blank" class="ml-2 profile-link"> [코치 프로필 보기] </a>
+					</th:block>
+
+					<th:block th:if="${report['USER_TYPE'] == 'COMPANY' and report['USER_IDX'] != null}">
+						<a th:href="@{/admin/companyDetail/{user_idx}(user_idx=${report['USER_IDX']})}"
+							target="_blank" class="ml-2 profile-link"> [기업 정보 보기] </a>
+					</th:block>
 				</div>
 			</div>
 
@@ -187,7 +194,7 @@
         <section class="action-panel">
             <h3 class="section-title"><span>⚙️</span> 신고 처리 및 알림 발송</h3>
             
-            <form th:action="@{/admin/report/execute}" method="post">
+            <form th:action="@{/admin/report/update}" method="post">
                 <input type="hidden" name="report_idx" th:value="${report?.REPORT_IDX}">
                 
                 <div class="form-group">

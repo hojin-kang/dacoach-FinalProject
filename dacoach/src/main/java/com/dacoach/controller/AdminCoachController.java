@@ -17,7 +17,10 @@ import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
+import com.dacoach.model.report.ReportDTO;
 import com.dacoach.service.admin.AdminService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
@@ -28,7 +31,13 @@ public class AdminCoachController {
 	
 	
 	@GetMapping("/coach/coachList")
-	public String coachList(Model model) {
+	public String coachList(Model model,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
+		
 	    List<Map<String, Object>> coachList = new ArrayList<>();
 	    int certCount = 0;
 	    
@@ -50,7 +59,11 @@ public class AdminCoachController {
 	
 	
 	@GetMapping("/coach/coachDetail")
-	public String coachDetail(Model model,@RequestParam int coach_idx, @RequestParam int user_idx) {
+	public String coachDetail(Model model,HttpSession session, @RequestParam int coach_idx, @RequestParam int user_idx) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> coachDetail = new HashMap<>();
 		String status="";
@@ -87,7 +100,12 @@ public class AdminCoachController {
 			@RequestParam int user_idx,
 			@RequestParam String status,
 			EmbeddedUserDTO dto,
-			RedirectAttributes ra) {
+			RedirectAttributes ra,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		int updateresult = 0;
 		int insertresult = 0;
@@ -141,7 +159,11 @@ public class AdminCoachController {
 			@RequestParam(value="cert_from", required=false) List<String> certFromList,
 			@RequestParam(value="cert_status", required=false) List<String> certStatusList,
 			@RequestParam(value="checked", required=false) List<Integer> checkedList,
-			RedirectAttributes ra) {
+			RedirectAttributes ra, HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			
@@ -186,7 +208,11 @@ public class AdminCoachController {
 	
 	@GetMapping("/coach/getCertList")
 	@ResponseBody
-	public List<CertDTO> getCertList(@RequestParam int user_idx) {
+	public List<CertDTO> getCertList(HttpSession session, @RequestParam int user_idx) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return null;
+		}
 		
 		List<CertDTO> certList = new ArrayList<>();
 		
@@ -206,8 +232,13 @@ public class AdminCoachController {
 	
 	@GetMapping("/keyword/keyword")
 	public String keyword(Model model,
-			@RequestParam (required = false) String keyword_type) {
+			@RequestParam (required = false) String keyword_type,
+			HttpSession session) {
 	    
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
+		
 		List<Map<String, Object>> keywordType = new ArrayList<>();
 		List<String> keywordName = new ArrayList<>();
 		List<Map<String, Object>> typeReview = new ArrayList<>();
@@ -234,7 +265,12 @@ public class AdminCoachController {
 	@PostMapping("/keyword/insertKeyword")
 	public String insertKeyword(@RequestParam String keyword_type,
 			@RequestParam String keyword_name,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, String> params = new HashMap<>();
 		params.put("keyword_type", keyword_type);
@@ -264,7 +300,11 @@ public class AdminCoachController {
 	
 	@GetMapping("/keyword/deleteKeyword")
 	public String deleteKeyword(@RequestParam String keyword_name,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.deleteKeyword(keyword_name);
@@ -286,7 +326,12 @@ public class AdminCoachController {
 
 	@PostMapping("/keyword/deleteReview")
 	@ResponseBody
-	public String deleteReview(@RequestBody Map<String, Object> params) {
+	public String deleteReview(@RequestBody Map<String, Object> params,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		String role = (String) params.get("role");
 		int review_idx = Integer.parseInt(String.valueOf(params.get("review_idx")));
@@ -311,7 +356,12 @@ public class AdminCoachController {
 	
 	@GetMapping("/support/notice")
 	public String noticeList(Model model,
-			@RequestParam(value="keyword", required=false) String keyword) {
+			@RequestParam(value="keyword", required=false) String keyword,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		List<Map<String, Object>> noticeList = new ArrayList<>();
 		
@@ -331,7 +381,11 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/notice/write")
-	public String noticeWrite(Model model) {
+	public String noticeWrite(Model model, HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		model.addAttribute("contentPage", "admin/support/notice/noticeWrite");
 		model.addAttribute("contentFragment", "noticeForm");
@@ -341,7 +395,11 @@ public class AdminCoachController {
 	
 	@PostMapping("/support/notice/insert")
 	public String noticeInsert(QnaDTO dto,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.insertNotice(dto);
@@ -362,7 +420,12 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/notice/content")
-	public String noticeContent(Model model, @RequestParam int qna_idx) {
+	public String noticeContent(Model model, @RequestParam int qna_idx,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		QnaDTO dto = new QnaDTO();
 		
@@ -380,7 +443,12 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/notice/noticeUpdateForm")
-	public String noticeUpdateForm(Model model, @RequestParam int qna_idx) {
+	public String noticeUpdateForm(Model model, @RequestParam int qna_idx,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		QnaDTO dto = new QnaDTO();
 		
@@ -399,7 +467,11 @@ public class AdminCoachController {
 	
 	@PostMapping("/support/notice/update")
 	public String updateNotice(QnaDTO dto,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.updateNotice(dto);
@@ -423,7 +495,11 @@ public class AdminCoachController {
 	
 	@PostMapping("/support/notice/delete")
 	public String deleteNotice(@RequestParam int qna_idx,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.deleteNotice(qna_idx);
@@ -446,7 +522,12 @@ public class AdminCoachController {
 	
 	@GetMapping("/support/qna")
 	public String qnaList(Model model,
-			@RequestParam(value="keyword", required=false) String keyword) {
+			@RequestParam(value="keyword", required=false) String keyword,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 			List<Map<String, Object>> qnaList = new ArrayList<>();
 			
@@ -466,7 +547,12 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/qna/content")
-	public String qnaContent(Model model,@RequestParam int qna_idx) {
+	public String qnaContent(Model model,@RequestParam int qna_idx, 
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> qnaContent = null;
 		
@@ -488,7 +574,12 @@ public class AdminCoachController {
 	public String insertQnaAnswer(@RequestParam int qna_idx,
 			@RequestParam String title,
 			@RequestParam String answer,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		Qna_aDTO dto = new Qna_aDTO();
 		dto.setQna_idx(qna_idx);
@@ -520,7 +611,12 @@ public class AdminCoachController {
 			@RequestParam int qna_idx,
 			@RequestParam String title,
 			@RequestParam String answer,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		Qna_aDTO dto = new Qna_aDTO();
 		dto.setQna_a_idx(qna_a_idx);
@@ -549,7 +645,12 @@ public class AdminCoachController {
 	@PostMapping("/support/qna/delete")
 	public String deleteQnaAnswer(@RequestParam int qna_a_idx,
 			@RequestParam int qna_idx,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.deleteQnaAnswer(qna_a_idx);
@@ -573,8 +674,13 @@ public class AdminCoachController {
 	
 	@GetMapping("/filter/field")
 	public String fieldContent(Model model,
-			@RequestParam(required = false, defaultValue = "1") Integer major_field_idx) {
+			@RequestParam(required = false, defaultValue = "1") Integer major_field_idx,
+			HttpSession session) {
 
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
+		
 		List<Map<String, Object>> majorField = new ArrayList<>();
 		List<Map<String, Object>> minorField = new ArrayList<>();
 		String selectedMajorName = "";
@@ -610,7 +716,12 @@ public class AdminCoachController {
 	public String insertMinorField(
 			@RequestParam int major_field_idx,
 			@RequestParam String minor_field_nm,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("major_field_idx", major_field_idx);
@@ -636,7 +747,12 @@ public class AdminCoachController {
 	
 	@PostMapping("/filter/update")
 	@ResponseBody
-	public String updateMinorField(@RequestBody Map<String, Object> params) {
+	public String updateMinorField(@RequestBody Map<String, Object> params,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.updateMinorField(params);
@@ -655,7 +771,11 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/report")
-	public String reportList(Model model) {
+	public String reportList(Model model, HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		List<Map<String, Object>> reportList = new ArrayList<>();
 		
@@ -676,12 +796,32 @@ public class AdminCoachController {
 	
 	@GetMapping("/report/content")
 	public String reportContent(Model model,
-			@RequestParam int report_idx) {
+			@RequestParam int report_idx,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> reportContent = new HashMap<>();
 		
+		
 		try {
 			reportContent=adminService.reportContent(report_idx);
+			
+			if(reportContent != null && !reportContent.isEmpty()) {
+				String user_type = String.valueOf(reportContent.get("USER_TYPE"));
+				int user_idx = ((Number) reportContent.get("USER_IDX")).intValue();
+				
+				if("COACH".equals(user_type)) {
+					int coach_idx=adminService.getCoachIdx(user_idx);
+					reportContent.put("COACH_IDX", coach_idx);
+				}else if("COMPANY".equals(user_type)) {
+					int company_idx=adminService.getCompanyIdx(user_idx);
+					reportContent.put("COMPANY_IDX", company_idx);
+				}
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -695,5 +835,30 @@ public class AdminCoachController {
 		
 	}
 	
+	
+	//하는중!!!!!!
+	@PostMapping("/report/update")
+	public String updateReport(Model model,
+			@RequestParam int report_idx,
+			@RequestParam String status,
+			HttpSession session) {
+		
+		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+			return "redirect:/admin";
+		}
+		
+		ReportDTO rdto=new ReportDTO();
+		
+		try {
+			int result=adminService.updateReport(rdto);
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "admin/dashboard";
+	}
 	
 }
