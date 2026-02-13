@@ -175,19 +175,18 @@ public class CompanyController {
 	@GetMapping("/company/profile/profileForm")
 	public ModelAndView profileForm(Integer userIdx) {
 		ModelAndView mav = new ModelAndView();
-		List<Map<String, Object>> field = null;
-		List<Map<String, Object>> region = null;
+
 		try {
 			int companyNum=companyService.getCompanyNum(userIdx);
-			field = companyService.fieldTeg();
-			region = companyService.regionTeg();
+			List<Map<String, Object>>field = companyService.fieldTeg();
+			List<Map<String, Object>> region = companyService.regionTeg();
 			
 			if(companyService.regionCheck(companyNum))
 			mav.addObject("regionList",companyService.getCompanyRegion(companyNum));
 			
 			mav.addObject("field_con", field);
 			mav.addObject("region_con", region);
-			mav.addObject("company_num",companyService.getCompanyNum(companyNum));
+			mav.addObject("company_num",companyNum);
 			mav.setViewName("/company/profile/profileForm");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
