@@ -16,12 +16,12 @@
     <select id="getScores" parameterType="int" resultType="HashMap">
     	select C.point_score, count(DISTINCT LU.liked_user_idx) likes, 
     	count(DISTINCT RC.reviewer_idx) reviews, count(DISTINCT M.match_idx) matches,
-    	R.rank_name, R.min_score, R.max_score
+    	R.rank_name, R.min_score, NVL(R.max_score, C.point_score) as MAX_SCORE
     	from coach C 	
     	left join likes_user LU on C.user_idx = LU.liked_user_idx
     	left join review_coach RC on C.user_idx = RC.reviewer_idx
     	left join match M on (C.user_idx = M.user1_idx or user2_idx = C.user_idx)
-    	join rank R on C.point_score >= R.min_score and C.point_score <![CDATA[<]]> R.max_score
+    	left join rank R on C.point_score >= R.min_score and (R.max_score is null or C.point_score <![CDATA[<]]> R.max_score)
     	where C.user_idx = #{user_idx}
         group by C.point_score, R.rank_name, R.min_score, R.max_score
     </select>

@@ -574,6 +574,7 @@ public class MypageController {
 					notAchievedList.add(challengeList.get(i));
 				}
 			}
+			
 			mav.addObject("scores", scores);
 			mav.addObject("challengeList", challengeList);
 			mav.addObject("achievedList", achievedList);
