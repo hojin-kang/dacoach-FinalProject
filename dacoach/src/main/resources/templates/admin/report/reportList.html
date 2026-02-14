@@ -179,8 +179,8 @@
                         <span class="target-text" th:text="${item.REPORTED_NAME}">김철수</span>
                     </td>
                     <td><span class="status-badge"
-						th:classappend="${item.STATUS == 'WAIT' ? 'status-pending' : (item.STATUS == 'REJECTED' ? 'status-rejected' : 'status-resolved')}"
-						th:text="${item.STATUS == 'WAIT' ? '대기' : (item.STATUS == 'REJECTED' ? '반려' : '완료')}">
+						th:classappend="${item.STATUS == 'WAIT' ? 'status-pending' : (item.STATUS == 'REJECT' ? 'status-rejected' : 'status-resolved')}"
+						th:text="${item.STATUS == 'WAIT' ? '대기' : (item.STATUS == 'REJECT' ? '반려' : '완료')}">
 							대기 </span></td>
                     <td th:text="${#strings.substring(item.CREATED_AT, 0, 10)}">2026-02-13</td>
                 </tr>

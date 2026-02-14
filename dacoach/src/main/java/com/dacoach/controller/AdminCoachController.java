@@ -15,10 +15,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.notification.NotificationDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.model.report.ReportDTO;
 import com.dacoach.service.admin.AdminService;
+import com.dacoach.service.notification.NotificationService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -29,10 +31,12 @@ public class AdminCoachController {
 	@Autowired
 	private AdminService adminService;
 	
+	@Autowired
+	private NotificationService notificationService;
+	
 	
 	@GetMapping("/coach/coachList")
-	public String coachList(Model model,
-			HttpSession session) {
+	public String coachList(Model model, HttpSession session) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
@@ -59,7 +63,7 @@ public class AdminCoachController {
 	
 	
 	@GetMapping("/coach/coachDetail")
-	public String coachDetail(Model model,HttpSession session, @RequestParam int coach_idx, @RequestParam int user_idx) {
+	public String coachDetail(Model model,HttpSession session, @RequestParam int user_idx) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
@@ -96,7 +100,6 @@ public class AdminCoachController {
 	
 	@PostMapping("/coach/updateCoachStatus")
 	public String updateCoachSuspended(
-			@RequestParam int coach_idx,
 			@RequestParam int user_idx,
 			@RequestParam String status,
 			EmbeddedUserDTO dto,
@@ -146,12 +149,11 @@ public class AdminCoachController {
 			ra.addFlashAttribute("msg", "시스템 오류가 발생했습니다.");
 		}
 		
-		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx + "&coach_idx=" + coach_idx;
+		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx;
 	}
 	
 	@PostMapping("/coach/updateCertStatus")
 	public String updateCertStatus(
-			@RequestParam int coach_idx,
 			@RequestParam int user_idx,
 			@RequestParam(value="cert_idx", required=false) List<Integer> certIdxList,
 			@RequestParam(value="cert_name", required=false) List<String> certNameList,
@@ -202,7 +204,7 @@ public class AdminCoachController {
 			ra.addFlashAttribute("msg", "시스템 오류가 발생했습니다.");
 		}
 		
-		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx + "&coach_idx=" + coach_idx;
+		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx;
 		
 	}
 	
@@ -793,6 +795,7 @@ public class AdminCoachController {
 		
 	}
 	
+	
 	@GetMapping("/report/content")
 	public String reportContent(Model model,
 			@RequestParam int report_idx,
@@ -804,22 +807,8 @@ public class AdminCoachController {
 		
 		Map<String, Object> reportContent = new HashMap<>();
 		
-		
 		try {
 			reportContent=adminService.reportContent(report_idx);
-			
-			if(reportContent != null && !reportContent.isEmpty()) {
-				String user_type = String.valueOf(reportContent.get("USER_TYPE"));
-				int user_idx = ((Number) reportContent.get("USER_IDX")).intValue();
-				
-				if("COACH".equals(user_type)) {
-					int coach_idx=adminService.getCoachIdx(user_idx);
-					reportContent.put("COACH_IDX", coach_idx);
-				}else if("COMPANY".equals(user_type)) {
-					int company_idx=adminService.getCompanyIdx(user_idx);
-					reportContent.put("COMPANY_IDX", company_idx);
-				}
-			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -837,9 +826,12 @@ public class AdminCoachController {
 	
 	//하는중!!!!!!
 	@PostMapping("/report/update")
-	public String updateReport(Model model,
+	public String updateReport(
 			@RequestParam int report_idx,
 			@RequestParam String status,
+			@RequestParam(required = false) Integer reporter_idx,
+			@RequestParam(required = false) Integer reported_idx,
+			@RequestParam String content,
 			HttpSession session) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
@@ -847,17 +839,36 @@ public class AdminCoachController {
 		}
 		
 		ReportDTO rdto=new ReportDTO();
+		rdto.setStatus(status);
+		rdto.setReport_idx(report_idx);
+		
 		
 		try {
 			int result=adminService.updateReport(rdto);
 			
+			if(result>0) {
+				List<Integer> receiver = new ArrayList<>();
+				if (reporter_idx != null) receiver.add(reporter_idx);
+				if (reported_idx != null) receiver.add(reported_idx);
+				
+				for(Integer receiver_idx : receiver) {
+					NotificationDTO ndto = new NotificationDTO();
+					ndto.setReceiver_idx(receiver_idx);
+					ndto.setProvider_idx(1);
+					ndto.setNoti_type("REPORT");
+					ndto.setContent(content);
+					notificationService.insertNotification(ndto);
+				}
+				
+			}
+			return "redirect:/admin/report";
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return "redirect:/admin/report/content?report_idx=" + report_idx;
 		}
 		
-		return "admin/dashboard";
 	}
 	
 }
