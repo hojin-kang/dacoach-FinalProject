@@ -11,6 +11,12 @@
   		select * from major_region order by major_region_idx asc
   	</select>
   	
+  	<select id="getPayHistory">
+  		select a.*,pay_status.status from pay_status,
+		(select * from pay where partner_user_id=#{user_idx}) a
+		where pay_status.tid=a.tid
+  	</select>
+  	
   	<select id="getRegionTag">
   		select * from minor_region
             where major_region_idx=#{idx}
