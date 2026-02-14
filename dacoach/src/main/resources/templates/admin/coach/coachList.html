@@ -94,7 +94,7 @@
                 <div class="col-idx" th:text="${coach.COACH_IDX}"></div>
                 <div class="col-name">
                     <a th:text="${coach.USER_NAME}" 
-                       th:href="@{/admin/coach/coachDetail(coach_idx=${coach.COACH_IDX},user_idx=${coach.USER_IDX})}"
+                       th:href="@{/admin/coach/coachDetail(user_idx=${coach.USER_IDX})}"
                        class="hover:text-[#9dbbb5] transition-colors"></a>
                 </div>
                 <div class="col-nick" th:text="${coach.NICKNAME}"></div>
