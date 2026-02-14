@@ -53,4 +53,6 @@ public interface CompanyMapper {
 	public int companyUp(CompanyDTO dto) throws Exception;
 	
 	public int regionDel(CompanyRegionDTO dto) throws Exception;
+	
+	public List<Map<String,Object>> getPayHistory(int user_idx) throws Exception;
  }
