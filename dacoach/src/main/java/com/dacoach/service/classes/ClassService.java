@@ -53,4 +53,11 @@ public interface ClassService {
 	// 제공자의 모든 클래스의 리뷰 목록 조회
 	List<Map<String, Object>> getAllReviewsByProvider(int provider_idx) throws Exception;
 
+	// ⭐ 멤버십 기반 클래스 등록 가능 여부 확인
+	// 클래스 등록 가능 여부 확인 (멤버십 제한)
+	boolean canRegisterClass(int user_idx) throws Exception;
+
+	// 멤버십 상세 정보 조회
+	Map<String, Object> getMembershipDetail(int user_idx) throws Exception;
+
 }
