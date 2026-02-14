@@ -74,4 +74,11 @@ public interface ClassMapper {
 
 	// 제공자의 모든 클래스 IDX 조회
 	List<Integer> selectClassIdxByProvider(int provider_idx) throws Exception;
+
+	// ⭐ 멤버십 기반 클래스 등록 제한 관련 메서드
+	// 유저의 멤버십 상세 정보 조회 (최대 클래스 개수)
+	Map<String, Object> selectMembershipDetail(int user_idx) throws Exception;
+
+	// 제공자의 활성 클래스 개수 조회 (종료되지 않은 클래스)
+	Integer countActiveClassesByProvider(int provider_idx) throws Exception;
 }

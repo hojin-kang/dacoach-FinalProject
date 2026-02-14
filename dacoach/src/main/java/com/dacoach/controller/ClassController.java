@@ -52,6 +52,18 @@ public class ClassController {
 			return authCheck;
 
 		ModelAndView mav = new ModelAndView("company/classes/classRegister");
+
+		try {
+			Integer userIdx = (Integer) session.getAttribute("user_idx");
+			if (userIdx != null) {
+				// 멤버십 정보 조회
+				Map<String, Object> membershipDetail = classService.getMembershipDetail(userIdx);
+				mav.addObject("membershipDetail", membershipDetail);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		mav.addObject("classDTO", new ClassDTO());
 		return mav;
 	}
@@ -124,6 +136,14 @@ public class ClassController {
 				rttr.addFlashAttribute("error", "클래스 등록에 실패했습니다.");
 				mav.setViewName("redirect:/class/company/register");
 			}
+		} catch (IllegalArgumentException e) {
+			// 멤버십 제한 에러 처리
+			if ("MEMBERSHIP_LIMIT".equals(e.getMessage())) {
+				rttr.addFlashAttribute("membershipLimitError", "true");
+			} else {
+				rttr.addFlashAttribute("error", e.getMessage());
+			}
+			mav.setViewName("redirect:/class/company/register");
 		} catch (Exception e) {
 			rttr.addFlashAttribute("error", "오류 발생: " + e.getMessage());
 			mav.setViewName("redirect:/class/company/register");
