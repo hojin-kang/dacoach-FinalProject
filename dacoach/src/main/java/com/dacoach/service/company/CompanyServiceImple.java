@@ -123,5 +123,8 @@ public class CompanyServiceImple implements CompanyService {
 	public int regionDel(CompanyRegionDTO dto) throws Exception{
 		return companyMapper.regionDel(dto);
 	}
+	public List<Map<String,Object>> getCoachList() throws Exception{
+		return companyMapper.getCoachList();
+	}
 	
 }
