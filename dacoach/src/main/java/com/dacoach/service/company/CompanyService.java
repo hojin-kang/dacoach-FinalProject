@@ -34,4 +34,6 @@ public interface CompanyService {
 	public boolean companyUp(CompanyDTO companyDto,CompanyProvideDTO provideDto) throws Exception;
 	public int regionDel(CompanyRegionDTO dto) throws Exception;
 	public List<Map<String,Object>> getPayHistory(int user_idx) throws Exception;
+	public List<Map<String,Object>> getCoachList() throws Exception;
+	
 }
