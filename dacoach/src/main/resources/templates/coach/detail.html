@@ -119,7 +119,12 @@
 
 		<div id="reviews">
          <div id="content-review" class="detail-section">
-            <h3 class="section-title">매칭 후기</h3>
+            <h3 class="section-title">매칭 후기<form th:action="@{/coach/allReview}" method="post" style="display:inline;">
+  <input type="hidden" name="user_idx" th:value="${dto.user_idx}">
+  <button type="submit" class="allReviewBtn" style="all:unset; cursor:pointer;">
+    전체보기＞
+  </button>
+</form></h3>
             <span class="review-summary" th:unless="${#lists.isEmpty(reviewList)}">
                <b>[[${dto.review_count}]]</b> 건의 후기 (평균 ⭐[[${dto.rating}]])
             </span>

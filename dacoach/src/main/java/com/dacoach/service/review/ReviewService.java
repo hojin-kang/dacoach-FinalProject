@@ -17,4 +17,7 @@ public interface ReviewService {
     int deleteClassReview(int review_class_idx, int user_idx);
     
     List<ReviewCoachDTO> getCoachReviews(int target_idx);
+    
+    int getCoachReviewCount(int coachUserIdx);
+	List<ReviewCoachDTO> getCoachReviewsPaged(int coachUserIdx, int start, int end);
 }

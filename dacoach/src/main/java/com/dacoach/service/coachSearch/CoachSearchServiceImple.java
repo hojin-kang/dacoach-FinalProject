@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dacoach.mapper.coach.CoachMapper;
 import com.dacoach.mapper.coachSearch.CoachSearchMapper;
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.review.ReviewCoachDTO;
 
 @Service
 @Transactional
@@ -153,5 +154,6 @@ public class CoachSearchServiceImple implements CoachSearchService {
 		boolean like=result>0?true:false;
 		return like;
 	}
+	
 
 }

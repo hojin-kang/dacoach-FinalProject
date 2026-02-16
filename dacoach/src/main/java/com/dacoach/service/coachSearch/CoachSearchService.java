@@ -3,6 +3,7 @@ package com.dacoach.service.coachSearch;
 import java.util.*;
 
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.review.ReviewCoachDTO;
 
 public interface CoachSearchService {
 	public List<CoachDTO> coachList(int cp, HashMap<String,Object> map) throws Exception;
@@ -15,4 +16,6 @@ public interface CoachSearchService {
 	public Integer acceptChat(int user_idx, int target_idx) throws Exception;
 	public Integer acceptMatch(int user_idx, int target_idx) throws Exception;
 	public boolean isLiked(int login_idx, int target_idx) throws Exception;
+	
+	
 }

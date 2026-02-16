@@ -224,4 +224,42 @@
     ORDER BY RC.CREATED_AT DESC
 </select>
 
+<select id="getCoachReviewCount" resultType="int">
+<![CDATA[
+    SELECT COUNT(*)
+    FROM review_coach
+    WHERE reviewee_idx = #{target_idx}
+]]>
+</select>
+
+<select id="getCoachReviewsPaged" resultType="com.dacoach.model.review.ReviewCoachDTO">
+<![CDATA[
+    SELECT *
+    FROM (
+        SELECT 
+            T.*,
+            ROW_NUMBER() OVER (ORDER BY T.CREATED_AT DESC) AS RN
+        FROM (
+            SELECT 
+                RC.REVIEW_COACH_IDX  AS review_coach_idx,
+                RC.REVIEWER_IDX      AS reviewer_idx,
+                RC.REVIEWEE_IDX      AS reviewee_idx,
+                RC.RATING            AS rating,
+                RC.TAG               AS tag,
+                RC.CONTENT           AS content,
+                RC.CREATED_AT        AS created_at,
+                C.nickname           AS reviewer_name,
+                C.photo              AS photo,
+                C.point_score        AS score
+            FROM review_coach RC
+            JOIN coach C ON RC.reviewer_idx = C.user_idx
+            WHERE RC.reviewee_idx = #{target_idx}
+        ) T
+    )
+    WHERE RN BETWEEN #{start} AND #{end}
+]]>
+</select>
+
+
+
 </mapper>

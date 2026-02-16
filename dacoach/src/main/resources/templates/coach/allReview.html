@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>dacoach</title>
+
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
+
+  <style>
+    .pageHead{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:12px; margin: 10px 0 14px;
+    }
+    .subInfo{ opacity:.75; font-size:14px; }
+    .backBtn{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:8px 10px; border:1px solid #ddd; border-radius:10px;
+      text-decoration:none; color:inherit;
+    }
+
+    .reviewWrap{ display:flex; flex-direction:column; gap:14px; margin-top:16px; }
+
+    .reviewCard{
+      border:1px solid #e6e6e6; border-radius:14px;
+      padding:14px; background:#fff;
+    }
+    .reviewTop{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .reviewUser{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .userImg{ width:44px; height:44px; border-radius:50%; object-fit:cover; border:1px solid #eee; }
+    .userMeta{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+    .userRole{ font-size:12px; opacity:.7; }
+    .userName{ font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px; }
+
+    .reviewBody{ margin-top:10px; line-height:1.55; }
+    .reviewTags{ margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; }
+    .hash{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid #eee; background:#D5D5D5;
+    }
+    .rating {
+    color: #328889;font-variant-emoji: text;
+    }
+
+    .paging{ margin:20px 0 6px; text-align:center; }
+    .paging a{ text-decoration:none; padding:6px 8px; border-radius:8px; }
+    .emptyBox{
+      border:1px dashed #ddd; border-radius:14px;
+      padding:18px; text-align:center; opacity:.75;
+    }
+  </style>
+</head>
+<body>
+  <div th:replace="~{layout/header :: siteHeader}"></div>
+
+  <main class="main">
+    <div class="container">
+
+      <div class="pageHead">
+        <div>
+          <h2 style="margin:0;">
+            <span th:text="|${dto.nickname} 코치|">코치</span> 전체 리뷰
+          </h2>
+          <div class="subInfo">
+            <span th:text="|총 ${totalCnt}건|">총 0건</span>
+          </div>
+        </div>
+
+        <!-- 상세로 돌아가기: 여기서는 user_idx가 필요하니까 세션에 target_idx가 있다면 타고 가자 -->
+        <a class="backBtn" th:href="@{/coach/detail(user_idx=${dto.user_idx})}">← 상세로</a>
+      </div>
+
+      <hr>
+
+      <div class="reviewWrap" th:if="${not #lists.isEmpty(reviewList)}">
+        <article class="reviewCard" th:each="review : ${reviewList}">
+          <div class="reviewTop">
+            <div class="reviewUser">
+              <a th:href="@{/coach/detail(user_idx=${review.reviewer_idx})}">
+                <img class="userImg"
+                     th:src="${review.photo != null and review.photo != ''} ? @{'/uploads/' + ${review.photo}} : @{/img/profile/defaultProfile.jpg}"
+                     alt="프로필">
+              </a>
+              <div class="userMeta">
+                <div class="userRole">일반 코치</div>
+                <div class="userName">
+                  <a th:href="@{/coach/detail(user_idx=${review.reviewer_idx})}"
+                     th:text="${review.reviewer_name}"
+                     style="text-decoration:none; color:inherit;">작성자</a>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-right: 10px;">
+              <th:block th:each="num : ${#numbers.sequence(1,5)}">
+                <span class="rating" th:text="${review.rating >= num} ? '★' : '☆'"></span>
+              </th:block>&nbsp;
+              <b th:text="${review.rating}">5</b>
+            </div>
+          </div>
+
+          <div class="reviewBody" th:text="${review.content}">리뷰 내용</div>
+
+          <div class="reviewTags" th:if="${not #lists.isEmpty(review.tagList)}">
+            <span class="hash" th:each="tag : ${review.tagList}" th:text="${tag}">#태그</span>
+          </div>
+        </article>
+
+        <div class="paging" th:utext="${pageStr}"></div>
+      </div>
+
+      <div class="emptyBox" th:if="${#lists.isEmpty(reviewList)}">
+        아직 작성된 후기가 없습니다.
+      </div>
+
+    </div>
+  </main>
+
+  <div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
+</html>
