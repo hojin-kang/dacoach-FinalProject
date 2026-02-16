@@ -35,7 +35,10 @@
     .reviewTags{ margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; }
     .hash{
       font-size:12px; padding:6px 10px; border-radius:999px;
-      border:1px solid #eee; background:#fafafa;
+      border:1px solid #eee; background:#D5D5D5;
+    }
+    .rating {
+    color: #328889;font-variant-emoji: text;
     }
 
     .paging{ margin:20px 0 6px; text-align:center; }
@@ -87,10 +90,10 @@
               </div>
             </div>
 
-            <div>
+            <div style="margin-right: 10px;">
               <th:block th:each="num : ${#numbers.sequence(1,5)}">
-                <span th:text="${review.rating >= num} ? '⭐' : '☆'"></span>
-              </th:block>
+                <span class="rating" th:text="${review.rating >= num} ? '★' : '☆'"></span>
+              </th:block>&nbsp;
               <b th:text="${review.rating}">5</b>
             </div>
           </div>
@@ -106,7 +109,7 @@
       </div>
 
       <div class="emptyBox" th:if="${#lists.isEmpty(reviewList)}">
-        아직 작성된 후기가 없어.
+        아직 작성된 후기가 없습니다.
       </div>
 
     </div>
