@@ -223,5 +223,15 @@ public class AdminServiceImple implements AdminService {
 	public int updateReport(ReportDTO dto) throws Exception {
 		return adminMapper.updateReport(dto);
 	}
+	
+	@Override
+	public int newUsers() throws Exception {
+		return adminMapper.newUsers();
+	}
+	
+	@Override
+	public int pendingReports() throws Exception {
+		return adminMapper.pendingReports();
+	}
 
 }

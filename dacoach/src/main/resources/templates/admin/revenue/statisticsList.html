@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="statisticsContent">
+    <style>
+        /* [공통 아이덴티티 적용] */
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --danger: #ef4444;
+        }
+
+        .stats-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; padding: 40px; }
+
+        /* [상단 헤더] */
+        .admin-top-bar { 
+            display: flex; align-items: flex-end; gap: 15px; 
+            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
+        }
+        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
+
+        /* [요약 카드 섹션] */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .summary-card {
+            background: var(--white);
+            border: 1px solid var(--gray-100);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .summary-card:hover { transform: translateY(-5px); }
+        .summary-label { font-size: 13px; font-weight: 700; color: #9ca3af; margin-bottom: 10px; display: block; }
+        .summary-value { font-size: 22px; font-weight: 900; color: var(--slate-text); }
+        .summary-unit { font-size: 14px; font-weight: 500; color: #9ca3af; margin-left: 4px; }
+        .trend-up { color: #10b981; font-size: 12px; font-weight: 700; margin-top: 5px; }
+
+        /* [차트 및 컨텐츠 레이아웃] */
+        .stats-main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        .content-box {
+            background: var(--white);
+            border: 1px solid var(--gray-100);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .box-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--mint-dark);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* [데이터 시각화 대용 임시 바(Bar)] */
+        .chart-placeholder {
+            height: 200px;
+            background: var(--mint-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .bar { width: 40px; background: var(--mint-main); border-radius: 6px 6px 0 0; transition: height 1s; }
+        
+        /* [리스트 스타일] */
+        .stats-list { width: 100%; border-collapse: collapse; }
+        .stats-list tr { border-bottom: 1px solid var(--gray-100); }
+        .stats-list td { padding: 12px 5px; font-size: 13px; }
+        .stats-list .rank { font-weight: 900; color: var(--mint-main); width: 30px; }
+        .stats-list .name { font-weight: 600; }
+        .stats-list .val { text-align: right; color: #6b7280; }
+
+        /* [배지 스타일] */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-mint { background: var(--mint-bg); color: var(--mint-dark); }
+        .badge-red { background: #fee2e2; color: #ef4444; }
+
+    </style>
+
+    <div class="stats-container">
+        <div class="admin-top-bar">
+            <h1>Platform Statistics</h1>
+            <span class="current-path">Management / Dashboard</span>
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <span class="summary-label">오늘의 매출</span>
+                <div class="summary-value" th:text="${todaySales != null ? #numbers.formatInteger(todaySales, 3, 'COMMA') : '0'}">0</div>
+                <span class="summary-unit">원</span>
+                <div class="trend-up">▲ 12.5%</div>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">신규 가입 (코치/컴퍼니)</span>
+                <div class="summary-value" th:text="${newUsersCount != null ? newUsersCount : '0'}">0</div>
+                <span class="summary-unit">명</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">매칭 성공률</span>
+                <div class="summary-value" th:text="${matchRate != null ? matchRate : '0'}">0</div>
+                <span class="summary-unit">%</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">미처리 신고</span>
+                <div class="summary-value" style="color: var(--danger);" th:text="${pendingReportCount != null ? pendingReportCount : '0'}">0</div>
+                <span class="summary-unit">건</span>
+            </div>
+        </div>
+
+        <div class="stats-main-grid">
+            
+            <div class="left-column">
+                <div class="content-box">
+                    <div class="box-title">
+                        <span>📊 월간 매출 추이</span>
+                        <span class="badge badge-mint">최근 6개월</span>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="bar" style="height: 40%;"></div>
+                        <div class="bar" style="height: 60%;"></div>
+                        <div class="bar" style="height: 55%;"></div>
+                        <div class="bar" style="height: 80%;"></div>
+                        <div class="bar" style="height: 70%;"></div>
+                        <div class="bar" style="height: 95%;"></div>
+                    </div>
+                </div>
+
+                <div class="content-box">
+                    <div class="box-title">
+                        <span>🔥 실시간 인기 클래스 TOP 5</span>
+                    </div>
+                    <table class="stats-list">
+                        <tbody th:if="${not #lists.isEmpty(popularClasses)}">
+                            <tr th:each="item, stat : ${popularClasses}">
+                                <td class="rank" th:text="${stat.count}">1</td>
+                                <td class="name" th:text="${item.TITLE}">요가 기초 클래스</td>
+                                <td class="val" th:text="${item.CNT + '명 수강'}">42명 수강</td>
+                            </tr>
+                        </tbody>
+                        <tbody th:if="${#lists.isEmpty(popularClasses)}">
+                            <tr><td colspan="3" class="text-center py-10 text-gray-400 italic">클래스 데이터가 존재하지 않습니다.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="content-box">
+                    <div class="box-title">
+                        <span>📍 지역별 활동 비중</span>
+                    </div>
+                    <table class="stats-list">
+                        <tbody th:if="${not #lists.isEmpty(regionStats)}">
+                            <tr th:each="region : ${regionStats}">
+                                <td class="name" th:text="${region.REGION_NM}">서울특별시</td>
+                                <td class="val"><span class="badge badge-mint" th:text="${region.PERCENT + '%'}">45%</span></td>
+                            </tr>
+                        </tbody>
+                        <tbody th:if="${#lists.isEmpty(regionStats)}">
+                            <tr><td class="name">서울</td><td class="val">45%</td></tr>
+                            <tr><td class="name">경기/인천</td><td class="val">30%</td></tr>
+                            <tr><td class="name">부산/경상</td><td class="val">15%</td></tr>
+                            <tr><td class="name">기타</td><td class="val">10%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-box">
+                    <div class="box-title" style="color: var(--danger);">
+                        <span>🚨 긴급 리스크 모니터링</span>
+                    </div>
+                    <div th:if="${not #lists.isEmpty(riskList)}">
+                        <div th:each="risk : ${riskList}" style="margin-bottom: 15px;">
+                            <div style="font-size: 12px; font-weight: 800; color: var(--danger);" th:text="${risk.TYPE}">다량 신고 발생</div>
+                            <div style="font-size: 13px; font-weight: 600;" th:text="${risk.USER_NAME}">김철수 코치</div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(riskList)}" class="text-center py-5">
+                        <span class="badge badge-mint" style="font-size: 12px;">✅ 현재 감지된 위험 요소 없음</span>
+                    </div>
+                </div>
+
+                <div class="content-box" style="background-color: var(--mint-bg); border: none;">
+                    <div class="box-title" style="margin-bottom: 10px;">
+                        <span>💡 운영 팁</span>
+                    </div>
+                    <p style="font-size: 12px; line-height: 1.6; color: var(--mint-dark); font-weight: 500;">
+                        현재 <b>테니스/필라테스</b> 카테고리의 매칭 수요가 급증하고 있습니다. 해당 코치진의 가입 승인을 우선적으로 처리하는 것을 권장합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

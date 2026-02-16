@@ -326,6 +326,15 @@
 	update report set status=#{status},updated_at=sysdate where report_idx=#{report_idx}
 	</update>
 	
-	
-	
+	<select id="newUsers">
+	select count(*) from users
+	where created_at >= trunc(sysdate)
+	and created_at <![CDATA[<]]> trunc(sysdate) + 1
+	and user_type!='ADMIN'
+  	</select>
+  	
+  	<select id="pendingReports">
+  	select count(*) from report
+  	where status='WAIT'
+  	</select>
 </mapper>

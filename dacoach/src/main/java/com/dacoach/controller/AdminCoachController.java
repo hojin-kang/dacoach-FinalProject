@@ -871,4 +871,28 @@ public class AdminCoachController {
 		
 	}
 	
+	@GetMapping("/statistics")
+	public String statisticsList(Model model) {
+		
+		int newUsersCount=0;
+		int pendingReportCount=0;
+		
+		try {
+			newUsersCount=adminService.newUsers();
+			pendingReportCount=adminService.pendingReports();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("newUsersCount",newUsersCount);
+		model.addAttribute("pendingReportCount",pendingReportCount);
+		model.addAttribute("contentPage", "admin/revenue/statisticsList");
+		model.addAttribute("contentFragment", "statisticsContent");
+
+		return "admin/dashboard";
+		
+	}
+	
+	
 }
