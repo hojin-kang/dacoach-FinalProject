@@ -24,6 +24,7 @@
          </div>
          </div>
 		<div class="topRight">
+		<th:block th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
          <div class="topIcons" th:if="${dto.user_idx != session.user_idx}">
 		  <!-- 찜 -->
 		  <a class="iconBtn likeBtn" aria-label="찜"
@@ -60,6 +61,7 @@
                  <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
              </th:block>
          </div>
+         </th:block>
          </div>
 
       </section>
