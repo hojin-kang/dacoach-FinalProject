@@ -233,5 +233,32 @@ public class AdminServiceImple implements AdminService {
 	public int pendingReports() throws Exception {
 		return adminMapper.pendingReports();
 	}
+	
+	@Override
+	public int inactiveCompany() throws Exception {
+		return adminMapper.inactiveCompany();
+	}
+	
+	@Override
+	public int dailySales() throws Exception {
+		return adminMapper.dailySales();
+	}
+	
+	@Override
+	public int monthlySales() throws Exception {
+		Integer result=adminMapper.monthlySales();
+		return (result==null)?0:result;
+	}
+	
+	@Override
+	public int lastMonthSales() throws Exception {
+		Integer result=adminMapper.lastMonthSales();
+		return (result==null)?0:result;
+	}
+	
+	@Override
+	public List<Map<String, Object>> weeklySales() throws Exception {
+		return adminMapper.weeklySales();
+	}
 
 }

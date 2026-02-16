@@ -337,4 +337,56 @@
   	select count(*) from report
   	where status='WAIT'
   	</select>
+  	
+  	<select id="inactiveCompany">
+  	select count(*) from users
+  	where user_type='COMPANY' and status='INACTIVE'
+  	</select>
+  	
+  	<select id="dailySales">
+	select sum(p.total)/10000
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where ps.status='완료됨'
+	and p.approved_at >= trunc(sysdate)
+	and p.approved_at <![CDATA[<]]> trunc(sysdate) + 1
+  	</select>
+  	
+  	<select id="monthlySales">
+	select sum(p.total) as totals
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where ps.status='완료됨'
+	and p.approved_at >= trunc(sysdate,'MM')
+	and p.approved_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
+  	</select>
+  	
+  	<select id="lastMonthSales">
+  	select sum(p.total) as totals
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where ps.status='완료됨'
+	and p.approved_at >= add_months(trunc(sysdate,'MM'),-1)
+	and p.approved_at <![CDATA[<]]> trunc(sysdate,'MM')
+  	</select>
+  	
+  	<select id="weeklySales">
+	SELECT
+	d.dt AS sales_date,
+	TO_CHAR(d.dt, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') AS day_name,
+	ROUND(NVL(SUM(p.total), 0) / 10000, 1) AS daily_revenue
+	FROM (
+	SELECT TRUNC(SYSDATE) - (LEVEL - 1) AS dt
+	FROM DUAL
+	CONNECT BY LEVEL <![CDATA[<=]]> 7
+	) d
+	LEFT OUTER JOIN (
+	SELECT DISTINCT p.tid, p.total, p.approved_at
+	FROM pay p
+	JOIN pay_status ps ON p.tid = ps.tid
+	WHERE ps.status = '완료됨'
+	) p ON TRUNC(p.approved_at) = d.dt
+	GROUP BY d.dt
+	ORDER BY d.dt ASC
+  	</select>
 </mapper>
