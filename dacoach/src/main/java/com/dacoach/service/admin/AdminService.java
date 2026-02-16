@@ -68,7 +68,14 @@ public interface AdminService {
 	public int getCompanyIdx (int user_idx) throws Exception;
 	public int updateReport(ReportDTO dto) throws Exception;
 	
-	//통계관리
+	//메인화면
 	public int newUsers() throws Exception;
 	public int pendingReports() throws Exception;
+	public int inactiveCompany() throws Exception;
+	public int dailySales() throws Exception;
+	
+	//통계관리화면
+	public int monthlySales() throws Exception;
+	public int lastMonthSales() throws Exception;
+	public List<Map<String,Object>> weeklySales() throws Exception;
 }

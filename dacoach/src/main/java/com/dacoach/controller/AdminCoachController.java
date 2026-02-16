@@ -872,21 +872,39 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/statistics")
-	public String statisticsList(Model model) {
+	public String statisticsList(Model model, HttpSession session) {
 		
-		int newUsersCount=0;
-		int pendingReportCount=0;
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
+		int monthlySales=0;
+		int lastMonthSales=0;
+		double growth=0.0;
+		List<Map<String, Object>> weeklySales = new ArrayList<>();
 		
 		try {
-			newUsersCount=adminService.newUsers();
-			pendingReportCount=adminService.pendingReports();
+			// 성장률 공식: (이번달 - 지난달) / 지난달 * 100
+			monthlySales=adminService.monthlySales();
+			lastMonthSales=adminService.lastMonthSales();
+			weeklySales = adminService.weeklySales();
+			
+			if(lastMonthSales != 0) {
+				growth = 100.0 * (monthlySales - lastMonthSales) / lastMonthSales;
+			}else if (lastMonthSales == 0 && monthlySales > 0){
+				growth = 100.0;
+			}else {
+				growth = 0.0;
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		model.addAttribute("newUsersCount",newUsersCount);
-		model.addAttribute("pendingReportCount",pendingReportCount);
+		model.addAttribute("monthlySales",monthlySales);
+		model.addAttribute("growth",growth);
+		model.addAttribute("weeklySales", weeklySales);
 		model.addAttribute("contentPage", "admin/revenue/statisticsList");
 		model.addAttribute("contentFragment", "statisticsContent");
 

@@ -69,10 +69,30 @@ public class AdminDashboardController {
 	public String dashboard(Model model,
 			HttpSession session) {
 		
-		if(session.getAttribute("user_idx")==null||(Integer)session.getAttribute("user_idx")==0) {
+		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
+		int newUsersCount=0;
+		int pendingReportCount=0;
+		int inactiveCompanyCount=0;
+		int dailySales=0;
+		
+		try {
+			newUsersCount=adminService.newUsers();
+			pendingReportCount=adminService.pendingReports();
+			inactiveCompanyCount=adminService.inactiveCompany();
+			dailySales=adminService.dailySales();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		model.addAttribute("newUsersCount",newUsersCount);
+		model.addAttribute("pendingReportCount",pendingReportCount);
+		model.addAttribute("inactiveCompanyCount",inactiveCompanyCount);
+		model.addAttribute("dailySales",dailySales);
         model.addAttribute("contentPage", "admin/mainStats"); // 보여줄 파일
         model.addAttribute("contentFragment", "statsContent"); // 보여줄 조각
         return "admin/dashboard"; 
