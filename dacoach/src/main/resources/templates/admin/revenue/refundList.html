@@ -1,64 +1,212 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>환불 관리 (Raw Form)</title>
-</head>
-<body>
-    <div th:fragment="contentPage">
-        
-        <h2>환불 요청 내역 조회</h2>
-        
-        <p>전체 대기 건수: <b th:text="${refundList != null ? #lists.size(refundList) : 0}">0</b>건</p>
+<div th:fragment="contentPage">
+	<style>
+/* 기본 레이아웃 */
+.admin-container {
+	padding: 20px;
+	font-family: 'Pretendard', sans-serif;
+	color: #333;
+}
 
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>주문번호 (Order ID)</th>
-                    <th>요청자 아이디</th>
-                    <th>결제 상품명</th>
-                    <th>환불 예정 금액</th>
-                    <th>원결제 승인일시</th>
-                    <th>현재 상태</th>
-                    <th>처리기능</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="item : ${refundList}">
-                    <td th:text="${item.PARTNER_ORDER_ID}">ORDER_ID</td>
-                    <td th:text="${item.PARTNER_USER_ID}">USER_ID</td>
-                    <td th:text="${item.ITEM_NAME}">ITEM_NAME</td>
-                    
-                    <td th:text="${#numbers.formatInteger(item.TOTAL, 0, 'COMMA')} + '원'">0원</td>
-                    <td th:text="${#dates.format(item.APPROVED_AT, 'yyyy-MM-dd HH:mm')}">DATE</td>
-                    
-                    <td th:text="${item.STATUS}">STATUS</td>
-                    
-                    <td>
-                        <button th:onclick="'approveRefund(\'' + ${item.TID} + '\')'">환불 승인</button>
-                        <button th:onclick="'rejectRefund(\'' + ${item.TID} + '\')'">반려</button>
-                    </td>
-                </tr>
+.admin-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 25px;
+	border-bottom: 2px solid #f4f4f4;
+	padding-bottom: 15px;
+}
 
-                <tr th:if="${refundList == null or #lists.isEmpty(refundList)}">
-                    <td colspan="7" style="text-align: center;">조회된 환불 요청이 없습니다.</td>
-                </tr>
-            </tbody>
-        </table>
+.admin-title {
+	font-size: 24px;
+	font-weight: 700;
+	color: #2c3e50;
+}
 
-        <script th:inline="javascript">
-            function approveRefund(tid) {
-                if(confirm('해당 결제건(TID: ' + tid + ')을 승인하시겠습니까?')) {
-                    alert('서버로 승인 요청을 보냅니다. (TID: ' + tid + ')');
-                }
+/* 필터 버튼 스타일 */
+.filter-group {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+.btn-filter {
+	padding: 8px 18px;
+	border-radius: 6px;
+	border: 1px solid #ddd;
+	background: #fff;
+	cursor: pointer;
+	transition: all 0.2s;
+	font-size: 14px;
+	text-decoration: none;
+	color: #666;
+}
+
+.btn-filter:hover {
+	background: #f8f9fa;
+}
+
+.btn-filter.active {
+	background: #4a7c74;
+	color: #fff;
+	border-color: #4a7c74;
+	font-weight: 600;
+}
+
+/* 테이블 스타일 */
+.table-card {
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+	overflow: hidden;
+	border: 1px solid #eee;
+}
+
+.admin-table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.admin-table th {
+	background: #f8f9fa;
+	padding: 15px;
+	font-size: 13px;
+	text-transform: uppercase;
+	color: #777;
+	border-bottom: 1px solid #eee;
+}
+
+.admin-table td {
+	padding: 15px;
+	border-bottom: 1px solid #f4f4f4;
+	font-size: 14px;
+	vertical-align: middle;
+}
+
+.admin-table tr:hover {
+	background-color: #fafafa;
+}
+
+/* 상태 배지 */
+.badge {
+	padding: 4px 10px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.badge-success {
+	background: #e6f4ea;
+	color: #1e7e34;
+} /* 결제완료 */
+.badge-warning {
+	background: #fff4e5;
+	color: #b7791f;
+} /* 환불요청 */
+.badge-info {
+	background: #e3f2fd;
+	color: #1976d2;
+} /* 환불완료 */
+
+/* 작업 버튼 */
+.btn-action {
+	padding: 6px 12px;
+	border-radius: 4px;
+	border: none;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 600;
+	transition: 0.2s;
+}
+
+.btn-approve {
+	background: #e74c3c;
+	color: #fff;
+}
+
+.btn-approve:hover {
+	background: #c0392b;
+}
+
+.empty-msg {
+	padding: 50px;
+	text-align: center;
+	color: #999;
+}
+</style>
+
+	<div class="admin-container">
+		<div class="admin-header">
+			<h2 class="admin-title" th:text="${title}">화면 제목</h2>
+			<div class="filter-group">
+				<a th:href="@{/admin/refund(view='all')}" class="btn-filter"
+					th:classappend="${currentView == 'all'} ? 'active'">전체 결제 내역</a> <a
+					th:href="@{/admin/refund(view='pending')}" class="btn-filter"
+					th:classappend="${currentView == 'pending'} ? 'active'">환불 대기자</a>
+			</div>
+		</div>
+
+		<div class="table-card">
+			<table class="admin-table">
+				<thead>
+					<tr>
+						<th>주문번호</th>
+						<th>요청자</th>
+						<th>상품명</th>
+						<th style="text-align: right;">결제금액</th>
+						<th style="text-align: center;">결제일시</th>
+						<th style="text-align: center;">상태</th>
+						<th th:if="${currentView == 'pending'}"
+							style="text-align: center;">관리</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${paymentList}">
+						<td th:text="${item.PARTNER_ORDER_ID}"
+							style="font-family: monospace; color: #888;">ORDER_ID</td>
+						<td th:text="${item.PARTNER_USER_ID}">USER_ID</td>
+						<td th:text="${item.ITEM_NAME}" style="font-weight: 600;">상품명</td>
+						<td
+							th:text="${#numbers.formatInteger(item.TOTAL, 0, 'COMMA')} + '원'"
+							style="text-align: right; color: #4a7c74; font-weight: 700;">0원</td>
+						<td
+							th:text="${#dates.format(item.APPROVED_AT, 'yyyy-MM-dd HH:mm')}"
+							style="text-align: center; color: #999; font-size: 13px;">DATE</td>
+						<td style="text-align: center;"><span class="badge"
+							th:classappend="${item.STATUS == 'SUCCESS' ? 'badge-success' : (item.STATUS == 'REFUND_REQUEST' ? 'badge-warning' : 'badge-info')}"
+							th:text="${item.STATUS == 'SUCCESS' ? '결제완료' : (item.STATUS == 'REFUND_REQUEST' ? '환불요청' : '환불완료')}">
+								상태 </span></td>
+						<td th:if="${currentView == 'pending'}"
+							style="text-align: center;">
+							<button type="button" class="btn-action btn-approve"
+								th:data-tid="${item.TID}"
+								onclick="approveRefund(this.getAttribute('data-tid'))">
+								환불 승인</button>
+						</td>
+					</tr>
+					<tr th:if="${#lists.isEmpty(paymentList)}">
+						<td colspan="7" class="empty-msg">데이터가 존재하지 않습니다.</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+        function approveRefund(tid) {
+            if(confirm('해당 건의 환불을 승인하시겠습니까?\n카카오페이 결제가 즉시 취소됩니다.')) {
+                // AJAX 통신 로직
+                fetch('/admin/refund/approve?tid=' + tid, { method: 'POST' })
+                .then(res => res.text())
+                .then(data => {
+                    if(data === 'SUCCESS') {
+                        alert('환불 처리가 완료되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('환불 처리 중 오류가 발생했습니다.');
+                    }
+                });
             }
-
-            function rejectRefund(tid) {
-                if(confirm('환불 요청을 반려하시겠습니까?')) {
-                    alert('반려 처리를 진행합니다.');
-                }
-            }
-        </script>
-    </div>
-</body>
-</html>
+        }
+    </script>
+</div>
