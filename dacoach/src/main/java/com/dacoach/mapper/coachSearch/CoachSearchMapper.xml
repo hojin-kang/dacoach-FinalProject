@@ -7,6 +7,9 @@
     
         SELECT * FROM (
             SELECT rownum AS rnum, R.* FROM (
+            	SELECT G.*,
+            	COUNT(*) OVER() AS total_cnt
+            	FROM (
                 SELECT 
                     A.user_idx, A.coach_idx, A.nickname, A.photo,
                     RANK.rank_name AS rank_name,
@@ -39,7 +42,7 @@
 					ON A.point_score >= RANK.min_score
 					AND (RANK.max_score IS NULL OR A.point_score < RANK.max_score)]]>
                 LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
-                JOIN minor_field MF ON B.minor_field_idx = MF.minor_field_idx
+                LEFT JOIN minor_field MF ON B.minor_field_idx = MF.minor_field_idx
                 LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
                 LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
                 LEFT JOIN user_hashtag_like UHL ON A.user_idx = UHL.user_idx
@@ -66,7 +69,7 @@
 	                	ORDER BY A.coach_idx DESC
 	                </otherwise>
                 </choose>
-                
+                ) G
             ) R
             WHERE rownum &lt;= #{end}
         )
