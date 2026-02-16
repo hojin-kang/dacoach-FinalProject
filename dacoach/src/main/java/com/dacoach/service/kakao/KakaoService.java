@@ -15,10 +15,12 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class KakaoService {
 	//카카오 토큰 발급 메서드
-	public String getAccessToken(String code) {
+	public String getAccessToken(String code, String uri) {
 	    String accessToken = "";
 	    String reqURL = "https://kauth.kakao.com/oauth/token";
 
@@ -35,11 +37,11 @@ public class KakaoService {
 	        
 	        // 헤더 설정, 카카오측으로 보내는 데이터의 형식 지정
 	        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-
+	        
 	        // 전송할 파라미터 문자열 생성, redirect_uri는 카카오 개발자 사이트에 등록된 값(REST API키의 카카오 로그인 리다리렉트 URI와 동일해야 함
 	        String params = "grant_type=authorization_code"
 	                      + "&client_id=836bfad03ae2127905c6623948062759"
-	                      + "&redirect_uri=http://localhost:9090/auth/kakao/callback"
+	                      + "&redirect_uri="+uri
 	                      + "&code=" + code;
 
 	        // 데이터를 byte 배열로 직접 전송 (인코딩 문제 방지)

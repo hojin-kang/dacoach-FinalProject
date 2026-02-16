@@ -1,5 +1,6 @@
 package com.dacoach.controller;
 
+import java.net.http.HttpRequest;
 import java.sql.*;
 import java.sql.Date;
 import java.util.*;
@@ -26,6 +27,7 @@ import com.dacoach.service.kakao.KakaoService;
 import com.dacoach.service.membership.MembershipService;
 import com.dacoach.service.users.UsersService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -43,19 +45,20 @@ public class UserController {
 
 	// 1. 카카오 로그인 페이지로 리다이렉트
 	@GetMapping("/auth/kakao")
-	public String kakaoLogin() {
+	public String kakaoLogin(HttpServletRequest request) {
+		String uri=request.getRequestURL().toString();
 		String kakaoUrl = "https://kauth.kakao.com/oauth/authorize?" + "client_id=836bfad03ae2127905c6623948062759"
-				+ "&redirect_uri=http://localhost:9090/auth/kakao/callback" + "&response_type=code";
+				+ "&redirect_uri="+uri+"/callback" + "&response_type=code";
 		return "redirect:" + kakaoUrl;
 	}
 
 	@GetMapping("/auth/kakao/callback")
-	public ModelAndView kakaoCallback(@RequestParam String code, HttpSession session) {
+	public ModelAndView kakaoCallback(@RequestParam String code, HttpSession session, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
-
+		String uri=request.getRequestURL().toString();
 		try {
 			// 토큰 및 사용자 정보 가져오기
-			String accessToken = kakaoService.getAccessToken(code);
+			String accessToken = kakaoService.getAccessToken(code, uri);
 			// (id, 카카오 고유 번호(long타입)), (nickname, 닉네임(문자열)), (email, 이메일(문자열))
 			Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
 
