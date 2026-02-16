@@ -27,6 +27,7 @@ public class CoachDTO {
 	private int point_score;
 	private int token_balance;
 	private String kakao_key;
+	private int total_cnt;
 	
 	private double rating;
 	private int review_count;
