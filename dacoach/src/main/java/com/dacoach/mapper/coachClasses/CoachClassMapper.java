@@ -1,5 +1,6 @@
 package com.dacoach.mapper.coachClasses;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,4 +99,8 @@ public interface CoachClassMapper {
 
 	// 사용자가 해당 클래스를 수강 완료했는지 확인 (수강 날짜가 오늘이거나 과거인지)
 	Integer checkUserCompletedEnrollment(Map<String, Object> param) throws Exception;
+	
+    Integer likeClass(HashMap map) throws Exception;
+	
+	Integer unlikeClass(HashMap map) throws Exception;
 }

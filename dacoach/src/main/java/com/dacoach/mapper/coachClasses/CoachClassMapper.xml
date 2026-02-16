@@ -580,5 +580,15 @@
 		AND
 		TRUNC(COMPLETED_AT) &lt;= TRUNC(SYSDATE)
 	</select>
+	
+	<insert id="likeClass" parameterType="HashMap">
+        INSERT INTO likes_class (likes_class_idx, liker_idx, class_idx)
+        VALUES (seq_likes_class.nextval,#{login_idx}, #{target_idx})
+    </insert>
+    <delete id="unlikeClass" parameterType="HashMap">
+        DELETE FROM likes_class
+        WHERE liker_idx=#{login_idx}
+        AND class_idx=#{target_idx}
+    </delete>
 
 </mapper>
