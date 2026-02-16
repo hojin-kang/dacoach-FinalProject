@@ -34,6 +34,37 @@
 						<div class="classTitle" th:text="${classDTO.title}"></div>
 					</div>
 				</div>
+
+				<div class="topRight">
+					<th:block
+						th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+						<div class="topIcons" th:if="${dto.user_idx != session.user_idx}">
+							<!-- 찜 -->
+							<a class="iconBtn likeBtn" aria-label="찜"
+								th:href="${isLiked} 
+		       ? @{/class/unlike(target_idx=${dto.user_idx})} 
+		       : @{/class/like(target_idx=${dto.user_idx})}">
+								<img class="icon"
+								th:src="${isLiked} ? @{/img/icon/heart_fill.png} : @{/img/icon/heart.png}"
+								alt="heart">
+							</a>
+
+							<!-- 신고 -->
+							<form th:action="@{/report/form}" method="post"
+								style="display: inline;">
+								<input type="hidden" name="reported_idx"
+									th:value="${dto.user_idx}"> <input type="hidden"
+									name="returnUrl"
+									th:value="@{/class/classDetail(user_idx=${dto.user_idx})}">
+								<button type="submit" class="iconBtn" aria-label="신고">
+									<img src="/img/icon/siren.png" alt="siren">
+								</button>
+							</form>
+						</div>
+
+					</th:block>
+				</div>
+
 			</section>
 
 			<!-- 탭(상세정보 / 클래스후기) -->

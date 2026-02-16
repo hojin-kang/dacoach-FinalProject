@@ -256,4 +256,21 @@ public class CoachClassServiceImple implements CoachClassService {
 		Integer count = classMapper.checkUserCompletedEnrollment(param);
 		return count != null && count > 0;
 	}
+	
+	@Override
+	public Integer likeClass(int login_idx, int targer_idx) throws Exception {
+		HashMap<String, Object> map=new HashMap<>();
+		map.put("login_idx", login_idx);
+		map.put("target_idx", targer_idx);
+		int result=classMapper.likeClass(map);
+		return result;
+	}
+	@Override
+	public Integer unlikeClass(int login_idx, int targer_idx) throws Exception {
+		HashMap<String, Object> map=new HashMap<>();
+		map.put("login_idx", login_idx);
+		map.put("target_idx", targer_idx);
+		int result=classMapper.unlikeClass(map);
+		return result;
+	}
 }
