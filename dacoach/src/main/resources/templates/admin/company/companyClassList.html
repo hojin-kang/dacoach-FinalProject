@@ -1,126 +1,239 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="contentPage">
-    <style>
-        /* [코치 관리 레이아웃과 동일한 아이덴티티 적용] */
-        :root {
-            --mint-bg: #f0f8f7;
-            --mint-main: #9dbbb5;
-            --mint-dark: #7a9a94;
-            --slate-text: #374151;
-        }
+	<style>
+/* [코치 관리 레이아웃과 동일한 아이덴티티 적용] */
+:root {
+	--mint-bg: #f0f8f7;
+	--mint-main: #9dbbb5;
+	--mint-dark: #7a9a94;
+	--slate-text: #374151;
+}
 
-        .class-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; min-height: 800px; }
+.class-admin-container {
+	font-family: 'Pretendard', sans-serif;
+	color: var(--slate-text);
+	background-color: white;
+	min-height: 800px;
+}
 
-        /* [상단 헤더 영역] */
-        .admin-top-bar { 
-            display: flex; align-items: flex-end; gap: 15px; 
-            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
-        }
-        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
-        .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
+/* [상단 헤더 영역] */
+.admin-top-bar {
+	display: flex;
+	align-items: flex-end;
+	gap: 15px;
+	padding-bottom: 20px;
+	border-bottom: 3px solid var(--mint-bg);
+	margin-bottom: 30px;
+}
 
-        /* [리스트 제어 영역] */
-        .control-panel { background-color: white; }
+.admin-top-bar h1 {
+	font-size: 24px;
+	font-weight: 900;
+	color: var(--mint-main);
+	margin: 0;
+}
 
-        /* 테이블 헤더 스타일 */
-        .list-header { 
-            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
-            margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; 
-            text-align: center;
-        }
+.current-path {
+	font-size: 14px;
+	color: #9ca3af;
+	font-weight: 500;
+}
 
-        /* 클래스 리스트 카드형 스타일 */
-        .class-item-card {
-            display: flex; align-items: center; padding: 15px 20px;
-            background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
-            margin-bottom: 10px; transition: 0.2s; text-align: center;
-        }
-        .class-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-        
-        /* 열 너비 설정 (코치 리스트 비율 참고) */
-        .col-idx { width: 80px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
-        .col-thumb { width: 80px; display: flex; justify-content: center; }
-        .col-title { flex: 1; text-align: left; padding: 0 15px; font-weight: 700; }
-        .col-company { width: 150px; color: var(--slate-text); font-weight: 600; }
-        .col-rating { width: 80px; font-weight: 800; color: #f59e0b; }
-        .col-date { width: 120px; color: #9ca3af; }
-        .col-status { width: 100px; }
+/* [리스트 제어 영역] */
+.control-panel {
+	background-color: white;
+}
 
-        /* 이미지 썸네일 스타일 */
-        .thumb-img { width: 50px; height: 35px; border-radius: 8px; object-fit: cover; background-color: #f9fafb; border: 1px solid #eee; }
+/* 테이블 헤더 스타일 */
+.list-header {
+	display: flex;
+	padding: 0 15px 10px;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 15px;
+	font-size: 12px;
+	font-weight: 800;
+	color: #9ca3af;
+	text-align: center;
+}
 
-        /* 상태 배지 */
-        .pill-badge {
-            display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
-            background-color: var(--mint-bg); color: var(--mint-dark);
-        }
+/* 클래스 리스트 카드형 스타일 */
+.class-item-card {
+	display: flex;
+	align-items: center;
+	padding: 15px 20px;
+	background-color: white;
+	border-radius: 15px;
+	border: 1px solid #f3f4f6;
+	margin-bottom: 10px;
+	transition: 0.2s;
+	text-align: center;
+}
 
-        /* 페이징 스타일 통일 */
-        .paging-container { margin-top: 30px; display: flex; justify-content: center; }
-        .paging-container :deep(.paging) { display: flex; gap: 5px; align-items: center; }
-        .paging-container :deep(a), .paging-container :deep(span) {
-            display: inline-block; padding: 8px 14px; border-radius: 10px; 
-            font-size: 13px; font-weight: 700; text-decoration: none; color: #9ca3af;
-            transition: 0.2s; border: 1px solid transparent;
-        }
-        .paging-container :deep(a:hover) { background-color: var(--mint-bg); color: var(--mint-main); }
-        .paging-container :deep(.current) { background-color: var(--mint-main); color: white; }
-    </style>
+.class-item-card:hover {
+	border-color: var(--mint-main);
+	transform: translateY(-2px);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
 
-    <div class="max-w-[1100px] mx-auto p-10 class-admin-container">
-        <div class="admin-top-bar">
-            <h1>Class Management</h1>
-            <span class="current-path">Contents / Class List</span>
-        </div>
+/* 열 너비 설정 (코치 리스트 비율 참고) */
+.col-idx {
+	width: 80px;
+	font-weight: 800;
+	color: var(--mint-main);
+	font-size: 13px;
+}
 
-        <section class="control-panel">
-            <div class="list-header">
-                <div class="col-idx">IDX</div>
-                <div class="col-thumb">PHOTO</div>
-                <div class="col-title">CLASS TITLE</div>
-                <div class="col-company">COMPANY</div>
-                <div class="col-rating">RATING</div>
-                <div class="col-date">CREATED</div>
-                <div class="col-status">STATUS</div>
-            </div>
+.col-thumb {
+	width: 80px;
+	display: flex;
+	justify-content: center;
+}
 
-            <div th:if="${list == null or #lists.isEmpty(list)}" class="text-center py-20 text-gray-300 italic">
-                등록된 클래스 데이터가 없습니다.
-            </div>
+.col-title {
+	flex: 1;
+	text-align: left;
+	padding: 0 15px;
+	font-weight: 700;
+}
 
-            <div th:each="row : ${list}" class="class-item-card">
-                <div class="col-idx" th:text="${row['CLASS_IDX'] != null ? row['CLASS_IDX'] : '-'}"></div>
-                
-                <div class="col-thumb">
-                    <img class="thumb-img"
-                         th:if="${row['PHOTO'] != null and row['PHOTO'] != ''}"
-                         th:src="@{/uploads/classes/{f}(f=${row['PHOTO']})}"
-                         alt="thumb"/>
-                    <div th:unless="${row['PHOTO'] != null and row['PHOTO'] != ''}" class="thumb-img" style="display:flex; align-items:center; justify-content:center; font-size:10px; color:#ccc;">NO IMG</div>
-                </div>
+.col-company {
+	width: 150px;
+	color: var(--slate-text);
+	font-weight: 600;
+}
 
-                <div class="col-title">
-                    <a th:href="@{/admin/classDetail/{idx}(idx=${row['CLASS_IDX']})}" 
-                       th:text="${row['TITLE'] != null ? row['TITLE'] : '-'}"
-                       class="hover:text-[#9dbbb5] transition-colors"></a>
-                </div>
+.col-rating {
+	width: 80px;
+	font-weight: 800;
+	color: #f59e0b;
+}
 
-                <div class="col-company" th:text="${row['PROVIDER_NAME'] != null ? row['PROVIDER_NAME'] : '-'}"></div>
+.col-date {
+	width: 120px;
+	color: #9ca3af;
+}
 
-                <div class="col-rating">
-                    <span style="font-size: 11px;">⭐</span>
-                    <span th:text="${row['AVG_RATING'] != null ? row['AVG_RATING'] : '0'}">0</span>
-                </div>
+.col-status {
+	width: 100px;
+}
 
-                <div class="col-date" th:text="${row['CREATED_AT'] != null ? #dates.format(row['CREATED_AT'], 'yyyy-MM-dd') : '-'}"></div>
+/* 이미지 썸네일 스타일 */
+.thumb-img {
+	width: 50px;
+	height: 35px;
+	border-radius: 8px;
+	object-fit: cover;
+	background-color: #f9fafb;
+	border: 1px solid #eee;
+}
 
-                <div class="col-status">
-                    <span class="pill-badge" th:text="${row['PROGRESS_STATUS'] != null ? row['PROGRESS_STATUS'] : '-'}"></span>
-                </div>
-            </div>
-        </section>
+/* 상태 배지 */
+.pill-badge {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 8px;
+	font-size: 11px;
+	font-weight: 700;
+	background-color: var(--mint-bg);
+	color: var(--mint-dark);
+}
 
-        <div class="paging-container" th:utext="${pageStr}"></div>
-    </div>
+/* 페이징 스타일 통일 */
+.paging-container {
+	margin-top: 30px;
+	display: flex;
+	justify-content: center;
+}
+
+.paging-container :deep(.paging) {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+}
+
+.paging-container :deep(a), .paging-container :deep(span) {
+	display: inline-block;
+	padding: 8px 14px;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: 700;
+	text-decoration: none;
+	color: #9ca3af;
+	transition: 0.2s;
+	border: 1px solid transparent;
+}
+
+.paging-container :deep(a:hover) {
+	background-color: var(--mint-bg);
+	color: var(--mint-main);
+}
+
+.paging-container :deep(.current) {
+	background-color: var(--mint-main);
+	color: white;
+}
+</style>
+
+	<div class="max-w-[1100px] mx-auto p-10 class-admin-container">
+		<div class="admin-top-bar">
+			<h1>Class Management</h1>
+			<span class="current-path">Contents / Class List</span>
+		</div>
+
+		<section class="control-panel">
+			<div class="list-header">
+				<div class="col-idx">IDX</div>
+				<div class="col-thumb">PHOTO</div>
+				<div class="col-title">CLASS TITLE</div>
+				<div class="col-company">COMPANY</div>
+				<div class="col-rating">RATING</div>
+				<div class="col-date">CREATED</div>
+				<div class="col-status">STATUS</div>
+			</div>
+
+			<div th:if="${list == null or #lists.isEmpty(list)}"
+				class="text-center py-20 text-gray-300 italic">등록된 클래스 데이터가
+				없습니다.</div>
+
+			<div th:each="row : ${list}" class="class-item-card">
+				<div class="col-idx"
+					th:text="${row['CLASS_IDX'] != null ? row['CLASS_IDX'] : '-'}"></div>
+
+				<div class="col-thumb">
+					<img class="thumb-img"
+						th:if="${row['PHOTO'] != null and row['PHOTO'] != ''}"
+						th:src="@{/uploads/classes/{f}(f=${row['PHOTO']})}" alt="thumb" />
+					<div th:unless="${row['PHOTO'] != null and row['PHOTO'] != ''}"
+						class="thumb-img"
+						style="display: flex; align-items: center; justify-content: center; font-size: 10px; color: #ccc;">NO
+						IMG</div>
+				</div>
+
+				<div class="col-title">
+					<a th:href="@{/admin/classDetail/{idx}(idx=${row['CLASS_IDX']})}"
+						th:text="${row['TITLE'] != null ? row['TITLE'] : '-'}"
+						class="hover:text-[#9dbbb5] transition-colors"></a>
+				</div>
+
+				<div class="col-company"
+					th:text="${row['PROVIDER_NAME'] != null ? row['PROVIDER_NAME'] : '-'}"></div>
+
+				<div class="col-rating">
+					<span style="font-size: 11px;">⭐</span> <span
+						th:text="${row['AVG_RATING'] != null ? row['AVG_RATING'] : '0'}">0</span>
+				</div>
+
+				<div class="col-date"
+					th:text="${row['CREATED_AT'] != null ? #dates.format(row['CREATED_AT'], 'yyyy-MM-dd') : '-'}"></div>
+
+				<div class="col-status">
+					<span class="pill-badge"
+						th:text="${row['PROGRESS_STATUS'] != null ? row['PROGRESS_STATUS'] : '-'}"></span>
+				</div>
+			</div>
+		</section>
+
+		<div class="paging-container" th:utext="${pageStr}"></div>
+	</div>
 </div>
 </html>

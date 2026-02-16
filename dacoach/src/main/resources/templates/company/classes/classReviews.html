@@ -167,6 +167,23 @@
 					? '/uploads/' + review.REVIEWER_PHOTO 
 					: '/images/default_profile.png';
 				
+				// 해시태그 파싱 및 표시 로직
+				let tagHtml = '';
+				if (review.TAG) {
+					const tags = review.TAG.split('#').filter(tag => tag.trim() !== '');
+					if (tags.length > 0) {
+						const firstTag = tags[0].trim();
+						const remainingCount = tags.length - 1;
+						
+						tagHtml = '<div class="reviewTagContainer">';
+						tagHtml += `<div class="reviewTag">#${firstTag}</div>`;
+						if (remainingCount > 0) {
+							tagHtml += `<span class="reviewTagMore">+${remainingCount}</span>`;
+						}
+						tagHtml += '</div>';
+					}
+				}
+				
 				reviewCard.innerHTML = `
 					<div class="reviewCardHeader">
 						<div class="reviewerInfo">
@@ -186,7 +203,7 @@
 						</div>
 					</div>
 					<div class="reviewCardBody">
-						${review.TAG ? `<div class="reviewTag">#${review.TAG}</div>` : ''}
+						${tagHtml}
 						<div class="reviewContent">${review.CONTENT || '내용 없음'}</div>
 					</div>
 				`;

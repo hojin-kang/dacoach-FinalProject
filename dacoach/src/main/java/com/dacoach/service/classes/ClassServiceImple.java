@@ -23,17 +23,22 @@ public class ClassServiceImple implements ClassService {
 	@Transactional
 	public int classRegister(ClassDTO classDTO, String hashtags) throws Exception {
 		try {
-			// 1. 유효성 검증
+			// 1. 멤버십 기반 클래스 등록 가능 여부 확인
+			if (!canRegisterClass(classDTO.getProvider_idx())) {
+				throw new IllegalArgumentException("MEMBERSHIP_LIMIT");
+			}
+
+			// 2. 유효성 검증
 			validateClassDTO(classDTO);
 
-			// 2. 클래스 정보 DB 저장
+			// 3. 클래스 정보 DB 저장
 			int result = classMapper.insertClass(classDTO);
 
 			if (result <= 0) {
 				throw new RuntimeException("클래스 등록에 실패했습니다.");
 			}
 
-			// 3. 해시태그 처리
+			// 4. 해시태그 처리
 			if (hashtags != null && !hashtags.trim().isEmpty()) {
 				// 콤마로 구분된 해시태그 분리
 				String[] tagArray = hashtags.split(",");
@@ -43,16 +48,16 @@ public class ClassServiceImple implements ClassService {
 					if (tag.isEmpty())
 						continue;
 
-					// 3-1. 해시태그가 이미 존재하는지 확인
+					// 4-1. 해시태그가 이미 존재하는지 확인
 					Integer hashtagIdx = classMapper.findHashtagByName(tag);
 
-					// 3-2. 존재하지 않으면 새로 INSERT
+					// 4-2. 존재하지 않으면 새로 INSERT
 					if (hashtagIdx == null) {
 						classMapper.insertHashtag(tag);
 						hashtagIdx = classMapper.findHashtagByName(tag);
 					}
 
-					// 3-3. CLASS_HASHTAG 매핑 테이블에 저장
+					// 4-3. CLASS_HASHTAG 매핑 테이블에 저장
 					if (hashtagIdx != null) {
 						classMapper.insertClassHashtag(classDTO.getClass_idx(), hashtagIdx);
 					}
@@ -120,10 +125,9 @@ public class ClassServiceImple implements ClassService {
 			throw new IllegalArgumentException("시작일은 오늘 이후여야 합니다.");
 		}
 
-		// 종료일이 시작일보다 이전이거나 같은지 확인
-		if (classDTO.getEnd_date().before(classDTO.getStart_date())
-				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
-			throw new IllegalArgumentException("종료일은 시작일보다 이후여야 합니다.");
+		// 종료일이 시작일보다 이전인지 확인 (같은 날짜는 허용)
+		if (classDTO.getEnd_date().before(classDTO.getStart_date())) {
+			throw new IllegalArgumentException("종료일은 시작일과 같거나 이후여야 합니다.");
 		}
 
 		// 제목/내용 길이 검증
@@ -399,10 +403,9 @@ public class ClassServiceImple implements ClassService {
 			throw new IllegalArgumentException("시작일은 오늘 이후여야 합니다.");
 		}
 
-		// 종료일이 시작일보다 이전이거나 같은지 확인
-		if (classDTO.getEnd_date().before(classDTO.getStart_date())
-				|| classDTO.getEnd_date().equals(classDTO.getStart_date())) {
-			throw new IllegalArgumentException("종료일은 시작일보다 이후여야 합니다.");
+		// 종료일이 시작일보다 이전인지 확인 (같은 날짜는 허용)
+		if (classDTO.getEnd_date().before(classDTO.getStart_date())) {
+			throw new IllegalArgumentException("종료일은 시작일과 같거나 이후여야 합니다.");
 		}
 
 		// 내용 길이 검증
@@ -498,6 +501,45 @@ public class ClassServiceImple implements ClassService {
 		});
 
 		return allReviews;
+	}
+
+	// ⭐ 멤버십 기반 클래스 등록 가능 여부 확인
+	@Override
+	public boolean canRegisterClass(int user_idx) throws Exception {
+		// 1. 유저의 멤버십 상세 정보 조회
+		Map<String, Object> membershipDetail = classMapper.selectMembershipDetail(user_idx);
+
+		if (membershipDetail == null) {
+			// 멤버십 정보가 없는 경우 등록 불가
+			return false;
+		}
+
+		// 2. 멤버십의 최대 클래스 개수 조회 (숫자를 문자열로 변환 후 Integer로)
+		Object classMaxCntObj = membershipDetail.get("CLASS_MAX_CNT");
+		if (classMaxCntObj == null) {
+			return false;
+		}
+		int classMaxCnt = Integer.parseInt(classMaxCntObj.toString());
+
+		if (classMaxCnt <= 0) {
+			return false;
+		}
+
+		// 3. 현재 활성 클래스 개수 조회 (종료되지 않은 클래스)
+		Object activeClassCountObj = classMapper.countActiveClassesByProvider(user_idx);
+		int activeClassCount = 0;
+
+		if (activeClassCountObj != null) {
+			activeClassCount = Integer.parseInt(activeClassCountObj.toString());
+		}
+
+		// 4. 활성 클래스 개수가 최대 개수보다 적으면 등록 가능
+		return activeClassCount < classMaxCnt;
+	}
+
+	@Override
+	public Map<String, Object> getMembershipDetail(int user_idx) throws Exception {
+		return classMapper.selectMembershipDetail(user_idx);
 	}
 
 }

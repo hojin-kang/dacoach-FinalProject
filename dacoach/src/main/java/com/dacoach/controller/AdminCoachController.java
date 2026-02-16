@@ -15,9 +15,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.notification.NotificationDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
+import com.dacoach.model.report.ReportDTO;
 import com.dacoach.service.admin.AdminService;
+import com.dacoach.service.notification.NotificationService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
@@ -26,9 +31,17 @@ public class AdminCoachController {
 	@Autowired
 	private AdminService adminService;
 	
+	@Autowired
+	private NotificationService notificationService;
+	
 	
 	@GetMapping("/coach/coachList")
-	public String coachList(Model model) {
+	public String coachList(Model model, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
 	    List<Map<String, Object>> coachList = new ArrayList<>();
 	    int certCount = 0;
 	    
@@ -50,14 +63,18 @@ public class AdminCoachController {
 	
 	
 	@GetMapping("/coach/coachDetail")
-	public String coachDetail(Model model,@RequestParam int coach_idx, @RequestParam int user_idx) {
+	public String coachDetail(Model model,HttpSession session, @RequestParam int user_idx) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> coachDetail = new HashMap<>();
 		String status="";
 		List<CertDTO> certList = new ArrayList<>();
 		
 		try {
-			coachDetail = adminService.getCoachDetail(coach_idx);
+			coachDetail = adminService.getCoachDetail(user_idx);
 			status = adminService.getCoachStatus(user_idx);
 			certList = adminService.getWaitCertList(user_idx);
 			
@@ -83,11 +100,15 @@ public class AdminCoachController {
 	
 	@PostMapping("/coach/updateCoachStatus")
 	public String updateCoachSuspended(
-			@RequestParam int coach_idx,
 			@RequestParam int user_idx,
 			@RequestParam String status,
 			EmbeddedUserDTO dto,
-			RedirectAttributes ra) {
+			RedirectAttributes ra,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		int updateresult = 0;
 		int insertresult = 0;
@@ -128,12 +149,11 @@ public class AdminCoachController {
 			ra.addFlashAttribute("msg", "시스템 오류가 발생했습니다.");
 		}
 		
-		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx + "&coach_idx=" + coach_idx;
+		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx;
 	}
 	
 	@PostMapping("/coach/updateCertStatus")
 	public String updateCertStatus(
-			@RequestParam int coach_idx,
 			@RequestParam int user_idx,
 			@RequestParam(value="cert_idx", required=false) List<Integer> certIdxList,
 			@RequestParam(value="cert_name", required=false) List<String> certNameList,
@@ -141,7 +161,11 @@ public class AdminCoachController {
 			@RequestParam(value="cert_from", required=false) List<String> certFromList,
 			@RequestParam(value="cert_status", required=false) List<String> certStatusList,
 			@RequestParam(value="checked", required=false) List<Integer> checkedList,
-			RedirectAttributes ra) {
+			RedirectAttributes ra, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			
@@ -180,13 +204,17 @@ public class AdminCoachController {
 			ra.addFlashAttribute("msg", "시스템 오류가 발생했습니다.");
 		}
 		
-		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx + "&coach_idx=" + coach_idx;
+		return "redirect:/admin/coach/coachDetail?user_idx=" + user_idx;
 		
 	}
 	
 	@GetMapping("/coach/getCertList")
 	@ResponseBody
-	public List<CertDTO> getCertList(@RequestParam int user_idx) {
+	public List<CertDTO> getCertList(HttpSession session, @RequestParam int user_idx) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return null;
+		}
 		
 		List<CertDTO> certList = new ArrayList<>();
 		
@@ -198,7 +226,6 @@ public class AdminCoachController {
 		}
 		
 		return certList;
-	
 
 	}
 	
@@ -206,8 +233,13 @@ public class AdminCoachController {
 	
 	@GetMapping("/keyword/keyword")
 	public String keyword(Model model,
-			@RequestParam (required = false) String keyword_type) {
+			@RequestParam (required = false) String keyword_type,
+			HttpSession session) {
 	    
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
 		List<Map<String, Object>> keywordType = new ArrayList<>();
 		List<String> keywordName = new ArrayList<>();
 		List<Map<String, Object>> typeReview = new ArrayList<>();
@@ -234,7 +266,12 @@ public class AdminCoachController {
 	@PostMapping("/keyword/insertKeyword")
 	public String insertKeyword(@RequestParam String keyword_type,
 			@RequestParam String keyword_name,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, String> params = new HashMap<>();
 		params.put("keyword_type", keyword_type);
@@ -264,7 +301,11 @@ public class AdminCoachController {
 	
 	@GetMapping("/keyword/deleteKeyword")
 	public String deleteKeyword(@RequestParam String keyword_name,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.deleteKeyword(keyword_name);
@@ -286,7 +327,12 @@ public class AdminCoachController {
 
 	@PostMapping("/keyword/deleteReview")
 	@ResponseBody
-	public String deleteReview(@RequestBody Map<String, Object> params) {
+	public String deleteReview(@RequestBody Map<String, Object> params,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		String role = (String) params.get("role");
 		int review_idx = Integer.parseInt(String.valueOf(params.get("review_idx")));
@@ -311,7 +357,12 @@ public class AdminCoachController {
 	
 	@GetMapping("/support/notice")
 	public String noticeList(Model model,
-			@RequestParam(value="keyword", required=false) String keyword) {
+			@RequestParam(value="keyword", required=false) String keyword,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		List<Map<String, Object>> noticeList = new ArrayList<>();
 		
@@ -331,7 +382,11 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/notice/write")
-	public String noticeWrite(Model model) {
+	public String noticeWrite(Model model, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		model.addAttribute("contentPage", "admin/support/notice/noticeWrite");
 		model.addAttribute("contentFragment", "noticeForm");
@@ -341,7 +396,11 @@ public class AdminCoachController {
 	
 	@PostMapping("/support/notice/insert")
 	public String noticeInsert(QnaDTO dto,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.insertNotice(dto);
@@ -362,7 +421,12 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/notice/content")
-	public String noticeContent(Model model, @RequestParam int qna_idx) {
+	public String noticeContent(Model model, @RequestParam int qna_idx,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		QnaDTO dto = new QnaDTO();
 		
@@ -380,7 +444,12 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/notice/noticeUpdateForm")
-	public String noticeUpdateForm(Model model, @RequestParam int qna_idx) {
+	public String noticeUpdateForm(Model model, @RequestParam int qna_idx,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		QnaDTO dto = new QnaDTO();
 		
@@ -399,7 +468,11 @@ public class AdminCoachController {
 	
 	@PostMapping("/support/notice/update")
 	public String updateNotice(QnaDTO dto,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.updateNotice(dto);
@@ -423,7 +496,11 @@ public class AdminCoachController {
 	
 	@PostMapping("/support/notice/delete")
 	public String deleteNotice(@RequestParam int qna_idx,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.deleteNotice(qna_idx);
@@ -446,7 +523,12 @@ public class AdminCoachController {
 	
 	@GetMapping("/support/qna")
 	public String qnaList(Model model,
-			@RequestParam(value="keyword", required=false) String keyword) {
+			@RequestParam(value="keyword", required=false) String keyword,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 			List<Map<String, Object>> qnaList = new ArrayList<>();
 			
@@ -466,7 +548,12 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/support/qna/content")
-	public String qnaContent(Model model,@RequestParam int qna_idx) {
+	public String qnaContent(Model model,@RequestParam int qna_idx, 
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> qnaContent = null;
 		
@@ -488,7 +575,12 @@ public class AdminCoachController {
 	public String insertQnaAnswer(@RequestParam int qna_idx,
 			@RequestParam String title,
 			@RequestParam String answer,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		Qna_aDTO dto = new Qna_aDTO();
 		dto.setQna_idx(qna_idx);
@@ -520,7 +612,12 @@ public class AdminCoachController {
 			@RequestParam int qna_idx,
 			@RequestParam String title,
 			@RequestParam String answer,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		Qna_aDTO dto = new Qna_aDTO();
 		dto.setQna_a_idx(qna_a_idx);
@@ -549,7 +646,12 @@ public class AdminCoachController {
 	@PostMapping("/support/qna/delete")
 	public String deleteQnaAnswer(@RequestParam int qna_a_idx,
 			@RequestParam int qna_idx,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.deleteQnaAnswer(qna_a_idx);
@@ -573,8 +675,13 @@ public class AdminCoachController {
 	
 	@GetMapping("/filter/field")
 	public String fieldContent(Model model,
-			@RequestParam(required = false, defaultValue = "1") Integer major_field_idx) {
+			@RequestParam(required = false, defaultValue = "1") Integer major_field_idx,
+			HttpSession session) {
 
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
 		List<Map<String, Object>> majorField = new ArrayList<>();
 		List<Map<String, Object>> minorField = new ArrayList<>();
 		String selectedMajorName = "";
@@ -610,7 +717,12 @@ public class AdminCoachController {
 	public String insertMinorField(
 			@RequestParam int major_field_idx,
 			@RequestParam String minor_field_nm,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> params = new HashMap<>();
 		params.put("major_field_idx", major_field_idx);
@@ -636,7 +748,12 @@ public class AdminCoachController {
 	
 	@PostMapping("/filter/update")
 	@ResponseBody
-	public String updateMinorField(@RequestBody Map<String, Object> params) {
+	public String updateMinorField(@RequestBody Map<String, Object> params,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		try {
 			int result = adminService.updateMinorField(params);
@@ -655,7 +772,11 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/report")
-	public String reportList(Model model) {
+	public String reportList(Model model, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		List<Map<String, Object>> reportList = new ArrayList<>();
 		
@@ -674,14 +795,21 @@ public class AdminCoachController {
 		
 	}
 	
+	
 	@GetMapping("/report/content")
 	public String reportContent(Model model,
-			@RequestParam int report_idx) {
+			@RequestParam int report_idx,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
 		
 		Map<String, Object> reportContent = new HashMap<>();
 		
 		try {
 			reportContent=adminService.reportContent(report_idx);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -695,5 +823,52 @@ public class AdminCoachController {
 		
 	}
 	
+	
+	//하는중!!!!!!
+	@PostMapping("/report/update")
+	public String updateReport(
+			@RequestParam int report_idx,
+			@RequestParam String status,
+			@RequestParam(required = false) Integer reporter_idx,
+			@RequestParam(required = false) Integer reported_idx,
+			@RequestParam String content,
+			HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
+		ReportDTO rdto=new ReportDTO();
+		rdto.setStatus(status);
+		rdto.setReport_idx(report_idx);
+		
+		
+		try {
+			int result=adminService.updateReport(rdto);
+			
+			if(result>0) {
+				List<Integer> receiver = new ArrayList<>();
+				if (reporter_idx != null) receiver.add(reporter_idx);
+				if (reported_idx != null) receiver.add(reported_idx);
+				
+				for(Integer receiver_idx : receiver) {
+					NotificationDTO ndto = new NotificationDTO();
+					ndto.setReceiver_idx(receiver_idx);
+					ndto.setProvider_idx(1);
+					ndto.setNoti_type("REPORT");
+					ndto.setContent(content);
+					notificationService.insertNotification(ndto);
+				}
+				
+			}
+			return "redirect:/admin/report";
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "redirect:/admin/report/content?report_idx=" + report_idx;
+		}
+		
+	}
 	
 }

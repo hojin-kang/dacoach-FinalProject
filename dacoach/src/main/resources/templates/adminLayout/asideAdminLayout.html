@@ -29,7 +29,7 @@
                     수익관리
                 </button>
                 <ul id="profitSubmenu" class="bg-gray-50 pb-2" th:classappend="${activeMenu != 'profit'} ? ' hidden'">
-                    <li><a th:href="@{/admin/payment}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'payment'} ? ' text-[#4a7c74] font-bold underline'">결제관리</a></li>
+                    <li><a th:href="@{/admin/refund}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'payment'} ? ' text-[#4a7c74] font-bold underline'">결제관리</a></li>
                     <li><a th:href="@{/admin/statistics}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'statistics'} ? ' text-[#4a7c74] font-bold underline'">통계관리</a></li>
                 </ul>
             </li>
@@ -95,7 +95,7 @@
                 </ul>
             </li>
             <li>
-                <a th:href="@{/admin/reports}" 
+                <a th:href="@{/admin/report}" 
                    class="block px-10 py-4 text-gray-700 font-medium transition-all duration-300 
                           hover:bg-[#f0f9f7] hover:text-[#4a7c74] border-l-4 border-transparent hover:border-[#4a7c74]"
                    th:classappend="${activeMenu == 'reports'} ? ' bg-[#f0f9f7] text-[#4a7c74] border-[#4a7c74] font-semibold'">

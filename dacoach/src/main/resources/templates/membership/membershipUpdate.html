@@ -6,12 +6,18 @@
    <title>dacoach</title>
 <script src="/js/kakaopayModule.js"></script>
    <link rel="stylesheet" th:href="@{/css/main.css}" />
+   <link rel="stylesheet" th:href="@{/css/company/companyMembership.css}" />
 </head>
 <body>
-   <div th:replace="layout/header :: siteHeader"></div>
+   <div th:replace="~{layout/header :: siteHeader}"></div>
 
    <main class="main">
    <div class="container">
+   <div class="category">
+   	<a href="/membership/membershipForm">멤버십 관리</a>
+   	<a href="/membership/membershipUpForm">멤버십 변경하기</a>
+   	<a th:if="${dto.member_detail_idx==2}" href="/membership/banner">배너광고</a>
+   </div>
       <div th:if="${dto.member_detail_idx==1}">
       	<input type="button" value="프리미엄 회원 가입하기" id="membershipUpBtn"> 
       	
@@ -24,7 +30,7 @@
    </div>
    </main>
   
-   <div th:replace="layout/footer :: siteFooter"></div>
+   <div th:replace="~{layout/footer :: siteFooter}"></div>
 
 <script th:inline="javascript">
 	var upBtn=document.getElementById('membershipUpBtn');

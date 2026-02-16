@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import com.dacoach.config.WebSocketConfig;
+import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.company.CompanyProvideDTO;
@@ -53,6 +54,29 @@ public class CompanyController {
 	public String joinForm() {
 
 		return "/company/join/companyJoin";
+	}
+	@GetMapping("/company/mypage/myPayment")
+	public ModelAndView myPaymentList(HttpSession session) {
+	    ModelAndView mav = new ModelAndView();
+
+	    Integer user_idx = (Integer) session.getAttribute("user_idx");
+	    if (user_idx == null || user_idx == 0) {
+	        mav.setViewName("/needLogin");
+	        return mav;
+	    }
+
+	    List<Map<String,Object>> payList = null;
+
+	    try {
+	       payList = companyService.getPayHistory(user_idx);
+	        
+	        mav.addObject("payList", payList);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    mav.setViewName("/company/profile/myPayment");
+	    return mav;
 	}
 	
 	@GetMapping("/company/mypage")

@@ -19,11 +19,12 @@
          <img th:src="${dto.photo != null} ? @{/uploads/{path}(path=${dto.photo})} : @{/img/profile/defaultProfile.jpg}" class="detail-thumb" alt="프로필">
          
          <div class="profile-main-info">
-            <span class="coach-title">베테랑 코치</span>
+            <span class="coach-title" th:if="${dto.rank_name != null}" th:text="${dto.rank_name}"></span>
             <span th:text="${dto.nickname}" class="coach-name">닉네임</span>
          </div>
          </div>
 		<div class="topRight">
+		<th:block th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
          <div class="topIcons" th:if="${dto.user_idx != session.user_idx}">
 		  <!-- 찜 -->
 		  <a class="iconBtn likeBtn" aria-label="찜"
@@ -60,6 +61,7 @@
                  <button th:case="*" class="btn-header btn-match-solid" th:onclick="applyAction('MATCH', [[${dto.user_idx}]])">매칭 신청</button>
              </th:block>
          </div>
+         </th:block>
          </div>
 
       </section>
@@ -95,19 +97,22 @@
             </div><div class="info-grid detail-section">
             <div class="info-item">
                <h3 class="section-title">동영상</h3>
-               <div class="video-placeholder">
-                  <video controls th:if="${dto?.video != null}">
-                     <source th:src="@{/uploads/{path}(path=${dto.video})}" type="video/mp4">
-                  </video>
-                  <p th:unless="${dto?.video != null}">등록된 소개 영상이 없습니다.</p>
-               </div>
+				<div class="video-placeholder">
+				    <video controls th:if="${dto.video != null && #strings.trim(dto.video) != ''}">
+				        <source th:src="@{/uploads/{path}(path=${#strings.trim(dto.video)})}" type="video/mp4">
+				    </video>
+				
+				    <p th:if="${dto.video == null || #strings.trim(dto.video) == ''}" style="color:white;">
+				        등록된 소개 영상이 없습니다.
+				    </p>
+				</div>
             </div>
             
             <div class="info-item">
                <h3 class="section-title">자격증</h3>
                <ul class="section-content">
                   <li th:each="cert : ${certList}" th:text="${cert.cert_name}"></li>
-                  <li th:if="${#lists.isEmpty(certList)}">등록된 자격증이 없습니다.</li>
+                  <span th:if="${#lists.isEmpty(certList)}">등록된 자격증이 없습니다.</span>
                </ul>
             </div>
          </div>

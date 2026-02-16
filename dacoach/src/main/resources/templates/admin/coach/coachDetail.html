@@ -258,13 +258,11 @@
             <div class="i-card flex flex-col min-h-[350px]">
                 <input type="hidden" id="serverMsg" th:value="${msg}">
                 <input type="hidden" id="serverUIdx" th:value="${user_idx}">
-                <input type="hidden" id="serverCIdx" th:value="${coach_idx}">
                 
                 <form th:action="@{/admin/coach/updateCoachStatus}" method="post" class="flex-1 flex flex-col">
                     <div>
                         <h2 class="s-badge">계정관리</h2>
                         <input type="hidden" name="user_idx" th:value="${param.user_idx}">
-                        <input type="hidden" name="coach_idx" th:value="${param.coach_idx}">
                         
                         <div class="row-box min-h-[120px]">
                             <div class="lbl">계정상태</div>
@@ -298,7 +296,6 @@
                 <form th:action="@{/admin/coach/updateCertStatus}" method="post" class="flex-1 flex flex-col">
                     <div>
                         <h2 class="s-badge">자격증</h2>
-                        <input type="hidden" name="coach_idx" th:value="${param.coach_idx}">
                         <input type="hidden" name="user_idx" th:value="${param.user_idx}">
 
                         <div class="overflow-hidden rounded-lg border border-gray-200 min-h-[120px]">
@@ -378,11 +375,10 @@
     window.onload = function() {
         const msg = document.getElementById('serverMsg').value;
         const uIdx = document.getElementById('serverUIdx').value;
-        const cIdx = document.getElementById('serverCIdx').value;
         if (msg && msg.trim() !== "") {
             alert(msg);
-            if (uIdx && cIdx) {
-                location.href = "/admin/coach/coachDetail?user_idx=" + uIdx + "&coach_idx=" + cIdx;
+            if (uIdx) {
+                location.href = "/admin/coach/coachDetail?user_idx=" + uIdx;
             }
         }
     };

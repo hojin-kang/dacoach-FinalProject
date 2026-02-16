@@ -1,5 +1,7 @@
 package com.dacoach.kakaopay;
 
+import java.sql.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,8 +22,8 @@ public class KakaoApproveResponse {
 	private String item_name; // 상품명
 	private String item_code; // 상품 코드
 	private int quantity; // 상품 수량
-	private String created_at; // 결제 요청 시간
-	private String approved_at; // 결제 승인 시간
+	private Date created_at; // 결제 요청 시간
+	private Date approved_at; // 결제 승인 시간
 	private String payload; // 결제 승인 요청에 대해 저장 값, 요청 시 전달 내용
 	
 }

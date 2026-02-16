@@ -34,3 +34,31 @@ fetch(url+'/ready',
 	alert(error.message);
 });
 }
+
+function kakaopayCancel(payIdx,payload){
+		
+		var cancelData={payIdx:payIdx,payload:payload};
+		
+		fetch('/membershipApi/cancel',
+				{method:'POST',
+				headers:{'Content-Type':'application/json'},
+				body:JSON.stringify(cancelData)})
+				
+		.then(function(resp){
+			if(resp.ok){
+				return resp.text();
+			}else{
+				throw new Error('에러남');
+			}
+			
+		})
+
+		.then(function(data){
+			alert(data);
+			
+		})
+
+		.catch(function(error){
+			alert(error.message);
+		});
+	}

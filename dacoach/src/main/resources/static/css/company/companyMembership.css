@@ -1,0 +1,474 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
+
+/* ==================== 
+   CSS Variables 
+==================== */
+:root {
+    --primary-color: #3d8e8e;
+    --primary-hover: #2d7a7a;
+    --primary-light: #e0f2f2;
+    --premium-color: #f59e0b;
+    --premium-hover: #d97706;
+    --premium-light: #fef3c7;
+    --regular-color: #6366f1;
+    --regular-light: #e0e7ff;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --bg-white: #ffffff;
+    --bg-gray: #f8fafc;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+}
+
+/* ==================== 
+   Category Navigation 
+==================== */
+.category {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding: 8px;
+    background: var(--bg-gray);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.category a {
+    flex: 1;
+    text-align: center;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.category a:hover {
+    color: var(--primary-color);
+    background: var(--bg-white);
+    box-shadow: var(--shadow-sm);
+}
+
+.category a:active {
+    transform: scale(0.98);
+}
+
+/* ==================== 
+   Membership Cards 
+==================== */
+.regularMemberDiv,
+.premiumMemberDiv {
+    background: var(--bg-white);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    line-height: 1.8;
+}
+
+.regularMemberDiv::before,
+.premiumMemberDiv::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.regularMemberDiv::before {
+    background: linear-gradient(90deg, var(--regular-color) 0%, #8b5cf6 100%);
+}
+
+.premiumMemberDiv::before {
+    background: linear-gradient(90deg, var(--premium-color) 0%, #f59e0b 100%);
+}
+
+.regularMemberDiv {
+    border-top-color: var(--regular-color);
+}
+
+.premiumMemberDiv {
+    border-top-color: var(--premium-color);
+}
+
+.regularMemberDiv a,
+.premiumMemberDiv a {
+    float: right;
+    padding: 10px 24px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.regularMemberDiv a:hover,
+.premiumMemberDiv a:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Clear float after button */
+.regularMemberDiv::after,
+.premiumMemberDiv::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.premiumMemberDiv span {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 6px 16px;
+    background: var(--error-color);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ==================== 
+   Banner Upload Form 
+==================== */
+form[name="bannerForm"] {
+    background: var(--bg-white);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    margin-top: 24px;
+}
+
+.fileArea {
+    min-height: 140px;
+    background: var(--bg-gray);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.fileArea:empty::before {
+    content: '미리보기 영역 (868 x 120)';
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.fileArea:hover {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.fileArea img {
+    display: block;
+}
+
+form[name="bannerForm"] input[type="file"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-gray);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+}
+
+form[name="bannerForm"] input[type="file"]:hover {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+form[name="bannerForm"] input[type="file"]::file-selector-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+}
+
+form[name="bannerForm"] input[type="file"]::file-selector-button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.fileInfo {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    padding: 8px 12px;
+    background: var(--bg-gray);
+    border-radius: var(--radius-sm);
+    display: inline-block;
+}
+
+/* ==================== 
+   Current Banner Display 
+==================== */
+.main .container > .category {
+    margin-bottom: 24px;
+}
+
+.main .container > div:not(.category) img {
+    display: block;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+/* ==================== 
+   Membership Buttons 
+==================== */
+#membershipUpBtn,
+#membershipDownBtn {
+    display: block;
+    margin: 40px auto;
+    padding: 18px 48px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+#membershipUpBtn {
+    background: linear-gradient(135deg, var(--premium-color) 0%, var(--premium-hover) 100%);
+    color: white;
+}
+
+#membershipUpBtn::before {
+    content: '⭐';
+    margin-right: 8px;
+    font-size: 1.25rem;
+}
+
+#membershipDownBtn {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #475569 100%);
+    color: white;
+}
+
+#membershipUpBtn:hover,
+#membershipDownBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+}
+
+#membershipUpBtn::after,
+#membershipDownBtn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+#membershipUpBtn:hover::after,
+#membershipDownBtn:hover::after {
+    width: 400px;
+    height: 400px;
+}
+
+#membershipUpBtn:active,
+#membershipDownBtn:active {
+    transform: translateY(-1px);
+}
+
+/* ==================== 
+   Submit Button 
+==================== */
+form[name="bannerForm"] input[type="submit"] {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    margin-left: auto;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+form[name="bannerForm"] input[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+form[name="bannerForm"] input[type="submit"]:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+form[name="bannerForm"] input[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+form[name="bannerForm"] input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* ==================== 
+   Empty State 
+==================== */
+.container > div:first-child:empty::before {
+    content: '등록된 배너가 없습니다';
+    display: block;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    background: var(--bg-gray);
+    border-radius: var(--radius-lg);
+    border: 2px dashed var(--border-color);
+}
+
+/* ==================== 
+   Animations 
+==================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.regularMemberDiv,
+.premiumMemberDiv,
+form[name="bannerForm"] {
+    animation: fadeInUp 0.5s ease;
+}
+
+/* ==================== 
+   Emphasis for Dynamic Content
+==================== */
+/* 사용자 이름 강조 */
+.regularMemberDiv strong:first-of-type,
+.premiumMemberDiv strong:first-of-type,
+.regularMemberDiv b:first-of-type,
+.premiumMemberDiv b:first-of-type {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+/* 멤버십 타입 강조 */
+.regularMemberDiv strong:nth-of-type(2),
+.premiumMemberDiv strong:nth-of-type(2),
+.regularMemberDiv b:nth-of-type(2),
+.premiumMemberDiv b:nth-of-type(2) {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.95em;
+}
+
+.regularMemberDiv strong:nth-of-type(2),
+.regularMemberDiv b:nth-of-type(2) {
+    background: var(--regular-light);
+    color: var(--regular-color);
+}
+
+.premiumMemberDiv strong:nth-of-type(2),
+.premiumMemberDiv b:nth-of-type(2) {
+    background: var(--premium-light);
+    color: var(--premium-hover);
+}
+
+/* ==================== 
+   Responsive Design 
+==================== */
+@media (max-width: 768px) {
+    .category {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .regularMemberDiv,
+    .premiumMemberDiv {
+        padding: 24px;
+    }
+    
+    form[name="bannerForm"] {
+        padding: 24px;
+    }
+    
+    #membershipUpBtn,
+    #membershipDownBtn {
+        padding: 16px 32px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .category a {
+        padding: 10px 16px;
+        font-size: 0.875rem;
+    }
+    
+    .regularMemberDiv,
+    .premiumMemberDiv {
+        padding: 20px;
+        font-size: 0.9375rem;
+    }
+}

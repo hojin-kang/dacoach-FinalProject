@@ -33,7 +33,9 @@ public class CompanyServiceImple implements CompanyService {
 		
 		return companyMapper.getRegionTag(idx);
 	}
-	
+	public List<Map<String,Object>> getPayHistory(int user_idx) throws Exception{
+		return companyMapper.getPayHistory(user_idx);
+	}
 	@Override
 	public int joinOk(UsersDTO dto) throws Exception {
 		dto.setPassword(com.dacoach.javasecure.JavaDataSecureModule.getSHA256(dto.getPassword()));
@@ -120,6 +122,9 @@ public class CompanyServiceImple implements CompanyService {
 	}
 	public int regionDel(CompanyRegionDTO dto) throws Exception{
 		return companyMapper.regionDel(dto);
+	}
+	public List<Map<String,Object>> getCoachList() throws Exception{
+		return companyMapper.getCoachList();
 	}
 	
 }

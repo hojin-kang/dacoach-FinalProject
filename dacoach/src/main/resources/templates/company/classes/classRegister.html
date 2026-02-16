@@ -26,6 +26,11 @@
 						<div th:if="${msg}" class="alert success" th:text="${msg}"></div>
 						<div th:if="${error}" class="alert error" th:text="${error}"></div>
 
+						<!-- 멤버십 제한 알림 -->
+						<script th:if="${membershipLimitError}">
+							alert('멤버십 클래스 등록 제한에 도달했습니다.\n추가 클래스를 등록하시려면 기존 클래스를 종료하시거나 멤버십을 업그레이드해주세요.');
+						</script>
+
 						<form id="classInsert" th:action="@{/class/company/register}"
 							method="post" enctype="multipart/form-data">
 
@@ -213,9 +218,9 @@
 				return false;
 			}
 			
-			// 종료일이 시작일보다 이전이거나 같은지 체크
-			if (end <= start) {
-				alert('종료일은 시작일 이후여야 합니다.');
+			// 종료일이 시작일보다 이전인지 체크
+			if (end < start) {
+				alert('종료일은 시작일과 같거나 이후여야 합니다.');
 				document.getElementById('endDate').focus();
 				return false;
 			}

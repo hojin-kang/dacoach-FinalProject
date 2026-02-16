@@ -8,6 +8,7 @@ import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
+import com.dacoach.model.report.ReportDTO;
 import com.dacoach.model.users.UsersDTO;
 
 @Mapper
@@ -63,4 +64,7 @@ public interface AdminMapper {
 	//신고 관리
 	public List<Map<String,Object>> reportList() throws Exception;
 	public Map<String, Object> reportContent(int report_idx) throws Exception;
+	public int getCoachIdx (int user_idx) throws Exception;
+	public int getCompanyIdx (int user_idx) throws Exception;
+	public int updateReport(ReportDTO dto) throws Exception;
 }

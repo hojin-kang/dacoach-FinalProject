@@ -46,8 +46,8 @@
 	from 
 	coach c
 	join
-	users u on c.user_idx = u.user_idx
-	where c.coach_idx=#{coach_idx}
+	users u on c.user_idx = u.user_idx	
+	where u.user_idx=#{user_idx}
 	</select>
 	
 	<select id="getCoachStatus" parameterType="int" resultType="String">
@@ -299,10 +299,12 @@
 	select
 	r.report_idx,
 	rt.content as report_type,
+	r.status,
 	r.created_at,
 	u1.user_name as reporter_name,
+	u1.user_idx as reporter_idx,
 	u2.user_name as reported_name,
-	u2.user_idx,
+	u2.user_idx as reported_idx,
 	u2.user_type,
 	r.content
 	from report r
@@ -311,4 +313,19 @@
 	join reason_type rt on r.reason_type_idx=rt.reason_type_idx
 	where r.report_idx=#{report_idx}
 	</select>
+	
+	<select id="getCoachIdx">
+	select coach_idx from coach where user_idx=#{user_idx}
+	</select>
+	
+	<select id="getCompanyIdx">
+	select company_idx from company where user_idx=#{user_idx}
+	</select>
+	
+	<update id="updateReport" parameterType="com.dacoach.model.report.ReportDTO">
+	update report set status=#{status},updated_at=sysdate where report_idx=#{report_idx}
+	</update>
+	
+	
+	
 </mapper>
