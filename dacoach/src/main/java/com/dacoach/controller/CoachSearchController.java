@@ -219,4 +219,55 @@ public class CoachSearchController {
 	 	    return result;
 	 	}
 	 	
+	 // 상세페이지에서 POST로 들어옴 (user_idx 노출 X)
+	 	@PostMapping("/coach/allReview")
+	 	public String allReviewPost(@RequestParam("user_idx") int target_idx, HttpSession session) {
+	 	    session.setAttribute("allReviewTargetIdx", target_idx);
+	 	    return "redirect:/coach/allReview"; // cp=1 기본
+	 	}
+
+	 	// 페이징 이동은 GET (PageModule이 ?cp= 를 만들어주니까)
+	 	@GetMapping("/coach/allReview")
+	 	public ModelAndView allReviewGet(
+	 	        @RequestParam(value="cp", defaultValue="1") int cp,
+	 	        HttpSession session
+	 	) {
+	 	    ModelAndView mav = new ModelAndView();
+
+	 	    Integer target_idx = (Integer) session.getAttribute("allReviewTargetIdx");
+	 	    if (target_idx == null) {
+	 	        mav.addObject("msg", "잘못된 접근입니다. 코치 상세에서 다시 들어와주세요.")
+	 	           .addObject("url", "/coach/search")
+	 	           .setViewName("alert");
+	 	        return mav;
+	 	    }
+
+	 	    int listSize = 5;   // 한 페이지에 리뷰 n개
+	 	    int pageSize = 5;   // 페이지 버튼 n개씩
+
+	 	    int totalCnt = reviewService.getCoachReviewCount(target_idx);
+
+	 	    int start = (cp - 1) * listSize + 1;
+	 	    int end = cp * listSize;
+
+	 	    List<ReviewCoachDTO> reviewList = reviewService.getCoachReviewsPaged(target_idx, start, end);
+
+	 	    CoachDTO dto = null;
+			try {
+				dto = coachService.getCoachInfo(target_idx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+	 	    String pageStr = com.dacoach.page.PageModule.makePage("/coach/allReview", totalCnt, listSize, pageSize, cp);
+
+	 	    mav.addObject("dto", dto);
+	 	    mav.addObject("reviewList", reviewList);
+	 	    mav.addObject("pageStr", pageStr);
+	 	    mav.addObject("totalCnt", totalCnt);
+	 	    mav.setViewName("coach/allReview");
+	 	    return mav;
+	 	}
+
+	 	
 }

@@ -24,5 +24,15 @@ public interface ReviewMapper {
     int deleteCoachReview(@Param("review_coach_idx") int review_coach_idx, @Param("user_idx") int user_idx);
     int deleteClassReview(@Param("review_class_idx") int review_class_idx, @Param("user_idx") int user_idx);
     
-    List<ReviewCoachDTO> getCoachReviews(int target_idx);
+    // 코치 상세/전체리뷰
+    List<ReviewCoachDTO> getCoachReviews(@Param("target_idx") int target_idx);
+
+    // 페이징용
+    int getCoachReviewCount(@Param("target_idx") int target_idx);
+
+    List<ReviewCoachDTO> getCoachReviewsPaged(
+            @Param("target_idx") int target_idx,
+            @Param("start") int start,
+            @Param("end") int end
+    );
 }
