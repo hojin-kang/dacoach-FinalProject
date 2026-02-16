@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>환불 관리 (Raw Form)</title>
+</head>
+<body>
+    <div th:fragment="contentPage">
+        
+        <h2>환불 요청 내역 조회</h2>
+        
+        <p>전체 대기 건수: <b th:text="${refundList != null ? #lists.size(refundList) : 0}">0</b>건</p>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>주문번호 (Order ID)</th>
+                    <th>요청자 아이디</th>
+                    <th>결제 상품명</th>
+                    <th>환불 예정 금액</th>
+                    <th>원결제 승인일시</th>
+                    <th>현재 상태</th>
+                    <th>처리기능</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${refundList}">
+                    <td th:text="${item.PARTNER_ORDER_ID}">ORDER_ID</td>
+                    <td th:text="${item.PARTNER_USER_ID}">USER_ID</td>
+                    <td th:text="${item.ITEM_NAME}">ITEM_NAME</td>
+                    
+                    <td th:text="${#numbers.formatInteger(item.TOTAL, 0, 'COMMA')} + '원'">0원</td>
+                    <td th:text="${#dates.format(item.APPROVED_AT, 'yyyy-MM-dd HH:mm')}">DATE</td>
+                    
+                    <td th:text="${item.STATUS}">STATUS</td>
+                    
+                    <td>
+                        <button th:onclick="'approveRefund(\'' + ${item.TID} + '\')'">환불 승인</button>
+                        <button th:onclick="'rejectRefund(\'' + ${item.TID} + '\')'">반려</button>
+                    </td>
+                </tr>
+
+                <tr th:if="${refundList == null or #lists.isEmpty(refundList)}">
+                    <td colspan="7" style="text-align: center;">조회된 환불 요청이 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <script th:inline="javascript">
+            function approveRefund(tid) {
+                if(confirm('해당 결제건(TID: ' + tid + ')을 승인하시겠습니까?')) {
+                    alert('서버로 승인 요청을 보냅니다. (TID: ' + tid + ')');
+                }
+            }
+
+            function rejectRefund(tid) {
+                if(confirm('환불 요청을 반려하시겠습니까?')) {
+                    alert('반려 처리를 진행합니다.');
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
