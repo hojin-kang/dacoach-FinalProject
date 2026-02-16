@@ -67,4 +67,8 @@ public interface AdminService {
 	public int getCoachIdx (int user_idx) throws Exception;
 	public int getCompanyIdx (int user_idx) throws Exception;
 	public int updateReport(ReportDTO dto) throws Exception;
+	
+	//통계관리
+	public int newUsers() throws Exception;
+	public int pendingReports() throws Exception;
 }
