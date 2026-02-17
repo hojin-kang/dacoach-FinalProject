@@ -9,7 +9,8 @@
   		#{tid},
   		#{partner_order_id},
   		#{partner_user_id},
-  		#{status}
+  		#{status},
+  		'사유'
   	)
   </insert>
   <select id="getPayStatus" resultType="com.dacoach.kakaopay.PayStatusDTO">
