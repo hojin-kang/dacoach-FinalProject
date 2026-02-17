@@ -78,15 +78,15 @@
           <div class="chatMessages" id="chatMessages">
             <!-- JS로 txt를 파싱해서 렌더 -->
           </div>
-
+          <div th:if="${isLeft == true}">상대방이 채팅방을 나갔습니다</div>
           <div class="chatInputRow">
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
-			    <a href="/schedule/write" class="quickItem">
+			    <a href="/schedule/write" class="quickItem" th:if="${isLeft == false}">
 			      <img class="qiIcon" src="/img/icon/write.png">
 			      <span class="qiText">서약서<br>작성</span>
 			    </a>
-			    <a href="/schedule/create" class="quickItem">
+			    <a href="/schedule/create" class="quickItem" th:if="${isLeft == false}">
 			      <img class="qiIcon" src="/img/icon/calendarPlus.png">
 			      <span class="qiText">일정<br>등록</span>
 			    </a>
@@ -100,7 +100,7 @@
 			    </button>
 			</div>
             <input type="text" id="chatInput" class="chatInput" placeholder="메세지 입력">
-            <button type="button" id="sendBtn" class="chatSendBtn">전송</button>
+            <button type="button" id="sendBtn" class="chatSendBtn" th:if="${isLeft != true}">전송</button>
           </div>
         </div>
 

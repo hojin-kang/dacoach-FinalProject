@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -171,5 +172,26 @@ public class ChatServiceImple implements ChatService {
         int updated = chatMapper.leaveRoom(roomIdx, myIdx);
         return updated > 0;
     }
+
+	@Override
+	public boolean isLeft(int roomIdx, int myIdx) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("chat_room_idx",roomIdx);
+		map.put("user_idx", myIdx);
+		int result = chatMapper.isLeft(map);
+		if(result > 0) return true;
+		return false;
+	}
+
+	@Override
+	public int deleteChat(int roomIdx) {
+		return chatMapper.deleteChat(roomIdx);
+	}
+
+	@Override
+	public int updateChatStatus(int roomIdx) {
+		
+		return chatMapper.updateChatStatus(roomIdx);
+	}
 
 }

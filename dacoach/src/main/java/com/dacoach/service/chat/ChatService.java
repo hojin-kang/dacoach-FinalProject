@@ -20,4 +20,11 @@ public interface ChatService {
     
     // 채팅방 나가기
     boolean leaveRoom(int roomIdx, int myIdx);
+    
+    // 채팅상대 존재여부 확인
+    boolean isLeft(int roomIdx, int myIdx);
+    
+    public int deleteChat(int roomIdx);
+    
+    public int updateChatStatus(int roomIdx);
 }
