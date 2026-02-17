@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.adminad.service.AdminAdManagementService;
-import com.dacoach.util.AdminAuthHelper;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -22,18 +21,12 @@ public class AdminAdManagementController {
 	@Autowired
 	AdminAdManagementService adminAdService;
 
-	@Autowired
-	AdminAuthHelper adminAuthHelper;
-
 	@GetMapping("/adView")
-	public String adView(Model model, HttpSession session, RedirectAttributes rttr) {
+	public String adView(Model model, HttpSession session) {
 
-		String redirect = adminAuthHelper.checkAdminAuth(session, rttr);
-
-		if (redirect != null) {
-			return redirect;
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
 		}
-
 		List<Map<String, Object>> adList = adminAdService.getAdRequestList();
 		model.addAttribute("adList", adList);
 		model.addAttribute("contentPage", "admin/ad/adManagement");
@@ -46,10 +39,8 @@ public class AdminAdManagementController {
 	public String approveAd(@RequestParam int ad_idx, @RequestParam int user_idx, @RequestParam String action,
 			RedirectAttributes rttr, HttpSession session) {
 
-		String redirect = adminAuthHelper.checkAdminAuth(session, rttr);
-
-		if (redirect != null) {
-			return redirect;
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
 		}
 		int result = adminAdService.sendNotification(ad_idx, user_idx, action);
 		String msg = null;

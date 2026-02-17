@@ -26,4 +26,8 @@ public class PayDTO {
     private Integer discount;
     private Integer green_deposit;
     private String pay_type; // CLASS, TOKEN, MEMBERSHIP
+    
+    //pay_status 매핑
+    private String status;
+    private String payload; //사용자가 입력한 환불 내용
 }

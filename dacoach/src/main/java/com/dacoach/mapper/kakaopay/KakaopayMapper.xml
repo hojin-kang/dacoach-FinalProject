@@ -12,7 +12,7 @@
   		#{status}
   	)
   </insert>
-  <select id="getPayStatus">
+  <select id="getPayStatus" resultType="com.dacoach.kakaopay.PayStatusDTO">
   	SELECT tid, partner_order_id, partner_user_id, status
 	FROM (
 		SELECT tid, partner_order_id, partner_user_id, status
@@ -24,7 +24,8 @@
   </select>
   
   <update id="upPayStatus">
-  	update pay_status set status=#{status} where tid= #{tid}
+  	update pay_status set status=#{status} ,
+  	payload = #{payload} where tid= #{tid}
   </update>
   
   <insert id="cancelOk">
@@ -65,8 +66,32 @@
   	)
   </insert>
   
-  <select id="paySelect">
+  <select id="paySelect" resultType="com.dacoach.kakaopay.PayDTO">
   	select * from pay where pay_idx=#{pay_idx}
+  </select>
+  
+  <select id="selectRefundList" resultType="map">
+    select
+        p.partner_order_id  as "partner_order_id",
+        p.partner_user_id   as "partner_user_id",
+        p.item_name         as "item_name",
+        p.total             as "total",
+        p.approved_at       as "approved_at",
+        p.pay_idx           as "pay_idx",
+        ps.tid              as "tid",
+        ps.status           as "status",
+        ps.payload          as "payload"
+    from pay_status ps
+    join pay p on ps.tid = p.tid
+    where ps.status = '환불요청'
+</select>
+  
+  <select id="selectPayStatus" resultType="com.dacoach.kakaopay.PayDTO">
+  	select 
+  	p.*, ps.status,ps.payload
+  	from pay p 
+  	join pay_status ps on p.tid=ps.tid
+  	where p.pay_idx=#{pay_idx}
   </select>
   
   </mapper>
