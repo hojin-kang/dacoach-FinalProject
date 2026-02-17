@@ -1,5 +1,6 @@
 package com.dacoach.mapper.chat;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -56,4 +57,10 @@ public interface ChatMapper {
     // 채팅방 나가기
     int leaveRoom(@Param("roomIdx") int roomIdx,
             @Param("myIdx") int myIdx);
+    
+    int isLeft(HashMap<String, Object> map);
+    
+    int deleteChat(int roomIdx);
+    
+    int updateChatStatus(int roomIdx);
 }

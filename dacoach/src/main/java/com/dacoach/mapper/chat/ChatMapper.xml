@@ -120,5 +120,40 @@
   WHERE chat_room_idx = #{roomIdx}
     AND #{myIdx} IN (user1_idx, user2_idx)
 </update>
+<select id="isLeft" parameterType="map" resultType="Integer">
+  select count(*) from chat_room
+  where chat_room_idx = #{chat_room_idx}
+  	and (
+      (user1_idx = #{user_idx} and left2_yn = 'Y')
+      or
+      (user2_idx = #{user_idx} and left1_yn = 'Y')
+    )
+</select>
 
+<delete id="deleteChat" parameterType="int">
+  delete from chat_room
+  where chat_room_idx = #{roomIdx}
+  and (left1_yn = 'Y' and left2_yn = 'Y')
+</delete>
+
+<update id="updateChatStatus" parameterType="map">
+  update match m
+  set m.is_chat = 'N', m.chat_applicant = null
+  where 
+  (m.user1_idx = (
+  	select user1_idx from chat_room
+  	where chat_room_idx = #{roomIdx}
+  ) and m.user2_idx = (
+  	select user2_idx from chat_room
+  	where chat_room_idx = #{roomIdx}
+  ))
+  or
+  (m.user2_idx = (
+  	select user1_idx from chat_room
+  	where chat_room_idx = #{roomIdx}
+  ) and m.user1_idx = (
+  	select user2_idx from chat_room
+  	where chat_room_idx = #{roomIdx}
+  ))
+</update>
 </mapper>

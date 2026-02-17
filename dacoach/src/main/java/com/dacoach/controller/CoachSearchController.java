@@ -77,7 +77,6 @@ public class CoachSearchController {
 			page+= "majorField="+majorField+"&minorField="+minorField+"&majorRegion="+majorRegion+"&minorRegion="+minorRegion+"&keyword="+keyword+"&"+"&sort="+sort;
 			if(coachList != null && coachList.size() > 0) {
 				total_cnt = coachList.get(0).getTotal_cnt();
-				System.out.println("total_cnt : " + total_cnt);
 				String pageStr = com.dacoach.page.PageModule.makePagewithParams(page, total_cnt, 4, 5, cp);
 				mav.addObject("pageStr", pageStr);
 			}

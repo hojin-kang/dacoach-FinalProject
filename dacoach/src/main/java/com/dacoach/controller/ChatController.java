@@ -1,5 +1,10 @@
 package com.dacoach.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -60,8 +65,13 @@ public class ChatController {
 		model.addAttribute("rooms", chatService.listRooms(my));
 
 		ChatRoomDTO activeRoom = chatService.selectRoomByIdx(roomIdx, my);
+		
+		boolean isLeft=chatService.isLeft(roomIdx, my);
+		
+		model.addAttribute("isLeft", isLeft);
+		System.out.println(isLeft);
 		model.addAttribute("activeRoom", activeRoom);
-
+		
 		model.addAttribute("activeRoomIdx", roomIdx);
 		model.addAttribute("myIdx", my);
 		model.addAttribute("tab", tab);
@@ -85,8 +95,28 @@ public class ChatController {
 	public String leaveRoom(@PathVariable int roomIdx, HttpSession session){
 	    Integer my = (Integer) session.getAttribute("user_idx");
 	    if(my == null) return "NOLOGIN";
+	    
+	    ChatRoomDTO room=chatService.selectRoomByIdx(roomIdx, my);
 
 	    boolean ok = chatService.leaveRoom(roomIdx, my);
+	    chatService.updateChatStatus(roomIdx);
+	    
+	    int result=chatService.deleteChat(roomIdx);
+	    if (result > 0) {
+	    	
+	        String baseDir = "C:/student_java/dacoach/dacoach/uploads/chats";
+	        String fileName = "chat_" + room.getUser1Idx() + "_" + room.getUser2Idx();
+	        String fileName2 = "chat_" + room.getUser2Idx() + "_" + room.getUser1Idx();
+	        
+	        try {
+	            Path filePath = Paths.get(baseDir, fileName);
+	            Path filePath2 = Paths.get(baseDir, fileName2);
+	            Files.deleteIfExists(filePath);
+	            Files.deleteIfExists(filePath2);
+	        } catch (IOException e) {
+	            System.err.println("파일 삭제 중 오류 발생: " + e.getMessage());
+	        }
+	    }
 	    return ok ? "OK" : "FAIL";
 	}
 }
