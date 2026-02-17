@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.model.coachClasses.CoachClassDTO;
 import com.dacoach.model.coachClasses.ClassEnrollmentDTO;
 import com.dacoach.model.review.ReviewClassDTO;
@@ -99,8 +100,11 @@ public interface CoachClassMapper {
 
 	// 사용자가 해당 클래스를 수강 완료했는지 확인 (수강 날짜가 오늘이거나 과거인지)
 	Integer checkUserCompletedEnrollment(Map<String, Object> param) throws Exception;
-	
-    Integer likeClass(HashMap map) throws Exception;
-	
+
+	Integer likeClass(HashMap map) throws Exception;
+
 	Integer unlikeClass(HashMap map) throws Exception;
+
+	// 결제 내역 저장 (수강신청 결제)
+	int insertPay(PayDTO dto);
 }

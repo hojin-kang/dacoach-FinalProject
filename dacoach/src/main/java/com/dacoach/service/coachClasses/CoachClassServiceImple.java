@@ -13,6 +13,8 @@ import com.dacoach.mapper.coachClasses.CoachClassMapper;
 import com.dacoach.model.coachClasses.CoachClassDTO;
 import com.dacoach.model.coachClasses.ClassEnrollmentDTO;
 import com.dacoach.model.review.ReviewClassDTO;
+import com.dacoach.kakaopay.KakaoApproveResponse;
+import com.dacoach.kakaopay.PayDTO;
 
 @Service
 public class CoachClassServiceImple implements CoachClassService {
@@ -256,21 +258,88 @@ public class CoachClassServiceImple implements CoachClassService {
 		Integer count = classMapper.checkUserCompletedEnrollment(param);
 		return count != null && count > 0;
 	}
-	
+
 	@Override
 	public Integer likeClass(int login_idx, int targer_idx) throws Exception {
-		HashMap<String, Object> map=new HashMap<>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("login_idx", login_idx);
 		map.put("target_idx", targer_idx);
-		int result=classMapper.likeClass(map);
+		int result = classMapper.likeClass(map);
 		return result;
 	}
+
 	@Override
 	public Integer unlikeClass(int login_idx, int targer_idx) throws Exception {
-		HashMap<String, Object> map=new HashMap<>();
+		HashMap<String, Object> map = new HashMap<>();
 		map.put("login_idx", login_idx);
 		map.put("target_idx", targer_idx);
-		int result=classMapper.unlikeClass(map);
+		int result = classMapper.unlikeClass(map);
 		return result;
+	}
+
+	@Override
+	@Transactional
+	public void enrollClassAfterPay(int class_idx, int user_idx, String enrollment_date, KakaoApproveResponse approve)
+			throws Exception {
+
+		// 1) PAY 테이블에 결제 내역 저장
+		PayDTO pay = new PayDTO();
+		pay.setTid(approve.getTid());
+		pay.setCid(approve.getCid());
+		pay.setSid(approve.getSid());
+		pay.setPartner_order_id(approve.getPartner_order_id());
+		pay.setPartner_user_id(approve.getPartner_user_id());
+		pay.setItem_name(approve.getItem_name());
+		pay.setItem_code(approve.getItem_code());
+		pay.setQuantity(approve.getQuantity());
+
+		pay.setCreated_at(approve.getCreated_at());
+		pay.setApproved_at(approve.getApproved_at());
+
+		if (approve.getAmount() != null) {
+			pay.setTotal(approve.getAmount().getTotal());
+			pay.setTax_free(approve.getAmount().getTax_free());
+			pay.setVat(approve.getAmount().getVat());
+			pay.setPoint(approve.getAmount().getPoint());
+			pay.setDiscount(approve.getAmount().getDiscount());
+			pay.setGreen_deposit(approve.getAmount().getGreen_deposit());
+		}
+
+		pay.setPay_type("CLASS");
+
+		int payResult = classMapper.insertPay(pay);
+		if (payResult <= 0)
+			throw new RuntimeException("PAY insert failed");
+
+		// 2) 중복 신청 확인
+		if (checkDuplicateEnrollment(class_idx, user_idx, enrollment_date)) {
+			throw new IllegalStateException("이미 해당 날짜에 수강 신청을 하셨습니다.");
+		}
+
+		// 3) 정원 확인
+		CoachClassDTO classInfo = classMapper.getClassDetail(class_idx);
+		Integer currentCount = getEnrollmentCountByDate(class_idx, enrollment_date);
+		if (classInfo.getMax_user_cnt() != null && currentCount >= classInfo.getMax_user_cnt()) {
+			throw new IllegalStateException("해당 날짜의 수강 정원이 마감되었습니다.");
+		}
+
+		// 4) 수강신청 등록
+		ClassEnrollmentDTO enrollment = new ClassEnrollmentDTO();
+		enrollment.setClass_idx(class_idx);
+		enrollment.setUser_idx(user_idx);
+		enrollment.setStatus("CONFIRMED");
+		enrollment.setEnrolled_at(new Date());
+
+		try {
+			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+			Date completedDate = sdf.parse(enrollment_date);
+			enrollment.setCompleted_at(completedDate);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("날짜 형식이 올바르지 않습니다.");
+		}
+
+		int enrollResult = classMapper.insertEnrollment(enrollment);
+		if (enrollResult <= 0)
+			throw new RuntimeException("ENROLLMENT insert failed");
 	}
 }

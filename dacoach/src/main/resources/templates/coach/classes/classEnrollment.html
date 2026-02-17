@@ -101,20 +101,13 @@
 				</div>
 
 				<!-- 버튼 -->
-				<form th:action="@{/coach/enrollClass}" method="post"
-					id="enrollForm">
-					<input type="hidden" name="classId"
-						th:value="${classDTO.class_idx}" /> <input type="hidden"
-						name="enrollmentDate" id="enrollmentDateInput" />
-
-					<div class="enrollment-actions">
-						<button type="button" class="btn btn-secondary"
-							th:onclick="|location.href='@{/coach/classDetail(id=${classDTO.class_idx})}'|">
-							취소</button>
-						<button type="submit" class="btn btn-primary" id="submitBtn"
-							disabled>수강 신청하기</button>
-					</div>
-				</form>
+				<div class="enrollment-actions">
+					<button type="button" class="btn btn-secondary"
+						th:onclick="|location.href='@{/coach/classDetail(id=${classDTO.class_idx})}'|">
+						취소</button>
+					<button type="button" class="btn btn-primary" id="submitBtn"
+						disabled onclick="startKakaoPay()">카카오페이로 결제하기</button>
+				</div>
 			</div>
 		</div>
 	</main>
@@ -124,6 +117,8 @@
 	<script th:inline="javascript">
 	// Thymeleaf 변수를 JavaScript로 전달
 	const classId = /*[[${classDTO.class_idx}]]*/ 0;
+	const classTitle = /*[[${classDTO.title}]]*/ '';
+	const classPrice = /*[[${classDTO.price}]]*/ 0;
 	const startDate = new Date(/*[[${classDTO.start_date}]]*/ '2024-01-01');
 	const endDate = new Date(/*[[${classDTO.end_date}]]*/ '2024-12-31');
 	const maxUserCnt = /*[[${classDTO.max_user_cnt}]]*/ 10;
@@ -275,9 +270,6 @@
 			text.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 			info.style.display = 'block';
 
-			// 숨겨진 input에 값 설정
-			document.getElementById('enrollmentDateInput').value = dateStr;
-
 			// 제출 버튼 활성화
 			document.getElementById('submitBtn').disabled = false;
 		});
@@ -326,18 +318,55 @@
 	});
 
 	// 폼 제출 시 확인
-	document.getElementById('enrollForm').addEventListener('submit', function(e) {
+	document.getElementById('enrollForm') && document.getElementById('enrollForm').addEventListener('submit', function(e) {
 		if (!selectedDate) {
 			e.preventDefault();
 			alert('수강 날짜를 선택해주세요.');
 			return false;
 		}
-
-		if (!confirm(`선택한 날짜로 수강 신청하시겠습니까?\n\n날짜: ${document.getElementById('selectedDateText').textContent}`)) {
-			e.preventDefault();
-			return false;
-		}
 	});
+
+	// 카카오페이 결제 시작
+	function startKakaoPay() {
+		if (!selectedDate) {
+			alert('수강 날짜를 선택해주세요.');
+			return;
+		}
+
+		const parameters = {
+			cid: "TC0ONETIME",
+			partner_order_id: "class_" + Date.now(),
+			partner_user_id: "sessionUser",
+			item_name: classTitle + " (" + selectedDate + ")",
+			quantity: 1,
+			total_amount: classPrice,
+			vat_amount: 0,
+			tax_free_amount: 0,
+			approval_url: "http://localhost:9090/kakaopay/class/success",
+			fail_url: "http://localhost:9090/kakaopay/class/fail",
+			cancel_url: "http://localhost:9090/kakaopay/class/cancel",
+			// 수강신청에 필요한 추가 정보
+			class_id: classId,
+			enrollment_date: selectedDate
+		};
+
+		fetch('/kakaopay/class/ready', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(parameters)
+		})
+		.then(function(resp) {
+			if (resp.ok) return resp.text();
+			throw new Error('결제 요청 중 오류가 발생했습니다. 고객센터에 문의해주세요.');
+		})
+		.then(function(data) {
+			var val = JSON.parse(data);
+			window.location.href = val.next_redirect_pc_url;
+		})
+		.catch(function(error) {
+			alert(error.message);
+		});
+	}
 
 	// 초기 렌더링
 	renderCalendar();

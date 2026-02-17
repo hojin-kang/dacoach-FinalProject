@@ -109,7 +109,14 @@ public interface CoachClassService {
 	 * 사용자가 해당 클래스를 수강 완료했는지 확인 (수강 날짜가 오늘이거나 과거인지)
 	 */
 	boolean hasUserCompletedEnrollment(int class_idx, int user_idx) throws Exception;
-	
+
 	Integer likeClass(int login_idx, int targer_idx) throws Exception;
-    Integer unlikeClass(int login_idx, int targer_idx) throws Exception;
+
+	Integer unlikeClass(int login_idx, int targer_idx) throws Exception;
+
+	/**
+	 * 카카오페이 결제 승인 후 수강신청 처리 (결제내역 저장 + 수강신청 등록 트랜잭션)
+	 */
+	void enrollClassAfterPay(int class_idx, int user_idx, String enrollment_date,
+			com.dacoach.kakaopay.KakaoApproveResponse approve) throws Exception;
 }

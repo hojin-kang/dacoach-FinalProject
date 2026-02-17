@@ -92,5 +92,12 @@
 	</main>
 
 	<div th:replace="~{layout/footer :: siteFooter}"></div>
+
+	<script th:inline="javascript">
+		var result = /*[[${param.result}]]*/null;
+		if (result === 'success') {
+			alert('수강신청이 완료되었습니다!');
+		}
+	</script>
 </body>
 </html>
