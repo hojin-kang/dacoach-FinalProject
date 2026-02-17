@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dacoach.admincompany.service.AdminCompanyService;
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.page.PageModule;
-import com.dacoach.util.AdminAuthHelper;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,16 +27,13 @@ public class AdminCompanyController {
 
     @Autowired
     private AdminCompanyService service;
-    
-    @Autowired
-    AdminAuthHelper adminAuthHelper;
+   
     //기업 회원 목록
     @GetMapping("/companyList")
     public String companyList(Model model,HttpSession session,RedirectAttributes rttr) {
-    	String redirect = adminAuthHelper.checkAdminAuth(session, rttr);
-
-		if (redirect != null) {
-			return redirect;
+    	
+    	if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
 		}
         List<Map<String, Object>> list = service.getCompanyList();
         model.addAttribute("list", list);
@@ -50,10 +46,8 @@ public class AdminCompanyController {
     @GetMapping("/companyDetail/{usersIdx}")
     public String companyDetail(@PathVariable("usersIdx") int usersIdx, Model model,HttpSession session,RedirectAttributes rttr) { 
 
-    	String redirect = adminAuthHelper.checkAdminAuth(session, rttr);
-
-		if (redirect != null) {
-			return redirect;
+    	if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
 		}
 		
         Map<String, Object> companyInfo = service.getCompanyDetail(usersIdx);
@@ -98,11 +92,9 @@ public class AdminCompanyController {
             @RequestParam(value = "cp", required = false, defaultValue = "1") int cp,
             Model model,RedirectAttributes rttr,HttpSession session
     ) {
-    	String redirect = adminAuthHelper.checkAdminAuth(session, rttr);
-
-		if (redirect != null) {
-			return redirect;
-		}
+    	if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}	
 		
         int listSize = 10;
         int pageSize = 5;
@@ -134,10 +126,9 @@ public class AdminCompanyController {
     @GetMapping("/classDetail/{classIdx}")
     public String classDetail(@PathVariable int classIdx, Model model,
     		RedirectAttributes rttr,HttpSession session) {
-    	String redirect = adminAuthHelper.checkAdminAuth(session, rttr);
-
-		if (redirect != null) {
-			return redirect;
+    	
+    	if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
 		}
         Map<String, Object> classInfo = service.getClassDetail(classIdx);
         List<Map<String, Object>> reviews = service.getClassReviews(classIdx);

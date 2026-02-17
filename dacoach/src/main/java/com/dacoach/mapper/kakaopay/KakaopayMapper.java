@@ -19,4 +19,8 @@ public interface KakaopayMapper {
 	public PayDTO paySelect(int pay_idx) throws Exception; 
 	
 	public int cancelOk(KakaoCancelResponse kcr) throws Exception;
+	
+	public List<Map<String,Object>> selectRefundList() throws Exception;
+	
+	PayDTO selectPayStatus(int pay_idx) throws Exception;
 }
