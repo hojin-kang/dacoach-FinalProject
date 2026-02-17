@@ -119,4 +119,10 @@ public interface CoachClassService {
 	 */
 	void enrollClassAfterPay(int class_idx, int user_idx, String enrollment_date,
 			com.dacoach.kakaopay.KakaoApproveResponse approve) throws Exception;
+
+	/**
+	 * 수강신청 취소 및 환불요청 처리 - CLASS_ENROLLMENT status = CANCELLED - PAY_STATUS status =
+	 * 환불요청, payload = 사유
+	 */
+	void requestRefund(int enroll_idx, int user_idx, String payload) throws Exception;
 }

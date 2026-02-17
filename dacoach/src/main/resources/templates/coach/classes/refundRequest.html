@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>환불 요청 - dacoach</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/coach_class.css}" />
+</head>
+<body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
+
+	<main class="main">
+		<div class="enrollment-container">
+			<h1 style="text-align: center; margin-bottom: 30px;">수강신청 취소 및
+				환불 요청</h1>
+
+			<!-- 수강 정보 카드 -->
+			<div class="class-info-card">
+				<h2 th:text="${enrollment.class_title}">클래스 제목</h2>
+				<div class="info-row">
+					<span class="info-label">제공자</span> <span class="info-value"
+						th:text="${enrollment.provider_name}">제공자명</span>
+				</div>
+				<div class="info-row">
+					<span class="info-label">수강 날짜</span> <span class="info-value"
+						th:text="${#dates.format(enrollment.completed_at, 'yyyy년 MM월 dd일')}">날짜</span>
+				</div>
+				<div class="info-row">
+					<span class="info-label">결제 금액</span> <span class="info-value"
+						th:text="|${#numbers.formatInteger(enrollment.price, 3, 'COMMA')}원|">금액</span>
+				</div>
+			</div>
+
+			<!-- 환불 사유 입력 -->
+			<div class="calendar-card">
+				<h3>환불 사유를 입력해주세요</h3>
+				<form th:action="@{/coach/refundRequest}" method="post"
+					id="refundForm">
+					<input type="hidden" name="enroll_idx"
+						th:value="${enrollment.enroll_idx}" /> <input type="hidden"
+						name="class_idx" th:value="${enrollment.class_idx}" />
+					<textarea name="payload" rows="5" placeholder="환불 사유를 상세히 작성해주세요."
+						style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: vertical;"
+						required></textarea>
+
+					<div class="enrollment-actions" style="margin-top: 20px;">
+						<button type="button" class="btn btn-secondary"
+							onclick="history.back()">취소</button>
+						<button type="submit" class="btn btn-primary"
+							onclick="return confirm('수강신청을 취소하고 환불을 요청하시겠습니까?');">
+							환불 요청하기</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
+</html>

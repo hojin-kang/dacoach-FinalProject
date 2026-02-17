@@ -107,4 +107,10 @@ public interface CoachClassMapper {
 
 	// 결제 내역 저장 (수강신청 결제)
 	int insertPay(PayDTO dto);
+
+	// 환불요청: user_idx + class_idx로 가장 최근 tid 조회
+	String findTidByUserAndClass(Map<String, Object> param);
+
+	// 환불요청: pay_status 업데이트 (status=환불요청, payload=사유)
+	int updatePayStatusForRefund(Map<String, Object> param);
 }

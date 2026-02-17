@@ -423,26 +423,36 @@
 		resultType="int">
 		SELECT
 		CASE
-		-- 오늘부터 종료일까지 남은 날짜 수
-		WHEN (SELECT GREATEST(0,
-		TRUNC(END_DATE) - TRUNC(SYSDATE) + 1)
-		FROM CLASS
-		WHERE CLASS_IDX =
-		#{class_idx})
-		-- 오늘 이후 이미 신청한 날짜 수
-		= (SELECT COUNT(*)
-		FROM
-		CLASS_ENROLLMENT
-		WHERE CLASS_IDX = #{class_idx}
-		AND USER_IDX =
-		#{user_idx}
-		AND STATUS = 'CONFIRMED'
-		AND TRUNC(COMPLETED_AT) >=
-		TRUNC(SYSDATE))
-		THEN 1 -- 신청 가능한 모든 날짜 신청 완료
-		ELSE 0 -- 아직 신청 가능한 날짜 있음
+		WHEN total.cnt > 0 AND total.cnt = (my_enrolled.cnt + full_dates.cnt) THEN
+		1
+		ELSE 0
 		END
-		FROM DUAL
+		FROM
+		(SELECT TRUNC(END_DATE) - TRUNC(START_DATE) + 1 AS cnt
+		FROM CLASS
+		WHERE CLASS_IDX = #{class_idx}) total,
+		(SELECT COUNT(*) AS cnt
+		FROM CLASS_ENROLLMENT
+		WHERE CLASS_IDX = #{class_idx}
+		AND USER_IDX = #{user_idx}
+		AND STATUS = 'CONFIRMED') my_enrolled,
+		(SELECT COUNT(*) AS cnt
+		FROM (
+		SELECT TRUNC(COMPLETED_AT) AS dt, COUNT(*) AS day_cnt
+		FROM CLASS_ENROLLMENT
+		WHERE CLASS_IDX = #{class_idx}
+		AND STATUS = 'CONFIRMED'
+		GROUP BY TRUNC(COMPLETED_AT)
+		HAVING COUNT(*) >= (SELECT MAX_USER_CNT FROM CLASS WHERE CLASS_IDX =
+		#{class_idx})
+		) full_day
+		WHERE full_day.dt NOT IN (
+		SELECT TRUNC(COMPLETED_AT)
+		FROM CLASS_ENROLLMENT
+		WHERE CLASS_IDX = #{class_idx}
+		AND USER_IDX = #{user_idx}
+		AND STATUS = 'CONFIRMED'
+		)) full_dates
 	</select>
 
 	<!-- 사용자가 해당 클래스에 신청한 날짜 목록 조회 (YYYY-MM-DD 문자열) -->
@@ -627,5 +637,28 @@
 		#{pay_type, jdbcType=VARCHAR}
 		)
 	</insert>
+
+
+	<!-- 환불요청: user_idx + class_idx로 가장 최근 tid 조회 -->
+	<select id="findTidByUserAndClass" parameterType="map"
+		resultType="string">
+		SELECT TID FROM (
+		SELECT p.TID
+		FROM PAY p
+		WHERE p.PARTNER_USER_ID = #{user_idx}
+		AND p.ITEM_NAME LIKE '%' || #{class_title} || '%'
+		AND p.PAY_TYPE = 'CLASS'
+		ORDER BY p.APPROVED_AT DESC
+		) WHERE ROWNUM = 1
+	</select>
+
+	<!-- 환불요청: pay_status 업데이트 -->
+	<update id="updatePayStatusForRefund" parameterType="map">
+		UPDATE
+		PAY_STATUS
+		SET STATUS = '환불요청',
+		PAYLOAD = #{payload}
+		WHERE TID = #{tid}
+	</update>
 
 </mapper>
