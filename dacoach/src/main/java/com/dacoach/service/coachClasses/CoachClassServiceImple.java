@@ -342,4 +342,36 @@ public class CoachClassServiceImple implements CoachClassService {
 		if (enrollResult <= 0)
 			throw new RuntimeException("ENROLLMENT insert failed");
 	}
+
+	@Override
+	@Transactional
+	public void requestRefund(int enroll_idx, int user_idx, String payload) throws Exception {
+
+		// 1) 수강신청 상세 조회 (class_idx, class_title 필요)
+		ClassEnrollmentDTO enrollment = classMapper.selectEnrollmentDetail(enroll_idx);
+		if (enrollment == null)
+			throw new IllegalArgumentException("수강신청 내역을 찾을 수 없습니다.");
+
+		// 2) CLASS_ENROLLMENT status = CANCELLED
+		Map<String, Object> cancelParam = new HashMap<>();
+		cancelParam.put("enroll_idx", enroll_idx);
+		cancelParam.put("status", "CANCELLED");
+		classMapper.updateEnrollmentStatus(cancelParam);
+
+		// 3) user_idx + class_title로 가장 최근 tid 조회
+		CoachClassDTO classInfo = classMapper.getClassDetail(enrollment.getClass_idx());
+		Map<String, Object> tidParam = new HashMap<>();
+		tidParam.put("user_idx", String.valueOf(user_idx));
+		tidParam.put("class_title", classInfo.getTitle());
+		String tid = classMapper.findTidByUserAndClass(tidParam);
+
+		if (tid == null)
+			throw new RuntimeException("결제 내역을 찾을 수 없습니다.");
+
+		// 4) PAY_STATUS 업데이트 (status=환불요청, payload=사유)
+		Map<String, Object> refundParam = new HashMap<>();
+		refundParam.put("tid", tid);
+		refundParam.put("payload", payload);
+		classMapper.updatePayStatusForRefund(refundParam);
+	}
 }

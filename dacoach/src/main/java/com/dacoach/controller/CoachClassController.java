@@ -422,6 +422,62 @@ public class CoachClassController {
 		return response; //
 	}
 
+	/**
+	 * 환불요청 페이지
+	 */
+	@GetMapping("/coach/refundForm")
+	public ModelAndView refundForm(@RequestParam("enrollIdx") int enrollIdx, HttpSession session) throws Exception {
+		ModelAndView mav = new ModelAndView();
+
+		Integer userIdx = (Integer) session.getAttribute("user_idx");
+		if (userIdx == null) {
+			mav.setViewName("redirect:/login");
+			return mav;
+		}
+
+		var enrollment = classService.getEnrollmentDetail(enrollIdx);
+		if (enrollment == null) {
+			mav.setViewName("redirect:/coach/myEnrollment");
+			return mav;
+		}
+
+		mav.addObject("enrollment", enrollment);
+		mav.setViewName("coach/classes/refundRequest");
+		return mav;
+	}
+
+	/**
+	 * 환불요청 처리 (POST)
+	 */
+	@PostMapping("/coach/refundRequest")
+	public ModelAndView refundRequest(@RequestParam("enroll_idx") int enrollIdx,
+			@RequestParam("class_idx") int classIdx, @RequestParam("payload") String payload, HttpSession session)
+			throws Exception {
+
+		ModelAndView mav = new ModelAndView();
+
+		Integer userIdx = (Integer) session.getAttribute("user_idx");
+		if (userIdx == null) {
+			mav.setViewName("redirect:/login");
+			return mav;
+		}
+
+		try {
+			classService.requestRefund(enrollIdx, userIdx, payload);
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav.addObject("msg", "환불 요청 중 오류가 발생했습니다: " + e.getMessage());
+			mav.addObject("url", "/coach/myEnrollment");
+			mav.setViewName("alert");
+			return mav;
+		}
+
+		mav.addObject("msg", "수강신청 취소되었습니다. 환불은 관리자에 의해 빠른 시일 내에 진행해드리겠습니다.");
+		mav.addObject("url", "/coach/myEnrollment");
+		mav.setViewName("alert");
+		return mav;
+	}
+
 	@PostMapping("/class/unlike")
 	@ResponseBody
 	public Map<String, String> unlikeCoach(@RequestBody Map<String, Integer> params, HttpSession session) {
