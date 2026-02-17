@@ -25,9 +25,9 @@
   </select>
   
   <update id="upPayStatus">
-  	update pay_status set status=#{status} ,
-  	payload = #{payload} where tid= #{tid}
-  </update>
+    update pay_status set status=#{status},
+    payload = #{payload, jdbcType=VARCHAR} where tid=#{tid}
+</update>
   
   <insert id="cancelOk">
   	insert into pay_cancel values (
@@ -35,7 +35,7 @@
   		#{partner_order_id},
   		#{partner_user_id},
   		#{canceled_at},
-  		#{payload},
+  		#{payload, jdbcType=VARCHAR},
   		#{approved_cancel_amount.total},
   		#{approved_cancel_amount.tax_free},
   		#{approved_cancel_amount.vat},

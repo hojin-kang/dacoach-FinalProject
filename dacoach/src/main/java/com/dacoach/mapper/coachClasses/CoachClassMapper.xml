@@ -580,15 +580,52 @@
 		AND
 		TRUNC(COMPLETED_AT) &lt;= TRUNC(SYSDATE)
 	</select>
-	
+
 	<insert id="likeClass" parameterType="HashMap">
-        INSERT INTO likes_class (likes_class_idx, liker_idx, class_idx)
-        VALUES (seq_likes_class.nextval,#{login_idx}, #{target_idx})
-    </insert>
-    <delete id="unlikeClass" parameterType="HashMap">
-        DELETE FROM likes_class
-        WHERE liker_idx=#{login_idx}
-        AND class_idx=#{target_idx}
-    </delete>
+		INSERT INTO likes_class (likes_class_idx, liker_idx, class_idx)
+		VALUES (seq_likes_class.nextval,#{login_idx}, #{target_idx})
+	</insert>
+	<delete id="unlikeClass" parameterType="HashMap">
+		DELETE FROM likes_class
+		WHERE liker_idx=#{login_idx}
+		AND class_idx=#{target_idx}
+	</delete>
+
+
+	<!-- 수강신청 결제 내역 저장 -->
+	<insert id="insertPay"
+		parameterType="com.dacoach.kakaopay.PayDTO">
+		<selectKey keyProperty="pay_idx" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_PAY.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO PAY (
+		PAY_IDX, TID, CID, SID,
+		PARTNER_ORDER_ID, PARTNER_USER_ID,
+		ITEM_NAME, ITEM_CODE, QUANTITY,
+		CREATED_AT, APPROVED_AT,
+		TOTAL, TAX_FREE, VAT, POINT, DISCOUNT, GREEN_DEPOSIT,
+		PAY_TYPE
+		) VALUES (
+		#{pay_idx},
+		#{tid, jdbcType=VARCHAR},
+		#{cid, jdbcType=VARCHAR},
+		#{sid, jdbcType=VARCHAR},
+		#{partner_order_id, jdbcType=VARCHAR},
+		#{partner_user_id, jdbcType=VARCHAR},
+		#{item_name, jdbcType=VARCHAR},
+		#{item_code, jdbcType=VARCHAR},
+		#{quantity, jdbcType=NUMERIC},
+		#{created_at, jdbcType=VARCHAR},
+		#{approved_at, jdbcType=VARCHAR},
+		#{total, jdbcType=NUMERIC},
+		#{tax_free, jdbcType=NUMERIC},
+		#{vat, jdbcType=NUMERIC},
+		#{point, jdbcType=NUMERIC},
+		#{discount, jdbcType=NUMERIC},
+		#{green_deposit, jdbcType=NUMERIC},
+		#{pay_type, jdbcType=VARCHAR}
+		)
+	</insert>
 
 </mapper>

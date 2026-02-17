@@ -215,40 +215,6 @@ public class CoachClassController {
 	}
 
 	/**
-	 * 수강 신청 처리 (POST)
-	 */
-	@PostMapping("/coach/enrollClass")
-	public String enrollClass(@RequestParam("classId") int classId,
-			@RequestParam("enrollmentDate") String enrollmentDate, HttpSession session,
-			RedirectAttributes redirectAttributes) throws Exception {
-
-		Integer userIdx = (Integer) session.getAttribute("user_idx");
-		if (userIdx == null) {
-			return "redirect:/login";
-		}
-
-		try {
-			boolean success = classService.enrollClass(classId, userIdx, enrollmentDate);
-
-			if (success) {
-				redirectAttributes.addFlashAttribute("message", "수강 신청이 완료되었습니다.");
-				redirectAttributes.addFlashAttribute("messageType", "success");
-			} else {
-				redirectAttributes.addFlashAttribute("message", "수강 신청에 실패했습니다.");
-				redirectAttributes.addFlashAttribute("messageType", "error");
-			}
-		} catch (IllegalStateException e) {
-			redirectAttributes.addFlashAttribute("message", e.getMessage());
-			redirectAttributes.addFlashAttribute("messageType", "error");
-		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("message", "오류가 발생했습니다: " + e.getMessage());
-			redirectAttributes.addFlashAttribute("messageType", "error");
-		}
-
-		return "redirect:/coach/classDetail?id=" + classId;
-	}
-
-	/**
 	 * 내 수강 신청 목록 조회 URL: /coach/myEnrollment View: coach/classes/myEnrollment.html
 	 */
 	@GetMapping("/coach/myEnrollment")
@@ -428,57 +394,58 @@ public class CoachClassController {
 
 		return "redirect:/coach/classDetail?id=" + classId;
 	}
-	
+
 	@PostMapping("/class/like")
 	@ResponseBody
 	public Map<String, String> likeCoach(@RequestBody Map<String, Integer> params, HttpSession session) {
-	    Map<String, String> response = new HashMap<>();
-	    Integer login_idx = (Integer) session.getAttribute("user_idx");
+		Map<String, String> response = new HashMap<>();
+		Integer login_idx = (Integer) session.getAttribute("user_idx");
 
-	    if (login_idx == null) {
-	        response.put("status", "login_required");
-	        return response;
-	    }
+		if (login_idx == null) {
+			response.put("status", "login_required");
+			return response;
+		}
 
-	    try {
-	        int target_idx = params.get("target_idx");
-	        int result = classService.likeClass(login_idx, target_idx);
-	        
-	        if (result > 0) {
-	            response.put("status", "success");
-	        } else {
-	            response.put("status", "error");
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        response.put("status", "error");
-	    }
-	    return response; // 
+		try {
+			int target_idx = params.get("target_idx");
+			int result = classService.likeClass(login_idx, target_idx);
+
+			if (result > 0) {
+				response.put("status", "success");
+			} else {
+				response.put("status", "error");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", "error");
+		}
+		return response; //
 	}
+
 	@PostMapping("/class/unlike")
 	@ResponseBody
 	public Map<String, String> unlikeCoach(@RequestBody Map<String, Integer> params, HttpSession session) {
-	    Map<String, String> response = new HashMap<>();
-	    Integer login_idx = (Integer) session.getAttribute("user_idx");
+		Map<String, String> response = new HashMap<>();
+		Integer login_idx = (Integer) session.getAttribute("user_idx");
 
-	    if (login_idx == null) {
-	        response.put("status", "login_required");
-	        return response;
-	    }
+		if (login_idx == null) {
+			response.put("status", "login_required");
+			return response;
+		}
 
-	    try {
-	        int target_idx = params.get("target_idx");
-	        int result = classService.unlikeClass(login_idx, target_idx);
-	        
-	        if (result > 0) {
-	            response.put("status", "success");
-	        } else {
-	            response.put("status", "error");
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        response.put("status", "error");
-	    }
-	    return response; // 
+		try {
+			int target_idx = params.get("target_idx");
+			int result = classService.unlikeClass(login_idx, target_idx);
+
+			if (result > 0) {
+				response.put("status", "success");
+			} else {
+				response.put("status", "error");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", "error");
+		}
+		return response; //
 	}
 }
