@@ -62,7 +62,7 @@ public interface AdminService {
 	public int updateMinorField(Map<String, Object> params) throws Exception;
 	
 	//신고관리
-	public List<Map<String,Object>> reportList() throws Exception;
+	public List<Map<String,Object>> reportList(String status) throws Exception;
 	public Map<String, Object> reportContent(int report_idx) throws Exception;
 	public int getCoachIdx (int user_idx) throws Exception;
 	public int getCompanyIdx (int user_idx) throws Exception;

@@ -148,13 +148,13 @@
                 <p class="list-sub-text">사용자 신고 내역을 검토하고 조치합니다.</p>
             </div>
             <div class="filter-bar">
-                <select class="filter-select">
-                    <option>전체 상태</option>
-                    <option>접수</option>
-                    <option>완료</option>
-                    <option>반려</option>
-                </select>
-            </div>
+				<select class="filter-select" id="statusFilter" onchange="filterReport()">
+					<option value="" th:selected="${selectedStatus == null || selectedStatus == ''}">전체상태</option>
+					<option value="WAIT" th:selected="${selectedStatus == 'WAIT'}">접수</option>
+					<option value="APPROVE" th:selected="${selectedStatus == 'APPROVE'}">완료</option>
+					<option value="REJECT" th:selected="${selectedStatus == 'REJECT'}">반려</option>
+				</select>
+			</div>
         </div>
 
         <table class="report-table">
@@ -180,8 +180,8 @@
                     </td>
                     <td><span class="status-badge"
 						th:classappend="${item.STATUS == 'WAIT' ? 'status-pending' : (item.STATUS == 'REJECT' ? 'status-rejected' : 'status-resolved')}"
-						th:text="${item.STATUS == 'WAIT' ? '대기' : (item.STATUS == 'REJECT' ? '반려' : '완료')}">
-							대기 </span></td>
+						th:text="${item.STATUS == 'WAIT' ? '접수' : (item.STATUS == 'REJECT' ? '반려' : '완료')}">
+							접수 </span></td>
                     <td th:text="${#strings.substring(item.CREATED_AT, 0, 10)}">2026-02-13</td>
                 </tr>
 
@@ -202,5 +202,18 @@
             <div class="page-btn"> > </div>
         </div>
     </div>
+	<script>
+		function filterReport() {
+			const status = document.getElementById('statusFilter').value;
+			const baseUrl = '/admin/report';
+
+			if (status && status !== "") {
+				location.href = baseUrl + '?status=' + status;
+			} else {
+				location.href = baseUrl;
+			}
+		}
+	</script>
+
 </div>
 </html>
