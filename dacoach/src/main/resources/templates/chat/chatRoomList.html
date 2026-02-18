@@ -82,9 +82,9 @@
           <div class="chatInputRow">
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
-			    <a href="/schedule/write" class="quickItem" th:if="${isLeft == false && status == 'MATCHED'}">
+			    <a th:href="@{/dicipline(target_idx=${activeRoom.otherIdx})}" class="quickItem" th:if="${isLeft == false && status == 'MATCHED'}">
 			      <img class="qiIcon" src="/img/icon/write.png">
-			      <span class="qiText">서약서<br>작성</span>
+			      <span class="qiText">서약<br>하기</span>
 			    </a>
 					<th:block th:if="${isLeft == false && status != 'MATCHED'}" th:switch="${status}">
 						<button type="button" th:case="'RECEIVED'" class="btn-match stop-card" th:onclick="applyAction('A_MATCH', [[${target_idx}]])">
@@ -97,17 +97,17 @@
 							매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
 						 </button>
 					</th:block>			    
-			    <a href="/schedule/create" class="quickItem" th:if="${isLeft == false}">
+			    <a th:href="@{/schedule/create(agreement_idx=${agreement_idx})}" class="quickItem" th:if="${isLeft == false && status == 'MATCHED' && agreement_idx != null}">
 			      <img class="qiIcon" src="/img/icon/calendarPlus.png">
 			      <span class="qiText">일정<br>등록</span>
 			    </a>
-			    <a href="/schedule/list" class="quickItem">
+			    <a th:href="@{/schedule/list(agreement_idx=${agreement_idx})}" class="quickItem" th:if="${status == 'MATCHED' && agreement_idx != null}">
 			      <img class="qiIcon" src="/img/icon/calendar.png">
 			      <span class="qiText">모든<br>일정</span>
 			    </a>
 			    <button type="button" class="quickItem danger" id="leaveRoomBtn">
 			      <img class="qiIcon" src="/img/icon/exit.png">
-			      <span class="qiText" th:unless="${status=='MATCHED'}">채팅방<br>나가기</span>
+			      <span class="qiText" th:unless="${status=='MATCHED'}">채팅<br>종료</span>
 			      <span class="qiText" th:if="${status=='MATCHED'}">매칭<br>종료</span>
 			    </button>
 			</div>

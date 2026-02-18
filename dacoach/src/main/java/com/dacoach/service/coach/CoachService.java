@@ -6,8 +6,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.dicip.DicipDTO;
 import com.dacoach.model.minorField.MinorFieldDTO;
 import com.dacoach.model.review.ReviewClassDTO;
+import com.dacoach.model.schedule.ScheduleDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CoachService {
@@ -60,5 +62,15 @@ public interface CoachService {
     List<String> getCoachReviewTags() throws Exception;
     
     boolean writeCoachReview(ReviewClassDTO review) throws Exception;
+    
+    public DicipDTO getDicip(int user_idx, int target_idx) throws Exception;
+    
+    public int writeDicip(DicipDTO dto) throws Exception;
+    
+    public int agreeDicip(int agreement_idx) throws Exception;
+    
+    public int createSchedule(ScheduleDTO dto) throws Exception;
+    
+    public List<ScheduleDTO> getSchedule(int agreement_idx) throws Exception;
 
 }

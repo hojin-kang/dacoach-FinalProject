@@ -6,8 +6,10 @@ import org.apache.ibatis.annotations.Param;
 
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.dicip.DicipDTO;
 import com.dacoach.model.minorField.MinorFieldDTO;
 import com.dacoach.model.review.ReviewClassDTO;
+import com.dacoach.model.schedule.ScheduleDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CoachMapper {
@@ -97,4 +99,14 @@ public interface CoachMapper {
     List<String> selectCoachReviewTags() throws Exception;
     
     public int insertCoachReview(ReviewClassDTO dto) throws Exception;
+    
+    public DicipDTO getDicip(HashMap map) throws Exception;
+    
+    public int writeDicip(DicipDTO dto) throws Exception;
+    
+    public int agreeDicip(int agreement_idx) throws Exception;
+    
+    public int createSchedule(ScheduleDTO dto) throws Exception;
+    
+    public List<ScheduleDTO> getSchedule(int agreement_idx) throws Exception;
 }

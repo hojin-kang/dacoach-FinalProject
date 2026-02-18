@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.dacoach.model.chat.ChatRoomDTO;
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.dicip.DicipDTO;
 import com.dacoach.service.chat.ChatService;
 import com.dacoach.service.coach.CoachService;
 
@@ -33,7 +34,7 @@ public class ChatController {
 		Integer my = (Integer) session.getAttribute("user_idx");
 		if (my == null)
 			return "redirect:/login"; 
-
+		
 		model.addAttribute("rooms", chatService.listRooms(my));
 		model.addAttribute("myIdx", my);
 		model.addAttribute("activeRoom", null);
@@ -75,6 +76,17 @@ public class ChatController {
 		
 		boolean isLeft=chatService.isLeft(roomIdx, my);
 		String status=chatService.isMatched(my, target_idx);
+		
+		int user_idx=my.intValue();
+		try {
+			DicipDTO dto = coachService.getDicip(user_idx, target_idx);
+			if(dto!=null && dto.getStatus().equals("Y")) {
+				model.addAttribute("agreement_idx", dto.getAgreement_idx());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		model.addAttribute("isLeft", isLeft);
 		model.addAttribute("activeRoom", activeRoom);

@@ -399,4 +399,44 @@
 		SYSDATE
 		)
 	</insert>
+	<select id="getDicip" parameterType="map" resultType="com.dacoach.model.dicip.DicipDTO">
+        select * from agreement
+        where (writer_idx = #{user_idx} and receiver_idx = #{target_idx})
+        or (writer_idx = #{target_idx} and receiver_idx = #{user_idx})
+    </select>
+    <insert id="writeDicip" parameterType="com.dacoach.model.dicip.DicipDTO">
+        insert into agreement (
+        agreement_idx, writer_idx, receiver_idx, content, status, created_at
+        ) values (
+        seq_agreement.nextval,
+        #{writer_idx},
+        #{receiver_idx},
+        #{content},
+        'N',
+        sysdate
+        )
+     </insert>
+     <update id="agreeDicip" parameterType="int">
+        update agreement set status = 'Y', created_at = sysdate
+        where agreement_idx = #{agreement_idx}
+     </update>
+     <insert id="createSchedule" parameterType="com.dacoach.model.schedule.ScheduleDTO">
+        insert into schedule (
+        schedule_idx, agreement_idx, name, content, start_date, end_date, location, created_at
+        ) values (
+        seq_schedule.nextval,
+        #{agreement_idx},
+        #{name},
+        #{content},
+        #{start_date, jdbcType=TIMESTAMP},
+        #{end_date, jdbcType=TIMESTAMP},
+        #{location},
+        sysdate
+        )
+     </insert>
+     <select id="getSchedule" parameterType="int" resultType="com.dacoach.model.schedule.ScheduleDTO">
+        select * from schedule
+        where agreement_idx = #{agreement_idx}
+        order by start_date asc
+     </select>
 </mapper>
