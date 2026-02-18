@@ -1830,35 +1830,47 @@
 }
 
 /* 탭 */
-.detailTabs {
-	display: flex;
-	gap: 24px;
-	margin-top: 24px;
+#detail, #reviews {
+	scroll-margin-top: 140px;
 }
 
-.detailTabs .tab {
-	font-size: 16px;
-	font-weight: 500;
-	color: #888;
+.detail-tabs {
+	position: sticky;
+	top: 73px;
+	z-index: 50;
+	background: #fff;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.detail-tabs .tab {
+	position: relative;
+	padding: 13px 10px;
+	font-size: 15px;
+	font-weight: 400;
+	color: #6b7280;
 	text-decoration: none;
-	padding-bottom: 8px;
-	border-bottom: 2px solid transparent;
-	transition: color 0.2s, border-color 0.2s;
 }
 
-.detailTabs .tab.active {
+.detail-tabs .tab.active {
+	font-weight: 700;
+	color: #111827;
+}
+
+.detail-tabs .tab.active::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0px;
+	height: 2px;
+	border-radius: 999px;
+	background: #111827;
+}
+
+.detail-tabs .tab:hover {
 	color: #333;
-	border-bottom-color: #333;
-}
-
-.detailTabs .tab:hover {
-	color: #333;
-}
-
-.divider {
-	margin: 16px 0 32px;
-	border: none;
-	border-top: 1px solid #e0e0e0;
 }
 
 /* 2컬럼 레이아웃 */

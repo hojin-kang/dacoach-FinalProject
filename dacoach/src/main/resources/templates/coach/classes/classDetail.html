@@ -83,13 +83,12 @@
 			</section>
 
 			<!-- ===== 탭(상세정보 / 클래스후기) ===== -->
-			<nav class="detailTabs">
-				<a class="tab active" href="#detail">상세정보</a>
-				<!-- ✅ 여기 누르면 아래 후기 블록으로 앵커 이동 -->
-				<a class="tab" href="#reviews">클래스 후기</a>
+			<nav class="detail-tabs">
+				<a class="tab active" href="#detail">상세정보</a> <a class="tab"
+					href="#reviews">클래스 후기</a>
 			</nav>
 
-			<hr class="divider" />
+
 
 			<div class="classDetailPage">
 
@@ -315,16 +314,16 @@
     });
     
     // ✅ 탭 active 토글
-    const tabs = document.querySelectorAll('.detailTabs .tab');
+    const tabs = document.querySelectorAll('.detail-tabs .tab');
 
     function setActiveByHash() {
       const hash = window.location.hash;
       tabs.forEach(t => t.classList.remove('active'));
 
       if (hash === '#reviews') {
-        document.querySelector('.detailTabs .tab[href="#reviews"]')?.classList.add('active');
+        document.querySelector('.detail-tabs .tab[href="#reviews"]')?.classList.add('active');
       } else {
-        document.querySelector('.detailTabs .tab[href="#detail"]')?.classList.add('active');
+        document.querySelector('.detail-tabs .tab[href="#detail"]')?.classList.add('active');
       }
     }
 
