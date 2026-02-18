@@ -372,4 +372,31 @@
         select * from cert
         where user_idx = #{user_idx}
     </select>
+    <select id="selectCoachReviewTags" resultType="string">
+		SELECT CONTENT
+		FROM REVIEW_TAG
+		WHERE REVIEW_TYPE = 'COACH'
+		ORDER BY REVIEW_TAG_IDX
+	</select>
+		<insert id="insertCoachReview"
+		parameterType="com.dacoach.model.review.ReviewClassDTO">
+		
+		INSERT INTO REVIEW_COACH (
+		REVIEW_COACH_IDX,
+		REVIEWER_IDX,
+		REVIEWEE_IDX,
+		RATING,
+		TAG,
+		CONTENT,
+		CREATED_AT
+		) VALUES (
+		SEQ_REVIEW_COACH.NEXTVAL,
+		#{reviewer_idx},
+		#{class_idx},
+		#{rating},
+		#{tag},
+		#{content},
+		SYSDATE
+		)
+	</insert>
 </mapper>

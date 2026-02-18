@@ -202,7 +202,7 @@
     </update>
     <update id="acceptMatch" parameterType="map">
     	update match
-    	set is_match = 'Y'
+    	set is_match = 'Y', is_chat = 'Y'
     	where (match_applicant = #{target} and user1_idx = #{me})
     	or (match_applicant = #{target} and user2_idx = #{me})
     </update>

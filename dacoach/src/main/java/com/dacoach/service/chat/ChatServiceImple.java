@@ -194,4 +194,39 @@ public class ChatServiceImple implements ChatService {
 		return chatMapper.updateChatStatus(roomIdx);
 	}
 
+	@Override
+	public String isMatched(int myIdx, int targetIdx) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("my_idx", myIdx);
+		map.put("target_idx", targetIdx);
+		HashMap result = chatMapper.isMatched(map);
+		
+		String isMatched=(String) result.get("IS_MATCH");
+		
+		Object applicantObj = result.get("MATCH_APPLICANT");
+
+		int applicant = 0;
+		if (applicantObj != null) {
+		    applicant = Integer.parseInt(String.valueOf(applicantObj));
+		}
+		
+		if(isMatched.equals("Y")) {
+			return "MATCHED";
+		}else if(applicant==myIdx) {
+			return "APPLIED";
+		}else if(applicant==targetIdx) {
+			return "RECEIVED";
+		}else {
+			return "NO_MATCH";
+		}
+	}
+
+	@Override
+	public int deleteMatch(int user_idx, int target_idx) {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("user_idx", user_idx);
+		map.put("target_idx", target_idx);
+		return chatMapper.deleteMatch(map);
+	}
+
 }

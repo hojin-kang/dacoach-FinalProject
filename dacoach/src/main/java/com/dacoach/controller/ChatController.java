@@ -5,12 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.dacoach.model.chat.ChatRoomDTO;
+import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.service.chat.ChatService;
+import com.dacoach.service.coach.CoachService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +21,10 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
-
+	
 	private final ChatService chatService;
+	@Autowired
+	private CoachService coachService;
 
 	@GetMapping("/chat")
 	public String chatMain(HttpSession session, Model model,
@@ -66,14 +71,17 @@ public class ChatController {
 
 		ChatRoomDTO activeRoom = chatService.selectRoomByIdx(roomIdx, my);
 		
+		int target_idx=activeRoom.getOtherIdx();
+		
 		boolean isLeft=chatService.isLeft(roomIdx, my);
+		String status=chatService.isMatched(my, target_idx);
 		
 		model.addAttribute("isLeft", isLeft);
-		System.out.println(isLeft);
 		model.addAttribute("activeRoom", activeRoom);
-		
 		model.addAttribute("activeRoomIdx", roomIdx);
 		model.addAttribute("myIdx", my);
+		model.addAttribute("target_idx", target_idx);
+		model.addAttribute("status", status);
 		model.addAttribute("tab", tab);
 
 		return "chat/chatRoomList";
@@ -97,10 +105,11 @@ public class ChatController {
 	    if(my == null) return "NOLOGIN";
 	    
 	    ChatRoomDTO room=chatService.selectRoomByIdx(roomIdx, my);
+	    String status=chatService.isMatched(my, room.getOtherIdx());
 
 	    boolean ok = chatService.leaveRoom(roomIdx, my);
-	    chatService.updateChatStatus(roomIdx);
 	    
+	    chatService.updateChatStatus(roomIdx);
 	    int result=chatService.deleteChat(roomIdx);
 	    if (result > 0) {
 	    	
@@ -116,7 +125,26 @@ public class ChatController {
 	        } catch (IOException e) {
 	            System.err.println("파일 삭제 중 오류 발생: " + e.getMessage());
 	        }
+	        int delete=chatService.deleteMatch(my, room.getOtherIdx());
+	        
 	    }
+	    
+		try {
+			
+			
+			CoachDTO dto = coachService.getCoachInfo(room.getOtherIdx());
+			if(dto!=null && dto.getUser_idx()==room.getOtherIdx() && status.equals("MATCHED")) {
+	        	session.setAttribute("reviewDispo", true);
+	            long expiryTime = System.currentTimeMillis() + (60 * 60 * 1000);
+	            session.setAttribute("reviewExpiry", expiryTime);
+	            return ""+room.getOtherIdx();
+	        }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+        
 	    return ok ? "OK" : "FAIL";
 	}
 }

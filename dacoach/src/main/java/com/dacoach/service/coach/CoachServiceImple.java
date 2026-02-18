@@ -16,6 +16,7 @@ import com.dacoach.mapper.coach.CoachMapper;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.minorField.MinorFieldDTO;
+import com.dacoach.model.review.ReviewClassDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.file.FileUpload;
 
@@ -314,5 +315,17 @@ public class CoachServiceImple implements CoachService {
 	public List<CertDTO> getCoachCertList(int user_idx) throws Exception {
 		List<CertDTO> allLists=coachMapper.getCoachCertList(user_idx);
 		return allLists;
+	}
+
+	@Override
+	public List<String> getCoachReviewTags() throws Exception {
+		// TODO Auto-generated method stub
+		return coachMapper.selectCoachReviewTags();
+	}
+
+	@Override
+	public boolean writeCoachReview(ReviewClassDTO review) throws Exception {
+		int result=coachMapper.insertCoachReview(review);
+		return result>0?true:false;
 	}
 }

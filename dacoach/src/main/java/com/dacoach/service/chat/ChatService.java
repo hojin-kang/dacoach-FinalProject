@@ -27,4 +27,8 @@ public interface ChatService {
     public int deleteChat(int roomIdx);
     
     public int updateChatStatus(int roomIdx);
+    
+    String isMatched(int myIdx, int targetIdx);
+    
+    int deleteMatch(int user_idx, int target_idx);
 }
