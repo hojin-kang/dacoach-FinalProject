@@ -513,3 +513,283 @@ input[type="submit"]:active:not(:disabled) {
         font-size: 0.8125rem;
     }
 }
+
+/* ==================== 
+   MyInfo Page Styles 
+==================== */
+/* 이미지 미리보기 영역 */
+#imgArea {
+    width: 140px;
+    height: 140px;
+    background: linear-gradient(135deg, var(--primary-light) 0%, #f1f5f9 100%);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 4px solid var(--bg-white);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#imgArea:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+#imgArea img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#imgArea::before {
+    content: '👤';
+    font-size: 48px;
+    opacity: 0.3;
+    position: absolute;
+}
+
+#imgArea:has(img)::before {
+    display: none;
+}
+
+/* 파일 입력 */
+#fileInput {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-gray);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 auto 32px;
+    display: block;
+}
+
+#fileInput:hover {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+#fileInput::file-selector-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+}
+
+#fileInput::file-selector-button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* 일반 입력 필드 */
+#companyForm input[type="text"] {
+    width: 100%;
+    border: 2px solid var(--border-color);
+    background-color: var(--bg-gray);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    box-sizing: border-box;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+}
+
+#companyForm input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--bg-white);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+#companyForm input[type="text"]:read-only {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* 제공 분야 섹션 */
+.provide {
+    margin-bottom: 32px;
+    padding: 24px;
+    background: var(--bg-gray);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-color);
+}
+
+#userProvide {
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--primary-light);
+    color: var(--primary-hover);
+    border-radius: var(--radius-full);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.provide select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-white);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    margin-bottom: 12px;
+}
+
+.provide select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--bg-white);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* 지역 섹션 */
+.region {
+    margin-bottom: 32px;
+}
+
+.region fieldset {
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    background: var(--bg-white);
+}
+
+.region fieldset legend {
+    padding: 0 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+#regionDiv {
+    margin-bottom: 12px;
+}
+
+.regionClass {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--bg-white);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin: 6px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.regionClass:hover {
+    background-color: var(--error-color);
+    color: white;
+    border-color: var(--error-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.regionClass::after {
+    content: ' ✕';
+    margin-left: 8px;
+    opacity: 0.5;
+}
+
+.regionClass:hover::after {
+    opacity: 1;
+}
+
+.region select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-gray);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    margin-bottom: 12px;
+}
+
+.region select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--bg-white);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.region input[type="text"] {
+    width: 100%;
+    border: 2px solid var(--border-color);
+    background-color: var(--bg-gray);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    box-sizing: border-box;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+}
+
+.region input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--bg-white);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.region input[type="button"] {
+    width: 100%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    margin-top: 12px;
+}
+
+.region input[type="button"]:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
