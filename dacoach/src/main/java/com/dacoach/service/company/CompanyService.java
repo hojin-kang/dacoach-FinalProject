@@ -3,6 +3,10 @@ package com.dacoach.service.company;
 import java.util.List;
 import java.util.Map;
 
+import com.dacoach.model.chat.ChatMessageDTO;
+import com.dacoach.model.chat.ChatRoomDTO;
+import com.dacoach.model.classes.ClassDTO;
+import com.dacoach.model.coachClasses.ClassEnrollmentDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.company.CompanyProvideDTO;
@@ -35,5 +39,9 @@ public interface CompanyService {
 	public int regionDel(CompanyRegionDTO dto) throws Exception;
 	public List<Map<String,Object>> getPayHistory(int user_idx) throws Exception;
 	public List<Map<String,Object>> getCoachList() throws Exception;
-	
+	public List<ClassDTO> getClass(int user_idx) throws Exception;
+	public List<ClassEnrollmentDTO> getUserClass(int class_idx) throws Exception;
+	public ChatRoomDTO getClassRoom(int roomIdx) throws Exception;
+	public ChatMessageDTO saveAndBuildBroadcast(ChatMessageDTO msg);
+	public String loadMessagesRawCustom(int roomIdx, int myIdx);
 }

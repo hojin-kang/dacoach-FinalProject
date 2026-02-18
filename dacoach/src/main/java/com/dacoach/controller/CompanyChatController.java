@@ -1,6 +1,7 @@
 package com.dacoach.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.dacoach.mapper.chat.ChatMapper;
 import com.dacoach.model.chat.ChatRoomDTO;
+import com.dacoach.model.coachClasses.ClassEnrollmentDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.chat.ChatService;
 import com.dacoach.service.company.CompanyService;
@@ -23,6 +26,7 @@ public class CompanyChatController {
 
 	private final ChatService chatService;
 	private final CompanyService companyService;
+	private final ChatMapper chatMapper;
 	
 	@GetMapping("/chat")
 	public String chatMain(HttpSession session, Model model,
@@ -34,6 +38,8 @@ public class CompanyChatController {
 		
 		try {	
 			model.addAttribute("userList",companyService.getCoachList());
+			
+			model.addAttribute("class",companyService.getClass(my));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,28 +61,57 @@ public class CompanyChatController {
 		Integer my = (Integer) session.getAttribute("user_idx");
 		if (my == null)
 			return "redirect:/login";
-
+		
+		if(tab.equals("CLASS")) {
+			targetIdx*=-1;
+		}
 		int roomIdx = chatService.getOrCreateRoom(my, targetIdx);
 
 		if (tab != null && !tab.isBlank()) {
-			return "redirect:/company/chat/room/" + roomIdx + "?tab=" + tab;
+			return "redirect:/company/chat/room/" + roomIdx + "?tab=" + tab +"&targetIdx="+targetIdx;
 		}
-		return "redirect:/company/chat/room/" + roomIdx;
+		return "redirect:/company/chat/room/" + roomIdx  +"?targetIdx="+targetIdx;
 	}
 
 	@GetMapping("/chat/room/{roomIdx}")
 	public String chatRoom(@PathVariable int roomIdx, @RequestParam(value = "tab", required = false) String tab,
-			HttpSession session, Model model) {
+			HttpSession session, Model model,Integer targetIdx) {
 
 		Integer my = (Integer) session.getAttribute("user_idx");
 		if (my == null)
 			return "redirect:/login";
-
+		
+		try {	
+			model.addAttribute("userList",companyService.getCoachList());
+			model.addAttribute("class",companyService.getClass(my));
+			if(tab.equalsIgnoreCase("CLASS")&&targetIdx!=null) {
+					
+				List<ClassEnrollmentDTO> userClass = companyService.getUserClass(targetIdx*-1);					
+				List<Integer> userClassRoom=new ArrayList<>();
+				for(int i=0;i<userClass.size();i++) {
+					ClassEnrollmentDTO dto=userClass.get(i);
+					int room=chatService.getOrCreateRoom(my, dto.getUser_idx());
+					
+					userClassRoom.add(room);
+				}
+				   userClassRoom.add(roomIdx);
+				model.addAttribute("userClassRoom",userClassRoom);
+				
+			}
+			ChatRoomDTO activeRoom = chatService.selectRoomByIdx(roomIdx, my);
+			if(activeRoom==null)activeRoom=companyService.getClassRoom(roomIdx);
+			model.addAttribute("activeRoom", activeRoom);
+		
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		model.addAttribute("rooms", chatService.listRooms(my));
-
-		ChatRoomDTO activeRoom = chatService.selectRoomByIdx(roomIdx, my);
-		model.addAttribute("activeRoom", activeRoom);
-
+		
+		
 		model.addAttribute("activeRoomIdx", roomIdx);
 		model.addAttribute("myIdx", my);
 		model.addAttribute("tab", tab);
@@ -84,13 +119,25 @@ public class CompanyChatController {
 		return "/company/chat/chatRoomList";
 	}
 
+	@PostMapping("/chat/room/{roomIdx}/read")
+	@ResponseBody
+	public String readRoom(@PathVariable int roomIdx, HttpSession session) {
+	    Integer my = (Integer) session.getAttribute("user_idx");
+	    if (my != null) {
+	        
+	        chatMapper.resetUnread(roomIdx, my); 
+	        return "OK";
+	    }
+	    return "FAIL";
+	}
+	
 	@GetMapping(value = "/chat/messages/{roomIdx}", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String messages(@PathVariable int roomIdx, HttpSession session) {
 		Integer my = (Integer) session.getAttribute("user_idx");
 		if (my == null)
 			return "";
-		return chatService.loadMessagesRaw(roomIdx, my);
+		return companyService.loadMessagesRawCustom(roomIdx, my);
 	}
 	
 	
