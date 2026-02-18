@@ -39,7 +39,7 @@
             <div class="roomAvatar">
               <img th:src="${r.otherPhoto == 'default_profile.png'} 
               ? @{/img/profile/defaultProfile.jpg} 
-              : @{/uploads/profile/{img}(img=${r.otherPhoto})}"
+              : @{/uploads/{img}(img=${r.otherPhoto})}"
      alt="profile">
             </div>
 
@@ -54,8 +54,30 @@
               </div>
             </div>
           </a>
-
-          <div class="roomEmpty" th:if="${rooms == null or #lists.isEmpty(rooms)}">
+          
+			<a class="roomItem"
+			   th:each="c : ${class}"
+			   th:attr="data-other-type='CLASS'"
+			   th:href="@{/company/chat/start(targetIdx=${c.class_idx}, tab='CLASS')}"
+			   th:classappend="${activeRoomIdx != null and activeRoomIdx == c.class_idx} ? ' active' : ''">
+			    
+			    <div class="roomAvatar">
+			        <img th:src="${c.photo == null or c.photo == ''} 
+			              ? @{/img/profile/defaultProfile.jpg} 
+			              : @{/uploads/{img}(img=${c.photo})}"
+			             alt="profile">
+			    </div>
+			
+			    <div class="roomInfo">
+			        <div class="roomTopLine">
+			            <div class="roomName" th:text="${c.title}">클래스 제목</div>
+			        </div>
+			        <div class="roomBottomLine">
+			            <div class="roomPreview" th:text="${c.region_detail != null ? c.region_detail : ''}">지역 정보</div>
+			        </div>
+			    </div>
+			</a>
+          <div class="roomEmpty" th:if="${(rooms == null or #lists.isEmpty(rooms)) and (class == null or #lists.isEmpty(class))}">
             아직 채팅방이 없습니다.
           </div>
         </div>
@@ -89,7 +111,7 @@
 			    </button>
 			</div>
             <input type="text" id="chatInput" class="chatInput" placeholder="메세지 입력">
-            <button type="button" id="sendBtn" class="chatSendBtn">전송</button>
+            <button type="button" th:id="${tab=='CLASS'?'classSendBtn':'sendBtn'}" class="chatSendBtn">전송</button>
           </div>
         </div>
 
@@ -105,113 +127,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
-<script th:inline="javascript">
-var chatSearch=document.getElementById('chatSearch');
-var roomListHTML=document.getElementById('roomList').innerHTML;
-
-chatSearch.onkeyup=function(){
-	const roomList=document.getElementById('roomList');
-	const searchValue=chatSearch.value.trim();
-	const rooms=[[${rooms}]];
-	const users=[[${userList}]];
-	var newHTML='';
-	
-	if(!searchValue){
-		roomList.style.display='';
-		roomList.innerHTML=roomListHTML;
-		return
-	}else{
-		roomList.style.display='none';
-		var count=0;
-		for (let i = 0; i < rooms.length; i++) {
-		   
-		    const r = rooms[i]; 
-		    const roomName = r.otherName;
-		    
-		    if (roomName.startsWith(searchValue)) {
-		        count++;
-		        const imgPath = (r.otherPhoto === 'default_profile.png') 
-		                        ? '/img/profile/defaultProfile.jpg' 
-		                        : `/uploads/profile/${r.otherPhoto}`;
-
-		       
-		        const activeClass = ([[${activeRoomIdx}]] != null && [[${activeRoomIdx}]] == r.chatRoomIdx) ? ' active' : '';
-
-		       
-		        newHTML += `
-		            <a class="roomItem${activeClass}" 
-		               data-other-type="${r.otherType}"
-		               href="/company/chat/room/${r.chatRoomIdx}?tab=${r.otherType}">
-		               
-		               <div class="roomAvatar">
-		                 <img src="${imgPath}" alt="profile">
-		               </div>
-
-		               <div class="roomInfo">
-		                 <div class="roomTopLine">
-		                   <div class="roomName">${r.otherName}</div>
-		                 </div>
-		                 <div class="roomBottomLine">
-		                   <div class="roomPreview">${r.lastMessage || ''}</div>
-		                   ${r.unreadCount > 0 ? `<span class="roomBadge">${r.unreadCount}</span>` : ''}
-		                 </div>
-		               </div>
-		            </a>`;
-		    }
-		}
-		if(count===0){
-			for(let i=0;i<users.length;i++){
-				
-				const u= users[i];
-				const userName=u.USER_NAME;
-				const nickName=u.NICKNAME;
-				if(u.PHOTO){
-					u.PHOTO='default_profile.png';
-				}
-				if(userName.startsWith(searchValue)||nickName.startsWith(searchValue)){
-					const userImgPath = (u.PHOTO === 'default_profile.png') 
-                    ? '/img/profile/defaultProfile.jpg' 
-                    : `/uploads/profile/${u.PHOTO}`;
-					
-                    const userActiveClass = ([[${activeRoomIdx}]] != null ) ? ' active' : '';
-
-					newHTML += `
-						<a class="roomItem${userActiveClass}" 
-			      
-			               href="/company/chat/start?targetIdx=${u.USER_IDX}&tab=COACH">
-			               
-			               <div class="roomAvatar">
-			                 <img src="${userImgPath}" alt="profile">
-			               </div>
-
-			               <div class="roomInfo">
-			                 <div class="roomTopLine">
-			                   <div class="roomName">${u.NICKNAME}</div>
-			                 </div>
-			                 <div class="roomBottomLine">
-			                   <div class="roomPreview">${u.INTRO || ''}</div>
-			                   
-			                 </div>
-			               </div>
-			            </a>`;
-				}else{
-					newHTML='검색 결과가 없습니다';
-				}
-				}
-			}
-			
-			roomList.innerHTML=newHTML;
-			roomList.style.display='';
-			
-		}
-		
-	}
-	
-
-</script>
 
 <script>
-
+var stompClient = null;
 /* =========================
    1) 탭 필터 (COACH/COMPANY)
    ========================= */
@@ -236,7 +154,7 @@ chatSearch.onkeyup=function(){
 	  const params = new URLSearchParams(location.search);
 	  const initial = (params.get('tab') || '').toUpperCase();
 
-	  const initType = (initial === 'COMPANY' || initial === 'COACH') ? initial : 'COACH';
+	  var initType = (initial === 'CLASS' || initial === 'COACH') ? initial : 'COACH';
 	  setActive(initType);
 	  apply(initType);
 
@@ -417,8 +335,45 @@ chatSearch.onkeyup=function(){
 
     msgBox.appendChild(node);
     msgBox.scrollTop = msgBox.scrollHeight;
+    
+    updateLeftList(roomIdx, msg);
   }
+  
+  function updateLeftList(targetRoomIdx, lastMsg) {
+	    // data-room-idx 속성이나 href를 이용해 해당 방 요소를 찾습니다.
+	    const roomItems = document.querySelectorAll('.roomItem');
+	    roomItems.forEach(item => {
+	        // href에 해당 방 번호가 포함되어 있는지 확인
+	        if (item.getAttribute('href').includes('/room/' + targetRoomIdx)) {
+	            // 미리보기 텍스트 업데이트
+	            const preview = item.querySelector('.roomPreview');
+	            if (preview) preview.textContent = lastMsg;
 
+	            // 안 읽은 배지(Badge) 처리 (현재 내가 보고 있는 방이 아닐 때만 숫자를 올림)
+	            const currentWin = document.querySelector('.chatWindow');
+	            const currentRoomIdx = currentWin ? currentWin.dataset.roomIdx : null;
+
+	            if (targetRoomIdx != currentRoomIdx) {
+	                let badge = item.querySelector('.roomBadge');
+	                if (!badge) {
+	                    // 배지가 없으면 새로 생성
+	                    const bottomLine = item.querySelector('.roomBottomLine');
+	                    badge = document.createElement('span');
+	                    badge.className = 'roomBadge';
+	                    badge.textContent = '0';
+	                    bottomLine.appendChild(badge);
+	                }
+	                badge.textContent = parseInt(badge.textContent) + 1;
+	                badge.style.display = 'block';
+	            }
+
+	            // 가장 최근 메시지가 왔으므로 목록 맨 위로 올리기 (선택 사항)
+	            const parent = item.parentNode;
+	            parent.prepend(item);
+	        }
+	    });
+	}
+  
   // 최초 1회만 히스토리 로딩
   async function loadHistory(){
     const res = await fetch(`/company/chat/messages/${roomIdx}`, { cache: 'no-store' });
@@ -426,8 +381,6 @@ chatSearch.onkeyup=function(){
     renderHistory(raw);
   }
 
-  // STOMP 연결/구독
-  let stompClient = null;
 
   function connectWs(){
     const socket = new SockJS('/ws');
@@ -439,6 +392,17 @@ chatSearch.onkeyup=function(){
         try{
           const data = JSON.parse(frame.body);
           appendMsg(data.ts, data.senderIdx, data.message);
+          if (data.senderIdx !== myIdx) {
+              
+              fetch(`/company/chat/room/${roomIdx}/read`, { method: 'POST' });
+              
+              
+              const badge = document.querySelector(`.roomItem[href*="/room/${roomIdx}"] .roomBadge`);
+              if (badge) {
+                  badge.textContent = '0';
+                  badge.style.display = 'none';
+              }
+          }
         }catch(e){
           // 무시
         }
@@ -458,14 +422,21 @@ chatSearch.onkeyup=function(){
     input.value = '';
   }
 
-  sendBtn.addEventListener('click', sendWs);
-  input.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter'){
-      e.preventDefault();
-      sendWs();
-    }
-  });
 
+  if (sendBtn) { 
+      sendBtn.addEventListener('click', sendWs);
+  }
+  if (input) {
+	    input.addEventListener('keydown', (e) => {
+	      if(e.key === 'Enter'){
+	        e.preventDefault();
+	        // CLASS 탭이면 classSendWs를, 아니면 sendWs를 호출하거나 
+	        // 그냥 현재 클릭 가능한 버튼을 클릭하게 만듭니다.
+	        const activeBtn = document.getElementById('classSendBtn') || document.getElementById('sendBtn');
+	        if(activeBtn) activeBtn.click();
+	      }
+	    });
+	  }
   loadHistory();
   connectWs();
 })();
@@ -532,6 +503,178 @@ chatSearch.onkeyup=function(){
 	  }
 	});
 </script>
+<script th:inline="javascript">
 
+var chatInputForClass = document.getElementById('chatInput'); 
+
+function classSendWs(userRoom){
+    const message = chatInputForClass.value.trim(); 
+    if(!message || !stompClient) return;
+    stompClient.send('/app/class.send', {}, JSON.stringify({
+      roomIdx: parseInt(userRoom, 10),
+      message: message
+    }));
+}
+
+var classSendBtn = document.getElementById('classSendBtn');
+
+if (classSendBtn) { 
+    classSendBtn.addEventListener('click', function() {
+        var userRoom = [[${userClassRoom}]] || [];
+        
+        for (let i = 0; i < userRoom.length; i++) {
+            classSendWs(userRoom[i]);
+        }
+        	
+        if (chatInputForClass) chatInputForClass.value = ''; 
+    });
+}
+
+
+function tapSet(){
+	  const tabs = document.querySelectorAll('.chatTab1, .chatTab2');
+	  const items = Array.from(document.querySelectorAll('.roomItem'));
+
+	  function setActive(type){
+	    tabs.forEach(b => b.classList.remove('active'));
+	    const btn = Array.from(tabs).find(b => b.dataset.type === type);
+	    (btn || tabs[0])?.classList.add('active');
+	  }
+
+	  function apply(type){
+	    items.forEach(el => {
+	      const t = (el.dataset.otherType || '').trim(); // COACH / class
+	      el.style.display = (t === type) ? '' : 'none';
+	    });
+	  }
+
+	  // URL ?tab=COMPANY 우선
+	  const params = new URLSearchParams(location.search);
+	  const initial = (params.get('tab') || '').toUpperCase();
+
+	  var initType = (initial === 'CLASS' || initial === 'COACH') ? initial : 'COACH';
+	  setActive(initType);
+	  apply(initType);
+
+	  tabs.forEach(btn => {
+	    btn.addEventListener('click', () => {
+	      const type = btn.dataset.type;
+	      setActive(type);
+	      apply(type);
+
+	      // 탭 바꿀 때도 URL 유지(새로고침해도 유지됨)
+	      const url = new URL(location.href);
+	      url.searchParams.set('tab', type);
+	      history.replaceState(null, '', url);
+	    });
+	  });
+}
+
+var chatSearch=document.getElementById('chatSearch');
+var roomListHTML=document.getElementById('roomList').innerHTML;
+
+chatSearch.onkeyup=function(){
+	const roomList=document.getElementById('roomList');
+	const searchValue=chatSearch.value.trim();
+	const rooms=[[${rooms}]];
+	const users=[[${userList}]];
+	var newHTML='';
+	
+	if(!searchValue){
+		roomList.style.display='';
+		roomList.innerHTML=roomListHTML;
+		tapSet();
+		return
+	}else{
+		roomList.style.display='none';
+		var count=0;
+		for (let i = 0; i < rooms.length; i++) {
+		   
+		    const r = rooms[i]; 
+		    const roomName = r.otherName;
+		    
+		    if (roomName.startsWith(searchValue)) {
+		        count++;
+		        const imgPath = (r.otherPhoto === 'default_profile.png') 
+		                        ? '/img/profile/defaultProfile.jpg' 
+		                        : `/uploads/${r.otherPhoto}`;
+
+		       
+		        const activeClass = ([[${activeRoomIdx}]] != null && [[${activeRoomIdx}]] == r.chatRoomIdx) ? ' active' : '';
+
+		       
+		        newHTML += `
+		            <a class="roomItem${activeClass}" 
+		               data-other-type="COACH"
+		               href="/company/chat/room/${r.chatRoomIdx}?tab=${r.otherType}">
+		               
+		               <div class="roomAvatar">
+		                 <img src="${imgPath}" alt="profile">
+		               </div>
+
+		               <div class="roomInfo">
+		                 <div class="roomTopLine">
+		                   <div class="roomName">${r.otherName}</div>
+		                 </div>
+		                 <div class="roomBottomLine">
+		                   <div class="roomPreview">${r.lastMessage || ''}</div>
+		                   ${r.unreadCount > 0 ? `<span class="roomBadge">${r.unreadCount}</span>` : ''}
+		                 </div>
+		               </div>
+		            </a>`;
+		    }
+		}
+		if(count===0){
+			for(let z=0;z<users.length;z++){
+				
+				const u= users[z];
+				const userName=u.USER_NAME;
+				const nickName=u.NICKNAME;
+				
+					u.PHOTO='default_profile.png';//변경해야됨
+				
+				if(userName.startsWith(searchValue)||nickName.startsWith(searchValue)){
+					count++;
+					const userImgPath = (u.PHOTO === 'default_profile.png') 
+                    ? '/img/profile/defaultProfile.jpg' 
+                    : `/uploads/${u.PHOTO}`;
+					
+                    const userActiveClass = ([[${activeRoomIdx}]] != null ) ? ' active' : '';
+
+					newHTML += `
+						<a class="roomItem${userActiveClass}" 
+						   data-other-type="COACH";
+			               href="/company/chat/start?targetIdx=${u.USER_IDX}&tab=COACH">
+			               
+			               <div class="roomAvatar">
+			                 <img src="${userImgPath}" alt="profile">
+			               </div>
+
+			               <div class="roomInfo">
+			                 <div class="roomTopLine">
+			                   <div class="roomName">${u.NICKNAME}</div>
+			                 </div>
+			                 <div class="roomBottomLine">
+			                   <div class="roomPreview">${u.INTRO || ''}</div>
+			                   
+			                 </div>
+			               </div>
+			            </a>`;
+				}				
+				}
+				if(count===0){
+				newHTML='검색 결과가 없습니다';
+			}
+			}
+			
+			roomList.innerHTML=newHTML;
+			roomList.style.display='';
+			tapSet();
+		}
+		
+	}
+	
+
+</script>
 </body>
 </html>

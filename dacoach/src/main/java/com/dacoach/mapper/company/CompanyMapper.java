@@ -2,6 +2,9 @@ package com.dacoach.mapper.company;
 
 import java.util.*;
 
+import com.dacoach.model.chat.ChatRoomDTO;
+import com.dacoach.model.classes.ClassDTO;
+import com.dacoach.model.coachClasses.ClassEnrollmentDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.company.CompanyProvideDTO;
@@ -57,4 +60,10 @@ public interface CompanyMapper {
 	public List<Map<String,Object>> getPayHistory(int user_idx) throws Exception;
 	
 	public List<Map<String,Object>> getCoachList() throws Exception;
+	
+	public List<ClassDTO> getClass(int user_idx) throws Exception;
+	
+	public List<ClassEnrollmentDTO> getUserClass(int class_idx) throws Exception;
+	
+	public ChatRoomDTO getClassRoom(int roomIdx) throws Exception;
  }

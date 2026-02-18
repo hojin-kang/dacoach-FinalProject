@@ -3,10 +3,29 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.dacoach.mapper.company.CompanyMapper">
-  
+  	
+  	<select id="getClassRoom">
+  		SELECT 
+        chat_room_idx AS chatRoomIdx,
+        user1_idx     AS user1Idx,
+        user2_idx     AS user2Idx,
+        last_message  AS lastMessage
+	    FROM chat_room 
+	    WHERE chat_room_idx = #{roomIdx}
+  	</select>
+  	
+  	<select id="getUserClass">
+  		select * from class_enrollment
+  		where class_idx=#{class_idx}
+  	</select>
+  	<select id="getClass">
+  		select * from class
+		where provider_idx=#{user_idx}
+		and end_date <![CDATA[>]]>sysdate
+  	</select>
   	<select id="getCoachList">
   		select users.USER_IDX,USER_TYPE,USER_NAME,COACH_IDX,NICKNAME,PHOTO,INTRO from users,coach
-		where user_type='COACH'
+		where user_type='COACH' and users.user_idx=coach.user_idx
   	</select>
   	<select id="fieldTag">
   		select * from major_field order by major_field_idx asc
