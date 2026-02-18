@@ -135,7 +135,13 @@
   where chat_room_idx = #{roomIdx}
   and (left1_yn = 'Y' and left2_yn = 'Y')
 </delete>
-
+<delete id="deleteMatch" parameterType="map">
+  delete from match
+  where 
+  (user1_idx = #{user_idx} and user2_idx = #{target_idx})
+  or
+  (user1_idx = #{target_idx} and user2_idx = #{user_idx})
+ </delete>
 <update id="updateChatStatus" parameterType="map">
   update match m
   set m.is_chat = 'N', m.chat_applicant = null
@@ -156,4 +162,11 @@
   	where chat_room_idx = #{roomIdx}
   ))
 </update>
+<select id="isMatched" parameterType="map" resultType="HashMap">
+  select match_applicant, is_match from match
+  where 
+  (user1_idx = #{my_idx} and user2_idx = #{target_idx})
+  or
+  (user1_idx = #{target_idx} and user2_idx = #{my_idx})
+</select>
 </mapper>

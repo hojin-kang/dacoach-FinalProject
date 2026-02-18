@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>후기 작성</title>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Noto Sans KR', sans-serif;
+	background-color: #f5f5f5;
+	padding: 20px;
+}
+
+.container {
+	max-width: 800px;
+	margin: 0 auto;
+	background-color: white;
+	padding: 40px;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+	font-size: 28px;
+	margin-bottom: 30px;
+	color: #333;
+}
+
+.class-info {
+	background-color: #f9f9f9;
+	padding: 20px;
+	border-radius: 8px;
+	margin-bottom: 30px;
+}
+
+.class-info h2 {
+	font-size: 20px;
+	color: #555;
+	margin-bottom: 10px;
+}
+
+.class-info p {
+	color: #777;
+	font-size: 14px;
+}
+
+.form-group {
+	margin-bottom: 30px;
+}
+
+.form-group label {
+	display: block;
+	font-size: 16px;
+	font-weight: 600;
+	margin-bottom: 10px;
+	color: #333;
+}
+
+.required {
+	color: #e74c3c;
+}
+
+/* 별점 스타일 */
+.rating-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.star-rating {
+	display: flex;
+	gap: 5px;
+	font-size: 32px;
+}
+
+.star {
+	cursor: pointer;
+	color: #ddd;
+	transition: color 0.2s;
+}
+
+.star:hover, .star.active {
+	color: #ffd700;
+}
+
+.rating-value {
+	font-size: 18px;
+	font-weight: 600;
+	color: #555;
+}
+
+/* 태그 스타일 */
+.tag-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.tag-item {
+	position: relative;
+}
+
+.tag-item input[type="checkbox"] {
+	display: none;
+}
+
+.tag-label {
+	display: inline-block;
+	padding: 10px 20px;
+	background-color: #f0f0f0;
+	border: 2px solid #e0e0e0;
+	border-radius: 25px;
+	cursor: pointer;
+	transition: all 0.3s;
+	font-size: 14px;
+	color: #555;
+}
+
+.tag-item input[type="checkbox"]:checked+.tag-label {
+	background-color: #4CAF50;
+	border-color: #4CAF50;
+	color: white;
+}
+
+.tag-label:hover {
+	background-color: #e8e8e8;
+}
+
+.tag-item input[type="checkbox"]:checked+.tag-label:hover {
+	background-color: #45a049;
+}
+
+/* 텍스트 영역 스타일 */
+textarea {
+	width: 100%;
+	min-height: 150px;
+	padding: 15px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 14px;
+	font-family: inherit;
+	resize: vertical;
+}
+
+textarea:focus {
+	outline: none;
+	border-color: #4CAF50;
+}
+
+/* 버튼 스타일 */
+.button-group {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	margin-top: 30px;
+}
+
+.btn {
+	padding: 12px 30px;
+	border: none;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s;
+}
+
+.btn-primary {
+	background-color: #4CAF50;
+	color: white;
+}
+
+.btn-primary:hover {
+	background-color: #45a049;
+}
+
+.btn-secondary {
+	background-color: #f0f0f0;
+	color: #555;
+}
+
+.btn-secondary:hover {
+	background-color: #e0e0e0;
+}
+
+.char-count {
+	text-align: right;
+	font-size: 12px;
+	color: #999;
+	margin-top: 5px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h1>코치 후기 작성</h1>
+
+		<!-- 클래스 정보 -->
+		<div class="class-info">
+			<h2 th:text="${dto.nickname}">코치 이름</h2>
+		</div>
+
+		<!-- 후기 작성 폼 -->
+		<form th:action="@{/coach/insertReview}" method="post" id="reviewForm">
+			<input type="hidden" name="target_idx" th:value="${dto.user_idx}" />
+			<input type="hidden" name="rating" id="ratingInput" value="5" />
+
+			<!-- 별점 -->
+			<div class="form-group">
+				<label>별점 <span class="required">*</span></label>
+				<div class="rating-container">
+					<div class="star-rating" id="starRating">
+						<span class="star active" data-value="1">★</span> <span
+							class="star active" data-value="2">★</span> <span
+							class="star active" data-value="3">★</span> <span
+							class="star active" data-value="4">★</span> <span
+							class="star active" data-value="5">★</span>
+					</div>
+					<span class="rating-value" id="ratingValue">5.0</span>
+				</div>
+			</div>
+
+			<!-- 태그 선택 -->
+			<div class="form-group">
+				<label>태그 선택 (복수 선택 가능)</label>
+				<div class="tag-container">
+					<div class="tag-item" th:each="tag : ${reviewTags}">
+						<input type="checkbox" th:id="'tag_' + ${tag}" name="tags"
+							th:value="${tag}" /> <label class="tag-label"
+							th:for="'tag_' + ${tag}" th:text="${tag}">태그</label>
+					</div>
+				</div>
+			</div>
+
+			<!-- 후기 내용 -->
+			<div class="form-group">
+				<label for="content">상세 후기</label>
+				<textarea id="content" name="content"
+					placeholder="매칭 후기를 작성해주세요." maxlength="3000" required></textarea>
+				<div class="char-count">
+					<span id="charCount">0</span> / 3000
+				</div>
+			</div>
+
+			<!-- 버튼 -->
+			<div class="button-group">
+				<button type="button" class="btn btn-secondary"
+					onclick="history.back()">취소</button>
+				<button type="submit" class="btn btn-primary">후기 등록</button>
+			</div>
+		</form>
+	</div>
+
+	<script>
+        // 별점 기능
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('ratingInput');
+        const ratingValue = document.getElementById('ratingValue');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = value;
+                ratingValue.textContent = value + '.0';
+                
+                stars.forEach((s, index) => {
+                    if (index < value) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseenter', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                stars.forEach((s, index) => {
+                    if (index < value) {
+                        s.style.color = '#ffd700';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        });
+        
+        document.getElementById('starRating').addEventListener('mouseleave', function() {
+            const currentRating = parseInt(ratingInput.value);
+            stars.forEach((s, index) => {
+                if (index < currentRating) {
+                    s.style.color = '#ffd700';
+                } else {
+                    s.style.color = '#ddd';
+                }
+            });
+        });
+        
+        // 글자 수 카운트
+        const contentTextarea = document.getElementById('content');
+        const charCount = document.getElementById('charCount');
+        
+        contentTextarea.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+        });
+        
+        // 폼 제출 검증
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            const rating = document.getElementById('ratingInput').value;
+            if (!rating || rating < 1 || rating > 5) {
+                e.preventDefault();
+                alert('별점을 선택해주세요.');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

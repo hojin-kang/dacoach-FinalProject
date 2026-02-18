@@ -63,4 +63,8 @@ public interface ChatMapper {
     int deleteChat(int roomIdx);
     
     int updateChatStatus(int roomIdx);
+    
+    HashMap isMatched(HashMap<String, Object> map);
+    
+    int deleteMatch(HashMap<String, Object> map);
 }

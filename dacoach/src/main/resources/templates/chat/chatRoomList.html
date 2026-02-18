@@ -78,14 +78,25 @@
           <div class="chatMessages" id="chatMessages">
             <!-- JS로 txt를 파싱해서 렌더 -->
           </div>
-          <div th:if="${isLeft == true}">상대방이 채팅방을 나갔습니다</div>
+          <div th:if="${isLeft == true}">상대방이 나갔습니다.</div>
           <div class="chatInputRow">
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
-			    <a href="/schedule/write" class="quickItem" th:if="${isLeft == false}">
+			    <a href="/schedule/write" class="quickItem" th:if="${isLeft == false && status == 'MATCHED'}">
 			      <img class="qiIcon" src="/img/icon/write.png">
 			      <span class="qiText">서약서<br>작성</span>
 			    </a>
+					<th:block th:if="${isLeft == false && status != 'MATCHED'}" th:switch="${status}">
+						<button type="button" th:case="'RECEIVED'" class="btn-match stop-card" th:onclick="applyAction('A_MATCH', [[${target_idx}]])">
+							매칭수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+						</button>
+						<button type="button" th:case="'APPLIED'" class="btn-match stop-card" disabled style="background:#666; color:#fff;">
+							매칭신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+						</button>
+						<button type="button" th:case="*" class="btn-match stop-card" th:onclick="applyAction('MATCH', [[${target_idx}]])">
+							매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+						 </button>
+					</th:block>			    
 			    <a href="/schedule/create" class="quickItem" th:if="${isLeft == false}">
 			      <img class="qiIcon" src="/img/icon/calendarPlus.png">
 			      <span class="qiText">일정<br>등록</span>
@@ -96,7 +107,8 @@
 			    </a>
 			    <button type="button" class="quickItem danger" id="leaveRoomBtn">
 			      <img class="qiIcon" src="/img/icon/exit.png">
-			      <span class="qiText">채팅방<br>나가기</span>
+			      <span class="qiText" th:unless="${status=='MATCHED'}">채팅방<br>나가기</span>
+			      <span class="qiText" th:if="${status=='MATCHED'}">매칭<br>종료</span>
 			    </button>
 			</div>
             <input type="text" id="chatInput" class="chatInput" placeholder="메세지 입력">
@@ -417,8 +429,8 @@
    
    // 채팅방 나가기
    document.getElementById('leaveRoomBtn')?.addEventListener('click', async () => {
-	  if(!confirm('채팅방을 나가시겠습니까?')) return;
-	
+	  if(!confirm('채팅(매칭)을 종료 하시겠습니까?')) return;
+	 
 	  const win = document.querySelector('.chatWindow');
 	  if(!win) return;
 	
@@ -432,10 +444,41 @@
 	  const text = await res.text();
 	  if(text === 'OK'){
 	    location.href = '/chat'; // 나가고 채팅 메인
-	  }else{
+	  }else if(text === 'FAIL'){
 	    alert('나가기 실패');
+	  }else{
+		  // 상대의 인덱스가 넘어온 경우 리뷰 작성 페이지로 이동
+		  location.href = `/coach/coachReview?target_idx=${text}`;
 	  }
 	});
+   
+   function applyAction(type, targetIdx) {
+       let msg = "";
+       if(type === 'CHAT') msg = "채팅 신청을 하시겠습니까? 토큰 1개가 차감됩니다.";
+       else if(type === 'MATCH') msg = "매칭 신청을 하시겠습니까? 토큰 3개가 차감됩니다.";
+       else if(type === 'A_CHAT') msg = "채팅 신청을 수락하시겠습니까?";
+       else if(type === 'A_MATCH') msg = "매칭 신청을 수락하시겠습니까?";
+       
+       if (!confirm(msg)) return;
+
+       const params = new URLSearchParams();
+       params.append('type', type);
+       params.append('target_idx', targetIdx);
+
+       fetch('/match/apply', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+           body: params
+       })
+       .then(response => response.json())
+       .then(res => {
+           if (res.status === 'success'|| res.status.includes('accepted')) { alert("완료되었습니다."); location.reload(); }
+           else if (res.status === 'login_required') { alert("로그인이 필요합니다."); location.href = '/login'; }
+           else if (res.status === 'no_token') { alert("토큰이 부족합니다."); location.href = '/tokenHistory'; }
+           else { alert("오류가 발생했습니다."); }
+       })
+       .catch(error => { console.error('Error:', error); alert("통신 중 오류 발생"); });
+   }
 </script>
 
 </body>

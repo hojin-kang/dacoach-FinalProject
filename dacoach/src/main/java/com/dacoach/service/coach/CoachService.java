@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.minorField.MinorFieldDTO;
+import com.dacoach.model.review.ReviewClassDTO;
 import com.dacoach.model.users.UsersDTO;
 
 public interface CoachService {
@@ -55,5 +56,9 @@ public interface CoachService {
     public List<MinorFieldDTO> getPopularField() throws Exception;
 
     public List<CertDTO> getCoachCertList(int user_idx) throws Exception;
+    
+    List<String> getCoachReviewTags() throws Exception;
+    
+    boolean writeCoachReview(ReviewClassDTO review) throws Exception;
 
 }
