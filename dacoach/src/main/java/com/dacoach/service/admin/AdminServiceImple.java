@@ -200,8 +200,8 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> reportList() throws Exception {
-		return adminMapper.reportList();
+	public List<Map<String, Object>> reportList(String status) throws Exception {
+		return adminMapper.reportList(status);
 	}
 	
 	@Override
@@ -241,7 +241,8 @@ public class AdminServiceImple implements AdminService {
 	
 	@Override
 	public int dailySales() throws Exception {
-		return adminMapper.dailySales();
+		Integer result=adminMapper.dailySales();
+		return (result==null)?0:result;
 	}
 	
 	@Override

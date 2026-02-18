@@ -63,7 +63,7 @@
             margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* 매출 차트 영역 */
+        /* 매출 차트 영역 (기존 코드 유지) */
         .revenue-chart-container {
             height: 250px;
             display: flex;
@@ -73,32 +73,30 @@
             border-bottom: 2px solid var(--gray-100);
         }
         .revenue-bar-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; }
-        
-        /* [중요] 막대 스타일 수정 */
         .revenue-bar { 
             width: 35px; 
             background-color: var(--mint-main); 
             border-radius: 6px 6px 0 0; 
             position: relative; 
             transition: height 0.3s ease;
-            min-height: 2px; /* 수치가 0이라도 바닥선은 보이게 함 */
+            min-height: 2px;
         }
         .revenue-bar.weekend { background-color: var(--mint-dark); }
         .revenue-bar:hover { filter: brightness(90%); cursor: pointer; }
-        
         .bar-label { font-size: 11px; color: #9ca3af; font-weight: 600; }
 
-        /* 수익 리스트 테이블 */
+        /* 테이블 및 기타 요소 */
         .stats-table { width: 100%; border-collapse: collapse; }
         .stats-table th { text-align: left; font-size: 12px; color: #9ca3af; padding: 10px 5px; border-bottom: 2px solid var(--mint-bg); }
         .stats-table td { padding: 15px 5px; font-size: 13px; border-bottom: 1px solid var(--gray-100); }
         .text-right { text-align: right; }
         .price-text { font-weight: 700; color: var(--slate-text); }
-
-        /* 우측 포인트 배지 */
         .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
-        .badge-gold { background: #fffbeb; color: #d97706; }
         .badge-mint { background: var(--mint-bg); color: var(--mint-dark); }
+        
+        /* 프로그레스바 스타일 */
+        .progress-container { width: 100%; height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .progress-bar { height: 100%; background: var(--mint-main); border-radius: 4px; }
     </style>
 
     <div class="stats-container">
@@ -114,36 +112,35 @@
                     <span th:text="${monthlySales != null ? #numbers.formatInteger(monthlySales, 1, 'COMMA') : '0'}">42,500,000</span>
                     <span class="summary-unit">원</span>
                 </div>
-                <div class="trend" 
-                     th:if="${growth != null}"
-                     th:classappend="${growth >= 0} ? 'trend-up' : 'trend-down'">
+                <div class="trend" th:if="${growth != null}" th:classappend="${growth >= 0} ? 'trend-up' : 'trend-down'">
                     <span th:text="${growth >= 0 ? '▲' : '▼'}">▲</span>
                     <span th:text="${#numbers.formatDecimal(growth < 0 ? -growth : growth, 1, 1)} + '%'">15.2%</span>
                     <span>(전월 대비)</span>
                 </div>
-                <div class="trend" th:if="${growth == null}" style="color: #9ca3af;">데이터 없음</div>
             </div>
             
             <div class="summary-card">
-                <span class="summary-label">예상 순수익 (수수료)</span>
+                <span class="summary-label">멤버십 구독 매출</span>
                 <div class="summary-value">
-                    <span th:text="${expectedProfit != null ? #numbers.formatInteger(expectedProfit, 1, 'COMMA') : '8,500,000'}">8,500,000</span>
+                    <span th:text="${membershipRevenue != null ? #numbers.formatInteger(membershipRevenue, 1, 'COMMA') : '12,500,000'}">12,500,000</span>
                     <span class="summary-unit">원</span>
                 </div>
-                <div class="trend trend-up">▲ 8.4%</div>
+                <div class="trend" style="color: var(--mint-dark);">정기 결제 고객 기반</div>
             </div>
+
             <div class="summary-card">
-                <span class="summary-label">평균 결제 단가 (ATV)</span>
+                <span class="summary-label">결제 건당 평균 금액</span>
                 <div class="summary-value">
-                    <span th:text="${avgTransactionValue != null ? #numbers.formatInteger(avgTransactionValue, 1, 'COMMA') : '125,000'}">125,000</span>
+                    <span th:text="${avgPayAmount != null ? #numbers.formatInteger(avgPayAmount, 1, 'COMMA') : '85,000'}">85,000</span>
                     <span class="summary-unit">원</span>
                 </div>
-                <div class="trend trend-down">▼ 2.1%</div>
+                <div class="trend" style="color: #9ca3af;">전체 결제건 평균</div>
             </div>
+
             <div class="summary-card">
                 <span class="summary-label">환불 진행건</span>
                 <div class="summary-value" style="color: var(--danger);">
-                    <span th:text="${pendingRefundCount != null ? pendingRefundCount : '3'}">3</span>
+                    <span th:text="${pendingRefundCount != null ? pendingRefundCount : '0'}">3</span>
                     <span class="summary-unit">건</span>
                 </div>
                 <div class="trend" style="color: #9ca3af;">검토 대기 중</div>
@@ -152,62 +149,53 @@
 
         <div class="stats-main-grid">
             <div class="left-column">
-				<div class="content-box">
-					<div class="box-title">
-						<span>📈 주간 매출 추이</span>
-						<div style="font-size: 12px; color: #9ca3af;">단위: 만원</div>
-					</div>
-					<div class="revenue-chart-container">
-						<div th:each="day : ${weeklySales}" class="revenue-bar-wrapper">
-							<span style="font-size: 10px; font-weight: bold; color: var(--mint-main); margin-bottom: 5px;"
-								  th:text="${day.DAILY_REVENUE > 0 ? day.DAILY_REVENUE : ''}"></span>
-
+                <div class="content-box">
+                    <div class="box-title">
+                        <span>📈 주간 매출 추이</span>
+                        <div style="font-size: 12px; color: #9ca3af;">단위: 만원</div>
+                    </div>
+                    <div class="revenue-chart-container">
+                        <div th:each="day : ${weeklySales}" class="revenue-bar-wrapper">
+                            <span style="font-size: 10px; font-weight: bold; color: var(--mint-main); margin-bottom: 5px;"
+                                  th:text="${day.DAILY_REVENUE > 0 ? day.DAILY_REVENUE : ''}"></span>
                             <div class="revenue-bar"
                                  th:with="h=${day.DAILY_REVENUE * 10 + 5}"
-								 th:style="|height: ${h}px;|"
+                                 th:style="|height: ${h}px;|"
                                  th:classappend="${day.DAY_NAME == 'SAT' || day.DAY_NAME == 'SUN'} ? 'weekend' : ''"
-								 th:title="|${day.DAILY_REVENUE} 만원|"></div>
+                                 th:title="|${day.DAILY_REVENUE} 만원|"></div>
+                            <span class="bar-label" th:text="${day.DAY_NAME}">Mon</span>
+                        </div>
+                        <div th:if="${#lists.isEmpty(weeklySales)}"
+                             style="width: 100%; text-align: center; color: #9ca3af; font-size: 12px;">
+                            데이터가 존재하지 않습니다.</div>
+                    </div>
+                </div>
 
-							<span class="bar-label" th:text="${day.DAY_NAME}">Mon</span>
-						</div>
-
-						<div th:if="${#lists.isEmpty(weeklySales)}"
-							style="width: 100%; text-align: center; color: #9ca3af; font-size: 12px;">
-							데이터가 존재하지 않습니다.</div>
-					</div>
-				</div>
-
-				<div class="content-box">
+                <div class="content-box">
                     <div class="box-title">
-                        <span>💰 카테고리별 매출 분석</span>
+                        <span>💰 종목별 실제 매출 기여도</span>
                     </div>
                     <table class="stats-table">
                         <thead>
                             <tr>
-                                <th>카테고리명</th>
+                                <th>종목명 (MINOR_FIELD)</th>
                                 <th>결제건수</th>
-                                <th class="text-right">총 매출액</th>
+                                <th class="text-right">누적 매출액</th>
                                 <th class="text-right">비중</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="item : ${categorySales}">
-                                <td style="font-weight: 600;" th:text="${item.CATEGORY_NM}">필라테스</td>
-                                <td th:text="${item.COUNT + '건'}">124건</td>
-                                <td class="text-right price-text" th:text="${#numbers.formatInteger(item.AMOUNT, 3, 'COMMA') + '원'}">15,400,000원</td>
-                                <td class="text-right"><span class="badge badge-mint" th:text="${item.RATIO + '%'}">36%</span></td>
+                            <tr th:each="stat : ${revenueByField}">
+                                <td style="font-weight: 600;" th:text="${stat.FIELD_NAME}">골프</td>
+                                <td th:text="${stat.PAY_COUNT + '건'}">42건</td>
+                                <td class="text-right price-text" th:text="${#numbers.formatInteger(stat.TOTAL_SUM, 0, 'COMMA') + '원'}">5,000,000원</td>
+                                <td class="text-right"><span class="badge badge-mint" th:text="${stat.RATIO + '%'}">25%</span></td>
                             </tr>
-                            <tr th:if="${#lists.isEmpty(categorySales)}">
+                            <tr th:if="${#lists.isEmpty(revenueByField)}">
                                 <td style="font-weight: 600;">테니스</td>
                                 <td>88건</td>
                                 <td class="text-right price-text">11,200,000원</td>
-                                <td class="text-right"><span class="badge badge-mint">26%</span></td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(categorySales)}">
-                                <td style="font-weight: 600;">골프</td>
-                                <td>42건</td>
-                                <td class="text-right price-text">9,800,000원</td>
-                                <td class="text-right"><span class="badge badge-mint">23%</span></td>
+                                <td class="text-right"><span class="badge badge-mint">36%</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -216,26 +204,45 @@
 
             <div class="right-column">
                 <div class="content-box">
-                    <div class="box-title">
-                        <span>🏆 이달의 우수 코치 (수익순)</span>
-                    </div>
-                    <div th:each="coach, stat : ${topCoaches}" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-weight: 900; color: var(--mint-main);" th:text="${stat.count}">1</span>
-                            <span style="font-size: 14px; font-weight: 600;" th:text="${coach.NAME}">이민수 코치</span>
+                    <div class="box-title"><span>📊 매출 유형별 분석</span></div>
+                    <div th:each="type : ${payTypeStats}" style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+                            <span th:text="${type.PAY_TYPE}" style="font-weight: 600;">CLASS</span>
+                            <span th:text="${type.PERCENT + '%'}">60%</span>
                         </div>
-                        <span class="badge badge-gold" th:text="${#numbers.formatInteger(coach.AMOUNT, 0, 'COMMA') + '원'}">4,200,000원</span>
-                    </div>
-                    <div th:if="${#lists.isEmpty(topCoaches)}">
-                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                            <span style="font-size: 14px;">1. 김지우 코치</span>
-                            <span class="badge badge-gold">5,210,000원</span>
-                        </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                            <span style="font-size: 14px;">2. 박상혁 코치</span>
-                            <span class="badge badge-gold">4,880,000원</span>
+                        <div class="progress-container">
+                            <div class="progress-bar" th:style="'width:' + ${type.PERCENT} + '%;'"></div>
                         </div>
                     </div>
+                    <div th:if="${#lists.isEmpty(payTypeStats)}">
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+                                <span style="font-weight: 600;">CLASS</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="progress-container"><div class="progress-bar" style="width: 70%;"></div></div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
+                                <span style="font-weight: 600;">MEMBERSHIP</span>
+                                <span>30%</span>
+                            </div>
+                            <div class="progress-container"><div class="progress-bar" style="width: 30%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-box" style="background-color: #fff5f5; border: 1px solid #feb2b2;">
+                    <div class="box-title" style="color: var(--danger); margin-bottom: 10px;">
+                        <span>⚠️ 이번 달 환불 손실액</span>
+                    </div>
+                    <div class="summary-value" style="font-size: 20px; color: var(--danger);">
+                        <span th:text="${monthlyCancelAmount != null ? #numbers.formatInteger(monthlyCancelAmount, 1, 'COMMA') : '1,200,000'}">1,200,000</span>
+                        <span style="font-size: 14px;">원</span>
+                    </div>
+                    <p style="font-size: 11px; color: #c53030; margin-top: 10px; font-weight: 500;">
+                        * PAY_CANCEL 테이블 기준 확정 손실입니다.
+                    </p>
                 </div>
 
                 <div class="content-box" style="background-color: #fff9f2; border: 1px solid #fee2e2;">
@@ -244,16 +251,7 @@
                     </div>
                     <p style="font-size: 12px; line-height: 1.6; color: #9a3412; font-weight: 500;">
                         오는 <b>25일</b>은 정기 정산일입니다.<br> 
-                        현재까지 <span style="color: var(--danger); font-weight: 700;">미승인된 환불 요청 3건</span>이 존재합니다. 정산 처리 전 확인이 필요합니다.
-                    </p>
-                </div>
-
-                <div class="content-box" style="background-color: var(--mint-bg); border: none;">
-                    <div class="box-title" style="margin-bottom: 10px;">
-                        <span>💡 수익 증대 팁</span>
-                    </div>
-                    <p style="font-size: 12px; line-height: 1.6; color: var(--mint-dark); font-weight: 500;">
-                        지난주 대비 <b>주말 매출</b> 비중이 15% 상승했습니다. 주말 특화 클래스(원데이) 프로모션을 강화하면 추가 수익 창출이 기대됩니다.
+                        현재까지 <span style="color: var(--danger); font-weight: 700;" th:text="${pendingRefundCount + '건'}">3건</span>의 환불 요청이 존재합니다. 정산 처리 전 확인이 필요합니다.
                     </p>
                 </div>
             </div>

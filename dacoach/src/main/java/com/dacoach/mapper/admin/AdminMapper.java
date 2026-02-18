@@ -62,7 +62,7 @@ public interface AdminMapper {
 	public int updateMinorField(Map<String, Object> params) throws Exception;
 	
 	//신고 관리
-	public List<Map<String,Object>> reportList() throws Exception;
+	public List<Map<String,Object>> reportList(String status) throws Exception;
 	public Map<String, Object> reportContent(int report_idx) throws Exception;
 	public int getCoachIdx (int user_idx) throws Exception;
 	public int getCompanyIdx (int user_idx) throws Exception;
@@ -72,7 +72,7 @@ public interface AdminMapper {
 	public int newUsers() throws Exception;
 	public int pendingReports() throws Exception;
 	public int inactiveCompany() throws Exception;
-	public int dailySales() throws Exception;
+	public Integer dailySales() throws Exception;
 	
 	//통계관리 화면
 	public Integer monthlySales() throws Exception;

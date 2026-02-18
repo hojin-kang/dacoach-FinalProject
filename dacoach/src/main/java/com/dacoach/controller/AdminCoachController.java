@@ -772,7 +772,8 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/report")
-	public String reportList(Model model, HttpSession session) {
+	public String reportList(Model model, HttpSession session,
+			@RequestParam(value="status", required=false) String status) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
@@ -781,13 +782,14 @@ public class AdminCoachController {
 		List<Map<String, Object>> reportList = new ArrayList<>();
 		
 		try {
-			reportList = adminService.reportList();
+			reportList = adminService.reportList(status);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		model.addAttribute("reportList",reportList);
+		model.addAttribute("selectedStatus", status);
 		model.addAttribute("contentPage", "admin/report/reportList");
 		model.addAttribute("contentFragment", "reportList");
 
@@ -823,8 +825,7 @@ public class AdminCoachController {
 		
 	}
 	
-	
-	//하는중!!!!!!
+
 	@PostMapping("/report/update")
 	public String updateReport(
 			@RequestParam int report_idx,
@@ -855,7 +856,7 @@ public class AdminCoachController {
 					NotificationDTO ndto = new NotificationDTO();
 					ndto.setReceiver_idx(receiver_idx);
 					ndto.setProvider_idx(1);
-					ndto.setNoti_type("REPORT");
+					ndto.setNoti_type(String.valueOf(report_idx));
 					ndto.setContent(content);
 					notificationService.insertNotification(ndto);
 				}
@@ -910,6 +911,20 @@ public class AdminCoachController {
 
 		return "admin/dashboard";
 		
+	}
+	
+	@GetMapping("/coach/coachInfoList")
+	public String coachInfoList(Model model, HttpSession session) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
+	    
+	    model.addAttribute("contentPage", "admin/coach/coachInfoList");
+	    model.addAttribute("contentFragment", "coachInfoContent");
+	    
+	    return "admin/dashboard";
 	}
 	
 	
