@@ -97,11 +97,11 @@
 							매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
 						 </button>
 					</th:block>			    
-			    <a href="/schedule/create" class="quickItem" th:if="${isLeft == false}">
+			    <a href="/schedule/create" class="quickItem" th:if="${isLeft == false && status == 'MATCHED'}">
 			      <img class="qiIcon" src="/img/icon/calendarPlus.png">
 			      <span class="qiText">일정<br>등록</span>
 			    </a>
-			    <a href="/schedule/list" class="quickItem">
+			    <a href="/schedule/list" class="quickItem" th:if="${status == 'MATCHED'}">
 			      <img class="qiIcon" src="/img/icon/calendar.png">
 			      <span class="qiText">모든<br>일정</span>
 			    </a>
