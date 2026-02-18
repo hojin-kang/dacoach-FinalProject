@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8" />
+   <title>dacoach - 일정 등록</title>
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+   
+   <style>
+      /* 전체 페이지 레이아웃 유지 */
+      .main {
+         display: flex;
+         justify-content: center;
+         padding: 60px 20px;
+         background-color: #f5f7f9;
+         min-height: 85vh;
+      }
+
+      /* 일정 등록 카드 스타일 */
+      .pledge-card {
+         width: 100%;
+         max-width: 550px;
+         background: #ffffff;
+         padding: 50px 40px;
+         border-radius: 20px;
+         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+      }
+
+      .pledge-card h1 {
+         font-size: 1.8rem;
+         font-weight: 800;
+         margin-bottom: 35px;
+         color: #111;
+         text-align: center;
+         letter-spacing: -0.5px;
+      }
+
+      /* 폼 요소 스타일링 */
+      .schedule-form {
+         display: flex;
+         flex-direction: column;
+         gap: 20px;
+      }
+
+      .form-group {
+         display: flex;
+         flex-direction: column;
+         gap: 8px;
+      }
+
+      .form-group label {
+         font-size: 0.9rem;
+         font-weight: 700;
+         color: #64748b;
+         margin-left: 4px;
+      }
+
+      .input-field {
+         width: 100%;
+         padding: 14px 18px;
+         border: 1.5px solid #e2e8f0;
+         border-radius: 12px;
+         font-size: 1rem;
+         font-family: inherit;
+         transition: all 0.3s ease;
+         box-sizing: border-box;
+      }
+
+      .input-field:focus {
+         outline: none;
+         border-color: #4A90E2;
+         background-color: #fff;
+         box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+      }
+
+      /* 버튼 스타일 */
+      .btn-submit {
+         margin-top: 10px;
+         padding: 16px;
+         background-color: #4A90E2;
+         color: white;
+         border: none;
+         border-radius: 12px;
+         font-weight: 700;
+         font-size: 1.1rem;
+         cursor: pointer;
+         transition: all 0.2s ease;
+      }
+
+      .btn-submit:hover:not(:disabled) {
+         background-color: #357ABD;
+         transform: translateY(-1px);
+      }
+
+      /* 비활성화 버튼 스타일 */
+      .btn-submit:disabled {
+         background-color: #cbd5e1;
+         cursor: not-allowed;
+         transform: none;
+      }
+
+      .date-info {
+         font-size: 0.8rem;
+         color: #94a3b8;
+         margin-top: 4px;
+      }
+   </style>
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+      <div class="pledge-card">
+         <h1>🗓️ 일정 등록</h1>
+         
+         <form th:action="@{/schedule/create}" method="post" class="schedule-form" id="scheduleForm">
+            <input type="hidden" name="agreement_idx" th:value="${agreement_idx}">
+
+            <div class="form-group">
+               <label>일정 명칭</label>
+               <input type="text" name="name" class="input-field" placeholder="예: 매일 아침 러닝" required>
+            </div>
+
+            <div class="form-group">
+               <label>상세 내용</label>
+               <input type="text" name="content" class="input-field" placeholder="무엇을 하나요?" required>
+            </div>
+
+            <div class="form-group">
+               <label>시작 일시</label>
+               <input type="datetime-local" name="start_date" id="startDate" class="input-field" required>
+               <span class="date-info">지금 이후의 시간만 선택 가능합니다.</span>
+            </div>
+
+            <div class="form-group">
+               <label>종료 일시</label>
+               <input type="datetime-local" name="end_date" id="endDate" class="input-field" required>
+               <span class="date-info">시작 일시 이후여야 합니다.</span>
+            </div>
+
+            <div class="form-group">
+               <label>장소</label>
+               <input type="text" name="location" class="input-field" placeholder="장소를 입력하세요" required>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn-submit" disabled>일정 등록하기</button>
+         </form>
+      </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+
+   <script>
+      const form = document.getElementById('scheduleForm');
+      const startDateInput = document.getElementById('startDate');
+      const endDateInput = document.getElementById('endDate');
+      const submitBtn = document.getElementById('submitBtn');
+      const inputs = form.querySelectorAll('.input-field[required]');
+
+      // 1. 페이지 로드 시 시작 날짜의 '최솟값'을 현재 시간으로 설정
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // 로컬 시간 보정
+      const minDateTime = now.toISOString().slice(0, 16);
+      startDateInput.min = minDateTime;
+
+      // 2. 시작 날짜가 변경되면 종료 날짜의 '최솟값'을 시작 날짜로 업데이트
+      startDateInput.addEventListener('change', function() {
+         endDateInput.min = this.value;
+         if (endDateInput.value && endDateInput.value < this.value) {
+            endDateInput.value = this.value; // 시작일보다 종료일이 빠르면 자동 조정
+         }
+         validateForm();
+      });
+
+      // 3. 모든 입력값이 채워졌는지 검사하여 버튼 활성화
+      function validateForm() {
+         let allFilled = true;
+         inputs.forEach(input => {
+            if (!input.value.trim()) {
+               allFilled = false;
+            }
+         });
+
+         // 추가 조건: 종료 날짜는 시작 날짜보다 커야 함
+         const isDateValid = startDateInput.value && endDateInput.value && (endDateInput.value >= startDateInput.value);
+
+         submitBtn.disabled = !(allFilled && isDateValid);
+      }
+
+      // 모든 입력 필드에 이벤트 리스너 추가
+      inputs.forEach(input => {
+         input.addEventListener('input', validateForm);
+      });
+   </script>
+</body>
+</html>

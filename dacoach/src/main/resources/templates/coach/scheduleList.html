@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8" />
+   <title>dacoach - 일정 목록</title>
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+   
+   <style>
+      /* 전체 페이지 레이아웃 */
+      .main {
+         display: flex;
+         justify-content: center;
+         padding: 60px 20px;
+         background-color: #f5f7f9;
+         min-height: 85vh;
+      }
+
+      /* 클래스 이름을 .pledge-card에서 .container로 변경 */
+      .container {
+         width: 100%;
+         max-width: 900px;
+         background: #ffffff;
+         padding: 40px;
+         border-radius: 24px;
+         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+      }
+
+      .container h1 {
+         font-size: 1.8rem;
+         font-weight: 800;
+         margin-bottom: 30px;
+         color: #111;
+         text-align: left;
+      }
+
+      /* 탭 시스템 구성 */
+      .tabs {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 10px;
+         margin-bottom: 30px;
+         border-bottom: 2px solid #f1f5f9;
+      }
+
+      .tab-input { display: none; }
+
+      .tab-label {
+         padding: 12px 24px;
+         cursor: pointer;
+         font-weight: 700;
+         color: #94a3b8;
+         transition: all 0.3s;
+         border-bottom: 3px solid transparent;
+         margin-bottom: -2px;
+      }
+
+      .tab-label:hover { color: #4A90E2; }
+
+      /* 선택된 탭 스타일 */
+      #tab1:checked ~ .tabs .label1,
+      #tab2:checked ~ .tabs .label2,
+      #tab3:checked ~ .tabs .label3 {
+         color: #4A90E2;
+         border-bottom-color: #4A90E2;
+      }
+
+      /* 콘텐츠 표시 제어 */
+      .tab-content { display: none; width: 100%; animation: fadeIn 0.4s ease; }
+
+      #tab1:checked ~ #content1,
+      #tab2:checked ~ #content2,
+      #tab3:checked ~ #content3 {
+         display: block;
+      }
+
+      @keyframes fadeIn {
+         from { opacity: 0; transform: translateY(10px); }
+         to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* 가로형 일정 아이템 스타일 */
+      .schedule-item {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         background: #fff;
+         border: 1px solid #f1f5f9;
+         border-radius: 16px;
+         padding: 20px 30px;
+         margin-bottom: 15px;
+         transition: all 0.2s ease;
+      }
+
+      .schedule-item:hover {
+         transform: scale(1.01);
+         box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+         border-color: #e2e8f0;
+      }
+
+      .sch-main-info {
+         flex: 1;
+         display: flex;
+         flex-direction: column;
+         gap: 5px;
+      }
+
+      .sch-name {
+         font-size: 1.15rem;
+         font-weight: 700;
+         color: #1e293b;
+      }
+
+      .sch-content {
+         font-size: 0.95rem;
+         color: #64748b;
+         margin: 0;
+      }
+
+      .sch-side-info {
+         text-align: right;
+         min-width: 220px;
+         display: flex;
+         flex-direction: column;
+         gap: 5px;
+      }
+
+      .sch-location {
+         font-size: 0.9rem;
+         font-weight: 600;
+         color: #4A90E2;
+      }
+
+      .sch-date {
+         font-size: 0.85rem;
+         color: #94a3b8;
+      }
+
+      /* 상태별 포인트 */
+      .border-ongoing { border-left: 6px solid #4A90E2; }
+      .border-upcoming { border-left: 6px solid #ff9f43; }
+      .border-complete { border-left: 6px solid #94a3b8; opacity: 0.7; }
+
+      .empty-msg {
+         text-align: center;
+         padding: 60px 0;
+         color: #cbd5e1;
+         font-weight: 500;
+      }
+
+      /* 반응형: 화면이 좁아지면 다시 세로로 */
+      @media (max-width: 768px) {
+         .schedule-item { flex-direction: column; align-items: flex-start; gap: 15px; }
+         .sch-side-info { text-align: left; min-width: auto; border-top: 1px solid #f1f5f9; width: 100%; pt: 10px; }
+      }
+   </style>
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+      <div class="container">
+         <h1>🗓️ 일정 목록</h1>
+
+         <input type="radio" name="schedule-tab" id="tab1" class="tab-input" checked>
+         <input type="radio" name="schedule-tab" id="tab2" class="tab-input">
+         <input type="radio" name="schedule-tab" id="tab3" class="tab-input">
+
+         <div class="tabs">
+            <label for="tab1" class="tab-label label1">진행 중</label>
+            <label for="tab2" class="tab-label label2">예정</label>
+            <label for="tab3" class="tab-label label3">종료됨</label>
+         </div>
+
+         <div id="content1" class="tab-content">
+            <div th:if="${#lists.isEmpty(ongoing)}" class="empty-msg">현재 진행 중인 일정이 없습니다.</div>
+            <div th:each="s : ${ongoing}" class="schedule-item border-ongoing">
+               <div class="sch-main-info">
+                  <span class="sch-name" th:text="${s.name}">일정 이름</span>
+                  <p class="sch-content" th:text="${s.content}">상세 내용</p>
+               </div>
+               <div class="sch-side-info">
+                  <span class="sch-location" th:text="'📍 ' + ${s.location}">장소</span>
+                  <div class="sch-date">
+                     <span th:text="${#dates.format(s.start_date, 'MM/dd HH:mm')}">시작</span> ~ 
+                     <span th:text="${#dates.format(s.end_date, 'MM/dd HH:mm')}">종료</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div id="content2" class="tab-content">
+            <div th:if="${#lists.isEmpty(upcoming)}" class="empty-msg">예정된 일정이 없습니다.</div>
+            <div th:each="s : ${upcoming}" class="schedule-item border-upcoming">
+               <div class="sch-main-info">
+                  <span class="sch-name" th:text="${s.name}">일정 이름</span>
+                  <p class="sch-content" th:text="${s.content}">상세 내용</p>
+               </div>
+               <div class="sch-side-info">
+                  <span class="sch-location" th:text="'📍 ' + ${s.location}">장소</span>
+                  <div class="sch-date">
+                     <span th:text="${#dates.format(s.start_date, 'yyyy-MM-dd HH:mm')}">시작일</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div id="content3" class="tab-content">
+            <div th:if="${#lists.isEmpty(complete)}" class="empty-msg">종료된 일정이 없습니다.</div>
+            <div th:each="s : ${complete}" class="schedule-item border-complete">
+               <div class="sch-main-info">
+                  <span class="sch-name" th:text="${s.name}">일정 이름</span>
+                  <p class="sch-content" th:text="${s.content}">상세 내용</p>
+               </div>
+               <div class="sch-side-info">
+                  <span class="sch-location" th:text="'📍 ' + ${s.location}">장소</span>
+                  <div class="sch-date">
+                     <span th:text="${#dates.format(s.end_date, 'yyyy-MM-dd')}">종료일</span> 종료됨
+                  </div>
+               </div>
+            </div>
+         </div>
+
+      </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <meta charset="UTF-8" />
+   <title>dacoach - 서약하기</title>
+   <link rel="stylesheet" th:href="@{/css/main.css}" />
+   
+   <style>
+      /* 레이아웃 격리: 헤더/푸터 너비 보존 */
+      .main {
+         display: flex;
+         justify-content: center;
+         align-items: flex-start; /* 상단부터 배치 */
+         padding: 60px 20px;
+         background-color: #f5f7f9;
+         min-height: 85vh;
+      }
+
+      /* 서약서 본체 카드 */
+      .pledge-card {
+         width: 100%;
+         max-width: 600px;
+         background: #ffffff;
+         padding: 50px 40px;
+         border-radius: 20px;
+         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+         position: relative;
+      }
+
+      /* 제목 및 프로필 정렬 */
+      .pledge-card h1 {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         gap: 16px;
+         font-size: 1.7rem;
+         font-weight: 800;
+         margin-bottom: 40px;
+         color: #111;
+      }
+
+      /* 제목 폰트 크기에 맞춘 이미지 크기 (1:1 비율 유지) */
+      .pledge-card h1 img {
+         width: 50px;
+         height: 50px;
+         border-radius: 50%;
+         object-fit: cover;
+         border: 2px solid #eee;
+         background-color: #f9f9f9;
+      }
+
+      /* 입력 폼 스타일 */
+      .pledge-form {
+         display: flex;
+         flex-direction: column;
+         gap: 20px;
+      }
+
+      .pledge-textarea {
+         width: 100%;
+         height: 250px; /* 10줄 내외의 넉넉한 높이 */
+         padding: 20px;
+         border: 1px solid #e2e8f0;
+         border-radius: 12px;
+         font-size: 1.1rem;
+         line-height: 1.7;
+         font-family: inherit;
+         resize: none;
+         background-color: #fcfcfc;
+         transition: all 0.3s ease;
+         box-sizing: border-box;
+      }
+
+      .pledge-textarea:focus {
+         outline: none;
+         border-color: #4A90E2;
+         background-color: #fff;
+         box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+      }
+
+      /* 버튼 공통 스타일 */
+      .btn-submit {
+         padding: 16px;
+         background-color: #4A90E2;
+         color: white;
+         border: none;
+         border-radius: 12px;
+         font-weight: 700;
+         font-size: 1.1rem;
+         cursor: pointer;
+         transition: all 0.2s ease;
+      }
+
+      .btn-submit:hover {
+         background-color: #357ABD;
+         transform: translateY(-1px);
+      }
+
+      /* 정보 표시 박스 (대기/확인/완료) */
+      .info-box {
+         background-color: #f8fafc;
+         border-radius: 16px;
+         padding: 30px;
+         margin-bottom: 20px;
+         border: 1px solid #edf2f7;
+         position: relative;
+      }
+
+      .status-badge {
+         display: inline-block;
+         font-size: 0.85rem;
+         font-weight: 700;
+         color: #64748b;
+         margin-bottom: 15px;
+         text-transform: uppercase;
+         letter-spacing: 0.5px;
+      }
+
+      .content-display {
+         font-size: 1.15rem;
+         line-height: 1.8;
+         color: #334155;
+         white-space: pre-wrap; /* 줄바꿈 유지 */
+         word-break: break-all;
+         margin-bottom: 30px; /* 날짜 영역과의 간격 */
+      }
+
+      /* 날짜 표시 스타일: 우측 하단 배치 */
+      .date-display {
+         text-align: right;
+         font-size: 0.9rem;
+         color: #94a3b8;
+         border-top: 1px dashed #e2e8f0;
+         padding-top: 15px;
+         margin-top: 10px;
+      }
+
+      .date-display strong {
+         color: #64748b;
+         margin-right: 5px;
+      }
+
+      /* 상태별 포인트 컬러 */
+      .border-waiting { border-left: 6px solid #4A90E2; }
+      .border-agree { border-left: 6px solid #ff9f43; }
+      .border-done { border-left: 6px solid #2ecc71; background-color: #f0fff4; }
+
+   </style>
+</head>
+<body>
+   <div th:replace="layout/header :: siteHeader"></div>
+
+   <main class="main">
+      <div class="pledge-card">
+         <h1 th:if="${cdto != null}">
+            <img th:src="${cdto.photo != null} ? @{'/uploads/'+${cdto.photo}} : @{/img/profile/defaultProfile.jpg}" alt="프로필">
+            <span>[[${cdto.nickname}]]님과 서약하기</span>
+         </h1>
+
+         <form th:action="@{/dicipline/submit}" method="post" th:if="${status == 'none'}" class="pledge-form">
+            <input type="hidden" name="receiver_idx" th:value="${target_idx}" />
+            <textarea name="content" class="pledge-textarea" placeholder="서약 내용을 상세히 입력하세요.&#10;(엔터를 입력하여 줄을 바꿀 수 있습니다.)" required></textarea>
+            <button type="submit" class="btn-submit">서약서 제출 및 요청</button>
+         </form>
+
+         <div th:if="${status == 'waiting'}" class="info-box border-waiting">
+            <span class="status-badge">⌛ 상대방의 응답을 기다리고 있습니다</span>
+            <div class="content-display">[[${dto.content}]]</div>
+            <div class="date-display">
+               <strong>작성일</strong> [[${dto.created_at}]]
+            </div>
+         </div>
+
+         <div th:if="${status == 'wait'}">
+            <form th:action="@{/dicipline/agree}" method="post">
+               <div class="info-box border-agree">
+                  <span class="status-badge">📜 도착한 서약 내용을 확인해 주세요</span>
+                  <div class="content-display">[[${dto.content}]]</div>
+                  <div class="date-display">
+                     <strong>작성일</strong> [[${dto.created_at}]]
+                  </div>
+               </div>
+               <input type="hidden" name="agreement_idx" th:value="${dto.agreement_idx}">
+               <button type="submit" class="btn-submit" style="background-color: #ff9f43; width: 100%;">위 내용에 동의합니다</button>
+            </form>
+         </div>
+
+         <div th:if="${status == 'done'}" class="info-box border-done">
+            <span class="status-badge" style="color: #27ae60;">✅ 서약이 공식 체결되었습니다</span>
+            <div class="content-display">[[${dto.content}]]</div>
+            <div class="date-display">
+               <strong>체결일</strong> [[${dto.created_at}]]
+            </div>
+         </div>
+      </div>
+   </main>
+  
+   <div th:replace="layout/footer :: siteFooter"></div>
+
+</body>
+</html>

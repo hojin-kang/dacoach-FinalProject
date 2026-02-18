@@ -15,8 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dacoach.mapper.coach.CoachMapper;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
+import com.dacoach.model.dicip.DicipDTO;
 import com.dacoach.model.minorField.MinorFieldDTO;
 import com.dacoach.model.review.ReviewClassDTO;
+import com.dacoach.model.schedule.ScheduleDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.file.FileUpload;
 
@@ -327,5 +329,38 @@ public class CoachServiceImple implements CoachService {
 	public boolean writeCoachReview(ReviewClassDTO review) throws Exception {
 		int result=coachMapper.insertCoachReview(review);
 		return result>0?true:false;
+	}
+
+	@Override
+	public DicipDTO getDicip(int user_idx, int target_idx) throws Exception {
+		HashMap<String, Object> map=new HashMap<>();
+		map.put("user_idx", user_idx);
+		map.put("target_idx", target_idx);
+		DicipDTO dto=coachMapper.getDicip(map);
+		return dto;
+	}
+
+	@Override
+	public int writeDicip(DicipDTO dto) throws Exception {
+		int result=coachMapper.writeDicip(dto);
+		return result;
+	}
+
+	@Override
+	public int agreeDicip(int agreement_idx) throws Exception {
+		int result=coachMapper.agreeDicip(agreement_idx);
+		return result;
+	}
+
+	@Override
+	public int createSchedule(ScheduleDTO dto) throws Exception {
+		int result=coachMapper.createSchedule(dto);
+		return result;
+	}
+
+	@Override
+	public List<ScheduleDTO> getSchedule(int agreement_idx) throws Exception {
+		List<ScheduleDTO> list=coachMapper.getSchedule(agreement_idx);
+		return list;
 	}
 }
