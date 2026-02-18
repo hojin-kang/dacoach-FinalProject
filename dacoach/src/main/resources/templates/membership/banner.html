@@ -19,11 +19,11 @@
    </div>
    
    <!-- 배너 목록이 비어있을 때 -->
-   <div th:if="${#lists.isEmpty(bannerList)}">등록된 배너가 없습니다</div>
+   <div th:if="${#lists.isEmpty(dto)}">등록된 배너가 없습니다</div>
    
    <!-- 현재 배너 표시 -->
-   <div th:unless="${#lists.isEmpty(bannerList)}">
-   	현재 배너:<img th:src="'/uploads/' + ${bannerList[0].photo}" style="max-width: 868px; max-height: 120px; border-radius: 0px;">
+   <div th:unless="${#lists.isEmpty(dto)}">
+   	현재 배너:<img th:src="'/uploads/' + ${dto[0].photo}" style="max-width: 868px; max-height: 120px; border-radius: 0px;">
    </div>
    
    <!-- 배너 업로드 폼 -->
