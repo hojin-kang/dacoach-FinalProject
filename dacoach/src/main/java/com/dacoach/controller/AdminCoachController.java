@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.notification.NotificationDTO;
 import com.dacoach.model.qna.QnaDTO;
@@ -881,6 +882,7 @@ public class AdminCoachController {
 		
 		int monthlySales=0;
 		int lastMonthSales=0;
+		int pendingRefundCount=0;
 		double growth=0.0;
 		List<Map<String, Object>> weeklySales = new ArrayList<>();
 		
@@ -888,6 +890,7 @@ public class AdminCoachController {
 			// 성장률 공식: (이번달 - 지난달) / 지난달 * 100
 			monthlySales=adminService.monthlySales();
 			lastMonthSales=adminService.lastMonthSales();
+			pendingRefundCount=adminService.pendingRefundCount();
 			weeklySales = adminService.weeklySales();
 			
 			if(lastMonthSales != 0) {
@@ -905,6 +908,7 @@ public class AdminCoachController {
 		
 		model.addAttribute("monthlySales",monthlySales);
 		model.addAttribute("growth",growth);
+		model.addAttribute("pendingRefundCount",pendingRefundCount);
 		model.addAttribute("weeklySales", weeklySales);
 		model.addAttribute("contentPage", "admin/revenue/statisticsList");
 		model.addAttribute("contentFragment", "statisticsContent");
@@ -920,12 +924,62 @@ public class AdminCoachController {
 			return "redirect:/admin";
 		}
 		
+		int coachCount = 0;
+		double avgRating = 0.0;
+		int totalTokens = 0;
+		List<Map<String, Object>> coachInfoList = new ArrayList<>();
+		
+		try {
+			coachCount = adminService.coachCount();
+			avgRating = adminService.avgRating();
+			totalTokens = adminService.totalTokens();
+			coachInfoList = adminService.coachInfoList();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    
+		model.addAttribute("coachCount",coachCount);
+		model.addAttribute("avgRating",avgRating);
+		model.addAttribute("totalTokens",totalTokens);
+		model.addAttribute("coachInfo",coachInfoList);
 	    model.addAttribute("contentPage", "admin/coach/coachInfoList");
 	    model.addAttribute("contentFragment", "coachInfoContent");
 	    
 	    return "admin/dashboard";
 	}
+	
+	@GetMapping("/coach/infoDetail")
+	public String coachInfoDetail(Model model, HttpSession session,
+			@RequestParam int coach_idx) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
+		CoachDTO dto = null;
+		List<String> coachHashtags = null;
+		
+		try {
+			
+			dto = adminService.coachInfoDetail(coach_idx);
+			coachHashtags = adminService.coachInfoHashtag(coach_idx);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		model.addAttribute("dto", dto);
+		model.addAttribute("coachHashtags",coachHashtags);
+		model.addAttribute("contentPage", "admin/coach/coachInfoDetail");
+	    model.addAttribute("contentFragment", "coachInfoDetail");
+	    
+	    return "admin/dashboard";
+		
+	}
+	
+	
 	
 	
 }

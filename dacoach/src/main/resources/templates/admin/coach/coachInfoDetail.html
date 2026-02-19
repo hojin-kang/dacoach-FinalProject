@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="coachInfoDetail">
+    <style>
+        .bg-m-l { background-color: #f0f8f7; }
+        .bg-m-d { background-color: #9dbbb5; }
+        .f-main { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #374151; }
+        .i-card { 
+            background-color: white; border: 2px solid #e5e7eb; border-radius: 40px; 
+            padding: 2.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+            margin-bottom: 1.5rem; position: relative; 
+        }
+        .s-badge { 
+            display: inline-block; background-color: #9dbbb5; color: white; 
+            padding: 0.5rem 2rem; border-radius: 999px; font-weight: bold; 
+            margin-bottom: 1.5rem; font-size: 1rem; 
+        }
+        .info-grid { display: grid; grid-template-columns: 100px 1fr; gap: 15px; align-items: center; }
+        .info-label { color: #6b7280; font-weight: 600; font-size: 0.9rem; }
+        .info-value { color: #1f2937; font-weight: 500; }
+        
+        .photo-frame { 
+            width: 15rem; height: 18rem; background-color: #f0f8f7; 
+            border-radius: 2rem; display: flex; align-items: center; 
+            justify-content: center; border: 1px solid rgba(157, 187, 181, 0.3); 
+            flex-shrink: 0; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .btn-back { 
+            background-color: #9ca3af; color: white; padding: 0.8rem 4rem; 
+            border-radius: 12px; font-weight: bold; font-size: 0.9rem; 
+            border: none; cursor: pointer; transition: 0.2s;
+        }
+        .btn-back:hover { background-color: #6b7280; }
+        
+        /* 태그 리스트 간격 수정 부분 */
+        .tag-list { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; /* 태그 사이의 간격을 10px로 설정 */
+            margin-top: 5px;
+        }
+
+        .detail-tag { 
+            background: #f0f8f7; border: 1px solid #9dbbb5; color: #7a9a94; 
+            padding: 5px 15px; border-radius: 999px; font-size: 0.85rem; text-decoration: none;
+            transition: 0.3s;
+        }
+        .detail-tag:hover { background: #9dbbb5; color: white; }
+        
+        .video-box { 
+            width: 100%; aspect-ratio: 16/9; background: #111827; 
+            border-radius: 25px; overflow: hidden; border: 1px solid #e5e7eb;
+        }
+        .coach-name { font-size: 2.5rem; font-weight: 800; color: #111827; margin-bottom: 8px; }
+        .rank-badge {
+            display: inline-block; padding: 4px 12px; background: #eff6ff; color: #2563eb;
+            border-radius: 6px; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px;
+        }
+        .stat-card {
+            background: #ffffff; border: 1px solid #f3f4f6; padding: 25px; border-radius: 20px;
+            text-align: center; transition: 0.3s;
+        }
+    </style>
+
+    <div class="max-w-[1100px] mx-auto p-8 f-main">
+        
+        <div class="i-card">
+            <h2 class="s-badge">코치 상세 프로필</h2>
+            <div class="flex gap-16">
+                <div class="photo-frame">
+                    <img th:src="${dto.photo != null and dto.photo != ''} ? @{|/uploads/${dto.photo}|} : @{/img/profile/defaultProfile.jpg}" 
+                         class="w-full h-full object-cover" alt="코치 프로필">
+                </div>
+                
+                <div class="flex-1">
+                    <div class="rank-badge" th:text="${dto.rank_name}">등급 정보</div>
+                    <h1 class="coach-name" th:text="${dto.nickname}">닉네임</h1>
+                    
+                    <div class="info-grid mt-6">
+                        <div class="info-label">한줄 소개</div>
+                        <div class="info-value" th:text="${dto.intro}">코치님 소개 문구</div>
+                        
+                        <div class="info-label">전문 분야</div>
+                        <div class="info-value">
+                             <span class="font-bold text-[#7a9a94]" th:text="${dto.major_field_name}">대분류</span>
+                             <span class="mx-2 text-gray-300">|</span>
+                             <span th:text="${dto.minor_field_name}">소분류</span>
+                        </div>
+
+                        <div class="info-label">해시태그</div>
+                        <div class="tag-list">
+                            <a th:each="tag : ${coachHashtags}" th:href="@{/coach/search(keyword=${tag})}" class="detail-tag" th:text="|#${tag}|"></a>
+                            <span th:if="${#lists.isEmpty(coachHashtags)}" class="text-gray-300 text-xs">등록된 태그가 없습니다.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8">
+            <div class="i-card flex flex-col">
+                <h2 class="s-badge">소개 영상</h2>
+                <div class="video-box">
+                    <video controls th:if="${dto.video != null and #strings.trim(dto.video) != ''}" class="w-full h-full">
+                        <source th:src="@{|/uploads/${#strings.trim(dto.video)}|}" type="video/mp4">
+                    </video>
+                    <div th:unless="${dto.video != null and #strings.trim(dto.video) != ''}" class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
+                        <div class="text-center">
+                            <p class="text-4xl mb-2">📹</p>
+                            <p>등록된 소개 영상이 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="i-card flex flex-col">
+                <h2 class="s-badge">데이터 요약</h2>
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="stat-card">
+                        <p class="info-label mb-2">평균 평점</p>
+                        <p class="text-3xl font-black text-yellow-500" th:text="${dto.rating}">0.0</p>
+                        <p class="text-xs text-gray-400 mt-1">/ 5.0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="info-label mb-2">리뷰 수</p>
+                        <p class="text-3xl font-black text-blue-600" th:text="${dto.review_count}">0</p>
+                        <p class="text-xs text-gray-400 mt-1">건의 피드백</p>
+                    </div>
+                </div>
+                
+                <div class="mt-auto pt-8">
+                    <form th:action="@{/coach/allReview}" method="post" class="flex justify-center">
+                        <input type="hidden" name="user_idx" th:value="${dto.user_idx}">
+                        <button type="submit" class="w-full py-4 bg-gray-50 rounded-2xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition">
+                            전체 후기 상세 보기 ＞
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center mt-8 mb-10">
+            <button type="button" onclick="history.back()" class="btn-back">목록으로 돌아가기</button>
+        </div>
+    </div>
+</div>
+</html>

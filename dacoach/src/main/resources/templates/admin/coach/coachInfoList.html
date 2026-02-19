@@ -70,7 +70,7 @@
         <div class="summary-row">
             <div class="stat-card">
                 <span class="stat-label">Total Coaches</span>
-                <span class="stat-value" th:text="${totalCoachCount ?: 0}">0</span>
+                <span class="stat-value" th:text="${coachCount ?: 0}">0</span>
             </div>
             <div class="stat-card">
                 <span class="stat-label">Avg. Rating</span>
@@ -92,17 +92,19 @@
             <div class="col-date">JOINED</div>
         </div>
 
-        <div th:if="${#lists.isEmpty(coachList)}" class="py-20 text-center">
+        <div th:if="${#lists.isEmpty(coachInfo)}" class="py-20 text-center">
             <div style="font-size: 40px; margin-bottom: 10px;">👤</div>
             <p style="color: #9ca3af; font-style: italic;">조회된 코치 정보가 없습니다.</p>
         </div>
 
-        <div th:each="coach : ${coachList}" class="coach-item-card" 
-             th:onclick="|location.href='/admin/coach/info?coach_idx=' + ${coach.COACH_IDX}|" style="cursor:pointer;">
+        <div th:each="coach : ${coachInfo}" class="coach-item-card" 
+             th:onclick="|location.href='/admin/coach/infoDetail?coach_idx=' + ${coach.COACH_IDX}|" style="cursor:pointer;">
             
             <div class="col-photo">
-                <img th:src="${coach.PHOTO ?: '/img/default-profile.png'}" class="profile-img" alt="profile">
-            </div>
+				<img
+					th:src="${coach['PHOTO'] != null and coach['PHOTO'] != ''} ? @{|/uploads/${coach['PHOTO']}|} : @{/img/profile/defaultProfile.jpg}"
+					class="profile-img" alt="profile">
+			</div>
             <div class="col-idx" th:text="${coach.COACH_IDX}">1</div>
             <div class="col-nick" th:text="${coach.NICKNAME}">현빈코치</div>
             <div class="col-email" th:text="${coach.MAIL}">coach@example.com</div>

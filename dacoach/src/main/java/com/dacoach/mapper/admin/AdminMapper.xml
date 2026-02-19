@@ -356,7 +356,7 @@
 	select sum(p.total)/10000
 	from pay p
 	join pay_status ps on p.tid=ps.tid
-	where ps.status='완료됨'
+	where ps.status='완료'
 	and p.approved_at >= trunc(sysdate)
 	and p.approved_at <![CDATA[<]]> trunc(sysdate) + 1
   	</select>
@@ -365,7 +365,7 @@
 	select sum(p.total) as totals
 	from pay p
 	join pay_status ps on p.tid=ps.tid
-	where ps.status='완료됨'
+	where ps.status='완료'
 	and p.approved_at >= trunc(sysdate,'MM')
 	and p.approved_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
   	</select>
@@ -374,9 +374,14 @@
   	select sum(p.total) as totals
 	from pay p
 	join pay_status ps on p.tid=ps.tid
-	where ps.status='완료됨'
+	where ps.status='완료'
 	and p.approved_at >= add_months(trunc(sysdate,'MM'),-1)
 	and p.approved_at <![CDATA[<]]> trunc(sysdate,'MM')
+  	</select>
+  	
+  	<select id="pendingRefundCount">
+	select count(*) from pay_status
+	where status='환불요청'
   	</select>
   	
   	<select id="weeklySales">
@@ -393,9 +398,89 @@
 	SELECT DISTINCT p.tid, p.total, p.approved_at
 	FROM pay p
 	JOIN pay_status ps ON p.tid = ps.tid
-	WHERE ps.status = '완료됨'
+	WHERE ps.status = '완료'
 	) p ON TRUNC(p.approved_at) = d.dt
 	GROUP BY d.dt
 	ORDER BY d.dt ASC
   	</select>
+  	
+  	<select id="coachInfoList">
+	SELECT
+	c.COACH_IDX,
+	c.PHOTO,
+	c.NICKNAME,
+	c.MAIL,
+	NVL(r.AVG_RATING, 0) AS AVG_RATING,
+	c.TOKEN_BALANCE,
+	u.CREATED_AT
+	FROM COACH c
+	JOIN USERS u ON c.USER_IDX = u.USER_IDX
+	LEFT JOIN (
+	SELECT
+	REVIEWEE_IDX,
+	ROUND(AVG(RATING), 1) AS AVG_RATING
+	FROM REVIEW_COACH
+	GROUP BY REVIEWEE_IDX
+	) r ON c.USER_IDX = r.REVIEWEE_IDX
+	ORDER BY c.COACH_IDX DESC
+  	</select>
+  	
+  	<select id="coachInfoDetail">
+	SELECT
+	c.USER_IDX,
+	c.COACH_IDX,
+	c.NICKNAME,
+	c.PHOTO,
+	c.VIDEO,
+	c.INTRO,
+	r.RANK_NAME,
+	mf_major.MAJOR_FIELD_CD AS MAJOR_FIELD_NAME,
+	mf_minor.MINOR_FIELD_NM AS MINOR_FIELD_NAME,
+	NVL(rv.AVG_RATING, 0) AS RATING,
+	NVL(rv.REVIEW_COUNT, 0) AS REVIEW_COUNT
+	FROM COACH c
+	JOIN USERS u ON c.USER_IDX = u.USER_IDX
+	LEFT JOIN RANK r ON c.POINT_SCORE BETWEEN r.MIN_SCORE AND r.MAX_SCORE
+	LEFT JOIN (
+	SELECT COACH_IDX, MIN(MINOR_FIELD_IDX) as MIN_FIELD_IDX
+	FROM COACH_PROVIDE
+	GROUP BY COACH_IDX
+	) cp_top ON c.COACH_IDX = cp_top.COACH_IDX
+	LEFT JOIN MINOR_FIELD mf_minor ON cp_top.MIN_FIELD_IDX =
+	mf_minor.MINOR_FIELD_IDX
+	LEFT JOIN MAJOR_FIELD mf_major ON mf_minor.MAJOR_FIELD_IDX =
+	mf_major.MAJOR_FIELD_IDX
+	LEFT JOIN (
+	SELECT
+	REVIEWEE_IDX,
+	ROUND(AVG(RATING), 1) AS AVG_RATING,
+	COUNT(REVIEW_COACH_IDX) AS REVIEW_COUNT
+	FROM REVIEW_COACH
+	GROUP BY REVIEWEE_IDX
+	) rv ON c.USER_IDX = rv.REVIEWEE_IDX
+	WHERE c.COACH_IDX = #{coach_idx}
+  	</select>
+  	
+  	<select id="coachInfoHashtag">
+	SELECT h.TAGS
+	FROM HASHTAG h
+	JOIN USER_HASHTAG uh ON h.HASHTAG_IDX = uh.HASHTAG_IDX
+	JOIN COACH c ON uh.USER_IDX = c.USER_IDX
+	WHERE c.COACH_IDX = #{coach_idx}
+  	</select>
+  	
+  	<select id="coachCount">
+  	select count(*) from coach
+  	</select>
+  	
+  	<select id="avgRating">
+  	SELECT 
+        NVL(ROUND(AVG(RATING), 1), 0.0) 
+    FROM REVIEW_COACH
+  	</select>
+  	
+  	<select id="totalTokens">
+  	select sum(token_balance) from coach
+  	</select>
+  	
 </mapper>

@@ -3,6 +3,7 @@ package com.dacoach.service.admin;
 import java.util.*;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
@@ -62,8 +63,8 @@ public interface AdminService {
 	public int updateMinorField(Map<String, Object> params) throws Exception;
 	
 	//신고관리
-	public List<Map<String,Object>> reportList(String status) throws Exception;
-	public Map<String, Object> reportContent(int report_idx) throws Exception;
+	List<Map<String,Object>> reportList(String status) throws Exception;
+	Map<String, Object> reportContent(int report_idx) throws Exception;
 	public int getCoachIdx (int user_idx) throws Exception;
 	public int getCompanyIdx (int user_idx) throws Exception;
 	public int updateReport(ReportDTO dto) throws Exception;
@@ -77,5 +78,14 @@ public interface AdminService {
 	//통계관리화면
 	public int monthlySales() throws Exception;
 	public int lastMonthSales() throws Exception;
-	public List<Map<String,Object>> weeklySales() throws Exception;
+	public int pendingRefundCount() throws Exception;
+	List<Map<String,Object>> weeklySales() throws Exception;
+	
+	//코치 상세정보 화면
+	List<Map<String,Object>> coachInfoList() throws Exception;
+	public CoachDTO coachInfoDetail(int coach_idx) throws Exception;
+	List<String> coachInfoHashtag(int coach_idx) throws Exception;
+	public int coachCount() throws Exception;
+	public double avgRating() throws Exception;
+	public int totalTokens() throws Exception;
 }

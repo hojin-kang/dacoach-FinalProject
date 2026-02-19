@@ -5,6 +5,7 @@ import java.util.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
@@ -77,5 +78,14 @@ public interface AdminMapper {
 	//통계관리 화면
 	public Integer monthlySales() throws Exception;
 	public Integer lastMonthSales() throws Exception;
+	public int pendingRefundCount() throws Exception;
 	public List<Map<String,Object>> weeklySales() throws Exception;
+	
+	//코치 상세정보 화면
+	public List<Map<String,Object>> coachInfoList() throws Exception;
+	public CoachDTO coachInfoDetail(int coach_idx) throws Exception;
+	public List<String> coachInfoHashtag(int coach_idx) throws Exception;
+	public int coachCount() throws Exception;
+	public double avgRating() throws Exception;
+	public Integer totalTokens() throws Exception;
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.dacoach.mapper.admin.AdminMapper;
 import com.dacoach.model.admin.EmbeddedUserDTO;
+import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
@@ -258,8 +259,44 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
+	public int pendingRefundCount() throws Exception {
+		return adminMapper.pendingRefundCount();
+	}
+	
+	@Override
 	public List<Map<String, Object>> weeklySales() throws Exception {
 		return adminMapper.weeklySales();
+	}
+	
+	@Override
+	public List<Map<String, Object>> coachInfoList() throws Exception {
+		return adminMapper.coachInfoList();
+	}
+	
+	@Override
+	public CoachDTO coachInfoDetail(int coach_idx) throws Exception {
+		return adminMapper.coachInfoDetail(coach_idx);
+	}
+	
+	@Override
+	public List<String> coachInfoHashtag(int coach_idx) throws Exception {
+		return adminMapper.coachInfoHashtag(coach_idx);
+	}
+	
+	@Override
+	public int coachCount() throws Exception {
+		return adminMapper.coachCount();
+	}
+	
+	@Override
+	public double avgRating() throws Exception {
+		return adminMapper.avgRating();
+	}
+	
+	@Override
+	public int totalTokens() throws Exception {
+		Integer result = adminMapper.totalTokens();
+		return (result==null)?0:result;
 	}
 
 }
