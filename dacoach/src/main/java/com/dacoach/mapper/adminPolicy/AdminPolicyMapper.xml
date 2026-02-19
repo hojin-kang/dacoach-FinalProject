@@ -70,7 +70,14 @@
 		left join users u on q.user_idx =
 		u.user_idx
 		where q.qna_type = '운영정책' and u.user_type='ADMIN'
-		order by q.qna_idx DESC
+		order by
+		q.qna_idx DESC
 		) where ROWNUM = 1
+	</select>
+
+	<select id="getNoticeList"
+		resultType="com.dacoach.model.adminPolicy.PolicyDTO">
+		select * from qna
+		where qna_type in('서비스' ,'안내' , '이벤트','점검')
 	</select>
 </mapper>

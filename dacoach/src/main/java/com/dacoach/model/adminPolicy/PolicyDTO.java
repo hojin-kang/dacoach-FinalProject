@@ -14,9 +14,11 @@ import lombok.Setter;
 public class PolicyDTO {
 
 	private int qna_idx;  
-	private String type;
+	private String qna_type;
     private String title;        
     private String question;     
     private int user_idx;        
-    private String login_id;      
+    private String login_id;  
+    private Date created_at;
 }
+	

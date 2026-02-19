@@ -1,13 +1,23 @@
 package com.dacoach.controller;
 
-import org.springframework.stereotype.Controller; 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.dacoach.adminpolicy.service.AdminPolicyService;
+import com.dacoach.model.adminPolicy.PolicyDTO; 
 
 @Controller
 @RequestMapping("/admin")
 public class AdminNoticeController {
 
+	@Autowired
+	AdminPolicyService service;
+	
     @GetMapping("/notice")
     public String noticeList() {
         return "admin/support/notice/policies";  
@@ -34,7 +44,11 @@ public class AdminNoticeController {
     }
     
     @GetMapping("/noticepolicy")
-    public String notice() {
+    public String notice(Model model) {
+    	List<PolicyDTO> noticeList = service.getNoticeList();
+    	model.addAttribute("noticeList",noticeList);
 		return "admin/support/notice/noticePolicy";
 	}
+    
+    
 }

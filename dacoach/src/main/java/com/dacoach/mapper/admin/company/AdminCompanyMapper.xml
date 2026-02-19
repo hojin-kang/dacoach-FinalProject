@@ -49,7 +49,7 @@
 		CLASS
 	</select>
 
-	<!-- 3. 클래스 상세 (간소화 버전 - 기본 정보만) -->
+	<!-- 3. 클래스 상세 -->
 	<select id="classDetail" parameterType="map" resultType="map">
   <![CDATA[
     SELECT

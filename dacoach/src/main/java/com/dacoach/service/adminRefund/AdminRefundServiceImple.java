@@ -33,7 +33,7 @@ public class AdminRefundServiceImple implements AdminRefundService{
 	@Override
 	public String approveRefund(int pay_idx) {
 		try {
-			PayDTO payInfo = kakakaoMapper.selectPayStatus(pay_idx);
+			PayDTO payInfo = kakakaoMapper.paySelect(pay_idx);
 			
 			if(payInfo == null) return "NOT_FOUND";
 			

@@ -10,4 +10,5 @@ public interface AdminPolicyService {
 	void savePolicy(PolicyDTO policy);
 	void deletePolicy(int qna_idx);
 	PolicyDTO getLatestPolicy();
+	List<PolicyDTO> getNoticeList();
 }
