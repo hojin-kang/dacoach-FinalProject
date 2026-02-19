@@ -54,6 +54,8 @@ public interface CoachClassMapper {
 
 	// 리뷰 개수 조회
 	Integer selectReviewCountByClass(int class_idx) throws Exception;
+	
+	List<CoachClassDTO> classSearchPaged(Map<String, Object> param);
 
 	// ===== 수강신청 관련 메서드 =====
 

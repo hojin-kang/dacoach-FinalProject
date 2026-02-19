@@ -31,6 +31,10 @@ public class CoachClassDTO {
 
 	private Date created_at; // 등록일
 	private Integer max_user_cnt; // 수강 인원 제한
+	
+	private int total_cnt;
+	public int getTotal_cnt() { return total_cnt; }
+	public void setTotal_cnt(int total_cnt) { this.total_cnt = total_cnt; }
 
 	// ========== 화면 표시용 추가 필드 (조인/계산 결과) ==========
 	// ※ 주의: 아래 필드들은 DB 테이블 컬럼이 아니며, SELECT 쿼리 결과로만 채워집니다
@@ -39,4 +43,5 @@ public class CoachClassDTO {
 	private Double avg_rating; // 평균 별점 (REVIEW_CLASS 집계)
 	private Integer review_cnt; // 리뷰 개수 (REVIEW_CLASS 집계)
 	private Integer is_premium; // 프리미엄 여부 (MEMBERSHIP 조인 계산 결과: 1=프리미엄, 0=일반)
+	
 }

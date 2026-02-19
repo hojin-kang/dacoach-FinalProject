@@ -105,6 +105,28 @@ public class CoachClassServiceImple implements CoachClassService {
 		Integer count = classMapper.selectReviewCountByClass(class_idx);
 		return count != null ? count : 0;
 	}
+	
+	@Override
+	public List<CoachClassDTO> classSearchPaged(int cp, int pageSize,
+	        Integer majorField, Integer minorField,
+	        Integer majorRegion, Integer minorRegion,
+	        String q, String sort) throws Exception {
+
+	    Map<String, Object> param = new HashMap<>();
+	    param.put("majorField", majorField);
+	    param.put("minorField", minorField);
+	    param.put("majorRegion", majorRegion);
+	    param.put("minorRegion", minorRegion);
+	    param.put("q", (q == null ? null : q.trim()));
+	    param.put("sort", (sort == null ? "latest" : sort));
+
+	    int start = (cp - 1) * pageSize + 1;
+	    int end   = cp * pageSize;
+	    param.put("start", start);
+	    param.put("end", end);
+
+	    return classMapper.classSearchPaged(param);
+	}
 
 	// ===== 수강신청 관련 메서드 구현 =====
 

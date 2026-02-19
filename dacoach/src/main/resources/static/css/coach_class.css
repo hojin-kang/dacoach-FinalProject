@@ -91,6 +91,30 @@
 }
 
 /* ============ RIGHT CONTENT ============ */
+
+/* 페이징 스타일 */
+#pageStr {
+	display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+#pageStr a {
+    color: #DC731D;          
+    text-decoration: none;   
+    padding: 5px 10px;       
+    border: 1px solid #ddd;  
+    border-radius: 4px;      
+    margin: 0 3px;           
+    transition: all 0.2s;    
+}
+
+
+#pageStr a:hover {
+    background-color: #DC731D;
+    color: white;
+    border-color: #DC731D;
+}
+
 .contentArea {
 	min-width: 0;
 }
