@@ -67,7 +67,7 @@ public class MembershipApiController {
 			map.put("tid", kakaoApprove.getTid());
 			kakaoApprove.setSid("담에추가");
 			kakaoApprove.setItem_code("담에추가");
-			kakaopayMapper.upPayStatus(map);
+			//kakaopayMapper.upPayStatus(map);
 			kakaopayMapper.insertPay(kakaoApprove);
 			
 			MembershipDTO dto=membershipMapper.userMembershipInfo((Integer)session.getAttribute("user_idx"));
