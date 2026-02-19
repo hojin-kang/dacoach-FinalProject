@@ -93,7 +93,7 @@
 						<button type="button" th:case="'APPLIED'" class="btn-match stop-card" disabled style="background:#666; color:#fff;">
 							매칭신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
 						</button>
-						<button type="button" th:case="*" class="btn-match stop-card" th:onclick="applyAction('MATCH', [[${target_idx}]])">
+						<button type="button" th:case="*" th:unless="${status == 'COMPANY'}" class="btn-match stop-card" th:onclick="applyAction('MATCH', [[${target_idx}]])">
 							매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
 						 </button>
 					</th:block>			    

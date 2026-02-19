@@ -200,7 +200,9 @@ public class ChatServiceImple implements ChatService {
 		map.put("my_idx", myIdx);
 		map.put("target_idx", targetIdx);
 		HashMap result = chatMapper.isMatched(map);
-		
+		if(result==null) {
+			return "COMPANY";
+		}
 		String isMatched=(String) result.get("IS_MATCH");
 		
 		Object applicantObj = result.get("MATCH_APPLICANT");
