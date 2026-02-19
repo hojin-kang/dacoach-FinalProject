@@ -137,6 +137,89 @@
 		</choose>
 	</select>
 
+	<select id="classSearchPaged" parameterType="map"
+		resultType="com.dacoach.model.coachClasses.CoachClassDTO">
+
+		SELECT * FROM (
+		SELECT rownum AS rnum, R.* FROM (
+		SELECT
+		c.CLASS_IDX,
+		c.PROVIDER_IDX,
+		u.USER_NAME,
+		c.TITLE,
+		c.INTRO,
+		c.MINOR_FIELD_IDX,
+		c.MINOR_REGION_IDX,
+		c.PRICE,
+		c.PHOTO,
+		c.VIDEO,
+		c.START_DATE,
+		c.END_DATE,
+		c.CREATED_AT,
+		c.MAX_USER_CNT,
+		NVL(r.AVG_RATING, 0) AS AVG_RATING,
+		NVL(r.REVIEW_CNT, 0) AS REVIEW_CNT,
+		COUNT(*) OVER() AS total_cnt
+		FROM CLASS c
+		LEFT JOIN MINOR_FIELD mf ON mf.MINOR_FIELD_IDX = c.MINOR_FIELD_IDX
+		LEFT JOIN MINOR_REGION mr ON mr.MINOR_REGION_IDX = c.MINOR_REGION_IDX
+		LEFT JOIN USERS u ON u.USER_IDX = c.PROVIDER_IDX
+		LEFT JOIN (
+		SELECT CLASS_IDX,
+		ROUND(AVG(RATING), 1) AS AVG_RATING,
+		COUNT(*) AS REVIEW_CNT
+		FROM REVIEW_CLASS
+		GROUP BY CLASS_IDX
+		) r ON r.CLASS_IDX = c.CLASS_IDX
+
+		<where>
+			AND TRUNC(c.END_DATE) >= TRUNC(SYSDATE)
+
+			<if test="minorField != null">
+				AND c.MINOR_FIELD_IDX = #{minorField}
+			</if>
+			<if test="minorField == null and majorField != null">
+				AND mf.MAJOR_FIELD_IDX = #{majorField}
+			</if>
+
+			<if test="minorRegion != null">
+				AND c.MINOR_REGION_IDX = #{minorRegion}
+			</if>
+			<if test="minorRegion == null and majorRegion != null">
+				AND mr.MAJOR_REGION_IDX = #{majorRegion}
+			</if>
+
+			<if test="q != null and q != ''">
+				AND (c.TITLE LIKE '%' || #{q} || '%'
+				OR c.INTRO LIKE '%' || #{q} || '%')
+			</if>
+		</where>
+
+		<choose>
+			<when test="sort == 'rating'">
+				ORDER BY r.AVG_RATING DESC NULLS LAST, r.REVIEW_CNT DESC, c.CREATED_AT
+				DESC
+			</when>
+			<when test="sort == 'most'">
+				ORDER BY NVL(r.REVIEW_CNT, 0) DESC, c.CREATED_AT DESC
+			</when>
+			<when test="sort == 'priceAsc'">
+				ORDER BY c.PRICE ASC NULLS LAST, c.CREATED_AT DESC
+			</when>
+			<when test="sort == 'priceDesc'">
+				ORDER BY c.PRICE DESC NULLS LAST, c.CREATED_AT DESC
+			</when>
+			<otherwise>
+				ORDER BY c.CREATED_AT DESC
+			</otherwise>
+		</choose>
+		) R
+		WHERE rownum &lt;= #{end}
+		)
+		WHERE rnum &gt;= #{start}
+
+	</select>
+
 	<!-- 코치 - 클래스 상세 -->
 	<select id="getClassDetail" parameterType="int"
 		resultType="com.dacoach.model.coachClasses.CoachClassDTO">

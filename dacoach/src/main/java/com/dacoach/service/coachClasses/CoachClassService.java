@@ -37,6 +37,11 @@ public interface CoachClassService {
 	Double getAvgRatingByClass(int class_idx) throws Exception;
 
 	Integer getReviewCountByClass(int class_idx) throws Exception;
+	
+	List<CoachClassDTO> classSearchPaged(int cp, int pageSize,
+	        Integer majorField, Integer minorField,
+	        Integer majorRegion, Integer minorRegion,
+	        String q, String sort) throws Exception;
 
 	// ===== 수강신청 관련 메서드 =====
 

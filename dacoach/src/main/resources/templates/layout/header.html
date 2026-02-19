@@ -24,7 +24,9 @@
 	
 	
 	        <div class="search">
-	          <input type="text" placeholder="검색" />
+	          <form th:action="@{/searchResult}" method="get">
+			    <input type="text" name="keyword" placeholder="검색" />
+			  </form>
 	        </div>
         </div>
         

@@ -57,32 +57,58 @@ public class CoachClassController {
 	}
 
 	@GetMapping("/coach/classList")
-	public ModelAndView coachClassList(@RequestParam(required = false) Integer majorField,
-			@RequestParam(required = false) Integer minorField, @RequestParam(required = false) Integer majorRegion,
-			@RequestParam(required = false) Integer minorRegion, @RequestParam(required = false) String q,
-			@RequestParam(required = false, defaultValue = "latest") String sort) throws Exception {
+	public ModelAndView coachClassList(
+	        @RequestParam(value="cp", defaultValue="1") int cp,
+	        @RequestParam(required = false) Integer majorField,
+	        @RequestParam(required = false) Integer minorField,
+	        @RequestParam(required = false) Integer majorRegion,
+	        @RequestParam(required = false) Integer minorRegion,
+	        @RequestParam(required = false) String q,
+	        @RequestParam(required = false, defaultValue = "latest") String sort
+	) throws Exception {
 
-		ModelAndView mav = new ModelAndView();
+	    ModelAndView mav = new ModelAndView();
 
-		List<Map<String, Object>> majorList = classService.getMajorFields();
-		List<Map<String, Object>> majorRegions = classService.getMajorRegions();
-		List<CoachClassDTO> classList = classService.classSearch(majorField, minorField, majorRegion, minorRegion, q,
-				sort);
+	    List<Map<String, Object>> majorList = classService.getMajorFields();
+	    List<Map<String, Object>> majorRegions = classService.getMajorRegions();
 
-		mav.addObject("majorList", majorList);
-		mav.addObject("majorRegions", majorRegions);
-		mav.addObject("classList", classList);
+	    // ✅ 4개씩 페이징
+	    List<CoachClassDTO> classList = classService.classSearchPaged(cp, 4,
+	            majorField, minorField, majorRegion, minorRegion, q, sort);
 
-		// 검색값 유지
-		mav.addObject("majorField", majorField);
-		mav.addObject("minorField", minorField);
-		mav.addObject("majorRegion", majorRegion);
-		mav.addObject("minorRegion", minorRegion);
-		mav.addObject("q", q);
-		mav.addObject("sort", sort);
+	    int totalCnt = 0;
+	    if (classList != null && !classList.isEmpty()) {
+	        totalCnt = classList.get(0).getTotal_cnt(); // total_cnt 컬럼을 DTO에 담아줘야 함
+	    }
 
-		mav.setViewName("coach/classes/classList");
-		return mav;
+	    // ✅ pageStr 만들기 (파라미터 유지)
+	    String page = "/coach/classList?";
+	    page += "majorField=" + (majorField == null ? "" : majorField)
+	         + "&minorField=" + (minorField == null ? "" : minorField)
+	         + "&majorRegion=" + (majorRegion == null ? "" : majorRegion)
+	         + "&minorRegion=" + (minorRegion == null ? "" : minorRegion)
+	         + "&q=" + (q == null ? "" : q)
+	         + "&sort=" + (sort == null ? "latest" : sort);
+
+	    if (totalCnt > 0) {
+	        String pageStr = com.dacoach.page.PageModule.makePagewithParams(page, totalCnt, 4, 5, cp);
+	        mav.addObject("pageStr", pageStr);
+	    }
+
+	    mav.addObject("majorList", majorList);
+	    mav.addObject("majorRegions", majorRegions);
+	    mav.addObject("classList", classList);
+
+	    // 검색값 유지
+	    mav.addObject("majorField", majorField);
+	    mav.addObject("minorField", minorField);
+	    mav.addObject("majorRegion", majorRegion);
+	    mav.addObject("minorRegion", minorRegion);
+	    mav.addObject("q", q);
+	    mav.addObject("sort", sort);
+
+	    mav.setViewName("coach/classes/classList");
+	    return mav;
 	}
 
 	@GetMapping("/coach/classDetail")
