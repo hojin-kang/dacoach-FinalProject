@@ -59,6 +59,40 @@
         }
 
         .star-icon { color: #f59e0b; margin-right: 3px; }
+        
+        /* [페이지네이션 - 공지사항과 동일한 스타일 적용] */
+        .pagination-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* PageModule에서 생성된 HTML에 대응하는 스타일 */
+        .pagination-wrap a, .pagination-wrap span {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #9ca3af;
+            transition: 0.2s;
+            border: 1px solid transparent;
+            background-color: white;
+            margin: 0 4px;
+        }
+
+        .pagination-wrap a:hover {
+            background-color: var(--mint-bg);
+            color: var(--mint-main);
+        }
+
+        .pagination-wrap .active, .pagination-wrap b {
+            background-color: var(--mint-main);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+        }
     </style>
 
     <div class="coach-admin-container">
@@ -117,6 +151,11 @@
             </div>
             <div class="col-date" th:text="${coach.CREATED_AT != null ? #dates.format(coach.CREATED_AT, 'yyyy-MM-dd') : '2026-02-18'}"></div>
         </div>
+        
+        <div class="pagination-wrap" th:if="${not #lists.isEmpty(coachInfo)}">
+            <div th:utext="${pageStr}"></div>
+        </div>
+        
     </div>
 </div>
 </html>

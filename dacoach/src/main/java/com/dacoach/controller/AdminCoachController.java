@@ -23,8 +23,6 @@ import com.dacoach.model.report.ReportDTO;
 import com.dacoach.service.admin.AdminService;
 import com.dacoach.service.notification.NotificationService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -48,12 +46,12 @@ public class AdminCoachController {
 		
 		int listSize=10;
 		int pageSize=5;
-		int CoachTotalCnt = 0;
+		int coachTotalCnt = 0;
 	    List<Map<String, Object>> coachList = new ArrayList<>();
 	    int certCount = 0;
 	    
 		try {
-		    CoachTotalCnt=adminService.getCoachTotalCnt();
+		    coachTotalCnt=adminService.getCoachTotalCnt();
 		    	
 		    int start = (cp - 1) * listSize + 1;
 		    int end = cp * listSize;
@@ -64,7 +62,7 @@ public class AdminCoachController {
 		    e.printStackTrace();
 		}
 		
-		String pageStr=com.dacoach.page.PageModule.makePage("coachList", CoachTotalCnt, listSize, pageSize, cp);
+		String pageStr=com.dacoach.page.PageModule.makePage("coachList", coachTotalCnt, listSize, pageSize, cp);
 	
 	    model.addAttribute("coachList", coachList);
 	    model.addAttribute("certCount", certCount);
@@ -944,31 +942,42 @@ public class AdminCoachController {
 	}
 	
 	@GetMapping("/coach/coachInfoList")
-	public String coachInfoList(Model model, HttpSession session) {
+	public String coachInfoList(Model model, HttpSession session,
+			@RequestParam(value="cp", defaultValue="1") int cp) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
-		int coachCount = 0;
-		double avgRating = 0.0;
-		int totalTokens = 0;
+		int listSize=10;
+		int pageSize=5;
+		int coachInfoTotalCnt=0;
 		List<Map<String, Object>> coachInfoList = new ArrayList<>();
+		int coachCount=0;
+		double avgRating=0.0;
+		int totalTokens=0;
 		
-		try {
+		try {	
 			coachCount = adminService.coachCount();
 			avgRating = adminService.avgRating();
 			totalTokens = adminService.totalTokens();
-			coachInfoList = adminService.coachInfoList();
+			
+			coachInfoTotalCnt = adminService.getCoachInfoTotalCnt();
+			int start = (cp - 1) * listSize + 1;
+			int end = cp * listSize;
+			coachInfoList = adminService.coachInfoList(start, end);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    
+		String pageStr=com.dacoach.page.PageModule.makePage("coachInfoList", coachInfoTotalCnt, listSize, pageSize, cp);
+		
 		model.addAttribute("coachCount",coachCount);
 		model.addAttribute("avgRating",avgRating);
 		model.addAttribute("totalTokens",totalTokens);
 		model.addAttribute("coachInfo",coachInfoList);
+		model.addAttribute("pageStr",pageStr);
 	    model.addAttribute("contentPage", "admin/coach/coachInfoList");
 	    model.addAttribute("contentFragment", "coachInfoContent");
 	    
