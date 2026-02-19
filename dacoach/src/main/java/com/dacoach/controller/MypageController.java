@@ -71,6 +71,7 @@ public class MypageController {
 	public ModelAndView mypageMain(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			System.out.println(session.getAttribute("user_idx"));
 			mav.setViewName("/needLogin");
 			return mav;
 		}

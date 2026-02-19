@@ -7,25 +7,35 @@
 	where login_id=#{login_id} and password=#{password}
 	</select>
 
+	<select id="getCoachTotalCnt">
+	select count(*)
+	from users u
+	join coach c on u.user_idx=c.user_idx 
+	</select>
+	
 	<select id="getCoachList" resultType="map"> 
-	select
-	c.coach_idx,
-	u.user_idx,
-	u.user_name,
-	c.nickname,
-	c.phone,
-	u.created_at,
-	u.status,
-	(select count(*) 
-		from cert c_sub
-		where c_sub.user_idx = c.user_idx
-		and cert_status = '대기') as cert_wait_count
-	from
-	coach c
-	join
-	users u on c.user_idx = u.user_idx
-	order by
-	u.created_at desc
+	select * from (
+		select rownum rnum,a.* from(
+			select
+			c.coach_idx,
+			u.user_idx,
+			u.user_name,
+			c.nickname,
+			c.phone,
+			u.created_at,
+			u.status,
+			(select count(*) 
+				from cert c_sub
+				where c_sub.user_idx = c.user_idx
+				and cert_status = '대기') as cert_wait_count
+			from
+			coach c
+			join
+			users u on c.user_idx = u.user_idx
+			order by
+			u.created_at desc
+		)a
+	)where rnum between #{start} and #{end}
 	</select>
 	
 	<select id="getCertCount" resultType="int">
