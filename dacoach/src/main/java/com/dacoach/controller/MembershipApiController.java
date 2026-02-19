@@ -24,6 +24,7 @@ import com.dacoach.kakaopay.PayStatusDTO;
 import com.dacoach.mapper.kakaopay.KakaopayMapper;
 import com.dacoach.mapper.membership.MembershipMapper;
 import com.dacoach.model.membership.MembershipDTO;
+import com.dacoach.model.membership.MembershipDetailDTO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -57,16 +58,16 @@ public class MembershipApiController {
 	
 	//결제성공
 	@GetMapping("/success")
-	public ModelAndView afterPayRequest(@RequestParam("pg_token") String pgToken){
+	public ModelAndView afterPayRequest(@RequestParam("pg_token") String pgToken,String cid){
 		
 		ModelAndView mav=new ModelAndView();
-		KakaoApproveResponse kakaoApprove= kakaoPayService.approveResponse(pgToken);
+		KakaoApproveResponse kakaoApprove= kakaoPayService.approveResponse(pgToken,cid);
 		try {
 			Map<String,String> map=new HashMap<String,String>();
-			map.put("status", "완료됨");
+			map.put("status", "완료");
 			map.put("tid", kakaoApprove.getTid());
-			kakaoApprove.setSid("담에추가");
-			kakaoApprove.setItem_code("담에추가");
+			//kakaoApprove.setSid("담에추가");
+			kakaoApprove.setItem_code("membershipCode");
 			//kakaopayMapper.upPayStatus(map);
 			kakaopayMapper.insertPay(kakaoApprove);
 			
@@ -134,9 +135,9 @@ public class MembershipApiController {
 			String msg="결제 취소요청이 실패하였습니다 관리자에게 문의 부탁드립니다";
 			
 			try {
-				System.out.println((int)cancelData.get("payIdx"));
+				//System.out.println((int)cancelData.get("payIdx"));
 				PayDTO payDto=kakaopayMapper.paySelect((int)cancelData.get("payIdx"));
-				System.out.println(payDto);
+				//System.out.println(payDto);
 				
 				Map<String,Object> parameters=new HashMap<String,Object>();
 				parameters.put("cid", payDto.getCid());
@@ -164,5 +165,38 @@ public class MembershipApiController {
 			}
 			
 			return new ResponseEntity<String>(msg,HttpStatus.OK);
+		}
+		
+		@PostMapping("/subscription")
+		public String subscription() {
+			
+			 
+			try {
+				for(int i=0;i<10;i++) {
+				PayDTO payDto = kakaopayMapper.paySelect(5);
+				MembershipDetailDTO membershipDto=membershipMapper.detail(2);
+				Map<String,Object> parameters=new HashMap<String,Object>();
+				parameters.put("cid", payDto.getCid());
+				parameters.put("sid", payDto.getSid() );
+				parameters.put("partner_order_id",membershipDto.getMember_detail_idx());
+				parameters.put("partner_user_id",payDto.getPartner_user_id());
+				parameters.put("item_name",membershipDto.getMember_type());
+				parameters.put("quantity", membershipDto.getCost());
+				parameters.put("total_amount", payDto.getTotal());
+				parameters.put("vat_amount", payDto.getVat());
+				parameters.put("tax_free_amount", payDto.getTax_free());
+				
+				KakaoApproveResponse kakaoApprove=kakaoPayService.subscription(parameters);
+				kakaopayMapper.insertPay(kakaoApprove);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+			return "/";
 		}
 }
