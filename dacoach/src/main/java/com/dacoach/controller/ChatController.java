@@ -126,7 +126,7 @@ public class ChatController {
 	 // 1. ChatMessageDTO 완벽하게 수동 조립
 	    ChatMessageDTO in = new ChatMessageDTO();
 	    in.setRoomIdx(roomIdx);
-	    in.setSenderIdx(0); // 시스템 메시지용 고유 번호
+	    in.setSenderIdx(0);
 	    in.setMessage("상대방이 채팅방을 나갔습니다.");
 	    
 	    // [추가] 만약 서비스에서 시간을 자동으로 안 넣어준다면 수동으로 세팅
