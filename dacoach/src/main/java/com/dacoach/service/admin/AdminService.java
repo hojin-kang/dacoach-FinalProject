@@ -87,7 +87,8 @@ public interface AdminService {
 	public int monthlyCancelAmount() throws Exception;
 	
 	//코치 상세정보 화면
-	List<Map<String,Object>> coachInfoList() throws Exception;
+	public int getCoachInfoTotalCnt() throws Exception;
+	List<Map<String,Object>> coachInfoList(int start,int end) throws Exception;
 	public CoachDTO coachInfoDetail(int coach_idx) throws Exception;
 	List<String> coachInfoHashtag(int coach_idx) throws Exception;
 	public int coachCount() throws Exception;

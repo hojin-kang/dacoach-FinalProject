@@ -33,7 +33,7 @@
 			join
 			users u on c.user_idx = u.user_idx
 			order by
-			u.created_at desc
+			c.coach_idx desc
 		)a
 	)where rnum between #{start} and #{end}
 	</select>
@@ -459,25 +459,34 @@
 	and pc.canceled_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
   	</select>
   	
+  	<select id="getCoachInfoTotalCnt">
+	SELECT COUNT(*) AS TOTAL_COUNT
+	FROM COACH
+  	</select>
+  	
   	<select id="coachInfoList">
-	SELECT
-	c.COACH_IDX,
-	c.PHOTO,
-	c.NICKNAME,
-	c.MAIL,
-	NVL(r.AVG_RATING, 0) AS AVG_RATING,
-	c.TOKEN_BALANCE,
-	u.CREATED_AT
-	FROM COACH c
-	JOIN USERS u ON c.USER_IDX = u.USER_IDX
-	LEFT JOIN (
-	SELECT
-	REVIEWEE_IDX,
-	ROUND(AVG(RATING), 1) AS AVG_RATING
-	FROM REVIEW_COACH
-	GROUP BY REVIEWEE_IDX
-	) r ON c.USER_IDX = r.REVIEWEE_IDX
-	ORDER BY c.COACH_IDX DESC
+  	SELECT * FROM (
+	  	SELECT ROWNUM RNUM,a.* FROM(
+			SELECT
+			c.COACH_IDX,
+			c.PHOTO,
+			c.NICKNAME,
+			c.MAIL,
+			NVL(r.AVG_RATING, 0) AS AVG_RATING,
+			c.TOKEN_BALANCE,
+			u.CREATED_AT
+			FROM COACH c
+			JOIN USERS u ON c.USER_IDX = u.USER_IDX
+			LEFT JOIN (
+			SELECT
+			REVIEWEE_IDX,
+			ROUND(AVG(RATING), 1) AS AVG_RATING
+			FROM REVIEW_COACH
+			GROUP BY REVIEWEE_IDX
+			) r ON c.USER_IDX = r.REVIEWEE_IDX
+			ORDER BY c.COACH_IDX DESC
+		)a
+	)WHERE RNUM BETWEEN #{start} and #{end}
   	</select>
   	
   	<select id="coachInfoDetail">
