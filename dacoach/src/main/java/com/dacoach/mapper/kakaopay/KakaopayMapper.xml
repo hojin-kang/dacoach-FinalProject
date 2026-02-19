@@ -25,8 +25,7 @@
   </select>
   
   <update id="upPayStatus">
-    update pay_status set status=#{status},
-    payload = #{payload, jdbcType=VARCHAR} where tid=#{tid}
+    update pay_status set status=#{status} where tid=#{tid}
 </update>
   
   <insert id="cancelOk">
