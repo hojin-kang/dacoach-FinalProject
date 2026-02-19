@@ -109,4 +109,6 @@ public interface CoachMapper {
     public int createSchedule(ScheduleDTO dto) throws Exception;
     
     public List<ScheduleDTO> getSchedule(int agreement_idx) throws Exception;
+    
+    int deleteAgree(HashMap map) throws Exception;
 }

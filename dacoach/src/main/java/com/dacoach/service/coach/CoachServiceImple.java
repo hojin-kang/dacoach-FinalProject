@@ -363,4 +363,14 @@ public class CoachServiceImple implements CoachService {
 		List<ScheduleDTO> list=coachMapper.getSchedule(agreement_idx);
 		return list;
 	}
+
+	@Override
+	public int deleteAgree(int user_idx, int target_idx) throws Exception {
+		HashMap<String, Object> map=new HashMap<>();
+		map.put("user_idx", user_idx);
+		map.put("target_idx", target_idx);
+		int result=coachMapper.deleteAgree(map);
+		return result;
+	}
+
 }

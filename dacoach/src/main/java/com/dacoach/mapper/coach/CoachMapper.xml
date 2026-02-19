@@ -439,4 +439,11 @@
         where agreement_idx = #{agreement_idx}
         order by start_date asc
      </select>
+     <delete id="deleteAgree" parameterType="map">
+	  delete from agreement
+	  where 
+	  (writer_idx = #{user_idx} and receiver_idx = #{target_idx})
+	  or
+	  (receiver_idx = #{user_idx} and writer_idx = #{target_idx})
+	 </delete>
 </mapper>

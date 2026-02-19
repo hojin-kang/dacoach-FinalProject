@@ -67,4 +67,8 @@ public interface ChatMapper {
     HashMap isMatched(HashMap<String, Object> map);
     
     int deleteMatch(HashMap<String, Object> map);
+    
+    int getAgreeIdx(HashMap<String, Object> map);
+    
+    int deleteAgree(int agreement_idx);
 }
