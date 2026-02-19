@@ -5,6 +5,9 @@
     <title>dacoach - 코치 찾기</title>
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/coach/coach_search.css}" />
+    <script th:inline="javascript">
+	  const IS_LOGGED_IN = [[${session.user_idx != null}]];
+	</script>
 </head>
 <body>
     <div th:replace="~{layout/header :: siteHeader}"></div>
@@ -229,9 +232,13 @@
 
     // 신청 액션 함수
     function applyAction(type, targetIdx) {
+    	if (!IS_LOGGED_IN) {
+    	    location.href = '/login';
+    	    return;
+    	  }
         let msg = "";
-        if(type === 'CHAT') msg = "채팅 신청을 하시겠습니까? 토큰 1개가 차감됩니다.";
-        else if(type === 'MATCH') msg = "매칭 신청을 하시겠습니까? 토큰 3개가 차감됩니다.";
+        if(type === 'CHAT') msg = "채팅 신청을 하시겠습니까? 닭꼬치 1개가 차감됩니다.";
+        else if(type === 'MATCH') msg = "매칭 신청을 하시겠습니까? 닭꼬치 3개가 차감됩니다.";
         else if(type === 'A_CHAT') msg = "채팅 신청을 수락하시겠습니까?";
         else if(type === 'A_MATCH') msg = "매칭 신청을 수락하시겠습니까?";
         
