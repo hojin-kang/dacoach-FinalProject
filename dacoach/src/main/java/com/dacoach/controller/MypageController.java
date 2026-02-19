@@ -253,7 +253,7 @@ public class MypageController {
 	    String userType = reviewService.getUserType(user_idx);
 	    mav.addObject("userType", userType);
 
-	    if ("coach".equals(userType)) {
+	    if ("COACH".equals(userType)) {
 	        mav.addObject("writtenCoachReviews", reviewService.getWrittenCoachReviews(user_idx));
 	        mav.addObject("writtenClassReviews", reviewService.getWrittenClassReviews(user_idx));
 	        mav.addObject("canWriteReview", true);

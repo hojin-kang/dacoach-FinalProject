@@ -63,10 +63,8 @@
 
 									<div class="reviewContent" th:text="${r.content}"></div>
 
-									<div class="tagLine" th:if="${r.tag != null and r.tag != ''}">
-										<span class="tagChip"
-											  th:each="t : ${#strings.arraySplit(r.tag,' ')}"
-											  th:text="${t}">#친절해요</span>
+									<div class="tagLine" th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
+									  <span class="tagChip" th:each="t : ${r.tagList}" th:text="${t}">#친절해요</span>
 									</div>
 								</div>
 							</div>
@@ -117,10 +115,8 @@
 
 									<div class="reviewContent" th:text="${r.content}"></div>
 
-									<div class="tagLine" th:if="${r.tag != null and r.tag != ''}">
-										<span class="tagChip"
-											  th:each="t : ${#strings.arraySplit(r.tag,' ')}"
-											  th:text="${t}">#친절해요</span>
+									<div class="tagLine" th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
+									  <span class="tagChip" th:each="t : ${r.tagList}" th:text="${t}">#친절해요</span>
 									</div>
 								</div>
 							</div>
@@ -172,10 +168,8 @@
 
 									
 
-									<div class="tagLine" th:if="${r.tag != null and r.tag != ''}">
-										<span class="tagChip"
-											  th:each="t : ${#strings.arraySplit(r.tag,' ')}"
-											  th:text="${t}">#친절해요</span>
+									<div class="tagLine" th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
+									  <span class="tagChip" th:each="t : ${r.tagList}" th:text="${t}">#친절해요</span>
 									</div>
 								</div>
 							</div>
