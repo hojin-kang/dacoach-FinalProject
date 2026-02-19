@@ -73,26 +73,25 @@ public class AdminDashboardController {
 			return "redirect:/admin";
 		}
 		
+		int dailySales=0;
 		int newUsersCount=0;
 		int pendingReportCount=0;
 		int inactiveCompanyCount=0;
-		int dailySales=0;
 		
 		try {
+			dailySales=adminService.dailySales();
 			newUsersCount=adminService.newUsers();
 			pendingReportCount=adminService.pendingReports();
 			inactiveCompanyCount=adminService.inactiveCompany();
-			dailySales=adminService.dailySales();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
+		model.addAttribute("dailySales",dailySales);
 		model.addAttribute("newUsersCount",newUsersCount);
 		model.addAttribute("pendingReportCount",pendingReportCount);
 		model.addAttribute("inactiveCompanyCount",inactiveCompanyCount);
-		model.addAttribute("dailySales",dailySales);
         model.addAttribute("contentPage", "admin/mainStats"); // 보여줄 파일
         model.addAttribute("contentFragment", "statsContent"); // 보여줄 조각
         return "admin/dashboard"; 

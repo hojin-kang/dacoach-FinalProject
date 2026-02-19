@@ -70,16 +70,20 @@ public interface AdminMapper {
 	public int updateReport(ReportDTO dto) throws Exception;
 	
 	//메인화면
+	public Integer dailySales() throws Exception;
 	public int newUsers() throws Exception;
 	public int pendingReports() throws Exception;
 	public int inactiveCompany() throws Exception;
-	public Integer dailySales() throws Exception;
 	
 	//통계관리 화면
 	public Integer monthlySales() throws Exception;
 	public Integer lastMonthSales() throws Exception;
+	public long avgPayAmount() throws Exception;
 	public int pendingRefundCount() throws Exception;
 	public List<Map<String,Object>> weeklySales() throws Exception;
+	public List<Map<String,Object>> revenueByField() throws Exception;
+	public List<Map<String,Object>> payTypeStats() throws Exception;
+	public Integer monthlyCancelAmount() throws Exception;
 	
 	//코치 상세정보 화면
 	public List<Map<String,Object>> coachInfoList() throws Exception;

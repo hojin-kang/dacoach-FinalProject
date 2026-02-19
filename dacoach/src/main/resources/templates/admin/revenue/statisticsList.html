@@ -189,7 +189,7 @@
                                 <td style="font-weight: 600;" th:text="${stat.FIELD_NAME}">골프</td>
                                 <td th:text="${stat.PAY_COUNT + '건'}">42건</td>
                                 <td class="text-right price-text" th:text="${#numbers.formatInteger(stat.TOTAL_SUM, 0, 'COMMA') + '원'}">5,000,000원</td>
-                                <td class="text-right"><span class="badge badge-mint" th:text="${stat.RATIO + '%'}">25%</span></td>
+                                <td class="text-right"><span class="badge badge-mint" th:text="${stat.RATIO}">25%</span></td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(revenueByField)}">
                                 <td style="font-weight: 600;">테니스</td>
