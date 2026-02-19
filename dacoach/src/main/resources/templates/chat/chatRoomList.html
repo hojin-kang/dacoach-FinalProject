@@ -456,8 +456,8 @@
        let msg = "";
        if(type === 'CHAT') msg = "채팅 신청을 하시겠습니까? 토큰 1개가 차감됩니다.";
        else if(type === 'MATCH') msg = "매칭 신청을 하시겠습니까? 토큰 3개가 차감됩니다.";
-       else if(type === 'A_CHAT') msg = "채팅 신청을 수락하시겠습니까?";
-       else if(type === 'A_MATCH') msg = "매칭 신청을 수락하시겠습니까?";
+       else if(type === 'A_CHAT') msg = "채팅 신청을 수락하시겠습니까? 토큰 1개가 차감됩니다.";
+       else if(type === 'A_MATCH') msg = "매칭 신청을 수락하시겠습니까? 토큰 3개가 차감됩니다.";
        
        if (!confirm(msg)) return;
 
@@ -473,6 +473,7 @@
        .then(response => response.json())
        .then(res => {
            if (res.status === 'success'|| res.status.includes('accepted')) { alert("완료되었습니다."); location.reload(); }
+           else if(res.status.includes('already')) { alert("상대방이 이미 신청했습니다."); location.reload();}
            else if (res.status === 'login_required') { alert("로그인이 필요합니다."); location.href = '/login'; }
            else if (res.status === 'no_token') { alert("토큰이 부족합니다."); location.href = '/tokenHistory'; }
            else { alert("오류가 발생했습니다."); }

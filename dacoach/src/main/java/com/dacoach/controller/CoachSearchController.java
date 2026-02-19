@@ -169,11 +169,41 @@ public class CoachSearchController {
 	 	        result.put("status", "login_required");
 	 	        return result;
 	 	    }
+	 	   int count=0;
+	 	    //상대방에게 받은 신청 존재 여부 체크
+	 	    if(!type.equals("A_CHAT")) {
+	 	    	try {
+					count = coachSearchService.checkChat(me, target_idx);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		 	    if(count>0) {
+		 	    	result.put("status", "already_received");
+		 	        return result;
+		 	    }
+	 	    }
+	 	    if(!type.equals("A_MATCH")) {
+	 	    	try {
+					count = coachSearchService.checkMatch(me, target_idx);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		 	    if(count>0) {
+		 	    	result.put("status", "already_received");
+		 	        return result;
+		 	    }
+	 	    }
+			
+	 	   
+	 	    
 	 	    //채팅 및 매칭 수락
 	 	    try {
 				CoachDTO coach=coachService.getCoachInfo(me);
 	 	        if (type.equals("A_CHAT")) {
 	 	        	int chatOk=coachSearchService.acceptChat(me, target_idx);
+	 	        	coachSearchService.useTokens(me, type.equals("A_CHAT") ? 1 : 3);
 	 	        	//채팅방 개설
 	 	        	if(chatOk>0) {
 	 	        		chatService.getOrCreateRoom(me, target_idx);
@@ -183,6 +213,7 @@ public class CoachSearchController {
 	 	        }
 	 	        if (type.equals("A_MATCH")) {
 	 	        	int matchOk=coachSearchService.acceptMatch(me, target_idx);
+	 	        	coachSearchService.useTokens(me, type.equals("A_MATCH") ? 1 : 3);
 	 	        	if(matchOk>0) {
 	 	        		chatService.getOrCreateRoom(me, target_idx);
 	 	        	}
@@ -219,11 +250,6 @@ public class CoachSearchController {
 	 	        e.printStackTrace();
 	 	        result.put("status", "error"); // 예외 발생 시 사용자에게 에러 알림
 	 	    }
-	 	    
-
-	 	    
-	 	    
-	 	    
 	 	    return result;
 	 	}
 	 	

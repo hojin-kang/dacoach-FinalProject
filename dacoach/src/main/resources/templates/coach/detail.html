@@ -250,8 +250,8 @@
     	  const msgs = {
     	    'CHAT': "채팅 신청을 하시겠습니까? 닭꼬치 1개가 차감됩니다.",
     	    'MATCH': "매칭 신청을 하시겠습니까? 닭꼬치 3개가 차감됩니다.",
-    	    'A_CHAT': "채팅 신청을 수락하시겠습니까?",
-    	    'A_MATCH': "매칭 신청을 수락하시겠습니까?"
+    	    'A_CHAT': "채팅 신청을 수락하시겠습니까? 닭꼬치 1개가 차감됩니다.",
+    	    'A_MATCH': "매칭 신청을 수락하시겠습니까? 닭꼬치 3개가 차감됩니다."
     	  };
 
     	  if (!confirm(msgs[type])) return;
@@ -266,7 +266,11 @@
     	    if (res.status === 'success' || (res.status && res.status.includes('accepted'))) {
     	      alert("완료되었습니다.");
     	      location.reload();
-    	    } else if (res.status === 'no_token') {
+    	    }else if(res.status.includes('already')){
+    	    	alert("상대방이 이미 신청했습니다");
+    	    	location.reload();
+    	    }
+    	    else if (res.status === 'no_token') {
     	      alert("닭꼬치가 부족합니다.");
     	      location.href = '/tokenHistory';
     	    } else if (res.status === 'login_required') {

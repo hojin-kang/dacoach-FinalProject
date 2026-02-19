@@ -16,4 +16,6 @@ public interface CoachSearchMapper {
     public Integer acceptChat(Map<String, Object> map);
     public Integer acceptMatch(Map<String, Object> map);
     public Integer isLiked(Map<String, Object> map);
+    public Integer checkChat(Map<String, Object> map);
+    public Integer checkMatch(Map<String, Object> map);
 }
