@@ -168,5 +168,20 @@
 }
 
 #kakaoPayBtn {
-	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0 auto;
+	background: #328889;
+	border-radius: 15px;
+	border: none;
+	padding: 10px 15px;
+	color: white;
+	gap: 20px;
+	font-size: 22px;
+	font-weight: 600;
+}
+
+#kakaoPayBtn img {
+	width: 80px;
 }
