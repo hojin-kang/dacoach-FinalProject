@@ -6,9 +6,12 @@
 
    <link rel="stylesheet" th:href="@{/css/main.css}" />
    <link rel="stylesheet" th:href="@{/css/coach/coachDetail.css}" />
-   
+   <script th:inline="javascript">
+	  const IS_LOGGED_IN = [[${session.user_idx != null}]];
+	</script>
 </head>
 <body>
+	
    <div th:replace="~{layout/header :: siteHeader}"></div>
 
    <main class="main">
@@ -239,25 +242,40 @@
       }
 
       function applyAction(type, targetIdx) {
-         const msgs = { 'CHAT': "채팅 신청(토큰 1개 소모)", 'MATCH': "매칭 신청(토큰 3개 소모)", 'A_CHAT': "수락하시겠습니까?", 'A_MATCH': "수락하시겠습니까?" };
-         if (!confirm(msgs[type])) return;
+    	  if (!IS_LOGGED_IN) {
+    	    location.href = '/login';
+    	    return;
+    	  }
 
-         fetch('/match/apply', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ type, target_idx: targetIdx })
-         })
-         .then(res => res.json())
-         .then(res => {
-            if (res.status === 'success' || res.status.includes('accepted')) {
-               alert("완료되었습니다."); location.reload();
-            } else if (res.status === 'no_token') {
-               alert("토큰이 부족합니다."); location.href = '/tokenHistory';
-            } else {
-               alert("오류가 발생했습니다.");
-            }
-         });
-      }
+    	  const msgs = {
+    	    'CHAT': "채팅 신청을 하시겠습니까? 닭꼬치 1개가 차감됩니다.",
+    	    'MATCH': "매칭 신청을 하시겠습니까? 닭꼬치 3개가 차감됩니다.",
+    	    'A_CHAT': "채팅 신청을 수락하시겠습니까?",
+    	    'A_MATCH': "매칭 신청을 수락하시겠습니까?"
+    	  };
+
+    	  if (!confirm(msgs[type])) return;
+
+    	  fetch('/match/apply', {
+    	    method: 'POST',
+    	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    	    body: new URLSearchParams({ type, target_idx: targetIdx })
+    	  })
+    	  .then(r => r.json())
+    	  .then(res => {
+    	    if (res.status === 'success' || (res.status && res.status.includes('accepted'))) {
+    	      alert("완료되었습니다.");
+    	      location.reload();
+    	    } else if (res.status === 'no_token') {
+    	      alert("닭꼬치가 부족합니다.");
+    	      location.href = '/tokenHistory';
+    	    } else if (res.status === 'login_required') {
+    	      location.href = '/login';
+    	    } else {
+    	      alert("오류가 발생했습니다.");
+    	    }
+    	  });
+    	}
    </script>
 </body>
 </html>
