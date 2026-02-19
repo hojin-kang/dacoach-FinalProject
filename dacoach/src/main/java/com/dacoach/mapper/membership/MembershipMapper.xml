@@ -21,6 +21,12 @@
   		select * from membership_detail where member_detail_idx = #{idx}
   	</select>
   	
+  	<update id="membershipContinue">
+  		update membership set
+  		status=null
+  		where user_idx=#{user_idx}
+  	</update>
+  	
   	<update id="membershipUpdate">
   		update membership set 
   		member_detail_idx=#{member_detail_idx},
@@ -46,7 +52,11 @@
   	</update>
   	
   	<select id="getPayInfo">
-  		select * from pay where partner_user_id=#{user_idx}
+  		select * 
+		from pay
+		where pay_idx=
+		(select max(pay_idx) from pay 
+		where partner_user_id=#{user_idx})
   	</select>
   	
   	<update id="autoUpdate">

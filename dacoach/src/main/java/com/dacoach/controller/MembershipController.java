@@ -32,10 +32,6 @@ public class MembershipController {
 		session=se;
 	
 	}
-	@GetMapping("/cancelTest")
-	public String test() {
-		return "/membership/cancelTest";
-	}
 	
 	@GetMapping("/membershipForm")
 	public ModelAndView membershipForm() {
@@ -96,6 +92,24 @@ public class MembershipController {
 		return mav;
 	}
 	
+	@GetMapping("/membershipContinue")
+	public ModelAndView membershipContinue() {
+		ModelAndView mav=new ModelAndView();
+		
+		try {
+			int result=membershipService.membershipContinue((Integer)session.getAttribute("user_idx"));
+			String msg=result>0?"멤버십 갱신에 성공하였습니다":"멤버십 갱신에 실패하였습니다. 잠시후 다시 시도해주세요";
+			mav.addObject("msg",msg);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		mav.addObject("url","/membership/membershipForm");
+		
+		mav.setViewName("/alert");
+		return mav;
+	}
 	@GetMapping("/banner")
 	public ModelAndView bannerForm() {
 		ModelAndView mav=new ModelAndView();

@@ -254,7 +254,8 @@ form[name="bannerForm"] input[type="file"]::file-selector-button:hover {
    Membership Buttons 
 ==================== */
 #membershipUpBtn,
-#membershipDownBtn {
+#membershipDownBtn,
+#membershipContinueBtn {
     display: block;
     margin: 40px auto;
     padding: 18px 48px;
@@ -269,12 +270,14 @@ form[name="bannerForm"] input[type="file"]::file-selector-button:hover {
     overflow: hidden;
 }
 
-#membershipUpBtn {
+#membershipUpBtn,
+#membershipContinueBtn {
     background: linear-gradient(135deg, var(--premium-color) 0%, var(--premium-hover) 100%);
     color: white;
 }
 
-#membershipUpBtn::before {
+#membershipUpBtn::before,
+#membershipContinueBtn::before {
     content: '⭐';
     margin-right: 8px;
     font-size: 1.25rem;
@@ -286,13 +289,15 @@ form[name="bannerForm"] input[type="file"]::file-selector-button:hover {
 }
 
 #membershipUpBtn:hover,
-#membershipDownBtn:hover {
+#membershipDownBtn:hover,
+#membershipContinueBtn:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-xl);
 }
 
 #membershipUpBtn::after,
-#membershipDownBtn::after {
+#membershipDownBtn::after,
+#membershipContinueBtn::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -306,13 +311,15 @@ form[name="bannerForm"] input[type="file"]::file-selector-button:hover {
 }
 
 #membershipUpBtn:hover::after,
-#membershipDownBtn:hover::after {
+#membershipDownBtn:hover::after,
+#membershipContinueBtn:hover::after {
     width: 400px;
     height: 400px;
 }
 
 #membershipUpBtn:active,
-#membershipDownBtn:active {
+#membershipDownBtn:active,
+#membershipContinueBtn:active {
     transform: translateY(-1px);
 }
 

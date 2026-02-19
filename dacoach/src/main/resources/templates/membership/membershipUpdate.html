@@ -24,7 +24,8 @@
       </div>
       <div th:if="${dto.member_detail_idx==2}">
       	
-      	 <input type="button" value="멤버십 해지하기" id="membershipDownBtn"> 
+      	 <input th:if="${dto.status==null}" type="button" value="멤버십 해지하기" id="membershipDownBtn"> 
+      	 <input th:unless="${dto.status==null}" type="button" value="멤버십 갱신하기" id="membershipContinueBtn">
       
       </div>
    </div>
@@ -35,6 +36,7 @@
 <script th:inline="javascript">
 	var upBtn=document.getElementById('membershipUpBtn');
 	var downBtn=document.getElementById('membershipDownBtn');
+	var continueBtn=document.getElementById('membershipContinueBtn');
 	if(upBtn){
 	upBtn.onclick=function(){
 		membership();
@@ -45,6 +47,11 @@
 		location.href='/membership/membershipDown';
 	}
 	}
+	if(continueBtn){
+		continueBtn.onclick=function(){
+			location.href='/membership/membershipContinue';
+		}
+	}
 	
 	function membership(){
 		
@@ -53,7 +60,7 @@
 					[[${detail.member_type}]],
 					'1',
 					[[${detail.cost}]],
-					'3',
+					'0',
 					'0',
 					'/membershipApi');	
 		

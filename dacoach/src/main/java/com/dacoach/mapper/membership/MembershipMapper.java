@@ -35,4 +35,6 @@ public interface MembershipMapper {
 	public PayDTO getPayInfo(int user_idx) throws Exception;
 	
 	public List<MembershipDTO> autoDownTarget() throws Exception;
+	
+	public int membershipContinue(int user_idx) throws Exception;
 }

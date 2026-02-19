@@ -21,6 +21,7 @@ import com.dacoach.kakaopay.KakaoApproveResponse;
 import com.dacoach.kakaopay.KakaoCancelResponse;
 import com.dacoach.kakaopay.KakaoPayService;
 import com.dacoach.kakaopay.KakaoReadyResponse;
+import com.dacoach.kakaopay.KakaopayCancelSubscriptionResponse;
 import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.kakaopay.PayStatusDTO;
 import com.dacoach.mapper.kakaopay.KakaopayMapper;
@@ -171,19 +172,22 @@ public class MembershipApiController {
 			return new ResponseEntity<String>(msg,HttpStatus.OK);
 		}
 		
-		@Scheduled(cron = "20 49 18 * * *", zone = "Asia/Seoul")
+		@Scheduled(cron = "50 53 03 * * *", zone = "Asia/Seoul")
 		public void memebershipSubscription() {
 			
 			 
 			try {
+				
 				List<MembershipDTO> targetDto=membershipService.autoUpdateTarget();
 				
 				if(targetDto!=null) {
 					MembershipDTO mDto=null;
 					MembershipDetailDTO membershipDto=membershipService.detail(2);
 					PayDTO payDto=null;
+					PayStatusDTO statusdto = new PayStatusDTO();
 				for(int i=0;i<targetDto.size();i++) {
-					mDto=targetDto.get(i);
+		try {
+				mDto=targetDto.get(i);
 				 payDto= membershipService.getPayInfo(mDto.getUser_idx());
 				
 				
@@ -193,36 +197,66 @@ public class MembershipApiController {
 				parameters.put("partner_order_id",membershipDto.getMember_detail_idx());
 				parameters.put("partner_user_id",payDto.getPartner_user_id());
 				parameters.put("item_name",membershipDto.getMember_type());
-				parameters.put("quantity", membershipDto.getCost());
+				parameters.put("quantity", 1);
 				parameters.put("total_amount", payDto.getTotal());
 				parameters.put("vat_amount", payDto.getVat());
 				parameters.put("tax_free_amount", payDto.getTax_free());
 				
 				KakaoApproveResponse kakaoApprove=kakaoPayService.subscription(parameters);
 				
+				statusdto.setTid(kakaoApprove.getTid());
+				statusdto.setPartner_order_id(kakaoApprove.getPartner_order_id());
+				statusdto.setPartner_user_id(kakaoApprove.getPartner_user_id());
+				statusdto.setStatus("정기결제");
+				kakaopayMapper.insertPayStatus(statusdto);
 				
 				kakaoApprove.setItem_code("MembershipSubscription");
-				kakaoApprove.setPayment_method_type("MEMBERSHIP");
+				kakaoApprove.setPayment_method_type("MEMBERSHIP");				
 				int result=kakaopayMapper.insertPay(kakaoApprove);
+				
 					if(result>0) {
 						membershipService.autoUpdate(mDto.getUser_idx());
 					}
+					
+		}catch(Exception e) {
+				System.err.println("결제 처리 중 에러 발생 (사용자 ID: " + targetDto.get(i).getUser_idx() + "): " + e.getMessage());
+                e.printStackTrace();
+			}
 				}
 				}
 				
 				List<MembershipDTO> downTargetDto=membershipService.autoDownTarget();
+				Map<String,Object> parameter=new HashMap<String, Object>();
 				if(downTargetDto!=null) {
 					MembershipDTO mDto=null;
+					PayDTO payDto=null;
 					for(int i=0;i<downTargetDto.size();i++) {
+		try {
 						mDto=downTargetDto.get(i);
-						membershipService.autoDown(mDto.getUser_idx());
+										
+						payDto=membershipService.getPayInfo(mDto.getUser_idx());
+						if(payDto!=null) {
+							parameter.put("cid", payDto.getCid());
+							parameter.put("sid", payDto.getSid());
+							KakaopayCancelSubscriptionResponse ksr=kakaoPayService.subscriptionCancel(parameter);
+							if(ksr!=null) {
+								//디비에 넣을거 상의
+							membershipService.autoDown(mDto.getUser_idx());
+						}
 					}
+		}catch(Exception e){
+				System.err.println("구독 해지 중 에러 발생 (사용자 ID: " + downTargetDto.get(i).getUser_idx() + "): " + e.getMessage());
+                e.printStackTrace();
+			}
 				}
 				
-			} catch (Exception e) {
+			} 
+			}catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 		}
+		
+		
 }

@@ -77,4 +77,8 @@ public class MembershipServiceImple implements MembershipService {
 	public List<MembershipDTO> autoDownTarget() throws Exception{
 		return membership.autoDownTarget();
 	}
+	
+	public int membershipContinue(int user_idx) throws Exception{
+		return membership.membershipContinue(user_idx);
+	}
 }

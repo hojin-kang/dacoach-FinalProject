@@ -132,4 +132,16 @@ public class KakaoPayService {
 		return kakaoApprove;
 		
 	}
+	
+	//정기결제 취소
+	public KakaopayCancelSubscriptionResponse subscriptionCancel(Map<String, Object> parameters) {
+
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(parameters, getHeaders());
+		RestTemplate restTemplate = new RestTemplate();
+
+		KakaopayCancelSubscriptionResponse kakaoSubscriptCancel = restTemplate.postForObject(
+				"https://open-api.kakaopay.com/online/v1/payment/manage/subscription/status", requestEntity, KakaopayCancelSubscriptionResponse.class);
+
+		return kakaoSubscriptCancel;
+	}
 }
