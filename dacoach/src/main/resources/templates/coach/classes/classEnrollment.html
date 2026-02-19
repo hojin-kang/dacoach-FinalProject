@@ -335,7 +335,7 @@
 
 		const parameters = {
 			cid: "TC0ONETIME",
-			partner_order_id: "class_" + Date.now(),
+			partner_order_id: String(classId),
 			partner_user_id: "sessionUser",
 			item_name: classTitle + " (" + selectedDate + ")",
 			quantity: 1,
