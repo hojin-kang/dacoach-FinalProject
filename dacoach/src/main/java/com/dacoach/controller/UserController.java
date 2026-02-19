@@ -300,6 +300,7 @@ public class UserController {
 				if(dto.getPhoto() != null ) {
 					session.setAttribute("photo", dto.getPhoto().equals("")? null : dto.getPhoto());
 				}
+				/**
 				MembershipDTO membershipDto=membershipService.userMembershipInfo(loginUser.getUser_idx());
 				Calendar now=Calendar.getInstance();
 				int year=now.get(Calendar.YEAR);
@@ -313,6 +314,7 @@ public class UserController {
 					membershipService.autoUpdate(membershipDto);
 					
 				}
+				*/
 				mav.addObject("msg", "로그인 성공!\n메인페이지로 이동합니다");
 				mav.addObject("url", "/");
 				mav.setViewName("alert");
