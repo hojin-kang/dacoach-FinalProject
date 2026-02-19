@@ -36,4 +36,9 @@ public class NotificationServiceImple implements NotificationService {
 		int result = notiMapper.insertNotification(dto);
 		return result;
 	}
+	
+	@Override
+	public NotificationDTO getNotiForUser(int noti_idx, int user_idx) {
+	    return notiMapper.getNotiForUser(noti_idx, user_idx);
+	}
 }

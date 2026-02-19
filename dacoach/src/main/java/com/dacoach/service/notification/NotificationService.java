@@ -13,4 +13,6 @@ public interface NotificationService {
 	public int notiDelete(int noti_idx);
 	
 	public int insertNotification(NotificationDTO dto);
+	
+	NotificationDTO getNotiForUser(int noti_idx, int user_idx);
 }

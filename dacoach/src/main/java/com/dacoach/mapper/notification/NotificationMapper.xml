@@ -36,4 +36,18 @@
         INSERT INTO notification (noti_idx, receiver_idx, provider_idx, noti_type, content, is_read, created_at)
         VALUES (seq_notification.nextval, #{receiver_idx}, #{provider_idx}, #{noti_type}, #{content}, 'N', sysdate)
 	</insert>
+	
+	<select id="getNotiForUser" resultType="com.dacoach.model.notification.NotificationDTO">
+	  select
+	    NOTI_IDX,
+	    RECEIVER_IDX,
+	    PROVIDER_IDX,
+	    NOTI_TYPE,
+	    CONTENT,
+	    IS_READ,
+	    CREATED_AT
+	  from notification
+	  where NOTI_IDX = #{noti_idx}
+	    and RECEIVER_IDX = #{user_idx}
+	</select>
 </mapper>

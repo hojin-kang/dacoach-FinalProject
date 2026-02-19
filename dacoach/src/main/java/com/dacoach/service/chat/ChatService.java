@@ -31,4 +31,6 @@ public interface ChatService {
     String isMatched(int myIdx, int targetIdx);
     
     int deleteMatch(int user_idx, int target_idx);
+    
+    Integer findRoom(int myIdx, int targetIdx);
 }

@@ -230,5 +230,10 @@ public class ChatServiceImple implements ChatService {
 		map.put("target_idx", target_idx);
 		return chatMapper.deleteMatch(map);
 	}
+	
+	@Override
+	public Integer findRoom(int myIdx, int targetIdx) {
+	    return chatMapper.findRoom(myIdx, targetIdx);
+	}
 
 }

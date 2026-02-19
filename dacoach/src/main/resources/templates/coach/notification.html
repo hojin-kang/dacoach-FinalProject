@@ -16,16 +16,42 @@
 		<h2>알림</h2>
 		<hr>
 		<div class="notificationDiv">
-			<div class="empty" th:if="${#lists.isEmpty(ndtos)}">새로운 알림이 없습니다.</div>
-			<form action="notiDelete" method="post">
-				<div class="notiUnit" th:each="n : ${ndtos}">
-				<img alt="noti" src="img/icon/notification_color.png">
-				<span th:text="${n.content}"></span>
-				<button type="submit" name="noti_idx" th:value="${n.noti_idx}">×</button>
-				</div>
-			</form>
-			
-		</div>
+  <div class="empty" th:if="${#lists.isEmpty(ndtos)}">새로운 알림이 없습니다.</div>
+
+  <div class="notiUnit" th:each="n : ${ndtos}">
+    
+    <!-- 아이콘 -->
+    <img alt="noti" th:src="@{/img/icon/notification_color.png}">
+
+    <!-- ✅ 이동 가능한 타입이면 링크 -->
+    <a class="notiLink"
+       th:if="${n.noti_type == 'CHAT_REQUEST' or n.noti_type == 'CHAT_ACCEPT'
+            or n.noti_type == 'MATCH_REQUEST' or n.noti_type == 'MATCH_ACCEPT'
+            or n.noti_type == 'CLASS_NOTICE'
+            or n.noti_type == 'REVIEW'
+            or n.noti_type == 'QNA'
+            or n.noti_type == 'ENROLLMENT'}"
+       th:href="@{/notification/open(noti_idx=${n.noti_idx})}">
+      <span th:text="${n.content}"></span>
+    </a>
+
+    <!-- ✅ 이동 불가 타입(공지/지급 등)은 텍스트만 -->
+    <span class="notiText"
+          th:if="${!(n.noti_type == 'CHAT_REQUEST' or n.noti_type == 'CHAT_ACCEPT'
+                  or n.noti_type == 'MATCH_REQUEST' or n.noti_type == 'MATCH_ACCEPT'
+                  or n.noti_type == 'CLASS_NOTICE'
+                  or n.noti_type == 'REVIEW'
+                  or n.noti_type == 'QNA'
+                  or n.noti_type == 'ENROLLMENT')}"
+          th:text="${n.content}"></span>
+
+    <!-- 삭제(읽음 처리) -->
+    <form th:action="@{/notiDelete}" method="post" class="notiDeleteForm">
+      <button type="submit" name="noti_idx" th:value="${n.noti_idx}">×</button>
+    </form>
+
+  </div>
+</div>
 	</div>
 	</main>
   
