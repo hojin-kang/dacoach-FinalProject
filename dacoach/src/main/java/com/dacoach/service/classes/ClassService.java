@@ -16,8 +16,13 @@ public interface ClassService {
 
 	List<Map<String, Object>> getMinorRegions(Integer majorRegionIdx) throws Exception;
 
-	// 정렬 파라미터 추가
-	List<ClassDTO> getClassesByProvider(Integer providerIdx, String sort) throws Exception;
+	// cp 파라미터 추가
+	List<ClassDTO> getClassesByProvider(Integer providerIdx, String sort, int cp) throws Exception;
+
+	// 전체 개수 조회 추가
+	int countClassesByProvider(Integer providerIdx, String sort) throws Exception;
+	
+	List<ClassDTO> getAllClassesByProvider(Integer providerIdx) throws Exception;
 
 	ClassDTO getClassDetail(int class_idx) throws Exception;
 

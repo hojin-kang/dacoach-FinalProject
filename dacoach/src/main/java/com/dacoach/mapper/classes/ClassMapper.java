@@ -22,6 +22,9 @@ public interface ClassMapper {
 	// 소지역 조회 (대지역 선택시 Ajax)
 	List<Map<String, Object>> selectMinorRegions(Integer major_region_idx) throws Exception;
 
+	// 클래스 전체 개수 조회 (페이징용)
+	int countClassesByProvider(Map<String, Object> params) throws Exception;
+	
 	// 클래스 조회 (정렬 옵션 추가)
 	List<ClassDTO> selectClassesByProvider(Map<String, Object> params) throws Exception;
 

@@ -88,48 +88,61 @@
 		ORDER BY DISTRICT_NM
 	</select>
 
-	<!-- 클래스 조회 (상태별 정렬 기능 추가, region_detail 추가) -->
+	<!-- 클래스 전체 개수 조회 (페이징용) -->
+	<select id="countClassesByProvider" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM CLASS
+		WHERE PROVIDER_IDX = #{provider_idx}
+		<choose>
+			<when test="sort == 'done'">
+				AND END_DATE &lt; SYSDATE
+			</when>
+			<when test="sort == 'ongoing'">
+				AND START_DATE &lt;= SYSDATE AND END_DATE &gt;=
+				SYSDATE
+			</when>
+			<when test="sort == 'will'">
+				AND START_DATE &gt; SYSDATE
+			</when>
+		</choose>
+	</select>
+
+	<!-- 클래스 조회 (페이징 적용) -->
 	<select id="selectClassesByProvider" parameterType="map"
 		resultType="com.dacoach.model.classes.ClassDTO">
+		SELECT * FROM (
+		SELECT ROWNUM AS RN, A.* FROM (
 		SELECT
 		CLASS_IDX,
-		PROVIDER_IDX,
-		TITLE,
-		INTRO,
-		MINOR_FIELD_IDX,
-		MINOR_REGION_IDX,
+		PROVIDER_IDX, TITLE, INTRO,
+		MINOR_FIELD_IDX, MINOR_REGION_IDX,
 		REGION_DETAIL,
-		PRICE,
-		PHOTO,
-		VIDEO,
-		START_DATE,
-		END_DATE,
-		CREATED_AT,
+		PRICE, PHOTO, VIDEO, START_DATE, END_DATE, CREATED_AT,
 		MAX_USER_CNT
 		FROM CLASS
 		WHERE PROVIDER_IDX = #{provider_idx}
 		<choose>
-			<!-- 종료된 클래스 -->
 			<when test="sort == 'done'">
 				AND END_DATE &lt; SYSDATE
 				ORDER BY END_DATE DESC
 			</when>
-			<!-- 진행중 클래스 -->
 			<when test="sort == 'ongoing'">
 				AND START_DATE &lt;= SYSDATE AND END_DATE &gt;=
 				SYSDATE
 				ORDER BY START_DATE DESC
 			</when>
-			<!-- 예정된 클래스 -->
 			<when test="sort == 'will'">
 				AND START_DATE &gt; SYSDATE
 				ORDER BY START_DATE ASC
 			</when>
-			<!-- 전체 -->
 			<otherwise>
 				ORDER BY CREATED_AT DESC
 			</otherwise>
 		</choose>
+		) A
+		)
+		WHERE RN BETWEEN #{startRow} AND #{endRow}
 	</select>
 
 	<!-- ⭐ 제공자 정보 조회 (이름, 사진) -->
@@ -385,10 +398,12 @@
 		#{user_idx}
 		AND (m.STATUS IS NULL OR m.STATUS = '취소')
 		AND (m.END_DATE
-		IS NULL OR m.END_DATE >= SYSDATE)
+		IS
+		NULL OR m.END_DATE >= SYSDATE)
 		ORDER BY m.MEMBER_IDX DESC
 		) WHERE
-		ROWNUM = 1
+		ROWNUM
+		= 1
 	</select>
 
 	<!-- ⭐ 제공자의 활성 클래스 개수 조회 (종료되지 않은 클래스) -->
