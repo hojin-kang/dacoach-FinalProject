@@ -78,7 +78,9 @@
           <div class="chatMessages" id="chatMessages">
             <!-- JS로 txt를 파싱해서 렌더 -->
           </div>
-          <div th:if="${isLeft == true}">상대방이 나갔습니다.</div>
+         <div th:if="${isLeft == true}" class="msgRow system">
+   			 <span class="systemMsg">상대방이 채팅방을 나갔습니다.</span>
+		</div>
           <div class="chatInputRow">
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
@@ -87,14 +89,14 @@
 			      <span class="qiText">서약<br>하기</span>
 			    </a>
 					<th:block th:if="${isLeft == false && status != 'MATCHED'}" th:switch="${status}">
-						<button type="button" th:case="'RECEIVED'" class="btn-match stop-card" th:onclick="applyAction('A_MATCH', [[${target_idx}]])">
-							매칭수락 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+						<button type="button" th:case="'RECEIVED'" class="btn-match stop-card" th:onclick="applyAction('A_MATCH', [[${target_idx}]])" style="border : none; background: none;">
+							<img src="/img/icon/dakcoach.png" class="btn-icon">×3<br>매칭<br>수락
 						</button>
-						<button type="button" th:case="'APPLIED'" class="btn-match stop-card" disabled style="background:#666; color:#fff;">
-							매칭신청됨 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+						<button type="button" th:case="'APPLIED'" disabled style="border : none; background: none;">
+							<img src="/img/icon/dakcoach.png" class="btn-icon">×3<br>매칭<br>신청됨
 						</button>
-						<button type="button" th:case="*" th:unless="${status == 'COMPANY'}" class="btn-match stop-card" th:onclick="applyAction('MATCH', [[${target_idx}]])">
-							매칭신청 <img src="/img/icon/dakcoach.png" class="btn-icon">×3
+						<button type="button" th:case="*" th:unless="${status == 'COMPANY'}" th:onclick="applyAction('MATCH', [[${target_idx}]])" style="border : none; background: none;">
+							<img src="/img/icon/dakcoach.png" class="btn-icon">×3<br>매칭<br>신청
 						 </button>
 					</th:block>			    
 			    <a th:href="@{/schedule/create(agreement_idx=${agreement_idx})}" class="quickItem" th:if="${isLeft == false && status == 'MATCHED' && agreement_idx != null}">
@@ -112,7 +114,7 @@
 			    </button>
 			</div>
             <input type="text" id="chatInput" class="chatInput" placeholder="메세지 입력">
-            <button type="button" id="sendBtn" class="chatSendBtn" th:if="${isLeft != true}">전송</button>
+            <button type="button" id="sendBtn" class="chatSendBtn" th:style="${isLeft == true ? 'display:none' : 'display:inline-block'}">전송</button>
           </div>
         </div>
 
@@ -301,28 +303,29 @@
   }
 
   // 기존 TXT 히스토리 렌더 (yyyy-MM-dd HH:mm:ss|senderIdx|message)
-  function renderHistory(raw){
+function renderHistory(raw) {
     msgBox.innerHTML = '';
-
     const lines = raw.split(/\r?\n/).filter(Boolean);
-    for(const line of lines){
-      const parts = line.split('|');
-      if(parts.length < 3) continue;
+    
+    for(const line of lines) {
+        const parts = line.split('|');
+        if(parts.length < 3) continue;
 
-      const ts = parts[0];
-      const sender = parseInt(parts[1],10);
-      const msg = parts.slice(2).join('|');
+        const sender = parseInt(parts[1], 10);
+        const msg = parts.slice(2).join('|');
+        const hhmm = parts[0].length >= 16 ? parts[0].substring(11, 16) : '';
 
-      const hhmm = ts.length >= 16 ? ts.substring(11,16) : '';
-
-      const node = (sender === myIdx)
-        ? makeMineRow(hhmm, msg)
-        : makeYouRow(hhmm, msg);
-
-      msgBox.appendChild(node);
+        if (sender === 0) {
+            // 시스템 메시지 (중앙 정렬)
+            msgBox.appendChild(makeSystemRow(msg));
+        } else {
+            // 일반 메시지 (나/상대방)
+            const node = (sender === myIdx) ? makeMineRow(hhmm, msg) : makeYouRow(hhmm, msg);
+            msgBox.appendChild(node);
+        }
     }
     msgBox.scrollTop = msgBox.scrollHeight;
-  }
+}
 
   // WS로 받은 단일 메시지 append
   function appendMsg(ts, sender, msg){
@@ -346,34 +349,73 @@
   // STOMP 연결/구독
   let stompClient = null;
 
-  function connectWs(){
-    const socket = new SockJS('/ws');
-    stompClient = Stomp.over(socket);
-    stompClient.debug = null;
+  function connectWs() {
+	  const socket = new SockJS('/ws');
+	  stompClient = Stomp.over(socket);
+	  stompClient.debug = null;
 
-    stompClient.connect({}, function(){
-      stompClient.subscribe(`/topic/room.${roomIdx}`, function(frame){
-        try{
-          const data = JSON.parse(frame.body);
-          appendMsg(data.ts, data.senderIdx, data.message);
-        }catch(e){
-          // 무시
+	  // 1. 연결 시도
+	  stompClient.connect({}, function (frame) {
+	    // === 이 안쪽이 연결이 완료된 후 실행되는 "안전 구역"입니다 ===
+	    console.log('Connected: ' + frame);
+
+	    // 2. 구독은 반드시 이 안에서!
+		stompClient.subscribe(`/topic/room.${roomIdx}`, function(frame){
+    try {
+        const data = JSON.parse(frame.body);
+
+        // 상대방이 나갔다는 신호를 받으면
+        if (data.type === 'LEAVE') {
+            if (data.senderIdx !== myIdx) {
+                // 1. 화면에 메시지 즉시 뿌리기
+                const node = makeSystemRow(data.message);
+                msgBox.appendChild(node);
+                msgBox.scrollTop = msgBox.scrollHeight;
+
+                // 2. 입력창과 전송버튼을 물리적으로 막기 (이게 핵심)
+                input.disabled = true; 
+                sendBtn.style.display = 'none';
+                input.placeholder = "상대방이 퇴장했습니다.";
+
+                // 3. 다른 매칭 버튼들도 클릭 못하게 막기
+                document.querySelectorAll('.btn-match, .quickItem:not(.danger)').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+            }
+            return;
         }
-      });
-    });
-  }
+
+        // 일반 메시지 처리
+        appendMsg(data.ts, data.senderIdx, data.message);
+    } catch(e) { }
+});
+
+	    // 전송 버튼 활성화 (연결 완료 후 누를 수 있게)
+	    const sendBtn = document.getElementById('sendBtn');
+	    if(sendBtn) sendBtn.disabled = false;
+
+	  }, function (error) {
+	    // === 연결 실패 시 처리 ===
+	    console.error('STOMP error:', error);
+	    // 5초 후 재연결 시도 등을 여기에 추가할 수 있습니다.
+	  });
+	}
 
   function sendWs(){
-    const message = input.value.trim();
-    if(!message || !stompClient) return;
+	    // 입력창이 비활성화(상대 나감) 상태라면 전송 프로세스 자체를 중단
+	    if(input.disabled) return;
 
-    stompClient.send('/app/chat.send', {}, JSON.stringify({
-      roomIdx: parseInt(roomIdx, 10),
-      message: message
-    }));
+	    const message = input.value.trim();
+	    if(!message || !stompClient) return;
 
-    input.value = '';
-  }
+	    stompClient.send('/app/chat.send', {}, JSON.stringify({
+	      roomIdx: parseInt(roomIdx, 10),
+	      message: message
+	    }));
+
+	    input.value = '';
+	}
 
   sendBtn.addEventListener('click', sendWs);
   input.addEventListener('keydown', (e)=>{
@@ -480,6 +522,18 @@
        })
        .catch(error => { console.error('Error:', error); alert("통신 중 오류 발생"); });
    }
+   
+   function makeSystemRow(msg) {
+	    const row = document.createElement('div');
+	    row.className = 'msgRow system';
+
+	    const span = document.createElement('span');
+	    span.className = 'systemMsg';
+	    span.textContent = msg;
+
+	    row.appendChild(span);
+	    return row;
+	}
 </script>
 
 </body>

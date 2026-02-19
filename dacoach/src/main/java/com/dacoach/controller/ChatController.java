@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.dacoach.model.chat.ChatMessageDTO;
 import com.dacoach.model.chat.ChatRoomDTO;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.dicip.DicipDTO;
@@ -26,6 +30,8 @@ public class ChatController {
 	private final ChatService chatService;
 	@Autowired
 	private CoachService coachService;
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
 	@GetMapping("/chat")
 	public String chatMain(HttpSession session, Model model,
@@ -63,7 +69,7 @@ public class ChatController {
 	@GetMapping("/chat/room/{roomIdx}")
 	public String chatRoom(@PathVariable int roomIdx, @RequestParam(value = "tab", required = false) String tab,
 			HttpSession session, Model model) {
-
+		
 		Integer my = (Integer) session.getAttribute("user_idx");
 		if (my == null)
 			return "redirect:/login";
@@ -86,7 +92,6 @@ public class ChatController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		model.addAttribute("isLeft", isLeft);
 		model.addAttribute("activeRoom", activeRoom);
 		model.addAttribute("activeRoomIdx", roomIdx);
@@ -94,13 +99,13 @@ public class ChatController {
 		model.addAttribute("target_idx", target_idx);
 		model.addAttribute("status", status);
 		model.addAttribute("tab", tab);
-
 		return "chat/chatRoomList";
 	}
 
 	@GetMapping(value = "/chat/messages/{roomIdx}", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String messages(@PathVariable int roomIdx, HttpSession session) {
+		
 		Integer my = (Integer) session.getAttribute("user_idx");
 		if (my == null)
 			return "";
@@ -117,10 +122,33 @@ public class ChatController {
 	    
 	    ChatRoomDTO room=chatService.selectRoomByIdx(roomIdx, my);
 	    String status=chatService.isMatched(my, room.getOtherIdx());
-
-	    boolean ok = chatService.leaveRoom(roomIdx, my);
 	    
+	 // 1. ChatMessageDTO 완벽하게 수동 조립
+	    ChatMessageDTO in = new ChatMessageDTO();
+	    in.setRoomIdx(roomIdx);
+	    in.setSenderIdx(0); // 시스템 메시지용 고유 번호
+	    in.setMessage("상대방이 채팅방을 나갔습니다.");
+	    
+	    // [추가] 만약 서비스에서 시간을 자동으로 안 넣어준다면 수동으로 세팅
+	    String nowTs = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	    in.setTs(nowTs); 
+	    
+	    // 2. 파일 저장 실행
+	    // 이 메서드가 ChatWsController에서 성공했던 바로 그 메서드이므로 동일하게 동작해야 합니다.
+	    chatService.saveAndBuildBroadcast(in);
+
+	    // 3. 실시간 알림 (상대방의 UI를 즉시 비활성화시키기 위함)
+	    Map<String, Object> leaveNotice = new HashMap<>();
+	    leaveNotice.put("type", "LEAVE");
+	    leaveNotice.put("senderIdx", my); 
+	    leaveNotice.put("message", "상대방이 채팅방을 나갔습니다.");
+	    leaveNotice.put("ts", nowTs);
+	    messagingTemplate.convertAndSend("/topic/room." + roomIdx, (Object) leaveNotice);
+
+	    // 4. 퇴장 처리
+	    boolean ok = chatService.leaveRoom(roomIdx, my);
 	    chatService.updateChatStatus(roomIdx);
+	    
 	    int result=chatService.deleteChat(roomIdx);
 	    if (result > 0) {
 	    	

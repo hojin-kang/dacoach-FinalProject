@@ -346,4 +346,15 @@
   align-items: flex-end;
   gap: 5px;
 }
-
+.msgRow.system {
+    justify-content: center;
+    margin: 10px 0;
+}
+.systemMsg {
+    background-color: #f0f0f0;
+    color: #666;
+    font-size: 0.85rem;
+    padding: 5px 15px;
+    border-radius: 20px;
+    text-align: center;
+}
