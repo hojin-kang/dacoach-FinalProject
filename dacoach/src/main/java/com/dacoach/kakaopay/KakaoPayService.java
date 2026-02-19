@@ -64,7 +64,8 @@ public class KakaoPayService {
 	}
 
 	// 결제 완료 승인(결제화면 나오는 메서드 ex-QR결제)
-	public KakaoApproveResponse approveResponse(String pgToken) {
+	public KakaoApproveResponse approveResponse(String pgToken,String cid) {
+		
 		// 카카오 요청
 		Map<String, String> parameters = new HashMap<>();
 		try {
@@ -75,7 +76,11 @@ public class KakaoPayService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		parameters.put("cid", payProperties.getCid());
+		if(cid==null||cid.equals("")){
+			parameters.put("cid", payProperties.getCid());
+		}else {
+			parameters.put("cid", cid);
+		}
 		parameters.put("tid", kakaoReady.getTid());
 		parameters.put("pg_token", pgToken);
 
@@ -113,5 +118,18 @@ public class KakaoPayService {
 				"https://open-api.kakaopay.com/online/v1/payment/cancel", requestEntity, KakaoCancelResponse.class);
 
 		return kakaocancel;
+	}
+	
+	//정기결제
+	public KakaoApproveResponse subscription(Map<String, Object> parameters) {
+		
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(parameters, getHeaders());
+		RestTemplate restTemplate = new RestTemplate();
+
+		KakaoApproveResponse kakaoApprove = restTemplate.postForObject(
+				"https://open-api.kakaopay.com/online/v1/payment/subscription", requestEntity, KakaoApproveResponse.class);
+
+		return kakaoApprove;
+		
 	}
 }
