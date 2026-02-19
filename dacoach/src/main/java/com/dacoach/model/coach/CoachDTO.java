@@ -47,5 +47,7 @@ public class CoachDTO {
 	
 	private String major_field_name2;
 	private String minor_field_name2;
+	
+	private Integer chat_room_idx;
 
 }

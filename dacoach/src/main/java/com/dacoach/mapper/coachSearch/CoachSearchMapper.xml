@@ -3,80 +3,94 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dacoach.mapper.coachSearch.CoachSearchMapper">
 
-    <select id="coachList" parameterType="map" resultType="com.dacoach.model.coach.CoachDTO">
-    
-        SELECT * FROM (
-            SELECT rownum AS rnum, R.* FROM (
-            	SELECT G.*,
-            	COUNT(*) OVER() AS total_cnt
-            	FROM (
-                SELECT 
-                    A.user_idx, A.coach_idx, A.nickname, A.photo,
-                    RANK.rank_name AS rank_name,
-                    ROUND(NVL(AVG(distinct rt.rating), 0), 1) AS rating,
-                    COUNT(distinct rt.content) AS review_count,
-                    <choose>
-                        <when test="login_idx != null and login_idx != 0">
-                            (SELECT CASE 
-                                WHEN IS_CHAT = 'Y' THEN 'ACCEPTED'
-                                WHEN CHAT_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'APPLIED'
-                                WHEN CHAT_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N' THEN 'RECEIVED'
-                                ELSE 'NONE' END FROM MATCH 
-                             WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
-                                OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as chatStatus,
-                            (SELECT CASE 
-                                WHEN IS_MATCH = 'Y' THEN 'ACCEPTED'
-                                WHEN MATCH_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'APPLIED'
-                                WHEN MATCH_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N' THEN 'RECEIVED'
-                                ELSE 'NONE' END FROM MATCH 
-                             WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX = A.user_idx) 
-                                OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx, jdbcType=INTEGER})) as matchStatus
-                        </when>
-                        <otherwise>
-                            'NONE' as chatStatus, 'NONE' as matchStatus
-                        </otherwise>
-                    </choose>
-                FROM coach A
+	<select id="coachList" parameterType="map"
+		resultType="com.dacoach.model.coach.CoachDTO">
+
+		SELECT * FROM (
+		SELECT rownum AS rnum, R.* FROM (
+		SELECT G.*,
+		COUNT(*) OVER() AS total_cnt
+		FROM (
+		SELECT
+		A.user_idx, A.coach_idx, A.nickname, A.photo,
+		RANK.rank_name AS rank_name,
+		ROUND(NVL(AVG(distinct rt.rating), 0), 1) AS rating,
+		COUNT(distinct rt.content) AS review_count, MAX(cr.chat_room_idx) AS chat_room_idx,
+		<choose>
+			<when test="login_idx != null and login_idx != 0">
+				(SELECT CASE
+				WHEN IS_CHAT = 'Y' THEN 'ACCEPTED'
+				WHEN CHAT_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N'
+				THEN 'APPLIED'
+				WHEN CHAT_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_CHAT = 'N'
+				THEN 'RECEIVED'
+				ELSE 'NONE' END FROM MATCH
+				WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX =
+				A.user_idx)
+				OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx,
+				jdbcType=INTEGER})) as chatStatus,
+				(SELECT CASE
+				WHEN IS_MATCH = 'Y' THEN 'ACCEPTED'
+				WHEN MATCH_APPLICANT = #{login_idx, jdbcType=INTEGER} AND IS_MATCH = 'N'
+				THEN 'APPLIED'
+				WHEN MATCH_APPLICANT != #{login_idx, jdbcType=INTEGER} AND IS_MATCH =
+				'N' THEN 'RECEIVED'
+				ELSE 'NONE' END FROM MATCH
+				WHERE (USER1_IDX = #{login_idx, jdbcType=INTEGER} AND USER2_IDX =
+				A.user_idx)
+				OR (USER1_IDX = A.user_idx AND USER2_IDX = #{login_idx,
+				jdbcType=INTEGER})) as matchStatus
+			</when>
+			<otherwise>
+				'NONE' as chatStatus, 'NONE' as matchStatus
+			</otherwise>
+		</choose>
+		FROM coach A
                 <![CDATA[
                 LEFT JOIN rank RANK
 					ON A.point_score >= RANK.min_score
 					AND (RANK.max_score IS NULL OR A.point_score < RANK.max_score)]]>
-                LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx 
-                LEFT JOIN minor_field MF ON B.minor_field_idx = MF.minor_field_idx
-                LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
-                LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
-				LEFT JOIN hashtag H1 ON UH.hashtag_idx = H1.hashtag_idx
-				LEFT JOIN user_hashtag_like UHL ON A.user_idx = UHL.user_idx
-				LEFT JOIN hashtag H2 ON UHL.hashtag_idx = H2.hashtag_idx
-                LEFT JOIN review_coach rt ON A.user_idx = rt.reviewee_idx
-                <where>
-                    (A.nickname LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%' 
-                     OR NVL(H1.TAGS, ' ') LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%'
-					 OR NVL(H2.TAGS, ' ') LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%')
-                    <if test="majorField != null and majorField != 0">AND MF.major_field_idx = #{majorField}</if>
-                    <if test="minorField != null and minorField != 0">AND B.minor_field_idx = #{minorField}</if>
-                    <if test="majorRegion != null and majorRegion != 0">AND C.major_region_idx = #{majorRegion}</if>
-                    <if test="minorRegion != null and minorRegion != 0">AND C.minor_region_idx = #{minorRegion}</if>
-                </where>
-                GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo, RANK.rank_name
-                <choose>
-                	<when test="sort == 'rating'">
-                	    ORDER BY rating DESC
-                	</when>
-                	<when test="sort == 'most'">
-                		ORDER BY review_count DESC
-                    </when>
-	                <otherwise>
-	                	ORDER BY A.coach_idx DESC
-	                </otherwise>
-                </choose>
-                ) G
-            ) R
-            WHERE rownum &lt;= #{end}
-        )
-        WHERE rnum &gt;= #{start}
-    
-    </select>
+		LEFT JOIN coach_provide B ON A.coach_idx = B.coach_idx
+		LEFT JOIN minor_field MF ON B.minor_field_idx = MF.minor_field_idx
+		LEFT JOIN coach_region C ON A.coach_idx = C.coach_idx
+		LEFT JOIN user_hashtag UH ON A.user_idx = UH.user_idx
+		LEFT JOIN hashtag H1 ON UH.hashtag_idx = H1.hashtag_idx
+		LEFT JOIN user_hashtag_like UHL ON A.user_idx = UHL.user_idx
+		LEFT JOIN hashtag H2 ON UHL.hashtag_idx = H2.hashtag_idx
+		LEFT JOIN review_coach rt ON A.user_idx = rt.reviewee_idx
+		LEFT JOIN chat_room cr
+		ON (
+		(cr.user1_idx = #{login_idx} AND cr.user2_idx = A.user_idx)
+		OR (cr.user2_idx = #{login_idx} AND cr.user1_idx = A.user_idx)
+		)
+		<where>
+			(A.nickname LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%'
+			OR NVL(H1.TAGS, ' ') LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%'
+			OR NVL(H2.TAGS, ' ') LIKE '%' || #{keyword, jdbcType=VARCHAR} || '%')
+			<if test="majorField != null and majorField != 0">AND MF.major_field_idx = #{majorField}</if>
+			<if test="minorField != null and minorField != 0">AND B.minor_field_idx = #{minorField}</if>
+			<if test="majorRegion != null and majorRegion != 0">AND C.major_region_idx = #{majorRegion}</if>
+			<if test="minorRegion != null and minorRegion != 0">AND C.minor_region_idx = #{minorRegion}</if>
+		</where>
+		GROUP BY A.user_idx, A.coach_idx, A.nickname, A.photo, RANK.rank_name
+		<choose>
+			<when test="sort == 'rating'">
+				ORDER BY rating DESC
+			</when>
+			<when test="sort == 'most'">
+				ORDER BY review_count DESC
+			</when>
+			<otherwise>
+				ORDER BY A.coach_idx DESC
+			</otherwise>
+		</choose>
+		) G
+		) R
+		WHERE rownum &lt;= #{end}
+		)
+		WHERE rnum &gt;= #{start}
+
+	</select>
 
     <select id="getCoachHashtags" parameterType="int" resultType="string">
         SELECT H.TAGS FROM hashtag H
@@ -124,6 +138,7 @@
         ROUND(NVL(AVG(rt.rating), 0), 1) AS rating,
         COUNT(rt.content) AS review_count,
         R.rank_name AS rank_name,
+        MAX(cr.chat_room_idx) AS chat_room_idx,
         
         (SELECT LISTAGG(MF.MINOR_FIELD_NM, ', ') WITHIN GROUP (ORDER BY MF.MINOR_FIELD_NM)
          FROM COACH_PROVIDE CP
@@ -175,6 +190,11 @@
     <![CDATA[LEFT JOIN rank R
 	ON A.point_score >= R.min_score
 	AND (R.max_score IS NULL OR A.point_score < R.max_score)]]>
+	LEFT JOIN chat_room cr
+      ON (
+            (cr.user1_idx = #{login_idx, jdbcType=INTEGER} AND cr.user2_idx = A.user_idx)
+         OR (cr.user2_idx = #{login_idx, jdbcType=INTEGER} AND cr.user1_idx = A.user_idx)
+         )
     WHERE A.user_idx = #{target_idx, jdbcType=INTEGER}
     GROUP BY 
         A.user_idx, 
