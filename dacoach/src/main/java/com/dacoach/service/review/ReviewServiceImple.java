@@ -24,22 +24,30 @@ public class ReviewServiceImple implements ReviewService {
 
     @Override
     public List<ReviewClassDTO> getWrittenClassReviews(int user_idx) {
-        return reviewMapper.selectWrittenClassReviews(user_idx);
+    	List<ReviewClassDTO> list = reviewMapper.selectWrittenClassReviews(user_idx);
+        fillTagList2(list);
+        return list;
     }
 
     @Override
     public List<ReviewCoachDTO> getWrittenCoachReviews(int user_idx) {
-        return reviewMapper.selectWrittenCoachReviews(user_idx);
+    	List<ReviewCoachDTO> list = reviewMapper.selectWrittenCoachReviews(user_idx);
+        fillTagList(list);
+        return list;
     }
 
     @Override
     public List<ReviewClassDTO> getReceivedClassReviewsByProvider(int provider_idx) {
-        return reviewMapper.selectReceivedClassReviewsByProvider(provider_idx);
+    	List<ReviewClassDTO> list = reviewMapper.selectReceivedClassReviewsByProvider(provider_idx);
+    	fillTagList2(list);
+    	return list;
     }
 
     @Override
     public List<ReviewCoachDTO> getReceivedCoachReviews(int user_idx) {
-        return reviewMapper.selectReceivedCoachReviews(user_idx);
+    	List<ReviewCoachDTO> list = reviewMapper.selectReceivedCoachReviews(user_idx);
+        fillTagList(list);
+        return list;
     }
 
     @Override
@@ -88,11 +96,40 @@ public class ReviewServiceImple implements ReviewService {
 	        r.setTagList(list);
 	    }
 	}
+	
+	private void fillTagList2(List<ReviewClassDTO> reviews) {
+	    if (reviews == null) return;
+
+	    for (ReviewClassDTO r : reviews) {
+	        String tag = r.getTag();
+
+	        if (tag == null || tag.isBlank()) {
+	            r.setTagList(Collections.emptyList());
+	            continue;
+	        }
+
+	        // "#" 기준 분리
+	        String[] parts = tag.split("#");
+
+	        List<String> list = new ArrayList<>();
+	        for (String p : parts) {
+	            if (!p.isBlank()) {
+	                list.add("#" + p.trim());  // 다시 # 붙여서 화면 그대로 출력
+	            }
+	        }
+
+	        r.setTagList(list);
+	    }
+	}
 
 	@Override
 	public List<ReviewCoachDTO> getCoachReviewsPaged(int coachUserIdx, int start, int end) {
 	    List<ReviewCoachDTO> reviews = reviewMapper.getCoachReviewsPaged(coachUserIdx, start, end);
 	    fillTagList(reviews);
+	    for (ReviewCoachDTO r : reviews) {
+	        System.out.println("RAW TAG = " + r.getTag());
+	        System.out.println("TAG LIST = " + r.getTagList());
+	    }
 	    return reviews;
 	}
 

@@ -1,6 +1,7 @@
 package com.dacoach.model.review;
 
 import java.sql.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,4 +33,6 @@ public class ReviewClassDTO {
     // 라벨
     private String reviewer_label;
     private String provider_label;
+    
+    private List<String> tagList;
 }
