@@ -882,16 +882,24 @@ public class AdminCoachController {
 		
 		int monthlySales=0;
 		int lastMonthSales=0;
+		long avgPayAmount=0;
 		int pendingRefundCount=0;
 		double growth=0.0;
 		List<Map<String, Object>> weeklySales = new ArrayList<>();
+		List<Map<String, Object>> revenueByField = new ArrayList<>();
+		List<Map<String, Object>> payTypeStats = new ArrayList<>();
+		int monthlyCancelAmount=0;
 		
 		try {
 			// 성장률 공식: (이번달 - 지난달) / 지난달 * 100
 			monthlySales=adminService.monthlySales();
 			lastMonthSales=adminService.lastMonthSales();
+			avgPayAmount=adminService.avgPayAmount();
 			pendingRefundCount=adminService.pendingRefundCount();
 			weeklySales = adminService.weeklySales();
+			revenueByField = adminService.revenueByField();
+			payTypeStats = adminService.payTypeStats();
+			monthlyCancelAmount = adminService.monthlyCancelAmount();
 			
 			if(lastMonthSales != 0) {
 				growth = 100.0 * (monthlySales - lastMonthSales) / lastMonthSales;
@@ -908,8 +916,12 @@ public class AdminCoachController {
 		
 		model.addAttribute("monthlySales",monthlySales);
 		model.addAttribute("growth",growth);
+		model.addAttribute("avgPayAmount",avgPayAmount);
 		model.addAttribute("pendingRefundCount",pendingRefundCount);
 		model.addAttribute("weeklySales", weeklySales);
+		model.addAttribute("revenueByField",revenueByField);
+		model.addAttribute("payTypeStats",payTypeStats);
+		model.addAttribute("monthlyCancelAmount",monthlyCancelAmount);
 		model.addAttribute("contentPage", "admin/revenue/statisticsList");
 		model.addAttribute("contentFragment", "statisticsContent");
 

@@ -226,6 +226,12 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
+	public int dailySales() throws Exception {
+		Integer result=adminMapper.dailySales();
+		return (result==null)?0:result;
+	}
+	
+	@Override
 	public int newUsers() throws Exception {
 		return adminMapper.newUsers();
 	}
@@ -241,12 +247,6 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public int dailySales() throws Exception {
-		Integer result=adminMapper.dailySales();
-		return (result==null)?0:result;
-	}
-	
-	@Override
 	public int monthlySales() throws Exception {
 		Integer result=adminMapper.monthlySales();
 		return (result==null)?0:result;
@@ -259,6 +259,11 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
+	public long avgPayAmount() throws Exception {
+		return adminMapper.avgPayAmount();
+	}
+	
+	@Override
 	public int pendingRefundCount() throws Exception {
 		return adminMapper.pendingRefundCount();
 	}
@@ -266,6 +271,22 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public List<Map<String, Object>> weeklySales() throws Exception {
 		return adminMapper.weeklySales();
+	}
+	
+	@Override
+	public List<Map<String, Object>> revenueByField() throws Exception {
+		return adminMapper.revenueByField();
+	}
+	
+	@Override
+	public List<Map<String, Object>> payTypeStats() throws Exception {
+		return adminMapper.payTypeStats();
+	}
+	
+	@Override
+	public int monthlyCancelAmount() throws Exception {
+		Integer result=adminMapper.monthlyCancelAmount();
+		return (result==null)?0:result;
 	}
 	
 	@Override

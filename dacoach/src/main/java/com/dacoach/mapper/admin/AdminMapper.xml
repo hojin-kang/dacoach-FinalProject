@@ -335,6 +335,15 @@
 	update report set status=#{status},updated_at=sysdate where report_idx=#{report_idx}
 	</update>
 	
+	<select id="dailySales">
+	select sum(p.total)/10000
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where (ps.status='완료' or ps.status='환불요청')
+	and p.approved_at >= trunc(sysdate)
+	and p.approved_at <![CDATA[<]]> trunc(sysdate) + 1
+  	</select>
+	
 	<select id="newUsers">
 	select count(*) from users
 	where created_at >= trunc(sysdate)
@@ -352,20 +361,11 @@
   	where user_type='COMPANY' and status='INACTIVE'
   	</select>
   	
-  	<select id="dailySales">
-	select sum(p.total)/10000
-	from pay p
-	join pay_status ps on p.tid=ps.tid
-	where ps.status='완료'
-	and p.approved_at >= trunc(sysdate)
-	and p.approved_at <![CDATA[<]]> trunc(sysdate) + 1
-  	</select>
-  	
   	<select id="monthlySales">
 	select sum(p.total) as totals
 	from pay p
 	join pay_status ps on p.tid=ps.tid
-	where ps.status='완료'
+	where (ps.status='완료' or ps.status='환불요청')
 	and p.approved_at >= trunc(sysdate,'MM')
 	and p.approved_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
   	</select>
@@ -374,9 +374,17 @@
   	select sum(p.total) as totals
 	from pay p
 	join pay_status ps on p.tid=ps.tid
-	where ps.status='완료'
+	where (ps.status='완료' or ps.status='환불요청')
 	and p.approved_at >= add_months(trunc(sysdate,'MM'),-1)
 	and p.approved_at <![CDATA[<]]> trunc(sysdate,'MM')
+  	</select>
+  	
+  	<select id="avgPayAmount">
+	SELECT
+	NVL(ROUND(AVG(p.total), 0), 0) AS avg_pay_amount
+	FROM pay p
+	JOIN pay_status ps ON p.tid = ps.tid
+	WHERE ps.status = '완료'
   	</select>
   	
   	<select id="pendingRefundCount">
@@ -402,6 +410,43 @@
 	) p ON TRUNC(p.approved_at) = d.dt
 	GROUP BY d.dt
 	ORDER BY d.dt ASC
+  	</select>
+  	
+  	<select id="revenueByField">
+	SELECT
+	mf.MINOR_FIELD_NM AS FIELD_NAME,
+	COUNT(p.PAY_IDX) AS PAY_COUNT,
+	SUM(p.TOTAL) AS TOTAL_SUM,
+	ROUND(SUM(p.TOTAL) * 100.0 / SUM(SUM(p.TOTAL)) OVER(), 1) || '%' AS RATIO
+	FROM PAY p
+	JOIN PAY_STATUS ps ON p.TID = ps.TID
+	JOIN CLASS c ON TO_NUMBER(p.PARTNER_ORDER_ID) = c.CLASS_IDX
+	JOIN MINOR_FIELD mf ON c.MINOR_FIELD_IDX = mf.MINOR_FIELD_IDX
+	WHERE ps.STATUS = '완료'
+	AND p.PAY_TYPE = 'CLASS'
+	GROUP BY mf.MINOR_FIELD_NM
+	ORDER BY TOTAL_SUM DESC
+  	</select>
+  	
+  	<select id="payTypeStats">
+	SELECT
+	p.pay_type AS PAY_TYPE,
+	COUNT(*) AS COUNT,
+	ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 1) AS PERCENT
+	FROM pay p
+	JOIN pay_status ps ON p.tid = ps.tid
+	WHERE ps.status = '완료'
+	GROUP BY p.pay_type
+  	</select>
+  	
+  	<select id="monthlyCancelAmount">
+	select sum(p.total) as total
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	join pay_cancel pc on ps.tid=pc.tid
+	where ps.status='환불완료'
+	and pc.canceled_at >= trunc(sysdate,'MM')
+	and pc.canceled_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
   	</select>
   	
   	<select id="coachInfoList">

@@ -89,7 +89,7 @@
 
                         <div class="info-label">해시태그</div>
                         <div class="tag-list">
-                            <a th:each="tag : ${coachHashtags}" th:href="@{/coach/search(keyword=${tag})}" class="detail-tag" th:text="|#${tag}|"></a>
+                            <a th:each="tag : ${coachHashtags}" th:href="@{/coach/search(keyword=${tag})}" class="detail-tag" th:text="|${tag}|"></a>
                             <span th:if="${#lists.isEmpty(coachHashtags)}" class="text-gray-300 text-xs">등록된 태그가 없습니다.</span>
                         </div>
                     </div>
