@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.*;
 
 import com.dacoach.model.coach.CoachDTO;
+import com.dacoach.model.coachClasses.CoachClassDTO;
 import com.dacoach.service.coachClasses.CoachClassService;
 import com.dacoach.service.coachSearch.CoachSearchService;
 
@@ -17,42 +18,46 @@ import jakarta.servlet.http.HttpSession;
 public class SearchController {
 
 	@Autowired
-    private CoachSearchService coachSearchService;
-	
+	private CoachSearchService coachSearchService;
+
 	@Autowired
-    private CoachClassService classService;
-	
+	private CoachClassService classService;
+
 	@GetMapping("/searchResult")
-	    public String searchResult(@RequestParam(name="keyword", required=false, defaultValue="") String keyword,
-	                               HttpSession session,
-	                               Model model) {
+	public String searchResult(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+			HttpSession session, Model model) throws Exception {
 
-	        // 로그인 idx (coachSearch 쿼리에서 상태값/chatStatus/matchStatus 계산할 때 씀)
-	        int loginIdx = session.getAttribute("user_idx") == null ? 0 : (int) session.getAttribute("user_idx");
+		String kw = keyword == null ? "" : keyword.trim();
 
-	        // coachSearchService.coachList(cp, map) 재사용 (cp=1만 일단 보여주자)
-	        HashMap<String, Object> map = new HashMap<>();
-	        map.put("keyword", keyword);
-	        map.put("sort", "latest");
-	        map.put("majorField", 0);
-	        map.put("minorField", 0);
-	        map.put("majorRegion", 0);
-	        map.put("minorRegion", 0);
-	        map.put("login_idx", loginIdx);
+		// ===== 코치(4개 미리보기) =====
+		int loginIdx = session.getAttribute("user_idx") == null ? 0 : (int) session.getAttribute("user_idx");
 
-	        List<CoachDTO> coachList = null;
-			try {
-				coachList = coachSearchService.coachList(1, map);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        int coachCnt = (coachList != null && !coachList.isEmpty()) ? coachList.get(0).getTotal_cnt() : 0;
+		HashMap<String, Object> coachParam = new HashMap<>();
+		coachParam.put("keyword", kw);
+		coachParam.put("sort", "latest");
+		coachParam.put("majorField", 0);
+		coachParam.put("minorField", 0);
+		coachParam.put("majorRegion", 0);
+		coachParam.put("minorRegion", 0);
+		coachParam.put("login_idx", loginIdx);
 
-	        model.addAttribute("keyword", keyword);
-	        model.addAttribute("coachList", coachList);
-	        model.addAttribute("coachCnt", coachCnt);
+		List<CoachDTO> coachList = coachSearchService.coachList(1, coachParam);
+		int coachCnt = (coachList != null && !coachList.isEmpty()) ? coachList.get(0).getTotal_cnt() : 0;
 
-	        return "searchResult";
-	    }
+		// ===== 클래스(4개 미리보기) =====
+		List<CoachClassDTO> classList = classService.classSearchPaged(1, 6, null, null, null, null, kw, "latest");
+
+		int classCnt = (classList != null && !classList.isEmpty()) ? classList.get(0).getTotal_cnt() : 0;
+
+		// ===== model =====
+		model.addAttribute("keyword", kw);
+
+		model.addAttribute("coachList", coachList);
+		model.addAttribute("coachCnt", coachCnt);
+
+		model.addAttribute("classList", classList);
+		model.addAttribute("classCnt", classCnt);
+
+		return "searchResult";
+	}
 }
