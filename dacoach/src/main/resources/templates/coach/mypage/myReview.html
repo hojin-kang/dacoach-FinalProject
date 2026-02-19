@@ -12,170 +12,184 @@
 	<main class="main">
 		<div class="container">
 			<div class="breadcrumb">
-				<a th:href="@{/mypage}">마이페이지</a>
-				<span class="sep">&gt;</span>
-				<span>나의 리뷰</span>
+				<a th:href="@{/mypage}">마이페이지</a> <span class="sep">&gt;</span> <span>나의
+					리뷰</span>
 			</div>
 
 			<h2 class="pageTitle">나의 리뷰</h2>
 
-			
-			<nav class="detailTabs">
-				
-				<a class="tab active"
-				   th:if="${canWriteReview}"
-				   href="#written">내가 쓴 리뷰</a>
 
-				<a class="tab"
-				   th:classappend="${!canWriteReview} ? 'active' : ''"
-				   th:href="${canWriteReview} ? '#received' : '#received'">내가 받은 리뷰</a>
+			<nav class="detailTabs">
+
+				<a class="tab active" th:if="${canWriteReview}" href="#written">내가
+					쓴 리뷰</a> <a class="tab"
+					th:classappend="${!canWriteReview} ? 'active' : ''"
+					th:href="${canWriteReview} ? '#received' : '#received'">내가 받은
+					리뷰</a>
 			</nav>
 
 			<hr class="divider" />
 
-			<section id="written" class="tabContent active" th:if="${canWriteReview}">
+			<section id="written" class="tabContent active"
+				th:if="${canWriteReview}">
 				<div class="reviewArea">
-				<!-- (내부 분리) 코치에게 쓴 리뷰 -->
-				<h3 class="sectionTitle"><b class="coachB">코치</b>에게 쓴 리뷰</h3>
+					<!-- (내부 분리) 코치에게 쓴 리뷰 -->
+					<h3 class="sectionTitle">
+						<b class="coachB">코치</b>에게 쓴 리뷰
+					</h3>
 
-				<div th:if="${#lists.isEmpty(writtenCoachReviews)}" class="emptyBox">
-					작성한 리뷰가 없습니다.
-				</div>
+					<div th:if="${#lists.isEmpty(writtenCoachReviews)}"
+						class="emptyBox">작성한 리뷰가 없습니다.</div>
 
-				<div th:each="r : ${writtenCoachReviews}" class="reviewCard">
-					<div class="reviewRow">
+					<div th:each="r : ${writtenCoachReviews}" class="reviewCard">
+						<div class="reviewRow">
 
-						<div class="reviewLeft">
-							<div class="reviewTitle">
-								<img class="avatarImg"
-									 th:src="${(r.reviewee_photo != null and r.reviewee_photo != '') ? r.reviewee_photo : '/img/default_profile.png'}"
-									 alt="profile" /><span th:text="${r.reviewee_name}">홍길동</span>
-							</div>
+							<div class="reviewLeft">
+								<div class="reviewTitle">
+									<img class="avatarImg"
+										th:src="${(r.reviewee_photo != null and !#strings.isEmpty(r.reviewee_photo))} ?
+              @{/uploads/{p}(p=${r.reviewee_photo})} :
+              @{/img/profile/defaultProfile.jpg}"
+										alt="profile" /><span th:text="${r.reviewee_name}">홍길동</span>
+								</div>
 
-							<div class="reviewBody">
-								
+								<div class="reviewBody">
 
-								<div class="reviewTextArea">
-									<div class="ratingLine">
-										<div class="stars" th:attr="data-rating=${r.rating}"></div>
-										<span class="ratingNum" th:text="${r.rating}">4.0</span>
-									</div>
 
-									<div class="reviewContent" th:text="${r.content}"></div>
+									<div class="reviewTextArea">
+										<div class="ratingLine">
+											<div class="stars" th:attr="data-rating=${r.rating}"></div>
+											<span class="ratingNum" th:text="${r.rating}">4.0</span>
+										</div>
 
-									<div class="tagLine" th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
-									  <span class="tagChip" th:each="t : ${r.tagList}" th:text="${t}">#친절해요</span>
+										<div class="reviewContent" th:text="${r.content}"></div>
+
+										<div class="tagLine"
+											th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
+											<span class="tagChip" th:each="t : ${r.tagList}"
+												th:text="${t}">#친절해요</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
-						
-						<div class="reviewRight" th:if="${userType == 'coach'}">
-							<form th:action="@{/review/coach/delete}" method="post">
-								<input type="hidden" name="review_coach_idx" th:value="${r.review_coach_idx}">
-								<button type="submit" class="btnDelete">삭제</button>
-							</form>
-						</div>
 
+							<div class="reviewRight" th:if="${userType == 'coach'}">
+								<form th:action="@{/review/coach/delete}" method="post">
+									<input type="hidden" name="review_coach_idx"
+										th:value="${r.review_coach_idx}">
+									<button type="submit" class="btnDelete">삭제</button>
+								</form>
+							</div>
+
+						</div>
+						<div class="cardDivider"></div>
 					</div>
-					<div class="cardDivider"></div>
-				</div>
-				
+
 				</div>
 				<div class="reviewArea">
 
-				<h3 class="sectionTitle" style="margin-top:24px;"><b class="classB">클래스</b>에 쓴 리뷰</h3>
+					<h3 class="sectionTitle" style="margin-top: 24px;">
+						<b class="classB">클래스</b>에 쓴 리뷰
+					</h3>
 
-				<div th:if="${#lists.isEmpty(writtenClassReviews)}" class="emptyBox">
-					작성한 리뷰가 없습니다.
-				</div>
+					<div th:if="${#lists.isEmpty(writtenClassReviews)}"
+						class="emptyBox">작성한 리뷰가 없습니다.</div>
 
-				<div th:each="r : ${writtenClassReviews}" class="reviewCard">
-					<div class="reviewRow">
+					<div th:each="r : ${writtenClassReviews}" class="reviewCard">
+						<div class="reviewRow">
 
-						<div class="reviewLeft">
-							<div class="reviewTitle">
-								<img class="avatarImg"
-									 th:src="${(r.provider_photo != null and r.provider_photo != '') ? r.provider_photo : '/img/default_profile.png'}"
-									 alt="profile" /><span style="color:#777; font-weight:500; margin-right: 4px;"
-									  th:text="'[' + ${r.provider_name} + ']'"> (제공자)</span>
-									  <span th:text="${r.class_title}">클래스명</span>
-								
-							</div>
+							<div class="reviewLeft">
+								<div class="reviewTitle">
+									<img class="avatarImg"
+										th:src="${(r.provider_photo != null and !#strings.isEmpty(r.provider_photo))} ?
+              @{/uploads/{p}(p=${r.provider_photo})} :
+              @{/img/profile/default_company.jpg}"
+										alt="profile" /><span
+										style="color: #777; font-weight: 500; margin-right: 4px;"
+										th:text="'[' + ${r.provider_name} + ']'"> (제공자)</span> <span
+										th:text="${r.class_title}">클래스명</span>
 
-							<div class="reviewBody">
-								
+								</div>
 
-								<div class="reviewTextArea">
-									<div class="ratingLine">
-										<div class="stars" th:attr="data-rating=${r.rating}"></div>
-										<span class="ratingNum" th:text="${r.rating}">4.0</span>
-									</div>
+								<div class="reviewBody">
 
-									<div class="reviewContent" th:text="${r.content}"></div>
 
-									<div class="tagLine" th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
-									  <span class="tagChip" th:each="t : ${r.tagList}" th:text="${t}">#친절해요</span>
+									<div class="reviewTextArea">
+										<div class="ratingLine">
+											<div class="stars" th:attr="data-rating=${r.rating}"></div>
+											<span class="ratingNum" th:text="${r.rating}">4.0</span>
+										</div>
+
+										<div class="reviewContent" th:text="${r.content}"></div>
+
+										<div class="tagLine"
+											th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
+											<span class="tagChip" th:each="t : ${r.tagList}"
+												th:text="${t}">#친절해요</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
-						<div class="reviewRight" th:if="${userType == 'coach'}">
-							<form th:action="@{/review/class/delete}" method="post">
-								<input type="hidden" name="review_class_idx" th:value="${r.review_class_idx}">
-								<button type="submit" class="btnDelete">삭제</button>
-							</form>
-						</div>
+							<div class="reviewRight" th:if="${userType == 'coach'}">
+								<form th:action="@{/review/class/delete}" method="post">
+									<input type="hidden" name="review_class_idx"
+										th:value="${r.review_class_idx}">
+									<button type="submit" class="btnDelete">삭제</button>
+								</form>
+							</div>
 
+						</div>
+						<div class="cardDivider"></div>
 					</div>
-					<div class="cardDivider"></div>
-				</div></div>
+				</div>
 
 			</section>
-			
-			<section id="received" class="tabContent"
-			         th:classappend="${!canWriteReview} ? ' active' : ''">
 
-				<div th:if="${#lists.isEmpty(receivedCoachReviews)}" class="emptyBox">
-					받은 리뷰가 없습니다.
-				</div>
+			<section id="received" class="tabContent"
+				th:classappend="${!canWriteReview} ? ' active' : ''">
+
+				<div th:if="${#lists.isEmpty(receivedCoachReviews)}"
+					class="emptyBox">받은 리뷰가 없습니다.</div>
 
 				<div th:each="r : ${receivedCoachReviews}" class="reviewCard">
 					<div class="reviewRow">
 
 
-							<div class="reviewedBody">
-								<div class="reviewProfileArea">
+						<div class="reviewedBody">
+							<div class="reviewProfileArea">
 								<img class="avatarImg"
-									 th:src="${(r.reviewer_photo != null and r.reviewer_photo != '') ? r.reviewer_photo : '/img/default_profile.png'}"
-									 alt="profile" />
+									th:src="${(r.reviewer_photo != null and !#strings.isEmpty(r.reviewer_photo))} ?
+              @{/uploads/{p}(p=${r.reviewer_photo})} :
+              @{/img/profile/defaultProfile.jpg}"
+									alt="profile" />
 								<div class="reviewMeta">
-										<span class="userType" th:text="${r.reviewer_label}">일반 코치</span>
-										<span class="writerName" th:text="${r.reviewer_name}">홍길동</span>
-									</div>
+									<span class="userType" th:text="${r.reviewer_label}">일반
+										코치</span> <span class="writerName" th:text="${r.reviewer_name}">홍길동</span>
 								</div>
-								
+							</div>
 
-								<div class="reviewTextArea">
-									<div class="ratingLine">
-										<div class="stars" th:attr="data-rating=${r.rating}"></div>
-										<span class="ratingNum" th:text="${r.rating}">4.0</span>
-									</div>
 
-									<div class="reviewContent" th:text="${r.content}"></div>
+							<div class="reviewTextArea">
+								<div class="ratingLine">
+									<div class="stars" th:attr="data-rating=${r.rating}"></div>
+									<span class="ratingNum" th:text="${r.rating}">4.0</span>
+								</div>
 
-									
+								<div class="reviewContent" th:text="${r.content}"></div>
 
-									<div class="tagLine" th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
-									  <span class="tagChip" th:each="t : ${r.tagList}" th:text="${t}">#친절해요</span>
-									</div>
+
+
+								<div class="tagLine"
+									th:if="${r.tagList != null and !#lists.isEmpty(r.tagList)}">
+									<span class="tagChip" th:each="t : ${r.tagList}" th:text="${t}">#친절해요</span>
 								</div>
 							</div>
 						</div>
-
 					</div>
+
+				</div>
 
 
 			</section>

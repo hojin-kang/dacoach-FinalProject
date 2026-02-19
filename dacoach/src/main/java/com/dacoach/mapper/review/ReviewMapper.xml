@@ -32,7 +32,7 @@
         CASE
           WHEN u.user_type = 'COMPANY' THEN '기업'
           WHEN u.user_type = 'ADMIN' THEN '관리자'
-          WHEN u.user_type = 'coach' THEN NVL(rk.rank_name, '일반 코치')
+          WHEN u.user_type = 'COACH' THEN NVL(rk.rank_name, '일반 코치')
           ELSE '일반'
         END AS reviewee_label
 
@@ -41,7 +41,7 @@
       LEFT JOIN coach c ON c.user_idx = u.user_idx
       LEFT JOIN company cp ON cp.user_idx = u.user_idx
       LEFT JOIN rank rk
-        ON u.user_type = 'coach'
+        ON u.user_type = 'COACH'
        AND (
             (rk.min_score IS NULL OR c.point_score >= rk.min_score)
         AND (rk.max_score IS NULL OR c.point_score <= rk.max_score)
@@ -70,7 +70,7 @@
         CASE
           WHEN u.user_type = 'COMPANY' THEN '기업'
           WHEN u.user_type = 'ADMIN' THEN '관리자'
-          WHEN u.user_type = 'coach' THEN NVL(rk.rank_name, '일반 코치')
+          WHEN u.user_type = 'COACH' THEN NVL(rk.rank_name, '일반 코치')
           ELSE '일반'
         END AS reviewer_label
 
@@ -79,7 +79,7 @@
       LEFT JOIN coach c ON c.user_idx = u.user_idx
       LEFT JOIN company cp ON cp.user_idx = u.user_idx
       LEFT JOIN rank rk
-        ON u.user_type = 'coach'
+        ON u.user_type = 'COACH'
        AND (
             (rk.min_score IS NULL OR c.point_score >= rk.min_score)
         AND (rk.max_score IS NULL OR c.point_score <= rk.max_score)
@@ -109,7 +109,7 @@
         CASE
           WHEN pu.user_type = 'COMPANY' THEN '기업'
           WHEN pu.user_type = 'ADMIN' THEN '관리자'
-          WHEN pu.user_type = 'coach' THEN NVL(prk.rank_name, '일반 코치')
+          WHEN pu.user_type = 'COACH' THEN NVL(prk.rank_name, '일반 코치')
           ELSE '일반'
         END AS provider_label
 
@@ -120,7 +120,7 @@
       LEFT JOIN coach c ON c.user_idx = pu.user_idx
       LEFT JOIN company pc ON pc.user_idx = pu.user_idx
       LEFT JOIN rank prk
-        ON pu.user_type = 'coach'
+        ON pu.user_type = 'COACH'
        AND (
             (prk.min_score IS NULL OR c.point_score >= prk.min_score)
         AND (prk.max_score IS NULL OR c.point_score <= prk.max_score)
@@ -151,7 +151,7 @@
       CASE
         WHEN ru.user_type = 'COMPANY' THEN '기업'
         WHEN ru.user_type = 'ADMIN' THEN '관리자'
-        WHEN ru.user_type = 'coach' THEN NVL(rrk.rank_name, '일반 코치')
+        WHEN ru.user_type = 'COACH' THEN NVL(rrk.rank_name, '일반 코치')
         ELSE '일반'
       END AS reviewer_label
 
@@ -162,7 +162,7 @@
     LEFT JOIN coach c ON c.user_idx = ru.user_idx
     LEFT JOIN company rcp ON rcp.user_idx = ru.user_idx
     LEFT JOIN rank rrk
-      ON ru.user_type = 'coach'
+      ON ru.user_type = 'COACH'
      AND (
           (rrk.min_score IS NULL OR c.point_score >= rrk.min_score)
       AND (rrk.max_score IS NULL OR c.point_score <= rrk.max_score)
