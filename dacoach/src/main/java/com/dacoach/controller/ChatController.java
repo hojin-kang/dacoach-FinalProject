@@ -137,12 +137,19 @@ public class ChatController {
 	            System.err.println("파일 삭제 중 오류 발생: " + e.getMessage());
 	        }
 	        int delete=chatService.deleteMatch(my, room.getOtherIdx());
+	        if(delete > 0) {
+	        	try {
+					int deleteAgree=coachService.deleteAgree(my, room.getOtherIdx());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+	        
 	        
 	    }
 	    
 		try {
-			
-			
 			CoachDTO dto = coachService.getCoachInfo(room.getOtherIdx());
 			if(dto!=null && dto.getUser_idx()==room.getOtherIdx() && status.equals("MATCHED")) {
 	        	session.setAttribute("reviewDispo", true);
