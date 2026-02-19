@@ -11,6 +11,13 @@
 	--approve-blue: #74b9ff;
 }
 
+/* 페이징 스타일 통일 */
+.pagging-container {
+	margin-top: 30px;
+	display: flex;
+	justify-content: center;
+}
+
 .ad-admin-container {
 	font-family: 'Pretendard', sans-serif;
 	color: var(--slate-text);
@@ -232,6 +239,7 @@
 				</div>
 			</div>
 		</section>
+		<div class="pagging-container" th:utext="${pageStr}"></div>
 	</div>
 
 	<script th:inline="javascript">

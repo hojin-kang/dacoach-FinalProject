@@ -1,340 +1,255 @@
 <div th:fragment="contentPage" class="class-detail-page">
-  <style>
+    <style>
+        .class-detail-page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 14px;
+            color: #374151;
+        }
 
-    .class-detail-page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 32px;
-      font-family: 'Pretendard', sans-serif;
-      font-size: 14px;
-      color: #374151;
-    }
+        .class-detail-page .info-card {
+            background-color: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 40px;
+            padding: 2.5rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            position: relative;
+            margin-bottom: 25px;
+        }
 
-    .class-detail-page .info-card {
-      background-color: #ffffff;
-      border: 2px solid #e5e7eb;
-      border-radius: 40px;
-      padding: 2rem;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      position: relative;
-      margin-bottom: 20px;
-    }
+        .class-detail-page .section-badge {
+            display: inline-block;
+            background-color: #9dbbb5;
+            color: #ffffff;
+            padding: 0.5rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    .class-detail-page .section-badge {
-      display: inline-block;
-      background-color: #9dbbb5;
-      color: #ffffff;
-      padding: 0.5rem 2rem;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-    }
+        .class-detail-page .sub-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 15px 0 12px;
+            color: #111827;
+        }
 
-    .class-detail-page .sub-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 10px 0 14px;
-      color: #111827;
-    }
+        .class-detail-page .divider {
+            border: none;
+            border-top: 1px solid #e5e7eb;
+            margin: 25px 0;
+        }
 
-    .class-detail-page .divider {
-      border: none;
-      border-top: 1px solid #e5e7eb;
-      margin: 18px 0;
-    }
+        /* [3. 정보 그리드 (Key-Value)] */
+        .class-detail-page .kv-grid {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 12px 15px;
+            align-items: stretch;
+        }
 
-    .class-detail-page .kv-grid {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 10px 14px;
-      align-items: stretch;
-    }
+        .class-detail-page .kv-label {
+            background-color: #9dbbb5;
+            color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            padding: 10px;
+        }
 
-    .class-detail-page .kv-label {
-      background-color: #9dbbb5;
-      color: #ffffff;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      padding: 10px 12px;
-      min-height: 40px;
-    }
+        .class-detail-page .kv-value {
+            background-color: #f0f8f7;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid #e5e7eb;
+        }
 
-    .class-detail-page .kv-value {
-      background-color: #f0f8f7;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      padding: 10px 14px;
-      min-height: 40px;
-      border: 1px solid #e5e7eb;
-    }
+        /* [4. 미디어(사진/영상) 레이아웃] */
+        .class-detail-page .media-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
 
-    .class-detail-page .status-badge {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 13px;
-    }
+        .class-detail-page .media-item {
+            flex: 1;
+            min-width: 300px;
+        }
 
-    .class-detail-page .status-progress {
-      background-color: rgba(16,185,129,0.15);
-      color: #047857;
-    }
+        .class-detail-page .class-photo,
+        .class-detail-page .class-video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            object-fit: cover;
+            background-color: #f3f4f6; /* 검정색보다 부드러운 배경색 */
+            display: block;
+        }
 
-    .class-detail-page .status-scheduled {
-      background-color: rgba(59,130,246,0.15);
-      color: #1e40af;
-    }
+        /* [5. 상태 배지] */
+        .class-detail-page .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .class-detail-page .status-progress { background-color: rgba(16, 185, 129, 0.15); color: #047857; }
+        .class-detail-page .status-scheduled { background-color: rgba(59, 130, 246, 0.15); color: #1e40af; }
+        .class-detail-page .status-finished { background-color: rgba(107, 114, 128, 0.15); color: #4b5563; }
 
-    .class-detail-page .status-finished {
-      background-color: rgba(107,114,128,0.15);
-      color: #4b5563;
-    }
+        /* [6. 리뷰 리스트] */
+        .class-detail-page .intro-box {
+            background-color: #f0f8f7;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
 
-    .class-detail-page .class-photo {
-      width: 100%;
-      max-width: 400px;
-      border-radius: 16px;
-      border: 1px solid #e5e7eb;
-    }
+        .class-detail-page .review-item {
+            background-color: #f0f8f7;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
 
-    .class-detail-page .intro-box {
-      background-color: #f0f8f7;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 14px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
+        .class-detail-page .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-    .class-detail-page .review-item {
-      background-color: #f0f8f7;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-    }
+        .class-detail-page .btn {
+            border: none; border-radius: 10px; padding: 8px 16px; font-weight: 700; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .class-detail-page .btn-delete { background-color: #dc2626; color: #fff; font-size: 12px; }
+        .class-detail-page .btn-list { background-color: #6b7280; color: #fff; padding: 12px 25px; text-decoration: none; }
+        .class-detail-page .btn:hover { filter: brightness(90%); }
+        .class-detail-page .btn-row { display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end; }
+    </style>
 
-    .class-detail-page .review-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
+    <div class="info-card">
+        <div class="section-badge">클래스 상세 정보</div>
 
-    .class-detail-page .review-rating {
-      color: #f59e0b;
-      font-weight: 700;
-    }
+        <div class="sub-title">📌 기본 정보</div>
+        <div class="kv-grid">
+            <div class="kv-label">클래스명</div>
+            <div class="kv-value" th:text="${classInfo['TITLE'] ?: '-'}"></div>
 
-    .class-detail-page .review-tag {
-      display: inline-block;
-      background-color: #9dbbb5;
-      color: white;
-      padding: 4px 10px;
-      border-radius: 9999px;
-      font-size: 12px;
-      margin-right: 8px;
-    }
+            <div class="kv-label">제공 회사</div>
+            <div class="kv-value">
+                <a th:href="@{/admin/companyDetail/{idx}(idx=${classInfo['PROVIDER_IDX']})}" 
+                   style="color: #2563eb; text-decoration: underline;" 
+                   th:text="${classInfo['PROVIDER_NAME'] ?: '-'}"></a>
+            </div>
 
-    .class-detail-page .btn {
-      border: none;
-      border-radius: 12px;
-      padding: 8px 16px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-    }
+            <div class="kv-label">분야 / 지역</div>
+            <div class="kv-value">
+                <span th:text="${classInfo['MAJOR_FIELD_CD'] ?: '-'}"></span>
+                <span th:if="${classInfo['MINOR_FIELD_NM'] != null}"> > [[${classInfo['MINOR_FIELD_NM']}]]</span>
+                <span style="margin: 0 15px; color: #ccc;">|</span>
+                <span th:text="${classInfo['REGION_NM'] ?: '-'}"></span>
+                <span th:if="${classInfo['DISTRICT_NM'] != null}"> > [[${classInfo['DISTRICT_NM']}]]</span>
+            </div>
 
-    .class-detail-page .btn-delete {
-      background-color: #dc2626;
-      color: #ffffff;
-    }
+            <div class="kv-label">수강 인원</div>
+            <div class="kv-value">
+                <b th:text="${classInfo['ENROLL_COUNT'] ?: '0'}"></b>명 / 
+                <span th:text="${classInfo['MAX_USER_CNT'] ?: '-'}"></span>명
+            </div>
 
-    .class-detail-page .btn-list {
-      background-color: #6b7280;
-      color: #ffffff;
-      padding: 10px 18px;
-      font-size: 14px;
-    }
-
-    .class-detail-page .btn:hover {
-      filter: brightness(90%);
-    }
-
-    .class-detail-page .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-      justify-content: flex-end;
-    }
-
-    .class-detail-page .company-link {
-      color: #2563eb;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .class-detail-page .empty-review {
-      padding: 20px;
-      text-align: center;
-      color: #9ca3af;
-    }
-  </style>
-
-  <!-- 클래스 기본 정보 -->
-  <div class="info-card">
-    <div class="section-badge">클래스 상세</div>
-
-    <div class="sub-title">기본 정보</div>
-
-    <div class="kv-grid">
-      <div class="kv-label">클래스명</div>
-      <div class="kv-value" th:text="${classInfo['TITLE'] != null ? classInfo['TITLE'] : '-'}">-</div>
-
-      <div class="kv-label">제공 회사</div>
-      <div class="kv-value">
-        <a th:href="@{/admin/companyDetail/{idx}(idx=${classInfo['PROVIDER_IDX']})}" 
-           class="company-link"
-           th:text="${classInfo['PROVIDER_NAME'] != null ? classInfo['PROVIDER_NAME'] : '-'}">-</a>
-      </div>
-
-      <div class="kv-label">분야</div>
-      <div class="kv-value">
-        <span th:text="${classInfo['MAJOR_FIELD_CD'] != null ? classInfo['MAJOR_FIELD_CD'] : '-'}">-</span>
-        <span th:if="${classInfo['MINOR_FIELD_NM'] != null}">
-          > <span th:text="${classInfo['MINOR_FIELD_NM']}"></span>
-        </span>
-      </div>
-
-      <div class="kv-label">지역</div>
-      <div class="kv-value">
-        <span th:text="${classInfo['REGION_NM'] != null ? classInfo['REGION_NM'] : '-'}">-</span>
-        <span th:if="${classInfo['DISTRICT_NM'] != null}">
-          > <span th:text="${classInfo['DISTRICT_NM']}"></span>
-        </span>
-      </div>
-
-      <div class="kv-label">가격</div>
-      <div class="kv-value">
-        <span th:text="${classInfo['PRICE'] != null ? #numbers.formatInteger(classInfo['PRICE'], 0, 'COMMA') + '원' : '-'}">-</span>
-      </div>
-
-      <div class="kv-label">수강 인원</div>
-      <div class="kv-value">
-        <span th:text="${classInfo['ENROLL_COUNT'] != null ? classInfo['ENROLL_COUNT'] : 0}">0</span>명 
-        / 
-        <span th:text="${classInfo['MAX_USER_CNT'] != null ? classInfo['MAX_USER_CNT'] : '-'}">-</span>명
-      </div>
-
-      <div class="kv-label">진행 기간</div>
-      <div class="kv-value">
-        <span th:text="${classInfo['START_DATE'] != null ? #dates.format(classInfo['START_DATE'], 'yyyy-MM-dd') : '-'}">-</span>
-        ~
-        <span th:text="${classInfo['END_DATE'] != null ? #dates.format(classInfo['END_DATE'], 'yyyy-MM-dd') : '무제한'}">-</span>
-      </div>
-
-      <div class="kv-label">등록일</div>
-      <div class="kv-value" th:text="${classInfo['CREATED_AT'] != null ? #dates.format(classInfo['CREATED_AT'], 'yyyy-MM-dd HH:mm') : '-'}">-</div>
-
-      <div class="kv-label">상태</div>
-      <div class="kv-value">
-        <span class="status-badge"
-              th:classappend="${classInfo['PROGRESS_STATUS'] == '진행중' ? 'status-progress' : 
-                               (classInfo['PROGRESS_STATUS'] == '예정' ? 'status-scheduled' : 'status-finished')}"
-              th:text="${classInfo['PROGRESS_STATUS'] != null ? classInfo['PROGRESS_STATUS'] : '-'}">-</span>
-      </div>
-
-      <div class="kv-label">평점</div>
-      <div class="kv-value">
-        ⭐ <span th:text="${classInfo['AVG_RATING'] != null ? classInfo['AVG_RATING'] : '0'}">0</span>점
-        (<span th:text="${classInfo['REVIEW_COUNT'] != null ? classInfo['REVIEW_COUNT'] : '0'}">0</span>개 리뷰)
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <div class="sub-title">클래스 소개</div>
-    <div class="intro-box" th:text="${classInfo['INTRO'] != null ? classInfo['INTRO'] : '소개 내용이 없습니다.'}">-</div>
-
-    <hr class="divider" th:if="${classInfo['PHOTO'] != null and classInfo['PHOTO'] != ''}">
-
-    <div class="sub-title" th:if="${classInfo['PHOTO'] != null and classInfo['PHOTO'] != ''}">클래스 사진</div>
-    <div th:if="${classInfo['PHOTO'] != null and classInfo['PHOTO'] != ''}">
-      <img th:src="@{/uploads/classes/{f}(f=${classInfo['PHOTO']})}" 
-           class="class-photo" 
-           alt="클래스 사진">
-    </div>
-  </div>
-
-  <!-- 리뷰 목록 -->
-  <div class="info-card">
-    <div class="section-badge">
-      리뷰 관리 
-      (<span th:text="${classInfo['REVIEW_COUNT'] != null ? classInfo['REVIEW_COUNT'] : '0'}">0</span>개)
-    </div>
-
-    <div th:if="${reviews == null or #lists.isEmpty(reviews)}" class="empty-review">
-      등록된 리뷰가 없습니다.
-    </div>
-
-    <div th:each="review : ${reviews}" class="review-item">
-      <div class="review-header">
-        <div>
-          <span class="review-rating">
-            ⭐ <span th:text="${review['RATING']}">5.0</span>
-          </span>
-          <span class="review-tag" th:if="${review['TAG'] != null and review['TAG'] != ''}" 
-                th:text="${review['TAG']}">태그</span>
-          <span style="color:#6b7280; margin-left:8px;">
-            <span th:text="${review['REVIEWER_NAME']}">작성자</span>
-            (<span th:text="${review['REVIEWER_TYPE']}">COACH</span>)
-          </span>
-          <span style="color:#9ca3af; margin-left:8px; font-size:12px;" 
-                th:text="${review['CREATED_AT'] != null ? #dates.format(review['CREATED_AT'], 'yyyy-MM-dd') : ''}"></span>
+            <div class="kv-label">상태 / 평점</div>
+            <div class="kv-value">
+                <span class="status-badge"
+                      th:classappend="${classInfo['PROGRESS_STATUS'] == '진행중' ? 'status-progress' : (classInfo['PROGRESS_STATUS'] == '예정' ? 'status-scheduled' : 'status-finished')}"
+                      th:text="${classInfo['PROGRESS_STATUS'] ?: '-'}"></span>
+                <span style="margin: 0 15px; color: #ccc;">|</span>
+                ⭐ <b th:text="${classInfo['AVG_RATING'] ?: '0'}"></b>점 
+                (리뷰 <span th:text="${classInfo['REVIEW_COUNT'] ?: '0'}"></span>개)
+            </div>
         </div>
-        <button class="btn btn-delete" 
-                th:onclick="|deleteReview(${classInfo['CLASS_IDX']}, ${review['REVIEW_CLASS_IDX']})|">
-          삭제
-        </button>
-      </div>
-      <div style="margin-top:8px; line-height:1.6;" 
-           th:text="${review['CONTENT'] != null ? review['CONTENT'] : ''}">리뷰 내용</div>
+
+        <hr class="divider">
+
+        <div class="sub-title">📝 클래스 소개</div>
+        <div class="intro-box" th:text="${classInfo['INTRO'] ?: '등록된 소개 내용이 없습니다.'}"></div>
+
+        <th:block th:if="${(classInfo['PHOTO'] != null and classInfo['PHOTO'] != '') or (classInfo['VIDEO'] != null and classInfo['VIDEO'] != '')}">
+            <hr class="divider">
+            <div class="media-row">
+                <div class="media-item" th:if="${classInfo['PHOTO'] != null and classInfo['PHOTO'] != ''}">
+                    <div class="sub-title">📸 클래스 사진</div>
+                    <img th:src="@{/uploads/{path}(path=${classInfo['PHOTO']})}" 
+                         class="class-photo" 
+                         alt="클래스 사진"
+                         onerror="this.src='https://placehold.co/600x400?text=No+Image'; this.onerror=null;">
+                    <p style="font-size: 11px; color: #999; margin-top: 5px;">파일 경로: /uploads/[[${classInfo['PHOTO']}]]</p>
+                </div>
+
+                <div class="media-item" th:if="${classInfo['VIDEO'] != null and classInfo['VIDEO'] != ''}">
+                    <div class="sub-title">🎥 클래스 비디오</div>
+                    <video th:src="@{/uploads/{path}(path=${classInfo['VIDEO']})}" 
+                           class="class-video" controls preload="metadata">
+                        브라우저가 동영상을 지원하지 않습니다.
+                    </video>
+                </div>
+            </div>
+        </th:block>
     </div>
-  </div>
 
-  <!-- 버튼 -->
-  <div class="btn-row">
-    <a th:href="@{/admin/companyClassList}" class="btn btn-list">목록으로</a>
-  </div>
+    <div class="info-card">
+        <div class="section-badge">리뷰 관리</div>
 
-  <script>
-    function deleteReview(classIdx, reviewIdx) {
-      if (!confirm('정말 이 리뷰를 삭제하시겠습니까?')) {
-        return;
-      }
+        <div th:if="${#lists.isEmpty(reviews)}" style="padding: 40px; text-align: center; color: #9ca3af; font-style: italic;">
+            아직 등록된 리뷰가 없습니다.
+        </div>
 
-      fetch(`/admin/classDetail/${classIdx}/deleteReview/${reviewIdx}`, { 
-        method: 'POST'
-      })
-        .then(resp => {
-          if (!resp.ok) throw new Error('delete fail');
-          return resp.text();
-        })
-        .then(() => {
-          alert('리뷰가 삭제되었습니다.');
-          location.reload();
-        })
-        .catch(() => alert('리뷰 삭제 실패'));
-    }
-  </script>
+        <div th:each="review : ${reviews}" class="review-item">
+            <div class="review-header">
+                <div>
+                    <span style="color: #f59e0b; font-weight: 800; font-size: 16px;">⭐ [[${review['RATING']}]]</span>
+                    <span th:if="${review['TAG'] != null}" 
+                          style="background:#9dbbb5; color:#fff; padding:3px 12px; border-radius:12px; font-size:11px; margin-left:12px; vertical-align: middle;" 
+                          th:text="${review['TAG']}"></span>
+                    <span style="margin-left:12px; font-weight:700; color: #111827;" th:text="${review['REVIEWER_NAME']}"></span>
+                    <span style="color:#9ca3af; font-size:12px; margin-left:10px;" 
+                          th:text="${review['CREATED_AT'] != null ? #dates.format(review['CREATED_AT'], 'yyyy-MM-dd') : ''}"></span>
+                </div>
+                <button type="button" class="btn btn-delete" th:onclick="deleteReview([[${classInfo['CLASS_IDX']}]], [[${review['REVIEW_CLASS_IDX']}]])">리뷰 삭제</button>
+            </div>
+            <div style="line-height: 1.7; color: #4b5563; padding-top: 5px;" th:text="${review['CONTENT']}"></div>
+        </div>
+    </div>
+
+    <div class="btn-row">
+        <a th:href="@{/admin/companyClassList}" class="btn btn-list">목록으로 돌아가기</a>
+    </div>
+
+    <script th:inline="javascript">
+        function deleteReview(classIdx, reviewIdx) {
+            if (!confirm('해당 리뷰를 정말 삭제하시겠습니까?\n삭제 후에는 복구가 불가능합니다.')) return;
+            
+            fetch(`/admin/classDetail/${classIdx}/deleteReview/${reviewIdx}`, { method: 'POST' })
+                .then(resp => {
+                    if (!resp.ok) throw new Error();
+                    alert('리뷰가 정상적으로 삭제되었습니다.');
+                    location.reload();
+                })
+                .catch(() => alert('리뷰 삭제에 실패했습니다. 다시 시도해 주세요.'));
+        }
+    </script>
 </div>

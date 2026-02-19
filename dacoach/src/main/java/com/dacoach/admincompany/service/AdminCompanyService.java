@@ -9,7 +9,7 @@ import com.dacoach.model.company.CertDTO;
 public interface AdminCompanyService {
 
 	//기업 관리
-    List<Map<String, Object>> getCompanyList();
+    List<Map<String, Object>> getCompanyList(Map<String,Object> param);
     Map<String, Object> getCompanyDetail(int usersIdx);
     void updateCompanyFullStatus(Map<String, Object> params, EmbeddedUserDTO dto);
     //기업 계정상태 관리
@@ -18,7 +18,7 @@ public interface AdminCompanyService {
     int updateEnddateSuspended(int user_idx);
     //기업 디테일
     void approveCompanyLogic(Map<String, Object> params);
-    
+    int getCompanyTotalCnt();
     
 	String getCertFilePath(int userIdx);
 	int saveCert(CertDTO dto);

@@ -19,6 +19,7 @@
       c.PHOTO,
       c.START_DATE,
       c.END_DATE,
+      c.VIDEO,
       u.USER_NAME AS PROVIDER_NAME,
       NVL(r.AVG_RATING, 0) AS AVG_RATING,
       NVL(r.REVIEW_COUNT, 0) AS REVIEW_COUNT,
@@ -47,6 +48,12 @@
 		SELECT COUNT(*)
 		FROM
 		CLASS
+	</select>
+	
+	<select id="countCompanyTotal" resultType="int">
+	select count(*)
+	from
+	company
 	</select>
 
 	<!-- 3. 클래스 상세 -->
@@ -138,23 +145,26 @@
 
 	<!-- 8. 기업 회원 목록 -->
 	<select id="companyList" resultType="map">
-		SELECT
-		u.USER_IDX,
-		u.USER_NAME,
-		u.STATUS,
-		c.COMPANY_IDX,
-		c.COMPANY_NUM,
-		NVL(ct.CERT_STATUS,
-		'INACTIVE') AS CERT_STATUS
-		FROM USERS u
-		JOIN COMPANY c ON c.USER_IDX =
-		u.USER_IDX
-		LEFT JOIN CERT ct ON u.USER_IDX = ct.USER_IDX AND
-		ct.CERT_TYPE = '사업자등록증'
-		WHERE u.USER_TYPE = 'COMPANY'
-		ORDER BY
-		c.COMPANY_IDX DESC
-	</select>
+<![CDATA[
+    SELECT *
+    FROM (
+        SELECT
+            u.USER_IDX,
+            u.USER_NAME,
+            u.STATUS,
+            c.COMPANY_IDX,
+            c.COMPANY_NUM,
+            NVL(ct.CERT_STATUS, 'INACTIVE') AS CERT_STATUS,
+            ROW_NUMBER() OVER (ORDER BY c.COMPANY_IDX DESC) AS RN
+        FROM USERS u
+        JOIN COMPANY c ON c.USER_IDX = u.USER_IDX
+        LEFT JOIN CERT ct ON u.USER_IDX = ct.USER_IDX 
+                          AND ct.CERT_TYPE = '사업자등록증'
+        WHERE u.USER_TYPE = 'COMPANY'
+    ) t
+    WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}
+]]>
+</select>
 
 	<!-- 9. 기업 회원 상세 -->
 <select id="companyDetail" parameterType="int" resultType="map">

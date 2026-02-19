@@ -28,17 +28,45 @@ public class AdminCompanyController {
     @Autowired
     private AdminCompanyService service;
    
-    //기업 회원 목록
+ // 기업 회원 목록 (페이징 적용)
     @GetMapping("/companyList")
-    public String companyList(Model model,HttpSession session,RedirectAttributes rttr) {
-    	
-    	if(session.getAttribute("loginAdmin")==null) {
-			return "redirect:/admin";
-		}
-        List<Map<String, Object>> list = service.getCompanyList();
+    public String companyList(
+            @RequestParam(value = "cp", required = false, defaultValue = "1") int cp,
+            Model model, HttpSession session, RedirectAttributes rttr
+    ) {
+        if (session.getAttribute("loginAdmin") == null) {
+            return "redirect:/admin";
+        }
+
+        // 1. 페이징 설정 (클래스 목록과 동일하게 10개씩)
+        int listSize = 10;
+        int pageSize = 5;
+
+        // 2. 전체 기업 수 조회 (요청하신 메서드 사용)
+        int totalCnt = service.getCompanyTotalCnt();
+
+        // 3. 페이지 범위 계산
+        int startRow = (cp - 1) * listSize + 1;
+        int endRow = cp * listSize;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("startRow", startRow);
+        map.put("endRow", endRow);
+
+        // 4. 페이징 쿼리 실행 (방금 만든 SQL 매퍼와 연결)
+        List<Map<String, Object>> list = service.getCompanyList(map);
+
+        // 5. 페이지 번호 HTML 생성
+        String pageStr = PageModule.makePage("/admin/companyList", totalCnt, listSize, pageSize, cp);
+
+        // 6. 모델에 데이터 전달
         model.addAttribute("list", list);
+        model.addAttribute("pageStr", pageStr);
+        model.addAttribute("cp", cp);
+
         model.addAttribute("contentPage", "admin/company/companyList");
         model.addAttribute("contentFragment", "contentPage");
+
         return "admin/dashboard";
     }
 

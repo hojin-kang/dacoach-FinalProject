@@ -20,9 +20,10 @@ public class AdminAdManagementServiceImple implements AdminAdManagementService {
 	NotificationService notificationService;
 
 	@Override
-	public List<Map<String, Object>> getAdRequestList() {
-		return admapper.getAdRequestList();
+	public List<Map<String, Object>> getAdRequestList(Map<String,Object> param) {
+		return admapper.getAdRequestList(param);
 	}
+	
 
 	@Override
 	public int sendNotification(int ad_idx, int user_idx, String action) {
@@ -42,6 +43,13 @@ public class AdminAdManagementServiceImple implements AdminAdManagementService {
 		// System.out.println("isread=" +dto.getIs_read());
 
 		return result;
+	}
+
+
+
+	@Override
+	public int getAdTotalCnt() {
+		return admapper.getAdTotalCnt();
 	}
 
 }
