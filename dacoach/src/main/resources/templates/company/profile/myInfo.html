@@ -32,7 +32,7 @@
     
      	<div class="provide">
      	<span id="userProvide">[[${provide.MAJOR_FIELD_CD}]] [[${provide.MINOR_FIELD_NM}]]</span>
-     	<p id="regionResultTag"></p>
+     	
      	<select name="fieldIdx" id="fieldIdx" >
      		<option value="">변경하실 분야의 대분류를 선택해주세요</option>
      		<option th:each="fieldTag:${fieldTag}" th:value="${fieldTag.MAJOR_FIELD_IDX}">[[${fieldTag.MAJOR_FIELD_CD}]]</option>
@@ -51,6 +51,7 @@
      			[[${region.REGION_NM}]][[${region.DISTRICT_NM}]] [[${region.REGION_DETAIL}]] [[${region.BRANCH_NAME}]] [[${region.BRANCH_TEL}]]
      			
      		</span>
+     		
      	</div>
      		<div id="regionResultTag"></div>
      			<select name="major_region_idx" id="majorSelect" >
