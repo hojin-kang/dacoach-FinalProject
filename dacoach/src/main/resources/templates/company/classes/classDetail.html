@@ -172,7 +172,7 @@
 
 							<div class="reviewCards">
 								<!-- 리뷰 1개 -->
-								<div class="reviewCard" th:each="r : ${reviewList}">
+								<div class="reviewCard" style="cursor:pointer;" th:each="r : ${reviewList}" th:onclick="|location.href='@{/coach/reviewDetail(reviewIdx=${r.REVIEW_CLASS_IDX}, classId=${classDTO.class_idx})}'|">
 									<div class="reviewTop">
 										<!-- 왼쪽: 프로필 사진 + 이름 -->
 										<div class="reviewAuthor">

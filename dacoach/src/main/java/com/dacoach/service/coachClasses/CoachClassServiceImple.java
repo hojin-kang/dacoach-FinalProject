@@ -396,4 +396,9 @@ public class CoachClassServiceImple implements CoachClassService {
 		refundParam.put("payload", payload);
 		classMapper.updatePayStatusForRefund(refundParam);
 	}
+
+	@Override
+	public Map<String, Object> getReviewDetail(int review_class_idx) throws Exception {
+		return classMapper.selectReviewDetail(review_class_idx);
+	}
 }

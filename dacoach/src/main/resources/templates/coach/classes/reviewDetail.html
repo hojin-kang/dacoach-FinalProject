@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>클래스 후기 - dacoach</title>
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/coach_class.css}" />
+</head>
+<body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
+
+	<main class="main">
+		<div class="reviewDetailWrap">
+
+			<!-- 뒤로가기 버튼 -->
+			<a class="backBtn" href="javascript:history.back()"> <span
+				class="arrow">←</span> 후기 목록으로
+			</a>
+
+			<!-- 클래스 이름 -->
+			<div class="reviewClassTitle">
+				<a th:href="@{/coach/classDetail(id=${backClassId})}"
+					th:text="${review['CLASS_TITLE']}">클래스명</a>의 후기
+			</div>
+
+			<!-- 후기 카드 -->
+			<div class="reviewDetailCard">
+
+				<!-- 작성자 프로필 -->
+				<div class="reviewerProfile">
+					<div class="reviewerAvatar">
+						<span
+							th:if="${review['REVIEWER_PHOTO'] == null or review['REVIEWER_PHOTO'] == ''}"
+							class="defaultIcon">👤</span> <img
+							th:if="${review['REVIEWER_PHOTO'] != null and review['REVIEWER_PHOTO'] != ''}"
+							th:src="'/uploads/' + ${review['REVIEWER_PHOTO']}" alt="reviewer" />
+					</div>
+					<div class="reviewerInfo">
+						<div class="reviewerName">
+							<a th:href="@{/coach/detail(user_idx=${review['REVIEWER_IDX']})}"
+								th:text="${review['REVIEWER_NAME']}">작성자명</a>
+						</div>
+						<div class="reviewDate"
+							th:text="${#dates.format(review['CREATED_AT'], 'yyyy년 MM월 dd일')}">작성일</div>
+					</div>
+				</div>
+
+				<!-- 별점 -->
+				<div class="reviewRatingRow">
+					<span class="starsLarge"> <th:block
+							th:each="i : ${#numbers.sequence(1, 5)}">
+							<span th:text="${i <= review['RATING']} ? '★' : '☆'"></span>
+						</th:block>
+					</span> <span class="ratingNum" th:text="${review['RATING']}">5.0</span> <span
+						class="ratingBase">/ 5.0</span>
+				</div>
+
+				<!-- 태그 -->
+				<div class="reviewTagRow"
+					th:if="${review['TAG'] != null and review['TAG'] != ''}">
+					<span class="reviewTagChip"
+						th:each="tag : ${#strings.arraySplit(review['TAG'], ' ')}"
+						th:text="${tag}"></span>
+				</div>
+
+				<!-- 후기 본문 -->
+				<div class="reviewContentTitle">후기 내용</div>
+				<div class="reviewContentText"
+					th:if="${review['CONTENT'] != null and review['CONTENT'] != ''}"
+					th:text="${review['CONTENT']}">후기 내용</div>
+				<div class="reviewContentText reviewContentEmpty"
+					th:if="${review['CONTENT'] == null or review['CONTENT'] == ''}">
+					작성된 내용이 없습니다.</div>
+
+			</div>
+		</div>
+	</main>
+
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
+</html>
