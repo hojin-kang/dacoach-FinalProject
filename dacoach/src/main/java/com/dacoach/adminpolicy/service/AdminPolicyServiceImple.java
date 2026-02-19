@@ -1,6 +1,7 @@
 package com.dacoach.adminpolicy.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,6 @@ public class AdminPolicyServiceImple implements AdminPolicyService {
 
 	@Autowired
 	private AdminPolicyMapper mapper;
-	
-	@Override
-	public List<PolicyDTO> getPolicyList() {
-		return mapper.getPolicyList();
-	}
 
 	@Override
 	public void savePolicy(PolicyDTO policy) {
@@ -39,8 +35,23 @@ public class AdminPolicyServiceImple implements AdminPolicyService {
 	}
 
 	@Override
-	public List<PolicyDTO> getNoticeList() {
-		return mapper.getNoticeList();
+	public List<Map<String,Object>> getPolicyList(Map<String, Object>param) {
+		return mapper.getNoticeList(param);
+	}
+
+	@Override
+	public int getNoticeTotalCnt() {
+		return mapper.getNoticeTotalCnt();
+	}
+
+	@Override
+	public List<Map<String, Object>> getNoticeList(Map<String, Object>param) {
+		return mapper.getNoticeList(param);
+	}
+
+	@Override
+	public int getNoticeAllCnt() {
+		return mapper.getNoticeAllCnt();
 	}
 
 }

@@ -1,14 +1,16 @@
 package com.dacoach.adminpolicy.service;
 
-import java.util.List;
+import java.util.*;
 
 import com.dacoach.model.adminPolicy.PolicyDTO;
 
 public interface AdminPolicyService {
 
-	List<PolicyDTO> getPolicyList();
+	List<Map<String,Object>> getPolicyList(Map<String,Object> param);
+	int getNoticeTotalCnt();
+	int getNoticeAllCnt();
 	void savePolicy(PolicyDTO policy);
 	void deletePolicy(int qna_idx);
 	PolicyDTO getLatestPolicy();
-	List<PolicyDTO> getNoticeList();
+	List<Map<String, Object>> getNoticeList(Map<String, Object> param);
 }

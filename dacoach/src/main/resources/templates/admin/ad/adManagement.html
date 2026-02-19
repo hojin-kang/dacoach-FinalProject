@@ -8,14 +8,26 @@
 	--mint-dark: #7a9a94;
 	--slate-text: #374151;
 	--reject-red: #ff7675;
-	--approve-blue: #74b9ff;
 }
 
-/* 페이징 스타일 통일 */
-.pagging-container {
+.paging-container {
 	margin-top: 30px;
 	display: flex;
 	justify-content: center;
+}
+
+.pagging-container a, .pagging-container b {
+	padding: 8px 14px;
+	border: 1px solid #eee;
+	border-radius: 8px;
+	text-decoration: none;
+	color: #999;
+	font-weight: bold;
+}
+
+.pagging-container b {
+	background: var(--mint-main);
+	color: white;
 }
 
 .ad-admin-container {
@@ -25,67 +37,6 @@
 	min-height: 800px;
 }
 
-/* [상단 헤더 영역] */
-.admin-top-bar {
-	display: flex;
-	align-items: flex-end;
-	gap: 15px;
-	padding-bottom: 20px;
-	border-bottom: 3px solid var(--mint-bg);
-	margin-bottom: 30px;
-}
-
-.admin-top-bar h1 {
-	font-size: 24px;
-	font-weight: 900;
-	color: var(--mint-main);
-	margin: 0;
-}
-
-.current-path {
-	font-size: 14px;
-	color: #9ca3af;
-	font-weight: 500;
-}
-
-/* [요약 박스] */
-.summary-box {
-	display: flex;
-	gap: 15px;
-	padding: 15px 25px;
-	background-color: var(--mint-bg);
-	border-radius: 20px;
-	margin-bottom: 25px;
-	align-items: center;
-}
-
-.summary-label {
-	font-weight: 800;
-	color: var(--mint-dark);
-	font-size: 14px;
-}
-
-.summary-count {
-	background: white;
-	padding: 4px 12px;
-	border-radius: 10px;
-	color: var(--mint-main);
-	font-weight: 900;
-}
-
-/* [리스트 헤더] */
-.list-header {
-	display: flex;
-	padding: 0 15px 10px;
-	border-bottom: 1px solid #eee;
-	margin-bottom: 15px;
-	font-size: 12px;
-	font-weight: 800;
-	color: #9ca3af;
-	text-align: center;
-}
-
-/* [카드 스타일] */
 .ad-item-card {
 	display: flex;
 	align-items: center;
@@ -94,17 +45,9 @@
 	border-radius: 15px;
 	border: 1px solid #f3f4f6;
 	margin-bottom: 10px;
-	transition: 0.2s;
 	text-align: center;
 }
 
-.ad-item-card:hover {
-	border-color: var(--mint-main);
-	transform: translateY(-2px);
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-}
-
-/* [컬럼 너비] */
 .col-idx {
 	width: 60px;
 	font-weight: 800;
@@ -118,30 +61,6 @@
 	padding-left: 10px;
 }
 
-.col-preview {
-	width: 180px;
-}
-
-.col-membership {
-	flex: 1;
-	font-weight: 600;
-	color: var(--mint-dark);
-}
-
-.col-date {
-	width: 120px;
-	color: #9ca3af;
-	font-size: 13px;
-}
-
-.col-action {
-	width: 180px;
-	display: flex;
-	gap: 8px;
-	justify-content: center;
-}
-
-/* [이미지 썸네일] */
 .ad-thumb {
 	width: 90px;
 	height: 60px;
@@ -149,14 +68,8 @@
 	border-radius: 8px;
 	border: 1px solid #eee;
 	cursor: pointer;
-	transition: 0.2s;
 }
 
-.ad-thumb:hover {
-	opacity: 0.8;
-}
-
-/* [버튼 스타일] */
 .btn-action {
 	padding: 8px 16px;
 	border-radius: 10px;
@@ -166,76 +79,62 @@
 	border: none;
 	transition: 0.2s;
 }
-
-.btn-approve {
-	background-color: var(--mint-bg);
-	color: var(--mint-dark);
-}
-
-.btn-approve:hover {
-	background-color: var(--mint-main);
-	color: white;
-}
-
-.btn-reject {
-	background-color: #fff0f0;
-	color: var(--reject-red);
-}
-
-.btn-reject:hover {
-	background-color: var(--reject-red);
-	color: white;
-}
 </style>
 
 	<div class="max-w-[1200px] mx-auto p-10 ad-admin-container">
-		<div class="admin-top-bar">
-			<h1>Ad Approval Management</h1>
-			<span class="current-path">Marketing / Advertisement Requests</span>
+		<div class="admin-top-bar"
+			style="border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px; padding-bottom: 20px;">
+			<h1
+				style="font-size: 24px; font-weight: 900; color: var(--mint-main);">Ad
+				Approval Management</h1>
 		</div>
 
 		<section class="control-panel">
-			<div class="summary-box">
-				<span style="font-size: 20px;">📢</span> <span class="summary-label">신규
-					광고 승인 대기</span>
-				<div class="summary-count">
+			<div class="summary-box"
+				style="background: var(--mint-bg); padding: 15px 25px; border-radius: 20px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+				<span style="font-size: 20px;">📢</span> <span
+					style="font-weight: 800; color: var(--mint-dark);">신규 광고 승인
+					대기</span>
+				<div
+					style="background: white; padding: 4px 12px; border-radius: 10px; color: var(--mint-main); font-weight: 900;">
 					<span th:text="${#lists.size(adList)}">0</span>건
 				</div>
 			</div>
 
-			<div class="list-header">
-				<div class="col-idx">번호</div>
-				<div class="col-user">광고주(이름)</div>
-				<div class="col-preview">배너 미리보기</div>
-				<div class="col-membership">멤버십 타입</div>
-				<div class="col-date">신청일</div>
-				<div class="col-action">승인/반려</div>
+			<div class="list-header"
+				style="display: flex; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; color: #9ca3af; font-size: 12px; font-weight: 800; text-align: center;">
+				<div style="width: 60px;">번호</div>
+				<div style="width: 180px; text-align: left; padding-left: 10px;">광고주(이름)</div>
+				<div style="width: 180px;">배너 미리보기</div>
+				<div style="flex: 1;">멤버십 타입</div>
+				<div style="width: 120px;">신청일</div>
+				<div style="width: 180px;">승인/반려</div>
 			</div>
 
 			<div th:if="${#lists.isEmpty(adList)}"
-				class="text-center py-20 text-gray-300 italic">현재 승인 대기 중인 광고
-				신청이 없습니다.</div>
+				class="text-center py-20 text-gray-300 italic">승인 대기 중인 광고 신청이
+				없습니다.</div>
 
 			<div th:each="ad : ${adList}" class="ad-item-card">
-				<div class="col-idx" th:text="${ad.AD_IDX}"></div>
-				<div class="col-user" th:text="${ad.USER_NAME}"></div>
-
-				<div class="col-preview">
-					<img th:if="${ad.PHOTO != null and ad.PHOTO != ''}"
-						th:src="@{|/uploads/${ad.PHOTO}|}" alt="배너로고" class="ad-thumb"
+				<div class="col-idx" th:text="${ad['AD_IDX']}"></div>
+				<div class="col-user" th:text="${ad['USER_NAME']}"></div>
+				<div style="width: 180px;">
+					<img th:if="${ad['PHOTO'] != null}"
+						th:src="@{|/uploads/${ad['PHOTO']}|}" class="ad-thumb"
 						th:onclick="'window.open(this.src)'">
 				</div>
-
-				<div class="col-membership" th:text="${ad.MEMBER_TYPE}"></div>
-
+				<div style="flex: 1;" th:text="${ad['MEMBER_TYPE']}"></div>
 				<div class="col-date"
-					th:text="${#dates.format(ad.CREATED_AT, 'yyyy-MM-dd')}"></div>
+					th:text="${#dates.format(ad['CREATED_AT'], 'yyyy-MM-dd')}"></div>
 
-				<div class="col-action">
-					<button class="btn-action btn-approve"
-						th:onclick="'processAd(' + ${ad.AD_IDX} + ',' + ${ad.USER_IDX} + ',\'APPROVE\')'">승인</button>
-					<button class="btn-action btn-reject"
-						th:onclick="'processAd(' + ${ad.AD_IDX} + ',' + ${ad.USER_IDX} + ', \'REJECT\')'">반려</button>
+				<div
+					style="width: 180px; display: flex; gap: 8px; justify-content: center;">
+					<button
+						class="btn-action bg-[#f0f8f7] text-[#7a9a94] hover:bg-[#9dbbb5] hover:text-white"
+						th:onclick="processAd([[${ad['AD_IDX']}]], [[${ad['USER_IDX']}]], 'APPROVE')">승인</button>
+					<button
+						class="btn-action bg-[#fff0f0] text-[#ff7675] hover:bg-[#ff7675] hover:text-white"
+						th:onclick="processAd([[${ad['AD_IDX']}]], [[${ad['USER_IDX']}]], 'REJECT')">반려</button>
 				</div>
 			</div>
 		</section>
@@ -243,15 +142,16 @@
 	</div>
 
 	<script th:inline="javascript">
-         //APPROVE' or REJECT
-         
         function processAd(adIdx, userIdx, action) {
             const actionText = (action === 'APPROVE') ? '승인' : '반려';
-            
             if (confirm(adIdx + "번 광고를 " + actionText + "하시겠습니까?")) {
                 location.href = "/admin/ad/process?ad_idx=" + adIdx + "&user_idx=" + userIdx + "&action=" + action;
             }
         }
+        
+        /* 알림 메시지 */
+        const msg = [[${msg}]];
+        if(msg) alert(msg);
     </script>
 </div>
 </html>
