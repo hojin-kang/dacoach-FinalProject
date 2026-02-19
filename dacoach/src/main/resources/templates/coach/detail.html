@@ -53,7 +53,7 @@
              <th:block th:switch="${dto.chatStatus}">
                  <button th:case="'RECEIVED'" class="btn-header btn-chat-outline" th:onclick="applyAction('A_CHAT', [[${dto.user_idx}]])">채팅 수락</button>
                  <button th:case="'APPLIED'" class="btn-header btn-chat-outline" disabled>채팅 신청됨</button>
-                 <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" onclick="location.href='/chat'">채팅방 이동</button>
+                 <button th:case="'ACCEPTED'" class="btn-header btn-chat-outline" th:onclick="|location.href='/chat/room/${dto.chat_room_idx}?tab=COACH'|">채팅방 이동</button>
                  <button th:case="*" class="btn-header btn-chat-outline" th:onclick="applyAction('CHAT', [[${dto.user_idx}]])">채팅 신청</button>
              </th:block>
          
