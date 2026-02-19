@@ -45,31 +45,38 @@
 </select>
 
   <!-- 방 1개(권한 체크 포함) -->
-  <select id="selectRoomByIdx" resultType="com.dacoach.model.chat.ChatRoomDTO">
+<select id="selectRoomByIdx" resultType="com.dacoach.model.chat.ChatRoomDTO">
   SELECT
     r.chat_room_idx AS chatRoomIdx,
     r.user1_idx AS user1Idx,
     r.user2_idx AS user2Idx,
     CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END AS otherIdx,
     u.user_name AS otherName,
-    'default_profile.png' AS otherPhoto,
+    CASE 
+      WHEN u.user_type = 'COACH' THEN NVL(co.photo, 'default_profile.png')
+      WHEN u.user_type = 'COMPANY' THEN NVL(cp.photo, 'default_profile.png')
+      ELSE 'default_profile.png'
+    END AS otherPhoto,
     u.user_type AS otherType,
-    r.last_message    AS lastMessage,
+    r.last_message AS lastMessage,
     CAST(r.last_message_at AS TIMESTAMP) AS lastMessageAt,
     CASE
-      WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1,0)
-      ELSE NVL(r.unread_count2,0)
+      WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1, 0)
+      ELSE NVL(r.unread_count2, 0)
     END AS unreadCount
   FROM chat_room r
   JOIN users u
-    ON u.user_idx =
-       CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END
+    ON u.user_idx = CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END
+  LEFT JOIN coach co
+    ON u.user_idx = co.user_idx
+  LEFT JOIN company cp
+    ON u.user_idx = cp.user_idx
   WHERE r.chat_room_idx = #{roomIdx}
     AND #{myIdx} IN (r.user1_idx, r.user2_idx)
     AND (
-      (r.user1_idx = #{myIdx} AND NVL(r.left1_yn,'N') = 'N')
+      (r.user1_idx = #{myIdx} AND NVL(r.left1_yn, 'N') = 'N')
       OR
-      (r.user2_idx = #{myIdx} AND NVL(r.left2_yn,'N') = 'N')
+      (r.user2_idx = #{myIdx} AND NVL(r.left2_yn, 'N') = 'N')
     )
 </select>
 
