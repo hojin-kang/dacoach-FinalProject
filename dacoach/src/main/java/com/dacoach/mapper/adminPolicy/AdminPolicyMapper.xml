@@ -6,22 +6,25 @@
 <mapper
 	namespace="com.dacoach.mapper.adminPolicy.AdminPolicyMapper">
 
-	<select id="getPolicyList"
-		resultType="com.dacoach.model.adminPolicy.PolicyDTO">
-		SELECT
-		q.qna_idx,
-		q.title,
-		q.question,
-		q.created_at,
-		q.user_idx,
-		u.login_id
-		FROM qna q
-		LEFT JOIN users u ON q.user_idx =
-		u.user_idx
-		where u.user_type = 'ADMIN' AND q.qna_type = '운영정책'
-		ORDER BY
-		q.qna_idx DESC
-
+	<select id="getPolicyList" parameterType="map" resultType="map">
+    <![CDATA[
+    SELECT *
+    FROM (
+        SELECT
+            q.qna_idx,
+            q.title,
+            q.question,
+            q.created_at,
+            q.user_idx,
+            u.login_id,
+            ROW_NUMBER() OVER (ORDER BY q.qna_idx DESC) AS RN
+        FROM qna q
+        LEFT JOIN users u ON q.user_idx = u.user_idx
+        WHERE u.user_type = 'ADMIN' 
+          AND q.qna_type = '운영정책'
+    ) t
+    WHERE t.RN BETWEEN #{startRow} AND #{endRow}
+    ]]>
 	</select>
 
 	<insert id="insertPolicy"
@@ -75,9 +78,36 @@
 		) where ROWNUM = 1
 	</select>
 
-	<select id="getNoticeList"
-		resultType="com.dacoach.model.adminPolicy.PolicyDTO">
-		select * from qna
-		where qna_type in('서비스' ,'안내' , '이벤트','점검')
+	<!-- 공지사항 목록 페이징 (수정) -->
+	<select id="getNoticeList" parameterType="map" resultType="map">
+<![CDATA[
+SELECT * FROM (
+    SELECT 
+        q.qna_idx       AS "QNA_IDX",
+        q.title         AS "TITLE",
+        q.qna_type      AS "QNA_TYPE",
+        q.created_at    AS "CREATED_AT",
+        u.login_id      AS "LOGIN_ID",
+        ROW_NUMBER() OVER (ORDER BY q.qna_idx DESC) AS RN
+    FROM qna q
+    LEFT JOIN users u ON q.user_idx = u.user_idx
+    WHERE q.qna_type IN ('서비스', '안내', '이벤트', '점검')
+) t
+WHERE t.RN BETWEEN #{startRow} AND #{endRow}
+]]>
+	</select>
+
+	<!-- 공지사항 전체 개수 -->
+	<select id="getNoticeAllCnt" resultType="int">
+		SELECT COUNT(*) FROM qna
+		WHERE qna_type IN ('서비스', '안내', '이벤트', '점검')
+	</select>
+
+	<!-- 운영정책 전체 개수 -->
+	<select id="getNoticeTotalCnt" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		qna
+		WHERE qna_type='운영정책'
 	</select>
 </mapper>

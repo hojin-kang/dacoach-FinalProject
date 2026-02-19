@@ -43,7 +43,7 @@
                     모니터링
                 </button>
                 <ul id="monitoringSubmenu" class="bg-gray-50 pb-2" th:classappend="${activeMenu != 'monitoring'} ? ' hidden'">
-                    <li><a th:href="@{/admin/companyClassList}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'class'} ? ' text-[#4a7c74] font-bold underline'">클래스</a></li>
+                    <li><a th:href="@{/admin/companyClassList}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'class'} ? ' text-[#4a7c74] font-bold underline'">클래스 상세정보</a></li>
                     <li><a th:href="@{/admin/coach/coachInfoList}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'content'} ? ' text-[#4a7c74] font-bold underline'">코치 상세정보</a></li>
                 </ul>
             </li>
@@ -57,7 +57,7 @@
                     고객센터
                 </button>
                 <ul id="supportSubmenu" class="bg-gray-50 pb-2" th:classappend="${activeMenu != 'support'} ? ' hidden'">
-                    <li><a th:href="@{/admin/support/notice}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'notice'} ? ' text-[#4a7c74] font-bold underline'">공지</a></li>
+                    <li><a th:href="@{/admin/support/noticepolicy}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'notice'} ? ' text-[#4a7c74] font-bold underline'">공지</a></li>
                     <li><a th:href="@{/admin/support/qna}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'qna'} ? ' text-[#4a7c74] font-bold underline'">Q&A</a></li>
                     <li><a th:href="@{/admin/support/policy}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'policy'} ? ' text-[#4a7c74] font-bold underline'">운영정책</a></li>
                 </ul>

@@ -11,6 +11,12 @@
             --red-point: #ef4444;
         }
 
+        .paging-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
         .policy-admin-container {
             font-family: 'Pretendard', sans-serif;
             color: var(--slate-text);
@@ -72,11 +78,33 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
         }
 
-        /* 열 너비 설정 (공지사항 구조 준수) */
-        .col-idx { width: 80px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
-        .col-title { flex: 1; text-align: left; padding: 0 20px; font-weight: 700; font-size: 15px; }
-        .col-writer { width: 150px; font-weight: 600; }
-        .col-manage { width: 200px; display: flex; gap: 8px; justify-content: center; }
+        /* 열 너비 설정 */
+        .col-idx {
+            width: 80px;
+            font-weight: 800;
+            color: var(--mint-main);
+            font-size: 13px;
+        }
+
+        .col-title {
+            flex: 1;
+            text-align: left;
+            padding: 0 20px;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .col-writer {
+            width: 150px;
+            font-weight: 600;
+        }
+
+        .col-manage {
+            width: 200px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
 
         /* 작성자 태그 */
         .author-tag {
@@ -101,7 +129,10 @@
             box-shadow: 0 4px 10px rgba(157, 187, 181, 0.3);
         }
 
-        .btn-mint:hover { background-color: var(--mint-dark); transform: translateY(-1px); }
+        .btn-mint:hover {
+            background-color: var(--mint-dark);
+            transform: translateY(-1px);
+        }
 
         .btn-outline {
             background: white;
@@ -115,25 +146,65 @@
             transition: 0.2s;
         }
 
-        .btn-outline:hover { background: #f9fafb; border-color: var(--mint-main); color: var(--mint-main); }
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: var(--mint-main);
+            color: var(--mint-main);
+        }
 
         /* [모달 스타일 - 민트 테마] */
         .modal {
-            display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4);
-            z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
         }
-        .modal.show { display: flex; }
+
+        .modal.show {
+            display: flex;
+        }
+
         .modal-box {
-            width: 90%; max-width: 650px; background: #fff; border-radius: 30px; padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 650px;
+            background: #fff;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
-        .form-label { display: block; margin-bottom: 10px; font-weight: 800; font-size: 14px; color: var(--slate-text); }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--slate-text);
+        }
+
         .form-input, .form-textarea {
-            width: 100%; border: 2px solid #f3f4f6; border-radius: 15px; padding: 14px;
-            outline: none; transition: 0.2s; background: #f9fafb; font-family: inherit;
+            width: 100%;
+            border: 2px solid #f3f4f6;
+            border-radius: 15px;
+            padding: 14px;
+            outline: none;
+            transition: 0.2s;
+            background: #f9fafb;
+            font-family: inherit;
         }
-        .form-input:focus, .form-textarea:focus { border-color: var(--mint-main); background: white; }
-        .form-textarea { min-height: 250px; resize: none; }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--mint-main);
+            background: white;
+        }
+
+        .form-textarea {
+            min-height: 250px;
+            resize: none;
+        }
     </style>
 
     <div class="max-w-[1200px] mx-auto p-10 policy-admin-container">
@@ -163,23 +234,32 @@
             </div>
 
             <div th:if="${not #lists.isEmpty(policyList)}" th:each="p : ${policyList}" class="policy-item-card">
-                <div class="col-idx" th:text="${p.qna_idx}">1</div>
-                <div class="col-title" th:text="${p.title}">개인정보 처리방침</div>
-                <div class="col-writer">
-                    <span class="author-tag" th:text="${p.login_id}">admin</span>
+                <div class="col-idx" th:text="${p['QNA_IDX']}"></div>
+
+                <div class="col-title">
+                    <a th:href="@{/admin/support/policy/detail(qna_idx=${p['QNA_IDX']})}" 
+                       th:text="${p['TITLE']}" class="hover:text-[#9dbbb5]"></a>
                 </div>
+
+                <div class="col-writer">
+                    <span class="author-tag" th:text="${p['LOGIN_ID']}">admin</span>
+                </div>
+
                 <div class="col-manage">
                     <button type="button" class="btn-outline"
-                        th:onclick="openPolicyModal([[${p.qna_idx}]], [[${p.title}]], [[${p.question}]], [[${p.login_id}]])">
+                        th:onclick="openPolicyModal([[${p['QNA_IDX']}]], [[${p['TITLE']}]], [[${p['QUESTION']}]], [[${p['LOGIN_ID']}]])">
                         상세보기
                     </button>
-                    <button type="button" class="btn-outline" style="color: var(--red-point);"
-                        th:onclick="|if(confirm('정말 삭제하시겠습니까?')) location.href='@{/admin/support/policy/delete(qna_idx=${p.qna_idx})}'|">
+                    <button type="button" class="btn-outline"
+                        style="color: var(--red-point);"
+                        th:onclick="|if(confirm('정말 삭제하시겠습니까?')) location.href='@{/admin/support/policy/delete(qna_idx=${p['QNA_IDX']})}'|">
                         삭제
                     </button>
                 </div>
             </div>
         </div>
+
+        <div class="paging-container" th:utext="${pageStr}"></div>
 
         <div class="modal" id="policyModal" onclick="if(event.target == this) closePolicyModal()">
             <div class="modal-box">
@@ -190,20 +270,19 @@
 
                 <form th:action="@{/admin/support/policy/save}" method="post">
                     <input type="hidden" id="modalIdx" name="qna_idx">
-
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                         <div>
-                            <label class="form-label">작성자</label>
+                            <label class="form-label">작성자</label> 
                             <input type="text" class="form-input" id="modalAuthor" readonly style="color: #999;">
                         </div>
                         <div>
-                            <label class="form-label">정책 구분</label>
+                            <label class="form-label">정책 구분</label> 
                             <input type="text" class="form-input" value="Terms & Policy" readonly style="color: #999;">
                         </div>
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <label class="form-label">정책 제목</label>
+                        <label class="form-label">정책 제목</label> 
                         <input type="text" class="form-input" id="modalTitleInput" name="title" placeholder="제목을 입력해 주세요" required>
                     </div>
 
@@ -232,8 +311,8 @@
         if (loginId) {
             document.getElementById('modalAuthor').value = loginId;
         } else {
-            // 세션에서 로그인 아이디 가져오기 (공지사항과 동일한 방식 적용 권장)
-            const currentAdmin = /*[[${session.loginUser?.login_id}]]*/ 'Admin';
+            // session에 저장된 admin 정보를 기반으로 세팅
+            const currentAdmin = /*[[${session.loginAdmin?.login_id}]]*/ 'Admin';
             document.getElementById('modalAuthor').value = currentAdmin;
         }
         

@@ -45,8 +45,6 @@ public class AdminAdManagementServiceImple implements AdminAdManagementService {
 		return result;
 	}
 
-
-
 	@Override
 	public int getAdTotalCnt() {
 		return admapper.getAdTotalCnt();

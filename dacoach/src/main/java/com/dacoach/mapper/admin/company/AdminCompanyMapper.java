@@ -17,9 +17,9 @@ public interface AdminCompanyMapper {
     // 기업 회원 관리
     List<Map<String, Object>> companyList(Map<String, Object> param);
     Map<String, Object> companyDetail(@Param("userIdx") int usersIdx);
-    String getCertFilePath(@Param("userIdx") int userIdx);
+    //String getCertFilePath(@Param("userIdx") int userIdx);
     int insertCert(CertDTO dto);
-    int hasCert(@Param("userIdx") int userIdx);
+    //int hasCert(@Param("userIdx") int userIdx);
     int countCompanyTotal();
        
     //계정상태 관리
@@ -33,7 +33,7 @@ public interface AdminCompanyMapper {
     
     int countCertByUserAndType(@Param("userIdx") int userIdx, @Param("certType") String certType);
     
-    int insertCertStatus(@Param("user_idx") int userIdx, @Param("cert_status") String certStatus);	
+    //int insertCertStatus(@Param("user_idx") int userIdx, @Param("cert_status") String certStatus);	
     
     // 클래스 목록
     List<Map<String, Object>> selectClassPage(Map<String, Object> param);

@@ -40,7 +40,7 @@
       GROUP BY CLASS_IDX
     ) r ON r.CLASS_IDX = c.CLASS_IDX
   ) t
-  WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}]]>
+  WHERE t.RN BETWEEN #{startRow} AND #{endRow}]]>
 	</select>
 
 	<!-- 2. 클래스 전체 개수 -->
@@ -111,7 +111,7 @@
 	<!-- 5. 클래스 수강생 수 조회 -->
 	<select id="selectClassEnrollCount" parameterType="int"
 		resultType="int">
-		SELECT NVL(COUNT(*), 0)
+		SELECT COUNT(*)
 		FROM CLASS_ENROLLMENT
 		WHERE CLASS_IDX
 		= #{classIdx}

@@ -2,268 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="noticeList">
     <style>
-        /* [코치 관리 레이아웃과 동일한 아이덴티티 적용] */
-        :root {
-            --mint-bg: #f0f8f7;
-            --mint-main: #9dbbb5;
-            --mint-dark: #7a9a94;
-            --slate-text: #374151;
-        }
-
-        .notice-admin-container {
-            font-family: 'Pretendard', sans-serif;
-            color: var(--slate-text);
-            background-color: white;
-            min-height: 800px;
-        }
-
-        /* [상단 헤더 영역] */
-        .admin-top-bar {
-            display: flex;
-            align-items: flex-end;
-            gap: 15px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid var(--mint-bg);
-            margin-bottom: 30px;
-        }
-
-        .admin-top-bar h1 {
-            font-size: 24px;
-            font-weight: 900;
-            color: var(--mint-main);
-            margin: 0;
-        }
-
-        .current-path {
-            font-size: 14px;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        /* [검색 및 제어 영역] */
-        .control-panel {
-            margin-bottom: 25px;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 10px;
-            background-color: var(--mint-bg);
-            padding: 15px 25px;
-            border-radius: 20px;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .search-input {
-            flex: 1;
-            border: 1px solid white;
-            border-radius: 10px;
-            padding: 8px 15px;
-            font-size: 13px;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        .search-input:focus {
-            border-color: var(--mint-main);
-        }
-
-        .btn-search {
-            background-color: var(--mint-main);
-            color: white;
-            padding: 8px 25px;
-            border-radius: 10px;
-            font-weight: 800;
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-search:hover {
-            background-color: var(--mint-dark);
-        }
-
-        /* 테이블 헤더 스타일 */
-        .list-header {
-            display: flex;
-            padding: 0 15px 10px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 15px;
-            font-size: 12px;
-            font-weight: 800;
-            color: #9ca3af;
-            text-align: center;
-        }
-
-        /* 리스트 카드형 스타일 */
-        .notice-item-card {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: white;
-            border-radius: 15px;
-            border: 1px solid #f3f4f6;
-            margin-bottom: 10px;
-            transition: 0.2s;
-            text-align: center;
-        }
-
-        .notice-item-card:hover {
-            border-color: var(--mint-main);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-        }
-
-        /* 열 너비 설정 */
-        .col-idx {
-            width: 80px;
-            font-weight: 800;
-            color: var(--mint-main);
-            font-size: 13px;
-        }
-
-        .col-title {
-            flex: 1;
-            text-align: left;
-            padding: 0 20px;
-            font-weight: 700;
-        }
-
-        .col-writer {
-            width: 150px;
-            font-weight: 600;
-        }
-
-        .col-date {
-            width: 120px;
-            color: #9ca3af;
-        }
-
-        /* 글쓰기 버튼 */
-        .btn-write-wrap {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .btn-write {
-            background-color: var(--mint-main);
-            color: white;
-            padding: 12px 35px;
-            border-radius: 12px;
-            font-weight: 900;
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(157, 187, 181, 0.3);
-        }
-
-        .btn-write:hover {
-            background-color: var(--mint-dark);
-            transform: translateY(-1px);
-        }
-
-        /* 페이지네이션 */
-        .pagination-wrap {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .pagination {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .page-item {
-            display: inline-block;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            text-decoration: none;
-            color: #9ca3af;
-            transition: 0.2s;
-            border: 1px solid transparent;
-            background-color: white;
-        }
-
-        .page-item:hover {
-            background-color: var(--mint-bg);
-            color: var(--mint-main);
-        }
-
-        .page-item.active {
-            background-color: var(--mint-main);
-            color: white;
-        }
+        :root { --mint-bg: #f0f8f7; --mint-main: #9dbbb5; --mint-dark: #7a9a94; }
+        .notice-admin-container { font-family: 'Pretendard', sans-serif; background-color: white; min-height: 800px; }
+        .admin-top-bar { display: flex; align-items: flex-end; gap: 15px; padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px; }
+        .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .pagination-wrap { display: flex; justify-content: center; margin-top: 30px; gap: 8px; }
+        .pagination-wrap a, .pagination-wrap b { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; color: #9ca3af; border: 1px solid #f3f4f6; }
+        .pagination-wrap b { background-color: var(--mint-main); color: white; }
     </style>
 
     <div class="max-w-[1100px] mx-auto p-10 notice-admin-container">
         <div class="admin-top-bar">
             <h1>Notice Management</h1>
-            <span class="current-path">Support / Notice List</span>
         </div>
 
         <section class="control-panel">
-            <form action="/admin/support/notice" method="get">
-                <div class="search-box">
-                    <span style="font-size: 20px; margin-right: 5px;">🔍</span>
-                    <input type="text" name="keyword" class="search-input" 
-                           placeholder="검색어를 입력하세요" th:value="${keyword}">
-                    <button type="submit" class="btn-search">Search</button>
+            <div th:if="${not #lists.isEmpty(noticeList)}" th:each="notice : ${noticeList}" 
+                 style="display: flex; border-bottom: 1px solid #eee; padding: 15px;">
+                <div th:text="${notice['QNA_IDX']}" style="width: 50px;"></div>
+                <div style="flex: 1;">
+                    <a th:href="@{/admin/support/notice/content(qna_idx=${notice['QNA_IDX']})}"
+                       th:text="|[${notice['QNA_TYPE']}] ${notice['TITLE']}|"></a>
                 </div>
-            </form>
-
-            <div class="list-header">
-                <div class="col-idx">IDX</div>
-                <div class="col-title">NOTICE TITLE</div>
-                <div class="col-writer">WRITER</div>
-                <div class="col-date">CREATED</div>
-            </div>
-
-            <div th:if="${not #lists.isEmpty(noticeList)}" th:each="notice : ${noticeList}" class="notice-item-card">
-                <div class="col-idx" th:text="${notice.QNA_IDX}"></div>
-
-                <div class="col-title">
-                    <a th:href="@{/admin/support/notice/content(qna_idx=${notice.QNA_IDX})}"
-                       th:text="|[${notice.QNA_TYPE}] ${notice.TITLE}|"
-                       class="hover:text-[#9dbbb5] transition-colors"></a>
-                </div>
-
-                <div class="col-writer" th:text="${notice.USER_NAME}"></div>
-
-                <div class="col-date" th:text="${#strings.contains(notice.CREATED_AT, ' ') ? #strings.substring(notice.CREATED_AT, 0, 10) : notice.CREATED_AT}"></div>
-            </div>
-
-            <div th:if="${#lists.isEmpty(noticeList)}" class="text-center py-24 text-gray-300 italic">
-                등록된 공지사항이 없습니다.
+                <div th:text="${#dates.format(notice['CREATED_AT'], 'yyyy-MM-dd')}" style="width: 100px;"></div>
             </div>
         </section>
 
-        <div class="relative">
-            <div class="pagination-wrap">
-                <div class="pagination">
-                    <a href="#" class="page-item">&lt;&lt;</a>
-                    <a href="#" class="page-item active">1</a>
-                    <a href="#" class="page-item">&gt;&gt;</a>
-                </div>
-            </div>
-            <div class="btn-write-wrap">
-                <button type="button" class="btn-write" onclick="location.href='/admin/support/notice/write'">글쓰기</button>
-            </div>
+        <div class="pagination-wrap" th:utext="${pageStr}"></div>
+        
+        <div style="text-align: right; margin-top: 20px;">
+            <button class="bg-[#9dbbb5] text-white px-8 py-2 rounded" 
+                    onclick="location.href='/admin/support/notice/write'">글쓰기</button>
         </div>
     </div>
-
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        const msg = /*[[${msg}]]*/ null;
-        if (msg) {
-            alert(msg);
-        }
-        /*]]>*/
-    </script>
 </div>
 </html>
