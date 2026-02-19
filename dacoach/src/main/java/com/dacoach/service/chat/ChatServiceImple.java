@@ -59,9 +59,9 @@ public class ChatServiceImple implements ChatService {
     @Override
     public String loadMessagesRaw(int roomIdx, int myIdx) {
         // 권한 체크 + user1/user2 확보
+    	
         ChatRoomDTO room = chatMapper.selectRoomByIdx(roomIdx, myIdx);
         if (room == null) return "";
-
         // 입장 시 unread 0
         chatMapper.resetUnread(roomIdx, myIdx);
 
