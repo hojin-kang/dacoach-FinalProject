@@ -13,7 +13,6 @@
     r.user2_idx AS user2Idx,
     CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END AS otherIdx,
     u.user_name AS otherName,
-    -- 상대방 타입에 따라 해당 테이블의 PHOTO 추출, 없으면 기본 이미지
     CASE 
       WHEN u.user_type = 'COACH' THEN NVL(co.photo, 'default_profile.png')
       WHEN u.user_type = 'COMPANY' THEN NVL(cp.photo, 'default_profile.png')
