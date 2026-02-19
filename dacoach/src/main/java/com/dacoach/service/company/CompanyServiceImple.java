@@ -274,4 +274,7 @@ public class CompanyServiceImple implements CompanyService {
 	public ChatRoomDTO getClassRoom(int roomIdx) throws Exception{
 		return companyMapper.getClassRoom(roomIdx);
 	}
+	public String getRating(int class_idx) throws Exception{
+		return companyMapper.getRating(class_idx);
+	}
 }
