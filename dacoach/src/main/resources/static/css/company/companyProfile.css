@@ -28,11 +28,7 @@
 /* ==================== 
    Base Container 
 ==================== */
-.container {
-    /* main.css의 container 스타일 사용 (900px) */
-}
-
-.container form {
+main.main .container form {
     background: var(--bg-white);
     border-radius: var(--radius-lg);
     padding: 40px;
@@ -402,7 +398,7 @@
 /* ==================== 
    Submit Button 
 ==================== */
-input[type="submit"] {
+main.main .container form input[type="submit"] {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
     color: white;
     border: none;
@@ -420,7 +416,7 @@ input[type="submit"] {
     overflow: hidden;
 }
 
-input[type="submit"]::before {
+main.main .container form input[type="submit"]::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -433,23 +429,23 @@ input[type="submit"]::before {
     transition: width 0.6s, height 0.6s;
 }
 
-input[type="submit"]:hover::before {
+main.main .container form input[type="submit"]:hover::before {
     width: 300px;
     height: 300px;
 }
 
-input[type="submit"]:hover:not(:disabled) {
+main.main .container form input[type="submit"]:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-input[type="submit"]:disabled {
+main.main .container form input[type="submit"]:disabled {
     background: var(--secondary-color);
     cursor: not-allowed;
     opacity: 0.5;
 }
 
-input[type="submit"]:active:not(:disabled) {
+main.main .container form input[type="submit"]:active:not(:disabled) {
     transform: translateY(0);
 }
 
@@ -480,7 +476,7 @@ input[type="submit"]:active:not(:disabled) {
     }
 }
 
-.container form {
+main.main .container form {
     animation: fadeInUp 0.5s ease;
 }
 
@@ -488,7 +484,7 @@ input[type="submit"]:active:not(:disabled) {
    Responsive Design 
 ==================== */
 @media (max-width: 940px) {
-    .container form {
+    main.main .container form {
         padding: 32px 24px;
     }
     
@@ -504,7 +500,7 @@ input[type="submit"]:active:not(:disabled) {
 }
 
 @media (max-width: 480px) {
-    .container form {
+    main.main .container form {
         padding: 24px 20px;
     }
     
@@ -792,4 +788,448 @@ input[type="submit"]:active:not(:disabled) {
     background: var(--primary-hover);
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+}
+
+/* ==================== 
+   Company Profile View Page
+   더 세련되고 모던한 디자인
+==================== */
+
+/* 프로필 상단 카드 - 레이아웃 변경 */
+main.main > .container > .profileTop {
+    background: var(--bg-white);
+    border-radius: var(--radius-xl);
+    padding: 48px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+main.main > .container > .profileTop::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #4db8b8 50%, var(--primary-hover) 100%);
+    box-shadow: 0 2px 8px rgba(61, 142, 142, 0.3);
+}
+
+/* 프로필 메인 영역 - 플렉스 레이아웃 */
+main.main > .container > .profileTop > #photoSpan {
+    display: block;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+main.main > .container > .profileTop #photoImgTag {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--bg-white);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+main.main > .container > .profileTop #photoImgTag:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+main.main > .container > .profileTop > #nameSpan {
+    display: block;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+main.main > .container > .profileTop > #introSpan {
+    display: block;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 24px;
+    padding: 20px;
+    background: var(--bg-gray);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+/* 정보 그리드 */
+main.main > .container > .profileTop > #emailSpan,
+main.main > .container > .profileTop > #addressSpan,
+main.main > .container > .profileTop > #phoneSpan {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 8px 12px;
+    padding: 10px 16px;
+    background: var(--bg-white);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+main.main > .container > .profileTop > #emailSpan:hover,
+main.main > .container > .profileTop > #addressSpan:hover,
+main.main > .container > .profileTop > #phoneSpan:hover {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+main.main > .container > .profileTop > #fieldSpan {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #4db8b8 100%);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(61, 142, 142, 0.3);
+    margin: 16px 12px;
+    transition: all 0.3s ease;
+}
+
+main.main > .container > .profileTop > #fieldSpan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(61, 142, 142, 0.4);
+}
+
+main.main > .container > .profileTop > #fieldSpan::before {
+    content: '💼 ';
+    margin-right: 6px;
+}
+
+main.main > .container > .profileTop > #regionSpan {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 8px 6px;
+    background: var(--bg-white);
+    color: var(--primary-hover);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    border: 1.5px solid var(--primary-light);
+    box-shadow: 0 2px 6px rgba(61, 142, 142, 0.1);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+main.main > .container > .profileTop > #regionSpan:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* 클래스 목록 그리드 - 폭 조정 */
+main.main > .container > .profileBottom {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 32px;
+    margin-bottom: 40px;
+    max-width: 1200px;
+}
+
+/* 클래스 카드 */
+main.main > .container > .profileBottom > #classSpan {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+main.main > .container > .profileBottom > #classSpan::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #4db8b8 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+main.main > .container > .profileBottom > #classSpan:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
+}
+
+main.main > .container > .profileBottom > #classSpan:hover::before {
+    opacity: 1;
+}
+
+main.main > .container > .profileBottom > #classSpan > img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+main.main > .container > .profileBottom > #classSpan:hover > img {
+    transform: scale(1.05);
+}
+
+main.main > .container > .profileBottom > #classSpan > span {
+    padding: 0 20px;
+}
+
+/* 지역 표시 */
+main.main > .container > .profileBottom > #classSpan > #classRegionSpan {
+    display: inline-block;
+    font-size: 0.8125rem;
+    color: var(--primary-hover);
+    padding: 6px 12px;
+    margin: 16px 0 8px 4px;
+    background: var(--primary-light);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    width: fit-content;
+}
+
+main.main > .container > .profileBottom > #classSpan > #classRegionSpan::before {
+    content: '📍 ';
+}
+
+main.main > .container > .profileBottom > #classSpan > #classDistrictSpan {
+    display: inline;
+    font-size: 0.8125rem;
+    color: var(--primary-hover);
+    font-weight: 600;
+}
+
+main.main > .container > .profileBottom > #classSpan > #classRegionDetailSpan {
+    display: none;
+}
+
+/* 제목 */
+main.main > .container > .profileBottom > #classSpan > #classTitleSpan {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-top: 12px;
+    padding-top: 0;
+    line-height: 1.4;
+    min-height: 3.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    letter-spacing: -0.3px;
+}
+
+/* 소개 */
+main.main > .container > .profileBottom > #classSpan > #classIntroSpan {
+    display: block;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    padding-top: 0;
+    line-height: 1.6;
+    min-height: 3em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 가격 */
+main.main > .container > .profileBottom > #classSpan > #classPriceSpan {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(226, 232, 240, 0.5);
+    letter-spacing: -0.5px;
+}
+
+main.main > .container > .profileBottom > #classSpan > #classPriceSpan::after {
+    content: '원';
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-left: 4px;
+    color: var(--text-secondary);
+}
+
+/* 날짜 - 완전히 한 줄로 (중요!) */
+main.main > .container > .profileBottom > #classSpan > #classStartDateSpan {
+    display: inline !important;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-top: 14px;
+    margin-left: 4px;
+    padding: 0;
+}
+
+main.main > .container > .profileBottom > #classSpan > #classEndDateSpan {
+    display: inline !important;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+main.main > .container > .profileBottom > #classSpan > #classStartDateSpan::before {
+    content: '📅 ';
+}
+
+main.main > .container > .profileBottom > #classSpan > #classStartDateSpan::after {
+    margin: 0 4px;
+}
+
+/* 평점 - 최소 폭으로 */
+main.main > .container > .profileBottom > #classSpan > #classRatingSpan {
+    display: inline-block !important;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #d97706;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 10px 0 10px 4px;
+    border: 1px solid #fbbf24;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+    width: fit-content !important;
+    max-width: fit-content !important;
+}
+
+main.main > .container > .profileBottom > #classSpan > #classRatingSpan::before {
+    content: '⭐ ';
+    font-size: 0.75rem;
+}
+
+/* 분야 태그 - 최소 폭으로 */
+main.main > .container > .profileBottom > #classSpan > #majorFiledSpan {
+    display: inline-block !important;
+    padding: 5px 12px;
+    margin: 6px 4px 16px 4px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #4db8b8 100%);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(61, 142, 142, 0.25);
+    transition: all 0.2s ease;
+    width: fit-content !important;
+    max-width: fit-content !important;
+}
+
+main.main > .container > .profileBottom > #classSpan > #majorFiledSpan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(61, 142, 142, 0.35);
+}
+
+main.main > .container > .profileBottom > #classSpan > #majorFiledSpan::before {
+    content: '🏷️ ';
+    margin-right: 3px;
+}
+
+main.main > .container > .profileBottom > #classSpan > #minorFiledSpan {
+    display: inline-block !important;
+    padding: 5px 12px;
+    margin: 6px 4px 16px 4px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    color: var(--text-primary);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    width: fit-content !important;
+    max-width: fit-content !important;
+}
+
+main.main > .container > .profileBottom > #classSpan > #minorFiledSpan:hover {
+    background: var(--bg-white);
+    border-color: var(--primary-color);
+}
+
+main.main > .container > .profileBottom > #classSpan > input[type="hidden"] {
+    display: none;
+}
+
+/* 클래스 없음 */
+main.main > .container > .profileBottom > #noClass {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 20px;
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    background: linear-gradient(135deg, var(--bg-gray) 0%, #ffffff 100%);
+    border-radius: var(--radius-xl);
+    border: 2px dashed var(--border-color);
+}
+
+main.main > .container > .profileBottom > #noClass::before {
+    content: '📭';
+    display: block;
+    font-size: 5rem;
+    margin-bottom: 24px;
+    opacity: 0.3;
+    filter: grayscale(1);
+}
+
+/* 반응형 */
+@media (max-width: 940px) {
+    main.main > .container > .profileTop {
+        padding: 40px 32px;
+    }
+    
+    main.main > .container > .profileBottom {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    main.main > .container > .profileTop {
+        padding: 32px 24px;
+    }
+    
+    main.main > .container > .profileBottom {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    main.main > .container > .profileBottom {
+        grid-template-columns: 1fr;
+    }
+    
+    main.main > .container > .profileTop > #nameSpan {
+        font-size: 1.75rem;
+    }
+    
+    main.main > .container > .profileTop > #emailSpan,
+    main.main > .container > .profileTop > #addressSpan,
+    main.main > .container > .profileTop > #phoneSpan {
+        display: block;
+        margin: 8px auto;
+        max-width: 300px;
+    }
 }
