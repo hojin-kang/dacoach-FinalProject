@@ -23,6 +23,8 @@ import com.dacoach.model.report.ReportDTO;
 import com.dacoach.service.admin.AdminService;
 import com.dacoach.service.notification.NotificationService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -37,24 +39,36 @@ public class AdminCoachController {
 	
 	
 	@GetMapping("/coach/coachList")
-	public String coachList(Model model, HttpSession session) {
+	public String coachList(Model model, HttpSession session,
+			@RequestParam(value="cp", defaultValue="1") int cp) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
+		int listSize=10;
+		int pageSize=5;
+		int CoachTotalCnt = 0;
 	    List<Map<String, Object>> coachList = new ArrayList<>();
 	    int certCount = 0;
 	    
-	    try {
-	        coachList = adminService.getCoachList();
-	        certCount = adminService.getCertCount();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    
+		try {
+		    CoachTotalCnt=adminService.getCoachTotalCnt();
+		    	
+		    int start = (cp - 1) * listSize + 1;
+		    int end = cp * listSize;
+		    	
+		    coachList = adminService.getCoachList(start, end);
+		    certCount = adminService.getCertCount();
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+		
+		String pageStr=com.dacoach.page.PageModule.makePage("coachList", CoachTotalCnt, listSize, pageSize, cp);
+	
 	    model.addAttribute("coachList", coachList);
 	    model.addAttribute("certCount", certCount);
+	    model.addAttribute("pageStr", pageStr);
 	    
 	    model.addAttribute("contentPage", "admin/coach/coachList");
 	    model.addAttribute("contentFragment", "coachContent");

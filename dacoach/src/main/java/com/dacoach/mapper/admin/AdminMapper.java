@@ -18,7 +18,8 @@ public interface AdminMapper {
 	public UsersDTO adminLogin(Map<String, String> params) throws Exception;
 	
 	// 코치 프로필 및 상태 관리
-	public List<Map<String,Object>> getCoachList() throws Exception;
+	public int getCoachTotalCnt() throws Exception;
+	public List<Map<String,Object>> getCoachList(int start,int end) throws Exception;
 	public int getCertCount() throws Exception;
 	public Map<String,Object> getCoachDetail(int coach_idx) throws Exception;
 	public String getCoachStatus(int user_idx) throws Exception;

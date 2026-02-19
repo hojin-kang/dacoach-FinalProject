@@ -59,6 +59,40 @@
         .pill-badge {
             display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
         }
+
+        /* [페이지네이션 - 공지사항과 동일한 스타일 적용] */
+        .pagination-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* PageModule에서 생성된 HTML에 대응하는 스타일 */
+        .pagination-wrap a, .pagination-wrap span {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            color: #9ca3af;
+            transition: 0.2s;
+            border: 1px solid transparent;
+            background-color: white;
+            margin: 0 4px;
+        }
+
+        .pagination-wrap a:hover {
+            background-color: var(--mint-bg);
+            color: var(--mint-main);
+        }
+
+        .pagination-wrap .active, .pagination-wrap b {
+            background-color: var(--mint-main);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+        }
     </style>
 
     <div class="max-w-[1100px] mx-auto p-10 coach-admin-container">
@@ -122,6 +156,10 @@
                         <span class="text-gray-300 text-xs italic">완료</span>
                     </div>
                 </div>
+            </div>
+
+            <div class="pagination-wrap" th:if="${not #lists.isEmpty(coachList)}">
+                <div th:utext="${pageStr}"></div>
             </div>
         </section>
     </div>
