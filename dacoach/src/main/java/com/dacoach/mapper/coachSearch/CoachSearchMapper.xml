@@ -237,5 +237,14 @@
     	where liker_idx = #{login_idx}
     	and liked_user_idx = #{target_idx}
     </select>
-        
+    <select id="checkChat" parameterType="map" resultType="Integer">
+    	select count(*) from match
+    	where (user1_idx = #{user_idx} and user2_idx = #{target_idx} and is_chat = 'N' and CHAT_APPLICANT = #{target_idx})
+    	or (user1_idx = #{target_idx} and user2_idx = #{user_idx} and is_chat = 'N' and CHAT_APPLICANT = #{target_idx})
+    </select>
+    <select id="checkMatch" parameterType="map" resultType="Integer">
+    	select count(*) from match
+    	where (user1_idx = #{user_idx} and user2_idx = #{target_idx} and is_match = 'N' and MATCH_APPLICANT = #{target_idx})
+    	or (user1_idx = #{target_idx} and user2_idx = #{user_idx} and is_match = 'N' and MATCH_APPLICANT = #{target_idx})
+    </select>
 </mapper>

@@ -154,6 +154,24 @@ public class CoachSearchServiceImple implements CoachSearchService {
 		boolean like=result>0?true:false;
 		return like;
 	}
+
+	@Override
+	public int checkChat(int user_idx, int target_idx) throws Exception {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("user_idx", user_idx);
+		map.put("target_idx", target_idx);
+		int result=coachSearchMapper.checkChat(map);
+		return result;
+	}
+
+	@Override
+	public int checkMatch(int user_idx, int target_idx) throws Exception {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("user_idx", user_idx);
+		map.put("target_idx", target_idx);
+		int result=coachSearchMapper.checkMatch(map);
+		return result;
+	}
 	
 
 }

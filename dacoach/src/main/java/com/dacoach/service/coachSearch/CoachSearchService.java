@@ -16,6 +16,8 @@ public interface CoachSearchService {
 	public Integer acceptChat(int user_idx, int target_idx) throws Exception;
 	public Integer acceptMatch(int user_idx, int target_idx) throws Exception;
 	public boolean isLiked(int login_idx, int target_idx) throws Exception;
+	int checkChat(int user_idx, int target_idx) throws Exception;
+	int checkMatch(int user_idx, int target_idx) throws Exception;
 	
 	
 }
