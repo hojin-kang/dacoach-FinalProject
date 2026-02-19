@@ -21,6 +21,8 @@ public interface ChatMapper {
        ========================= */
     ChatRoomDTO selectRoomByIdx(@Param("roomIdx") int roomIdx,
                                 @Param("myIdx") int myIdx);
+    
+    ChatRoomDTO selectRoomSimple(int roomIdx);
 
     /* =========================
        문의하기: 방 있으면 찾기

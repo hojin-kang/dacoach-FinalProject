@@ -78,9 +78,7 @@
           <div class="chatMessages" id="chatMessages">
             <!-- JS로 txt를 파싱해서 렌더 -->
           </div>
-         <div th:if="${isLeft == true}" class="msgRow system">
-   			 <span class="systemMsg">상대방이 채팅방을 나갔습니다.</span>
-		</div>
+
           <div class="chatInputRow">
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
@@ -506,6 +504,7 @@ function renderHistory(raw) {
        const params = new URLSearchParams();
        params.append('type', type);
        params.append('target_idx', targetIdx);
+       params.append('roomIdx', document.querySelector('.chatWindow')?.dataset.roomIdx || '0');
 
        fetch('/match/apply', {
            method: 'POST',

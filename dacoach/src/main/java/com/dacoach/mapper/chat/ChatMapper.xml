@@ -78,6 +78,16 @@
       (r.user2_idx = #{myIdx} AND NVL(r.left2_yn, 'N') = 'N')
     )
 </select>
+<select id="selectRoomSimple" resultType="com.dacoach.model.chat.ChatRoomDTO">
+  SELECT
+    chat_room_idx AS chatRoomIdx,
+    user1_idx AS user1Idx,
+    user2_idx AS user2Idx,
+    last_message AS lastMessage,
+    last_message_at AS lastMessageAt
+  FROM chat_room
+  WHERE chat_room_idx = #{roomIdx}
+</select>
 
   <!-- 방 마지막 메시지/시간 업데이트 -->
   <update id="updateRoomLast">

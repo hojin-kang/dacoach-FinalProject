@@ -160,7 +160,8 @@ public class CoachSearchController {
 	 	
 	 	@PostMapping("/match/apply")
 	 	@ResponseBody
-	 	public Map<String, Object> applyMatch(@RequestParam String type, @RequestParam int target_idx, HttpSession session) {
+	 	public Map<String, Object> applyMatch(@RequestParam String type, @RequestParam int target_idx, 
+	 			@RequestParam(value="roomIdx", defaultValue = "0")int roomIdx,HttpSession session) {
 	 	    Map<String, Object> result = new HashMap<>();
 	 	    Integer me = (Integer) session.getAttribute("user_idx");
 	 	    

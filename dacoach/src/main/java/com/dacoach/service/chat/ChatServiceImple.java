@@ -83,29 +83,35 @@ public class ChatServiceImple implements ChatService {
     @Override
     @Transactional
     public ChatMessageDTO saveAndBuildBroadcast(ChatMessageDTO msg) {
-        if (msg == null) return null;
+    	if (msg == null) return null;
 
         int roomIdx = msg.getRoomIdx();
         int senderIdx = msg.getSenderIdx();
         String message = (msg.getMessage() == null) ? "" : msg.getMessage();
 
-        // 권한 체크 + user1/user2 확보
-        ChatRoomDTO room = chatMapper.selectRoomByIdx(roomIdx, senderIdx);
+        // --- [수정 구간 시작] ---
+        ChatRoomDTO room;
+        if (senderIdx == 0) {
+            // 시스템 메시지인 경우, 발신자 권한 체크 없이 방 정보만 가져옴
+            room = chatMapper.selectRoomSimple(roomIdx); 
+        } else {
+            // 일반 메시지인 경우 기존 권한 체크 유지
+            room = chatMapper.selectRoomByIdx(roomIdx, senderIdx);
+        }
+        
         if (room == null) return null;
+        // --- [수정 구간 끝] ---
 
         // 폴더 생성
         Path dir = Paths.get(CHAT_DIR);
         try { Files.createDirectories(dir); } catch (IOException ignored) {}
 
-        // "기존에 있던 파일"을 우선으로 잡아서 append (파일 2개 생기는 거 방지)
         Path filePath = resolveLegacyChatFilePath(room);
         if (filePath == null) {
-            // 둘 다 없으면 새로 만들 때는 확장자 없는 기본 이름 사용 (원하면 .txt로 바꿔도 됨)
             String base = legacyBaseName(room);
             filePath = dir.resolve(base);
         }
 
-        // 한 줄 저장: yyyy-MM-dd HH:mm:ss|senderIdx|message
         String ts = LocalDateTime.now().format(TS_FMT);
         String clean = message.replace("\r", " ").replace("\n", " ");
         String line = ts + "|" + senderIdx + "|" + clean + "\n";
@@ -117,14 +123,17 @@ public class ChatServiceImple implements ChatService {
             return null;
         }
 
-        // DB 미리보기/시간 업데이트
-        String preview = clean.length() > 200 ? clean.substring(0, 200) : clean;
-        chatMapper.updateRoomLast(roomIdx, preview);
+        // --- [시스템 메시지일 경우 DB 업데이트 스킵 처리] ---
+        if (senderIdx != 0) {
+            // DB 미리보기/시간 업데이트
+            String preview = clean.length() > 200 ? clean.substring(0, 200) : clean;
+            chatMapper.updateRoomLast(roomIdx, preview);
 
-        // 상대 unread +1
-        chatMapper.increaseUnreadOther(roomIdx, senderIdx);
+            // 상대 unread +1
+            chatMapper.increaseUnreadOther(roomIdx, senderIdx);
+        }
 
-        // 브로드캐스트용
+        // 브로드캐스트용 객체 생성
         ChatMessageDTO out = new ChatMessageDTO();
         out.setRoomIdx(roomIdx);
         out.setSenderIdx(senderIdx);
