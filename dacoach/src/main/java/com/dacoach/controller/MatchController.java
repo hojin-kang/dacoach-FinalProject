@@ -46,7 +46,7 @@ public class MatchController {
 		}
 		
 		try {
-			CoachDTO cdto = coachService.getCoachInfo(user_idx);
+			CoachDTO cdto = coachService.getCoachInfo(target_idx);
 			mav.addObject("cdto", cdto);
 			DicipDTO dto = coachService.getDicip(user_idx, target_idx);
 			String status = "";
