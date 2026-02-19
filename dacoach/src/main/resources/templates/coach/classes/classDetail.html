@@ -208,7 +208,7 @@
 						<div class="reviewSlider">
 							<div class="reviewCards">
 								<!-- 리뷰 1개 -->
-								<div class="reviewCard" th:each="r : ${reviewList}">
+								<div class="reviewCard" style="cursor:pointer;" th:each="r : ${reviewList}" th:onclick="|location.href='@{/coach/reviewDetail(reviewIdx=${r.REVIEW_CLASS_IDX}, classId=${classDTO.class_idx})}'|">
 									<div class="reviewTop">
 										<!-- 왼쪽: 프로필 사진 + 이름 -->
 										<div class="reviewAuthor">
@@ -236,10 +236,13 @@
 										</div>
 									</div>
 
-									<!-- 하단: 태그 -->
+								<!-- 하단: 태그 + 전체보기 -->
 									<div class="reviewBottom">
 										<div class="reviewTag"
 											th:if="${r.TAG != null and r.TAG != ''}" th:text="${r.TAG}"></div>
+										<a class="reviewDetailLink"
+											th:href="@{/coach/reviewDetail(reviewIdx=${r.REVIEW_CLASS_IDX}, classId=${classDTO.class_idx})}">
+										</a>
 									</div>
 								</div>
 

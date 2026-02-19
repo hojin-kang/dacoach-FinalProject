@@ -115,4 +115,7 @@ public interface CoachClassMapper {
 
 	// 환불요청: pay_status 업데이트 (status=환불요청, payload=사유)
 	int updatePayStatusForRefund(Map<String, Object> param);
+
+	// 후기 단건 조회 (reviewDetail용)
+	Map<String, Object> selectReviewDetail(int review_class_idx) throws Exception;
 }

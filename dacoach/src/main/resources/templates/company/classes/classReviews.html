@@ -158,6 +158,8 @@
 			reviews.forEach(review => {
 				const reviewCard = document.createElement('div');
 				reviewCard.className = 'reviewCard';
+				reviewCard.style.cursor = 'pointer';
+				reviewCard.onclick = () => location.href = `/coach/reviewDetail?reviewIdx=${review.REVIEW_CLASS_IDX}`;
 				
 				// 별점 표시
 				const stars = '⭐'.repeat(Math.floor(review.RATING));
@@ -206,6 +208,7 @@
 						${tagHtml}
 						<div class="reviewContent">${review.CONTENT || '내용 없음'}</div>
 					</div>
+
 				`;
 				
 				reviewList.appendChild(reviewCard);

@@ -130,4 +130,7 @@ public interface CoachClassService {
 	 * 환불요청, payload = 사유
 	 */
 	void requestRefund(int enroll_idx, int user_idx, String payload) throws Exception;
+
+	// 후기 단건 조회
+	Map<String, Object> getReviewDetail(int review_class_idx) throws Exception;
 }

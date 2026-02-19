@@ -530,4 +530,27 @@ public class CoachClassController {
 		}
 		return response; //
 	}
+
+	/**
+	 * 후기 상세보기 페이지
+	 */
+	@GetMapping("/coach/reviewDetail")
+	public ModelAndView reviewDetail(@RequestParam("reviewIdx") int reviewIdx,
+			@RequestParam(value = "classId", required = false) Integer classId) throws Exception {
+		ModelAndView mav = new ModelAndView();
+
+		Map<String, Object> review = classService.getReviewDetail(reviewIdx);
+		if (review == null) {
+			mav.setViewName("redirect:/coach/classList");
+			return mav;
+		}
+
+		mav.addObject("review", review);
+		// 뒤로가기용 classId (없으면 review에서 꺼냄)
+		int backClassId = classId != null ? classId : ((Number) review.get("CLASS_IDX")).intValue();
+		mav.addObject("backClassId", backClassId);
+
+		mav.setViewName("coach/classes/reviewDetail");
+		return mav;
+	}
 }
