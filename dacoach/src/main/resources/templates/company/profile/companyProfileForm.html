@@ -4,205 +4,8 @@
 
    <meta charset="UTF-8" />
    <title>dacoach</title>
-<style>
-/* 전체 컨테이너 정렬 */
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    position: relative; /* 자식 요소들의 기준점 */
-}
-
-/* 상단 프로필 영역 높이 확보 */
-.profileTop {
-    display: block;
-    position: relative;
-    height: 250px; /* 상단 영역의 높이를 강제로 지정 */
-    border-bottom: 1px solid #eee;
-    margin-bottom: 50px;
-}
-
-/* 1. 프로필 이미지: 왼쪽 고정 */
-#photoSpan {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-#photoImgTag {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* 2. 회사 설명 박스: 중앙 상단 고정 */
-#introSpan {
-    position: absolute;
-    top: 0;
-    left: 400px; /* 이미지와 이름 사이 적당한 위치 */
-    width: 200px;
-    height: 100px;
-    border: 1px solid #ccc; /* 얇은 회색 선 */
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-}
-
-/* 3. 유저 정보 세로 나열 (이름, 이메일, 주소, 전화번호) */
-#nameSpan, #emailSpan, #addressSpan, #phoneSpan {
-    position: absolute;
-    left: 150px; /* 사진 바로 오른쪽 */
-    display: block;
-}
-
-#nameSpan { top: 30px; font-size: 24px; font-weight: bold; }
-#emailSpan { top: 75px; color: #666; font-size: 14px; }
-#addressSpan { top: 105px; color: #666; font-size: 14px; }
-#phoneSpan { top: 135px; color: #666; font-size: 14px; }
-
-/* 4. 제공분야 태그: 정보 아래 배치 */
-#fieldSpan {
-    position: absolute;
-    top: 175px;
-    left: 150px;
-    background-color: #e0f2f1;
-    color: #00897b;
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 13px;
-}
-
-/* 5. 오른쪽 지역 목록: 우측 하단 정렬 */
-#regionSpan {
-    display: block;
-    text-align: right;
-    color: #ff5252;
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-/* 지역 전체를 감싸는 위치 조정 (profileTop 안에서) */
-.profileTop > span[id^="regionSpan"] {
-    position: relative;
-    float: right;
-    clear: both;
-    top: 150px; /* 하단으로 밀기 */
-}
-
-/* 클래스 카드 영역 (중구난방 방지용 Grid) */
-.profileBottom {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 30px;
-    clear: both;
-}
-/* 1. 클래스 목록 전체 레이아웃 (그리드 적용) */
-.profileBottom {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* 카드를 너비에 맞게 자동 배치 */
-    gap: 25px;
-    padding: 20px 0;
-    clear: both;
-}
-
-/* 2. 각 클래스 카드 스타일 */
-#classSpan {
-    display: flex;
-    flex-direction: column; /* 세로로 나열 */
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 20px;
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    transition: transform 0.2s;
-    position: relative;
-}
-
-#classSpan:hover {
-    transform: translateY(-5px); /* 마우스 올리면 살짝 들림 */
-}
-
-/* 3. 이미지 */
-#classSpan img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
-/* 4. 지역 태그 (#지역 박스) */
-#classRegionSpan {
-    display: inline-block;
-    border: 1.5px solid #333; /* 검은색 선 */
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 10px;
-    width: fit-content;
-}
-
-/* 상세 주소 및 인트로 */
-#classDistrictSpan, #classRegionDetailSpan { display: none; } /* 깔끔하게 숨기거나 필요시 위치 조정 */
-
-#classTitleSpan {
-    display: block;
-    font-size: 18px;
-    font-weight: bold;
-    margin: 10px 0;
-}
-
-#classIntroSpan {
-    display: block;
-    font-size: 14px;
-    color: #666;
-    height: 40px;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
-
-/* 5. 가격 스타일 */
-#classPriceSpan {
-    display: block;
-    font-size: 20px;
-    font-weight: 800;
-    color: #009688;
-    margin-bottom: 15px;
-}
-#classPriceSpan::after { content: "원"; }
-
-/* 6. 분야 태그 (요리, 양식 등) */
-#majorFiledSpan, #minorFiledSpan {
-    display: inline-block;
-    background: #f1f3f5;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    margin-right: 5px;
-    color: #495057;
-}
-
-/* 7. 날짜 및 별점 (우측 하단 정렬) */
-#classStartDateSpan, #classEndDateSpan {
-    display: block;
-    text-align: right;
-    font-size: 12px;
-    color: #999;
-    margin-top: 2px;
-}
-
-#classRatingSpan {
-    display: block;
-    margin-top: 10px;
-    color: #fa5252;
-    font-weight: bold;
-}
-
-</style>
    <link rel="stylesheet" th:href="@{/css/main.css}" />
+   <link rel="stylesheet" th:href="@{/css/company/companyProfile.css}" />
   
 </head>
 <body>
@@ -249,17 +52,13 @@
       	<span id="classSpan" th:each="class:${classList}">
       		<img th:src="'/uploads/'+${class.PHOTO}">
       		
-      		<span id="classRegionSpan">[[${class.REGION_NM }]]</span>
-      		<span id="classDistrictSpan">[[${class.DISTRICT_NM }]]</span>
-      		<span id="classRegionDetailSpan">[[${class.REGION_DETAIL }]]</span>
+      		<span id="classRegionSpan">[[${class.REGION_NM }]]  [[${class.DISTRICT_NM }]]  [[${class.REGION_DETAIL }]]</span>
       		<span id="classTitleSpan">[[${class.TITLE }]]</span>
       		<span id="classIntroSpan">[[${class.INTRO }]]</span>
       		<span id="classPriceSpan">[[${class.PRICE }]]</span>
-      		<span id="classStartDateSpan">[[${class.START_DATE }]]</span>
-      		<span id="classEndDateSpan">[[${class.END_DATE }]]</span>
+      		<span id="classStartDateSpan">[[${class.START_DATE }]] ~ [[${class.END_DATE }]]</span>
       		<span id="classRatingSpan">[[${rating}]] </span>
-      		<span id="majorFiledSpan">[[${class.MAJOR_FIELD_CD }]]</span>
-      		<span id="minorFiledSpan">[[${class.MINOR_FIELD_NM }]]</span>
+      		<span id="majorFiledSpan">[[${class.MAJOR_FIELD_CD }]] > [[${class.MINOR_FIELD_NM }]]</span>
       		<input type="hidden" id="classIdx" th:value="${class.CLASS_IDX}">
       	</span>
       	<span id="noClass" th:if="${#lists.isEmpty(classList)}">
