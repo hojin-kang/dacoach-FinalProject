@@ -38,4 +38,9 @@ public class AdminPolicyServiceImple implements AdminPolicyService {
 		return mapper.getLatestPolicy();
 	}
 
+	@Override
+	public List<PolicyDTO> getNoticeList() {
+		return mapper.getNoticeList();
+	}
+
 }

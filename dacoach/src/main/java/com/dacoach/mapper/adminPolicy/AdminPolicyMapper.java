@@ -13,4 +13,5 @@ public interface AdminPolicyMapper {
     int updatePolicy(PolicyDTO policy); 
     int deletePolicy(int qna_idx);
     PolicyDTO getLatestPolicy();
+    List<PolicyDTO> getNoticeList();
 }

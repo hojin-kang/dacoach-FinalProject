@@ -1,67 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="contentPage">
     <style>
-        /* 제공해주신 스타일 적용 */
-        .admin-container { padding: 20px; font-family: 'Pretendard', sans-serif; color: #333; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; }
-        .admin-title { font-size: 24px; font-weight: 700; color: #2c3e50; }
-        .table-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); overflow: hidden; border: 1px solid #eee; }
-        .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .admin-table th { background: #f8f9fa; padding: 15px; font-size: 13px; text-transform: uppercase; color: #777; border-bottom: 1px solid #eee; }
-        .admin-table td { padding: 15px; border-bottom: 1px solid #f4f4f4; font-size: 14px; vertical-align: middle; }
-        .admin-table tr:hover { background-color: #fafafa; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .badge-warning { background: #fff4e5; color: #b7791f; } /* 환불요청 */
-        .btn-action { padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.2s; }
-        .btn-approve { background: #e74c3c; color: #fff; }
-        .btn-approve:hover { background: #c0392b; }
-        .empty-msg { padding: 50px; text-align: center; color: #999; }
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+            --warning-peach: #fff4e5;
+            --warning-text: #b7791f;
+            --red-point: #ef4444;
+            --red-bg: #fee2e2;
+        }
+
+        .refund-admin-container {
+            font-family: 'Pretendard', sans-serif;
+            color: var(--slate-text);
+            background-color: white;
+            min-height: 800px;
+        }
+
+        /* [상단 헤더 영역] */
+        .admin-top-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--mint-bg);
+            margin-bottom: 30px;
+        }
+
+        .admin-top-bar h1 {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--mint-main);
+            margin: 0;
+        }
+
+        .current-path {
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        /* [리스트 헤더 스타일] */
+        .list-header {
+            display: flex;
+            padding: 0 20px 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        /* [카드형 리스트 아이템] */
+        .refund-item-card {
+            display: flex;
+            align-items: center;
+            padding: 18px 25px;
+            background-color: white;
+            border-radius: 15px;
+            border: 1px solid #f3f4f6;
+            margin-bottom: 12px;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .refund-item-card:hover {
+            border-color: var(--mint-main);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        /* 열 너비 설정 (데이터 비중에 맞게 조절) */
+        .col-order { width: 120px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
+        .col-user { width: 100px; font-weight: 600; }
+        .col-item { flex: 1; text-align: left; padding: 0 20px; font-weight: 700; }
+        .col-amount { width: 120px; font-weight: 800; }
+        .col-reason { width: 180px; }
+        .col-date { width: 130px; color: #9ca3af; font-size: 13px; }
+        .col-manage { width: 120px; }
+
+        /* 상태 배지 (환불요청 전용) */
+        .badge-refund {
+            background-color: var(--warning-peach);
+            color: var(--warning-text);
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            display: inline-block;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 버튼 스타일 */
+        .btn-refund-approve {
+            background-color: var(--red-bg);
+            color: var(--red-point);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-refund-approve:hover {
+            background-color: var(--red-point);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .empty-state {
+            padding: 100px 0;
+            text-align: center;
+            color: #d1d5db;
+            font-style: italic;
+        }
     </style>
 
-    <div class="admin-container">
-        <div class="admin-header">
-            <h1 class="admin-title">환불 요청 관리</h1>
+    <div class="max-w-[1250px] mx-auto p-10 refund-admin-container">
+        <div class="admin-top-bar">
+            <h1>Refund Management</h1>
+            <span class="current-path">Revenue / Refund Request List</span>
         </div>
 
-        <div class="table-card">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>주문번호</th>
-                        <th>사용자ID</th>
-                        <th>상품명</th>
-                        <th>결제금액</th>
-                        <th>환불사유(Payload)</th>
-                        <th>결제일시</th>
-                        <th>관리</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="list : ${refund_list}">
-                        <td th:text="${list['partner_order_id']}"></td>
-						<td th:text="${list['partner_user_id']}"></td>
-                        <td th:text="${list['item_name']}">멤버십 구독</td>
-                        <td>
-                            <strong th:text="${#numbers.formatInteger(list['total'], 0, 'COMMA')} + '원'">10,000원</strong>
-                        </td>
-                        <td>
-                            <span class="badge badge-warning" th:text="${list['payload']}">단순 변심</span>
-                        </td>
-                        <td th:text="${#dates.format(list['approved_at'], 'yyyy-MM-dd HH:mm')}">2024-05-20 14:30</td>
-                        <td>
-                            <button type="button" class="btn-action btn-approve" 
-                                    th:onclick="approveRefund([[${list['pay_idx']}]])">
-                                환불승인
-                            </button>
-                        </td>
-                    </tr>
+        <div class="flex justify-between items-center mb-6 px-2">
+            <div class="text-gray-400 text-sm font-medium">
+                대기 중인 환불 요청: <span class="text-[#9dbbb5] font-bold" th:text="${#lists.size(refund_list)}">0</span>건
+            </div>
+        </div>
 
-                    <tr th:if="${#lists.isEmpty(refund_list)}">
-                        <td colspan="7">
-                            <div class="empty-msg">현재 승인 대기 중인 환불 요청이 없습니다.</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="list-header">
+            <div class="col-order">ORDER ID</div>
+            <div class="col-user">USER ID</div>
+            <div class="col-item">PRODUCT NAME</div>
+            <div class="col-amount">AMOUNT</div>
+            <div class="col-reason">REASON(PAYLOAD)</div>
+            <div class="col-date">PURCHASED</div>
+            <div class="col-manage">ACTION</div>
+        </div>
+
+        <div class="refund-list-content">
+            <div th:if="${not #lists.isEmpty(refund_list)}" th:each="list : ${refund_list}" class="refund-item-card">
+                <div class="col-order" th:text="${list['partner_order_id']}">ORD-000</div>
+                
+                <div class="col-user" th:text="${list['partner_user_id']}">user01</div>
+                
+                <div class="col-item">
+                    <span th:text="${list['item_name']}" class="truncate">프리미엄 멤버십</span>
+                </div>
+                
+                <div class="col-amount" th:text="${#numbers.formatInteger(list['total'], 0, 'COMMA')} + '원'">
+                    10,000원
+                </div>
+                
+                <div class="col-reason">
+                    <span class="badge-refund" th:title="${list['payload']}" th:text="${list['payload']}">단순 변심</span>
+                </div>
+                
+                <div class="col-date" th:text="${#dates.format(list['approved_at'], 'yyyy-MM-dd HH:mm')}">
+                    2024-05-20 14:30
+                </div>
+                
+                <div class="col-manage">
+                    <button type="button" class="btn-refund-approve" 
+                            th:onclick="approveRefund([[${list['pay_idx']}]])">
+                        환불승인
+                    </button>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(refund_list)}" class="empty-state">
+                <i class="fa-solid fa-receipt mb-4 block text-5xl opacity-20"></i>
+                현재 승인 대기 중인 환불 요청이 없습니다.
+            </div>
         </div>
     </div>
 
@@ -86,3 +205,4 @@
         }
     </script>
 </div>
+</html>
