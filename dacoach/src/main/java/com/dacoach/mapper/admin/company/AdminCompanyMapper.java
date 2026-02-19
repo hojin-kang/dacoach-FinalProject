@@ -15,13 +15,13 @@ public interface AdminCompanyMapper {
 	//cert 관리
 	int updateCertDetail(Map<String, Object> params);
     // 기업 회원 관리
-    List<Map<String, Object>> companyList();
+    List<Map<String, Object>> companyList(Map<String, Object> param);
     Map<String, Object> companyDetail(@Param("userIdx") int usersIdx);
     String getCertFilePath(@Param("userIdx") int userIdx);
     int insertCert(CertDTO dto);
     int hasCert(@Param("userIdx") int userIdx);
-    
-    int countCompanyTotal();    
+    int countCompanyTotal();
+       
     //계정상태 관리
     int updateCompanyStatus(Map<String, Object> params);
     int insertCompanySuspended(EmbeddedUserDTO dto);

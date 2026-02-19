@@ -10,6 +10,12 @@
 	--slate-text: #374151;
 }
 
+.paging-container {
+	margin-top: 30px;
+	display: flex;
+	justify-content: center;
+}
+
 .company-admin-container {
 	font-family: 'Pretendard', sans-serif;
 	color: var(--slate-text);
@@ -164,6 +170,7 @@
 				</div>
 			</div>
 		</section>
+		<div class="paging-container" th:utext="${pageStr}"></div>
 	</div>
 </div>
 </html>

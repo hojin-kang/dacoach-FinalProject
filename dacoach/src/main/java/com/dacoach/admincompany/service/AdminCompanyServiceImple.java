@@ -21,8 +21,8 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     //기업 관리
     
     @Override
-    public List<Map<String, Object>> getCompanyList() {
-        return mapper.companyList();
+    public List<Map<String, Object>> getCompanyList(Map<String,Object> param) {
+        return mapper.companyList(param);
     }
 
     @Override
@@ -133,5 +133,10 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
 	        // ACTIVE, WARNING, DANGER: 기존 정지 이력 종료 처리
 	        mapper.updateEnddateSuspended(userIdx);
 	    }
+	}
+
+	@Override
+	public int getCompanyTotalCnt() {
+		return mapper.countCompanyTotal();
 	}
 }
