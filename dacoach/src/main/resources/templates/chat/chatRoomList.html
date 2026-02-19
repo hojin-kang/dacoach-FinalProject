@@ -37,9 +37,9 @@
              th:href="@{/chat/room/{id}(id=${r.chatRoomIdx}, tab=${r.otherType})}"
              th:classappend="${activeRoomIdx != null and activeRoomIdx == r.chatRoomIdx} ? ' active' : ''">
             <div class="roomAvatar">
-              <img th:src="${r.otherPhoto == 'default_profile.png'} 
-              ? @{/images/default_profile.png} 
-              : @{/uploads/profile/{img}(img=${r.otherPhoto})}"
+              <img th:src="${r.otherPhoto != 'default_profile.png' and r.otherPhoto != null} 
+              ? @{'/uploads/' + ${r.otherPhoto}} 
+              : @{/img/profile/defaultProfile.jpg}" 
      alt="profile">
             </div>
 
@@ -205,9 +205,9 @@
   const otherPhoto = win.dataset.otherPhoto || 'default_profile.png';
 
   function resolvePhoto(p){
-    if(!p || p === 'default_profile.png') return '/images/default_profile.png';
-    return `/uploads/profile/${encodeURIComponent(p)}`;
-  }
+	    if(!p || p === 'default_profile.png') return '/img/profile/defaultProfile.jpg'; 
+	    return '/uploads/' + p; 
+	}
 
   /* 1) 상대 아바타 DOM을 "한 번만" 만들어둔다 */
   const baseYouAvatar = document.createElement('div');
@@ -218,7 +218,7 @@
   baseYouImg.src = resolvePhoto(otherPhoto);
   baseYouImg.onerror = function(){
     this.onerror = null;
-    this.src = '/images/default_profile.png';
+    this.src = '/img/profile/defaultProfile.jpg';
   };
 
   baseYouAvatar.appendChild(baseYouImg);
@@ -231,7 +231,7 @@
     if(img){
       img.onerror = function(){
         this.onerror = null;
-        this.src = '/images/default_profile.png';
+        this.src = '/img/profile/defaultProfile.jpg';
       };
     }
     return node;
