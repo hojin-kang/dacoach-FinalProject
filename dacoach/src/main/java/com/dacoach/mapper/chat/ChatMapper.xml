@@ -6,30 +6,40 @@
 <mapper namespace="com.dacoach.mapper.chat.ChatMapper">
 
   <!-- 방 리스트 -->
-  <select id="selectRoomList" resultType="com.dacoach.model.chat.ChatRoomDTO">
+<select id="selectRoomList" resultType="com.dacoach.model.chat.ChatRoomDTO">
   SELECT
     r.chat_room_idx AS chatRoomIdx,
     r.user1_idx AS user1Idx,
     r.user2_idx AS user2Idx,
     CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END AS otherIdx,
     u.user_name AS otherName,
-    'default_profile.png' AS otherPhoto,
+    -- 상대방 타입에 따라 해당 테이블의 PHOTO 추출, 없으면 기본 이미지
+    CASE 
+      WHEN u.user_type = 'COACH' THEN NVL(co.photo, 'default_profile.png')
+      WHEN u.user_type = 'COMPANY' THEN NVL(cp.photo, 'default_profile.png')
+      ELSE 'default_profile.png'
+    END AS otherPhoto,
     u.user_type AS otherType,
-    r.last_message    AS lastMessage,
+    r.last_message AS lastMessage,
     CAST(r.last_message_at AS TIMESTAMP) AS lastMessageAt,
     CASE
-      WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1,0)
-      ELSE NVL(r.unread_count2,0)
+      WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1, 0)
+      ELSE NVL(r.unread_count2, 0)
     END AS unreadCount
   FROM chat_room r
   JOIN users u
-    ON u.user_idx =
-       CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END
+    ON u.user_idx = CASE WHEN r.user1_idx = #{myIdx} THEN r.user2_idx ELSE r.user1_idx END
+  -- 코치 정보 조인
+  LEFT JOIN coach co
+    ON u.user_idx = co.user_idx
+  -- 컴퍼니 정보 조인
+  LEFT JOIN company cp
+    ON u.user_idx = cp.user_idx
   WHERE #{myIdx} IN (r.user1_idx, r.user2_idx)
     AND (
-      (r.user1_idx = #{myIdx} AND NVL(r.left1_yn,'N') = 'N')
+      (r.user1_idx = #{myIdx} AND NVL(r.left1_yn, 'N') = 'N')
       OR
-      (r.user2_idx = #{myIdx} AND NVL(r.left2_yn,'N') = 'N')
+      (r.user2_idx = #{myIdx} AND NVL(r.left2_yn, 'N') = 'N')
     )
   ORDER BY r.last_message_at DESC NULLS LAST, r.chat_room_idx DESC
 </select>
