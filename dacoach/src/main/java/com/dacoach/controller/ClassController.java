@@ -155,22 +155,32 @@ public class ClassController {
 
 	/************* company *************/
 	@GetMapping("/company/classList")
-	public ModelAndView classList(@RequestParam(value = "sort", required = false, defaultValue = "all") String sort,
-			HttpSession session, RedirectAttributes rttr) throws Exception {
-		// 기업 회원 체크
-		ModelAndView authCheck = checkCompanyAuth(session);
-		if (authCheck != null)
-			return authCheck;
+	public ModelAndView classList(
+	        @RequestParam(value = "sort", required = false, defaultValue = "all") String sort,
+	        @RequestParam(value = "cp", required = false, defaultValue = "1") int cp,
+	        HttpSession session, RedirectAttributes rttr) throws Exception {
 
-		ModelAndView mav = new ModelAndView("company/classes/classList");
+	    ModelAndView authCheck = checkCompanyAuth(session);
+	    if (authCheck != null) return authCheck;
 
-		Integer providerIdx = (Integer) session.getAttribute("user_idx");
+	    ModelAndView mav = new ModelAndView("company/classes/classList");
 
-		List<ClassDTO> classList = classService.getClassesByProvider(providerIdx, sort);
-		mav.addObject("classList", classList);
-		mav.addObject("sort", sort);
-		mav.addObject("now", new java.util.Date()); // 현재 날짜 추가
-		return mav;
+	    Integer providerIdx = (Integer) session.getAttribute("user_idx");
+
+	    int totalCnt = classService.countClassesByProvider(providerIdx, sort);
+	    List<ClassDTO> classList = classService.getClassesByProvider(providerIdx, sort, cp);
+
+	    // PageModule: listSize=6, pageSize=5 (페이지 버튼 5개)
+	    String pageStr = com.dacoach.page.PageModule.makePagewithParams(
+	        "/class/company/classList?sort=" + sort,
+	        totalCnt, 6, 5, cp
+	    );
+
+	    mav.addObject("classList", classList);
+	    mav.addObject("sort", sort);
+	    mav.addObject("pageStr", pageStr);
+	    mav.addObject("now", new java.util.Date());
+	    return mav;
 	}
 
 	@GetMapping("/company/classDetail")
@@ -248,7 +258,7 @@ public class ClassController {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 			}
 
-			List<ClassDTO> classList = classService.getClassesByProvider(providerIdx, "all");
+			List<ClassDTO> classList = classService.getAllClassesByProvider(providerIdx);
 			return ResponseEntity.ok(classList);
 		} catch (Exception e) {
 			e.printStackTrace();

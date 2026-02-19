@@ -18,7 +18,9 @@ public class ClassServiceImple implements ClassService {
 
 	@Autowired
 	private ClassMapper classMapper;
-
+	
+	private static final int LIST_SIZE = 4;  // 한 페이지당 카드 수
+	
 	@Override
 	@Transactional
 	public int classRegister(ClassDTO classDTO, String hashtags) throws Exception {
@@ -166,21 +168,42 @@ public class ClassServiceImple implements ClassService {
 	}
 
 	@Override
-	public List<ClassDTO> getClassesByProvider(Integer providerIdx, String sort) throws Exception {
-		if (providerIdx == null) {
-			throw new IllegalArgumentException("provider_idx가 필요합니다.");
-		}
+	public List<ClassDTO> getClassesByProvider(Integer providerIdx, String sort, int cp) throws Exception {
+	    if (providerIdx == null) throw new IllegalArgumentException("provider_idx가 필요합니다.");
+	    if (sort == null || sort.isEmpty()) sort = "all";
 
-		// sort 파라미터 검증
-		if (sort == null || sort.isEmpty()) {
-			sort = "all";
-		}
+	    int startRow = (cp - 1) * LIST_SIZE + 1;
+	    int endRow   = cp * LIST_SIZE;
 
-		Map<String, Object> params = new HashMap<>();
-		params.put("provider_idx", providerIdx);
-		params.put("sort", sort);
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("provider_idx", providerIdx);
+	    params.put("sort", sort);
+	    params.put("startRow", startRow);
+	    params.put("endRow", endRow);
 
-		return classMapper.selectClassesByProvider(params);
+	    return classMapper.selectClassesByProvider(params);
+	}
+
+	@Override
+	public int countClassesByProvider(Integer providerIdx, String sort) throws Exception {
+	    if (providerIdx == null) throw new IllegalArgumentException("provider_idx가 필요합니다.");
+	    if (sort == null || sort.isEmpty()) sort = "all";
+
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("provider_idx", providerIdx);
+	    params.put("sort", sort);
+
+	    return classMapper.countClassesByProvider(params);
+	}
+	
+	@Override
+	public List<ClassDTO> getAllClassesByProvider(Integer providerIdx) throws Exception {
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("provider_idx", providerIdx);
+	    params.put("sort", "all");
+	    params.put("startRow", 1);
+	    params.put("endRow", 9999);
+	    return classMapper.selectClassesByProvider(params);
 	}
 
 	@Override
