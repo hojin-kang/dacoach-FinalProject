@@ -66,4 +66,6 @@ public interface CompanyMapper {
 	public List<ClassEnrollmentDTO> getUserClass(int class_idx) throws Exception;
 	
 	public ChatRoomDTO getClassRoom(int roomIdx) throws Exception;
+	
+	public String getRating(int class_idx) throws Exception;
  }

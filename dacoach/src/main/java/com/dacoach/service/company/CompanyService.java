@@ -44,4 +44,5 @@ public interface CompanyService {
 	public ChatRoomDTO getClassRoom(int roomIdx) throws Exception;
 	public ChatMessageDTO saveAndBuildBroadcast(ChatMessageDTO msg);
 	public String loadMessagesRawCustom(int roomIdx, int myIdx);
+	public String getRating(int class_idx) throws Exception;
 }

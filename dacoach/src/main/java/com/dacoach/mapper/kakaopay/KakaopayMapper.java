@@ -23,4 +23,5 @@ public interface KakaopayMapper {
 	public List<Map<String,Object>> selectRefundList() throws Exception;
 	
 	PayDTO selectPayStatus(int pay_idx) throws Exception;
+	
 }

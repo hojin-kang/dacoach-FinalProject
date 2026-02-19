@@ -363,7 +363,8 @@ public class CompanyController {
 			int companyIdx=Integer.parseInt(String.valueOf(map.get("COMPANY_IDX")));
 			List<Map<String,Object>> classList=companyService.getProfileClass(classMap);
 			List<Map<String,Object>> region=companyService.getCompanyRegion(companyIdx);
-			;
+			String rating=companyService.getRating(companyIdx);
+			mav.addObject("rating", rating);
 			mav.addObject("classList",classList);
 			mav.addObject("profile",map);
 			mav.addObject("regionList",region);
