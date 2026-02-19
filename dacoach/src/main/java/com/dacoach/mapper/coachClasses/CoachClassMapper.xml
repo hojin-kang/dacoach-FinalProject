@@ -190,8 +190,16 @@
 			</if>
 
 			<if test="q != null and q != ''">
-				AND (c.TITLE LIKE '%' || #{q} || '%'
-				OR c.INTRO LIKE '%' || #{q} || '%')
+			  AND (
+			      c.TITLE LIKE '%' || #{q} || '%'
+			      OR EXISTS (
+			          SELECT 1
+			          FROM CLASS_HASHTAG ch2
+			          JOIN HASHTAG h2 ON h2.HASHTAG_IDX = ch2.HASHTAG_IDX
+			          WHERE ch2.CLASS_IDX = c.CLASS_IDX
+			            AND h2.TAGS LIKE '%' || #{q} || '%'
+			      )
+			  )
 			</if>
 		</where>
 

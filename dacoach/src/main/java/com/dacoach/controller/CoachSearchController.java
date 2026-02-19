@@ -99,8 +99,7 @@ public class CoachSearchController {
 	 	    Integer login_idx = (Integer) session.getAttribute("user_idx");
 	 	    
 	 	    if(login_idx == null) {
-	 	        mav.addObject("msg", "로그인 후 이용 가능합니다.").addObject("url", "/login").setViewName("alert");
-	 	        return mav;
+	 	        login_idx = 0;
 	 	    }
 
 	 	    try {

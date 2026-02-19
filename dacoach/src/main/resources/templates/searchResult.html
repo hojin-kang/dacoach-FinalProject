@@ -2,10 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 
-	<meta charset="UTF-8" />
-	<title>dacoach</title>
+<meta charset="UTF-8" />
+<title>dacoach</title>
 
-	<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/search.css}" />
 
 </head>
 <body>
@@ -17,78 +18,113 @@
 			<hr>
 
 			<div>
-				<div>
-  <span th:text="|코치 검색결과(${coachCnt})|">코치 검색결과(0)</span>
+				<section class="srSection">
+					<div class="srHeader">
+						<div class="srTitle">
+						  <span class="keyword-coach">코치</span>
+						  검색결과(<span th:text="${coachCnt}">0</span>)
+						</div>
 
-  <div th:if="${coachCnt == 0}" style="padding:16px 0;">
-    검색 결과가 없습니다.
+						<a class="srMore" th:if="${coachCnt > 4}"
+							th:href="@{/coach/search(keyword=${keyword}, sort='latest', majorField=0, minorField=0, majorRegion=0, minorRegion=0)}">
+							더보기 → </a>
+					</div>
+
+					<div class="empty-msg" th:if="${coachCnt == 0}">검색 결과가 없습니다.</div>
+
+					<div class="cardGrid" th:if="${coachCnt > 0}">
+						<article class="classCard coachCard" th:each="dto : ${coachList}"
+							th:attr="data-href=@{/coach/detail(user_idx=${dto.user_idx})}">
+							<div class="card-body">
+								<div class="profile-section">
+									<div class="coach-thumb">
+										<img
+											th:src="${dto.photo != null} ? @{/uploads/{path}(path=${dto.photo})} : @{/img/profile/defaultProfile.jpg}"
+											alt="coach">
+									</div>
+
+									<div class="name-rating">
+										<div class="badge" th:text="${dto.rank_name}">등급</div>
+										<div class="coach-name" th:text="${dto.nickname}">닉네임</div>
+										<div class="coach-rating">★[[${dto.rating}]]([[${dto.review_count}]])</div>
+									</div>
+								</div>
+
+								<div class="right">
+									<div class="row">
+										<div class="label">제공분야</div>
+										<div class="tags">
+											<span class="tag" th:each="t : ${dto.hashtags}"
+												th:text="${t}">태그</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="label">관심분야</div>
+										<div class="tags">
+											<span class="tag" th:each="t : ${dto.interhashtags}"
+												th:text="${t}">태그</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</article>
+					</div>
+				</section>
+				<!-- 클래스 검색결과 -->
+				<section class="srSection">
+  <div class="srHeader">
+    <div class="srTitle">
+  <span class="keyword-class">클래스</span>
+  검색결과(<span th:text="${classCnt}">0</span>)
+</div>
+
+    <a class="srMore"
+       th:if="${classCnt > 4}"
+       th:href="@{/coach/classList(q=${keyword}, sort='latest')}">
+      더보기 →
+    </a>
   </div>
 
-  <div th:if="${coachCnt > 0}">
-    <div th:each="c : ${coachList}" style="display:flex; gap:16px; padding:12px 0; border-bottom:1px solid #eee;">
-      
-      <!-- 썸네일 -->
-      <a th:href="@{/coach/detail(user_idx=${c.user_idx})}" style="display:block; width:72px; height:72px; overflow:hidden; border-radius:12px;">
-        <img th:src="${c.photo != null} ? @{/uploads/{p}(p=${c.photo})} : @{/img/profile/defaultProfile.jpg}"
-             alt="프로필"
-             style="width:100%; height:100%; object-fit:cover;">
-      </a>
+  <div class="empty-msg" th:if="${classCnt == 0}">검색 결과가 없습니다.</div>
 
-      <!-- 내용 -->
-      <div style="flex:1;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <a th:href="@{/coach/detail(user_idx=${c.user_idx})}"
-             th:text="${c.nickname}"
-             style="font-weight:700; font-size:16px; color:#111; text-decoration:none;">
-            닉네임
-          </a>
-          <span th:text="${c.rank_name}" style="font-size:12px; padding:2px 8px; border:1px solid #ddd; border-radius:999px;">
-            랭크
-          </span>
-        </div>
-
-        <div style="margin-top:6px; font-size:13px; color:#555;">
-          <span th:text="|⭐ ${c.rating} (${c.review_count})|">⭐ 0.0 (0)</span>
-        </div>
-
-        <!-- 해시태그 (서비스에서 2개로 잘라줌) -->
-        <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
-          <span th:each="t : ${c.hashtags}"
-                th:text="|${t}|"
-                style="font-size:12px; padding:4px 8px; background:#f5f5f5; border-radius:999px;">
-            #태그
-          </span>
-
-          <span th:each="t : ${c.interhashtags}"
-                th:text="|${t}|"
-                style="font-size:12px; padding:4px 8px; background:#eef6ff; border-radius:999px;">
-            #관심태그
-          </span>
-        </div>
+  <div class="cardGrid" th:if="${classCnt > 0}">
+    <a class="classCard classResultCard"
+       th:each="c : ${classList}"
+       th:href="@{/coach/classDetail(id=${c.class_idx})}">
+      <div class="thumb">
+        <span th:if="${c.photo == null or c.photo == ''}" class="no-media-message">📷 이미지가 없습니다</span>
+        <img th:if="${c.photo != null and c.photo != ''}" th:src="'/uploads/' + ${c.photo}" th:alt="${c.title}">
       </div>
 
-    </div>
+      <div class="meta">
+        <div class="top">
+          <div class="rating"
+               th:text="|★ ${#numbers.formatDecimal(c.avg_rating, 1, 1)}(${c.review_cnt})|">★ 0.0(0)</div>
+          <div class="provider" th:text="|[${c.user_name}]|">[제공자]</div>
+        </div>
 
-    <!-- 더보기: 코치찾기 페이지로 keyword 들고 이동 -->
-    <div style="padding:14px 0;">
-      <a th:href="@{/coach/search(keyword=${keyword}, sort='latest', majorField=0, minorField=0, majorRegion=0, minorRegion=0)}"
-         style="display:inline-block; padding:10px 14px; border:1px solid #ddd; border-radius:10px; text-decoration:none; color:#111;">
-        코치 검색결과 더보기
-      </a>
-    </div>
+        <div class="bottom">
+          <div class="title" th:text="${c.title}">클래스 제목</div>
+          <div class="price" th:text="|${#numbers.formatInteger(c.price, 3, 'COMMA')}₩|">0₩</div>
+        </div>
+      </div>
+    </a>
   </div>
-</div>
-				<div>
-					<span>클래스 검색결과(n)</span>
-					<div>
-						결과
-					</div>
-				</div>
+</section>
 			</div>
 		</div>
 	</main>
 
 	<div th:replace="~{layout/footer :: siteFooter}"></div>
-
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.coachCard').forEach(card => {
+    card.addEventListener('click', (e) => {
+      const href = card.getAttribute('data-href');
+      if (href) window.location.href = href;
+    });
+  });
+});
+</script>
 </body>
 </html>
