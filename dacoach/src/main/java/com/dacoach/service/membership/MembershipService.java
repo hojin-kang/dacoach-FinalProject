@@ -2,6 +2,7 @@ package com.dacoach.service.membership;
 
 import java.util.List;
 
+import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.model.company.AdDTO;
 import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
@@ -19,11 +20,19 @@ public interface MembershipService {
 
 	public int membershipDown(MembershipDTO dto) throws Exception;
 	
-	public int autoUpdate(MembershipDTO dto) throws Exception;
+	public int autoDown(int user_idx) throws Exception;
 	
 	public int bannerAdd(AdDTO dto) throws Exception;
 	
 	public int bannerUp(AdDTO dto) throws Exception;
 	
 	public List<AdDTO> bannerSelect(Integer member_idx) throws Exception;
+	
+	public List<MembershipDTO> autoUpdateTarget() throws Exception;
+	
+	public int autoUpdate(int user_idx) throws Exception;
+	
+	public PayDTO getPayInfo(int user_idx) throws Exception;
+	
+	public List<MembershipDTO> autoDownTarget() throws Exception;
 }

@@ -1,11 +1,13 @@
 package com.dacoach.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import com.dacoach.mapper.kakaopay.KakaopayMapper;
 import com.dacoach.mapper.membership.MembershipMapper;
 import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
+import com.dacoach.service.membership.MembershipService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +45,7 @@ public class MembershipApiController {
 	private final KakaoPayService kakaoPayService;
 	private HttpSession session;
 	@Autowired
-	private MembershipMapper membershipMapper;
+	private MembershipService membershipService;
 	
 	
 		
@@ -67,14 +70,15 @@ public class MembershipApiController {
 			map.put("status", "완료");
 			map.put("tid", kakaoApprove.getTid());
 			//kakaoApprove.setSid("담에추가");
-			kakaoApprove.setItem_code("membershipCode");
+			kakaoApprove.setItem_code("MembershipCode");
+			kakaoApprove.setPayment_method_type("MEMBERSHIP");
 			//kakaopayMapper.upPayStatus(map);
 			kakaopayMapper.insertPay(kakaoApprove);
 			
-			MembershipDTO dto=membershipMapper.userMembershipInfo((Integer)session.getAttribute("user_idx"));
+			MembershipDTO dto=membershipService.userMembershipInfo((Integer)session.getAttribute("user_idx"));
 			if(dto.getMember_detail_idx()==1) {
 				dto.setMember_detail_idx(2);
-				membershipMapper.membershipUpdate(dto);
+				membershipService.membershipUpdate(dto);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -167,14 +171,22 @@ public class MembershipApiController {
 			return new ResponseEntity<String>(msg,HttpStatus.OK);
 		}
 		
-		@PostMapping("/subscription")
-		public String subscription() {
+		@Scheduled(cron = "20 49 18 * * *", zone = "Asia/Seoul")
+		public void memebershipSubscription() {
 			
 			 
 			try {
-				for(int i=0;i<10;i++) {
-				PayDTO payDto = kakaopayMapper.paySelect(5);
-				MembershipDetailDTO membershipDto=membershipMapper.detail(2);
+				List<MembershipDTO> targetDto=membershipService.autoUpdateTarget();
+				
+				if(targetDto!=null) {
+					MembershipDTO mDto=null;
+					MembershipDetailDTO membershipDto=membershipService.detail(2);
+					PayDTO payDto=null;
+				for(int i=0;i<targetDto.size();i++) {
+					mDto=targetDto.get(i);
+				 payDto= membershipService.getPayInfo(mDto.getUser_idx());
+				
+				
 				Map<String,Object> parameters=new HashMap<String,Object>();
 				parameters.put("cid", payDto.getCid());
 				parameters.put("sid", payDto.getSid() );
@@ -187,16 +199,30 @@ public class MembershipApiController {
 				parameters.put("tax_free_amount", payDto.getTax_free());
 				
 				KakaoApproveResponse kakaoApprove=kakaoPayService.subscription(parameters);
-				kakaopayMapper.insertPay(kakaoApprove);
+				
+				
+				kakaoApprove.setItem_code("MembershipSubscription");
+				kakaoApprove.setPayment_method_type("MEMBERSHIP");
+				int result=kakaopayMapper.insertPay(kakaoApprove);
+					if(result>0) {
+						membershipService.autoUpdate(mDto.getUser_idx());
+					}
 				}
+				}
+				
+				List<MembershipDTO> downTargetDto=membershipService.autoDownTarget();
+				if(downTargetDto!=null) {
+					MembershipDTO mDto=null;
+					for(int i=0;i<downTargetDto.size();i++) {
+						mDto=downTargetDto.get(i);
+						membershipService.autoDown(mDto.getUser_idx());
+					}
+				}
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			
-			
-			
-			return "/";
 		}
 }

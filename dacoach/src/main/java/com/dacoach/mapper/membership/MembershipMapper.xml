@@ -36,13 +36,33 @@
   		where user_idx=#{user_idx}
   	</update>
   	
-  	<update id="autoUpdate">
+  	<update id="autoDown">
   		update membership set
   		member_detail_idx=1,
-  		start_date=#{end_date}+1,
+  		start_date=sysdate,
   		end_date=null,
   		status=null
+  		where user_idx=#{user_idx}
   	</update>
+  	
+  	<select id="getPayInfo">
+  		select * from pay where partner_user_id=#{user_idx}
+  	</select>
+  	
+  	<update id="autoUpdate">
+  		update membership set start_date=sysdate,end_date=ADD_MONTHS(SYSDATE, 1) where user_idx=#{user_idx}
+  	</update>
+  	
+  	<select id="autoUpdateTarget">
+  		select * from membership where
+		TRUNC(end_date) <![CDATA[<=]]> TRUNC(SYSDATE) and status is null
+  	</select>
+  	
+  	<select id="autoDownTarget">
+  		select * from membership 
+		where status = '취소'
+		and TRUNC(end_date) <![CDATA[<=]]> TRUNC(SYSDATE)
+	 </select>
   	
   	<insert id="bannerAdd">
   		insert into ad values(
