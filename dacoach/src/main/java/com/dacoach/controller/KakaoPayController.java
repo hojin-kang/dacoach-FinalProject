@@ -52,7 +52,7 @@ public class KakaoPayController {
         int qty = Integer.parseInt(qtyObj.toString());
 
         // ✅ KakaoPayService 그대로 사용 (내부 kakaoReady 필드에 의존)
-        KakaoApproveResponse approve = kakaoPayService.approveResponse(pgToken);
+        KakaoApproveResponse approve = kakaoPayService.approveResponse(pgToken,null);
         if (approve == null) return "redirect:/tokenChargeForm?result=approve_fail";
 
         try {

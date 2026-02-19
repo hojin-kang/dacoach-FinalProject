@@ -56,7 +56,7 @@ public class KakaoPayClassController {
 		int class_id = Integer.parseInt(classIdObj.toString());
 		String enrollment_date = enrollmentDateObj.toString();
 
-		KakaoApproveResponse approve = kakaoPayService.approveResponse(pgToken);
+		KakaoApproveResponse approve = kakaoPayService.approveResponse(pgToken, null);
 		if (approve == null)
 			return "redirect:/coach/classEnrollment?classId=" + class_id + "&result=approve_fail";
 
