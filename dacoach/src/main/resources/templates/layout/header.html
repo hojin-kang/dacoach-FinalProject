@@ -35,14 +35,14 @@
         </div>
 		<!-- 컴퍼니헤더 호지닝 -->
 		<th:block th:if="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
-		
+			<div class="headerIcons">
 		  <a class="iconBtn notiIcon" th:href="@{/notification}" title="알림">
 		  <img src="/img/icon/notification.png">
   		  <span class="notiDot" th:if="${unreadNotiCount > 0}"></span>
   		  </a>
 	      <a class="iconBtn" th:href="@{/company/chat}" title="채팅"><img src="/img/icon/chat.png"></a>
           <a class="iconBtn" href="/company/mypage" title="마이페이지"><img th:src="${session.photo!=null}?@{'/uploads/'+${session.photo}}:@{/img/profile/defaultProfile.jpg}"></a>
-			
+			</div>
 		</th:block>
 		
 		<!-- 코치해더 -->

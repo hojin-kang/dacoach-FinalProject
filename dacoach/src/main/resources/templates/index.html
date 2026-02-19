@@ -158,10 +158,8 @@
             
             <!-- 왼쪽: 프로필 영역 -->
             <div class="top">
-              <div>
                 <img th:src="${pc.photo != null and pc.photo != ''} ? @{/uploads/{p}(p=${pc.photo})} : @{/img/profile/default_company.jpg}"
                      alt="class">
-              </div>
             </div>
             <div class="middle">
 	            <div class="rating">
