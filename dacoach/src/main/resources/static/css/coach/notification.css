@@ -11,10 +11,8 @@
 	gap: 12px;
 }
 
-.notificationDiv form {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
+.notiDeleteForm {
+    margin-left: auto;
 }
 /* 알림 없음 문구 */
 .notificationDiv .empty {
@@ -30,7 +28,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: 12px;
-
+	width: 100%;
 	background: #FFFFFF;
 	border-radius: 12px;
 	padding: 14px 16px;
@@ -44,9 +42,16 @@
 	flex-shrink: 0;
 }
 
+.notiLink {
+	flex: 1;
+	display: block;
+	text-decoration: none;
+    color: inherit;
+    text-align: left;
+}
+
 /* 알림 내용 */
 .notiUnit span {
-	flex: 1;
 	text-align: left;
 	font-size: 14px;
 	color: #222;
@@ -66,10 +71,5 @@
 
 .notiUnit button:hover {
 	color: #333;
-}
-
-/* form 기본 스타일 제거 */
-.notificationDiv form {
-	width: 100%;
 }
 
