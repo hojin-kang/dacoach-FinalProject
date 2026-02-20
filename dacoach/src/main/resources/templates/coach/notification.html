@@ -34,7 +34,15 @@
        th:href="@{/notification/open(noti_idx=${n.noti_idx})}">
       <span th:text="${n.content}"></span>
     </a>
-
+	
+	<!-- 컴퍼니용 알람 -->
+	<a class="notiLink"
+       th:if="${(n.noti_type == 'CLASS'
+       			or n.noti_type == 'MAMBERSHIP')}"
+       th:href="@{/company/notification/open(noti_idx=${n.noti_idx})}">
+      <span th:text="${n.content}"></span>
+    </a>
+	
     <!-- ✅ 이동 불가 타입(공지/지급 등)은 텍스트만 -->
     <span class="notiText"
           th:if="${!(n.noti_type == 'CHAT_REQUEST' or n.noti_type == 'CHAT_ACCEPT'
