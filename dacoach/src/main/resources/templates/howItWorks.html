@@ -137,7 +137,7 @@ width:220px;
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
 	<div class="banner">
-		<img src="/img/howItWorks/howItWorksBanner.png" class="howItWorksBanner">
+		<img th:src="@{/img/howItWorks/howItWorksBanner.png}" class="howItWorksBanner">
 		<div class="bannerText">
 			<span>새로운 도전을 하고 싶다면?</span>
 			<span>다코치에서 나만의 코치를 찾으세요</span>
