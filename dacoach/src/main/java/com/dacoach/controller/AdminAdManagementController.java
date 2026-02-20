@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.dacoach.adminad.service.AdminAdManagementService;
 import com.dacoach.page.PageModule;
+import com.dacoach.service.adminad.AdminAdManagementService;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.*;

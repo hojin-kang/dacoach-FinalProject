@@ -1,4 +1,4 @@
-package com.dacoach.adminpolicy.service;
+package com.dacoach.service.adminpolicy;
 
 import java.util.List;
 
