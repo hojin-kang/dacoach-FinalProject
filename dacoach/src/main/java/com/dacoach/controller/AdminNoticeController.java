@@ -28,7 +28,6 @@ public class AdminNoticeController {
             Model model, HttpSession session) {
        
         if (session.getAttribute("loginAdmin") == null) {
-            System.out.println(">>> 로그인 정보 없음으로 리다이렉트");
             return "redirect:/admin";
         }
         
