@@ -91,7 +91,7 @@
             border-radius: 20px;
             border: 1px solid #e5e7eb;
             object-fit: cover;
-            background-color: #f3f4f6; /* 검정색보다 부드러운 배경색 */
+            background-color: #f3f4f6;
             display: block;
         }
 
@@ -168,7 +168,7 @@
 
             <div class="kv-label">수강 인원</div>
             <div class="kv-value">
-                <b th:text="${classInfo['ENROLL_COUNT'] ?: '0'}"></b>명 / 
+                <b th:text="${classInfo['ENROLLED_CNT'] ?: '0'}"></b>명 / 
                 <span th:text="${classInfo['MAX_USER_CNT'] ?: '-'}"></span>명
             </div>
 
@@ -229,7 +229,7 @@
                     <span style="color:#9ca3af; font-size:12px; margin-left:10px;" 
                           th:text="${review['CREATED_AT'] != null ? #dates.format(review['CREATED_AT'], 'yyyy-MM-dd') : ''}"></span>
                 </div>
-                <button type="button" class="btn btn-delete" th:onclick="deleteReview([[${classInfo['CLASS_IDX']}]], [[${review['REVIEW_CLASS_IDX']}]])">리뷰 삭제</button>
+                <button type="button" class="btn btn-delete" th:onclick="|deleteReview(${classInfo['CLASS_IDX']}, ${review['REVIEW_CLASS_IDX']})|">리뷰 삭제</button>
             </div>
             <div style="line-height: 1.7; color: #4b5563; padding-top: 5px;" th:text="${review['CONTENT']}"></div>
         </div>
