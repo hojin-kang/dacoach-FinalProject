@@ -54,7 +54,7 @@
       if (idx === 1) selected = { item_name: "닭꼬치 3개", quantity: 3, total_amount: 2800, vat_amount: 0, tax_free: 0 };
       if (idx === 2) selected = { item_name: "닭꼬치 10개", quantity: 10, total_amount: 9000, vat_amount: 0, tax_free: 0 };
 
-      // 선택 표시(원하면 CSS로 강조)
+      // 선택 표시
       document.querySelectorAll(".tokenPkg > div").forEach(x => x.style.outline = "none");
       el.style.outline = "3px solid #328889";
     });
@@ -66,16 +66,15 @@
       return;
     }
     // url은 서버의 ready 엔드포인트 prefix
-    // 예: /kakaopay/token
     kakaopayModule(
-      "order_" + Date.now(),     // order_id
-      "sessionUser",             // user_id (서버에서 세션으로 덮어쓰는 걸 추천)
+      "order_" + Date.now(),
+      "sessionUser",
       selected.item_name,
       selected.quantity,
       selected.total_amount,
       selected.vat_amount,
       selected.tax_free,
-      "/kakaopay/token"          // 여기 중요: 아래 2)에서 만들 컨트롤러 mapping과 맞춰
+      "/kakaopay/token"
     );
   });
 </script>

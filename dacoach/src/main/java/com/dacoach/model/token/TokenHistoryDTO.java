@@ -1,6 +1,6 @@
 package com.dacoach.model.token;
 
-import java.sql.Date;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
