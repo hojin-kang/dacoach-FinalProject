@@ -42,7 +42,7 @@
   ) 
   WHERE rnum BETWEEN #{startRow} AND #{endRow}
   ]]>
-</select>
+	</select>
 
 	<!-- 2. 클래스 전체 개수 -->
 	<select id="countClassTotal" resultType="int">
@@ -50,14 +50,13 @@
 		FROM
 		CLASS
 	</select>
-	
+
 	<select id="countCompanyTotal" resultType="int">
-	select count(*)
-	from
-	company
+		select count(*)
+		from
+		company
 	</select>
 
-	<!-- 3. 클래스 상세 -->
 	<select id="classDetail" parameterType="map" resultType="map">
   <![CDATA[
     SELECT
@@ -81,6 +80,8 @@
       mar.REGION_NM,
       mir.DISTRICT_NM,
       
+      NVL(ce.ENROLLED_CNT, 0) AS ENROLLED_CNT,
+      
       CASE
         WHEN c.START_DATE IS NOT NULL AND SYSDATE < c.START_DATE THEN '예정'
         WHEN c.END_DATE IS NOT NULL AND SYSDATE > c.END_DATE THEN '종료'
@@ -93,6 +94,13 @@
     LEFT JOIN MAJOR_FIELD maf ON maf.MAJOR_FIELD_IDX = mif.MAJOR_FIELD_IDX
     LEFT JOIN MINOR_REGION mir ON mir.MINOR_REGION_IDX = c.MINOR_REGION_IDX
     LEFT JOIN MAJOR_REGION mar ON mar.MAJOR_REGION_IDX = mir.MAJOR_REGION_IDX
+    
+    LEFT JOIN (
+        SELECT CLASS_IDX, COUNT(*) AS ENROLLED_CNT
+        FROM CLASS_ENROLLMENT
+        WHERE STATUS = 'CONFIRMED'
+        GROUP BY CLASS_IDX
+    ) ce ON ce.CLASS_IDX = c.CLASS_IDX
     
     WHERE c.CLASS_IDX = #{classIdx}
   ]]>
@@ -115,7 +123,8 @@
 		SELECT COUNT(*)
 		FROM CLASS_ENROLLMENT
 		WHERE CLASS_IDX
-		= #{classIdx}
+		=
+		#{classIdx}
 	</select>
 
 	<!-- 6. 클래스별 리뷰 목록 -->
@@ -165,42 +174,42 @@
     ) t
     WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}
 ]]>
-</select>
+	</select>
 
 	<!-- 9. 기업 회원 상세 -->
-<select id="companyDetail" parameterType="int" resultType="map">
-    SELECT
-        u.user_idx,
-        u.user_name,
-        c.email,
-        c.phone,
-        c.photo,
-        u.status,
-        u.login_id,
-        c.company_idx,
-        c.company_num,
-        c.address,
-        ct.cert_file,
-        ct.get_date,
-        ct.cert_from,
-        ct.cert_type,
-        ct.cert_name,
-        ct.cert_status,
-        e.reason,
-        e.end_date
-    FROM users u
-    JOIN company c ON c.user_idx = u.user_idx
-    LEFT JOIN cert ct ON u.user_idx = ct.user_idx
-    LEFT JOIN (
-        SELECT * FROM embedded_user
-        WHERE (user_idx, embed_user_idx) IN (
-            SELECT user_idx, MAX(embed_user_idx)
-            FROM embedded_user
-            GROUP BY user_idx
-        )
-    ) e ON u.user_idx = e.user_idx
-    WHERE u.user_idx = #{userIdx}
-</select>
+	<select id="companyDetail" parameterType="int" resultType="map">
+		SELECT
+		u.user_idx,
+		u.user_name,
+		c.email,
+		c.phone,
+		c.photo,
+		u.status,
+		u.login_id,
+		c.company_idx,
+		c.company_num,
+		c.address,
+		ct.cert_file,
+		ct.get_date,
+		ct.cert_from,
+		ct.cert_type,
+		ct.cert_name,
+		ct.cert_status,
+		e.reason,
+		e.end_date
+		FROM users u
+		JOIN company c ON c.user_idx = u.user_idx
+		LEFT JOIN cert ct ON u.user_idx = ct.user_idx
+		LEFT JOIN (
+		SELECT * FROM embedded_user
+		WHERE (user_idx, embed_user_idx) IN (
+		SELECT user_idx, MAX(embed_user_idx)
+		FROM embedded_user
+		GROUP BY user_idx
+		)
+		) e ON u.user_idx = e.user_idx
+		WHERE u.user_idx = #{userIdx}
+	</select>
 	<!-- 10.컴퍼니 상태 업데이트 -->
 	<update id="updateCompanyStatus" parameterType="map">
 		update users
@@ -248,7 +257,8 @@
 		SEQ_EMBED_USER.NEXTVAL,
 		#{userIdx},
 		#{startDate},
-		#{endDate, jdbcType=DATE}, 
+		#{endDate,
+		jdbcType=DATE},
 		#{reason}
 		)
 	</insert>
@@ -278,16 +288,17 @@
 	</select>
 
 	<!-- 14. CERT 승인될떄 -->
-<update id="updateCertDetail">
-    UPDATE cert
-    SET 
-        get_date = TO_DATE(SUBSTR(#{get_date, jdbcType=VARCHAR}, 1, 10), 'YYYY-MM-DD'),
-        cert_from = #{cert_from, jdbcType=VARCHAR},
-        cert_name = #{cert_name, jdbcType=VARCHAR},
-        cert_type='사업자등록증',
-        cert_status = '승인'
-    WHERE user_idx = #{user_idx, jdbcType=NUMERIC}
-</update>
+	<update id="updateCertDetail">
+		UPDATE cert
+		SET
+		get_date = TO_DATE(SUBSTR(#{get_date, jdbcType=VARCHAR}, 1, 10),
+		'YYYY-MM-DD'),
+		cert_from = #{cert_from, jdbcType=VARCHAR},
+		cert_name = #{cert_name, jdbcType=VARCHAR},
+		cert_type='사업자등록증',
+		cert_status = '승인'
+		WHERE user_idx = #{user_idx, jdbcType=NUMERIC}
+	</update>
 	<!-- 15. CERT 추가 -->
 	<insert id="insertCertDetail" parameterType="map">
 		INSERT INTO CERT (
