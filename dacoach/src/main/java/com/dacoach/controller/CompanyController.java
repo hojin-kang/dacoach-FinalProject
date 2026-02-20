@@ -28,10 +28,13 @@ import com.dacoach.model.company.CompanyDTO;
 import com.dacoach.model.company.CompanyProvideDTO;
 import com.dacoach.model.company.CompanyRegionDTO;
 import com.dacoach.model.membership.MembershipDTO;
+import com.dacoach.model.notification.NotificationDTO;
 import com.dacoach.model.users.UsersDTO;
+import com.dacoach.service.chat.ChatService;
 import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.file.FileUpload;
 import com.dacoach.service.membership.MembershipService;
+import com.dacoach.service.notification.NotificationService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -44,7 +47,13 @@ public class CompanyController {
 	private CompanyService companyService;
 	@Autowired MembershipService membershipService;
 	private HashMap<String, Object> m;
-
+	
+	@Autowired
+    private NotificationService notificationService;
+	
+	@Autowired
+	private ChatService chatService;
+	
 	public CompanyController(WebSocketConfig webSocketConfig) {
 		m = new HashMap<String, Object>();
 		this.webSocketConfig = webSocketConfig;
@@ -377,5 +386,32 @@ public class CompanyController {
 		return mav;
 	}
 	
+	@GetMapping("/company/notification/open")
+	public String openNoti(int noti_idx, HttpSession session) {
+	    if (session.getAttribute("user_idx") == null || (Integer) session.getAttribute("user_idx") == 0) {
+	        return "redirect:/needLogin";
+	    }
+	    int user_idx = (Integer) session.getAttribute("user_idx");
 
+	    // 내 알림 맞는지 확인용 조회 (새로 추가)
+	    NotificationDTO n = notificationService.getNotiForUser(noti_idx, user_idx);
+	    if (n == null) return "redirect:/notification";
+
+	    String type = n.getNoti_type();
+	    int provider = n.getProvider_idx();
+	    
+	    
+	    return "";
+	}
+	
+	public int easyNotifi(int Receiver_idx,int provider_idx,String noti_type,String content) {
+		
+		NotificationDTO nt=new NotificationDTO();
+		nt.setReceiver_idx(Receiver_idx);
+		nt.setProvider_idx(provider_idx);
+		nt.setNoti_type(noti_type);
+		nt.setContent(content);
+		
+		return notificationService.insertNotification(nt);
+	}
 }

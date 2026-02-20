@@ -28,7 +28,10 @@ import com.dacoach.mapper.kakaopay.KakaopayMapper;
 import com.dacoach.mapper.membership.MembershipMapper;
 import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
+import com.dacoach.model.notification.NotificationDTO;
+import com.dacoach.service.company.CompanyService;
 import com.dacoach.service.membership.MembershipService;
+import com.dacoach.service.notification.NotificationService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +51,8 @@ public class MembershipApiController {
 	@Autowired
 	private MembershipService membershipService;
 	
-	
+	@Autowired
+    private CompanyController companyController;
 		
 	
 	/**결제요청*/
@@ -80,6 +84,9 @@ public class MembershipApiController {
 			if(dto.getMember_detail_idx()==1) {
 				dto.setMember_detail_idx(2);
 				membershipService.membershipUpdate(dto);
+				
+				companyController.easyNotifi(dto.getUser_idx(),1,  "MEMBERSHIP", "멤버십 결제가 완료되었습니다.");
+				
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -101,6 +108,8 @@ public class MembershipApiController {
 			map.put("status", "취소됨");
 			map.put("tid", kakaoReady.getTid());
 			kakaopayMapper.upPayStatus(map);
+			companyController.easyNotifi((Integer)session.getAttribute("user_idx"),1,  "MEMBERSHIP", "멤버십 결제가 취소 되었습니다");
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -119,6 +128,8 @@ public class MembershipApiController {
 			map.put("status", "실패함");
 			map.put("tid", kakaoReady.getTid());
 			kakaopayMapper.upPayStatus(map);
+			companyController.easyNotifi( (Integer)session.getAttribute("user_idx"), 1,"MEMBERSHIP", "멤버십 결제가 실패 하였습니다");
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -172,7 +183,7 @@ public class MembershipApiController {
 			return new ResponseEntity<String>(msg,HttpStatus.OK);
 		}
 		
-		@Scheduled(cron = "50 53 03 * * *", zone = "Asia/Seoul")
+		@Scheduled(cron = "00 29 11 * * *", zone = "Asia/Seoul")
 		public void memebershipSubscription() {
 			
 			 
@@ -216,11 +227,16 @@ public class MembershipApiController {
 				
 					if(result>0) {
 						membershipService.autoUpdate(mDto.getUser_idx());
+						companyController.easyNotifi(Integer.parseInt(kakaoApprove.getPartner_user_id()),1, 
+								"MEMBERSHIP", "멤버십 정기 결제가 완료 되었습니다/"
+										+ "결제일시:"+kakaoApprove.getApproved_at());
+						
 					}
 					
 		}catch(Exception e) {
 				System.err.println("결제 처리 중 에러 발생 (사용자 ID: " + targetDto.get(i).getUser_idx() + "): " + e.getMessage());
                 e.printStackTrace();
+                companyController.easyNotifi( targetDto.get(i).getUser_idx(),1,"MEMBERSHIP", "결제 처리 중 에러가 발생하였습니다");
 			}
 				}
 				}
@@ -242,11 +258,14 @@ public class MembershipApiController {
 							if(ksr!=null) {
 								//디비에 넣을거 상의
 							membershipService.autoDown(mDto.getUser_idx());
+							companyController.easyNotifi(mDto.getUser_idx(),1, 
+									"MEMBERSHIP", "멤버십 구독 해지가 완료되었습니다");
 						}
 					}
 		}catch(Exception e){
 				System.err.println("구독 해지 중 에러 발생 (사용자 ID: " + downTargetDto.get(i).getUser_idx() + "): " + e.getMessage());
                 e.printStackTrace();
+                companyController.easyNotifi(downTargetDto.get(i).getUser_idx(),1, "MEMBERSHIP", "구독 해지 중 에러가 발생하였습니다");
 			}
 				}
 				
