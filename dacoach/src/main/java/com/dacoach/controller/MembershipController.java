@@ -57,6 +57,7 @@ public class MembershipController {
 		ModelAndView mav=new ModelAndView();
 		
 		try {
+			mav.addObject("downReason", membershipService.downReason());
 			mav.addObject("detail",membershipService.detailInfo(dto.getMember_detail_idx()));
 			mav.addObject("session",session);
 			mav.addObject("dto",dto);

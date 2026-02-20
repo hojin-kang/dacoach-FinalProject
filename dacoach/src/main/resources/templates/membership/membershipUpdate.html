@@ -24,7 +24,16 @@
       </div>
       <div th:if="${dto.member_detail_idx==2}">
       	
-      	 <input th:if="${dto.status==null}" type="button" value="멤버십 해지하기" id="membershipDownBtn"> 
+      	 <input th:if="${dto.status==null}" type="button" value="멤버십 해지하기" id="membershipDownBtn">
+      	 <div class="downReasonDiv" id="downReasonDiv" style="display: none">
+      	 	<form name="fm" th:if="${downReason!=null}">
+      	 		<div th:each="down:${downReason}">
+      	 		<input type="radio" name="downReason" th:value="down.reason_type_idx">[[${down.content}]]
+      	 		<input th:if="${down.content=='기타'}" type="text" name="downReason" placeholder="사유를 입력해주세요">
+      	 		</div>
+      	 		<input type="submit" value="입력">
+      	 	</form>
+      	 </div> 
       	 <input th:unless="${dto.status==null}" type="button" value="멤버십 갱신하기" id="membershipContinueBtn">
       
       </div>
@@ -44,7 +53,9 @@
 	}
 	if(downBtn){
 	downBtn.onclick=function(){
-		location.href='/membership/membershipDown';
+		const downReasonDiv=document.getElementById('downReasonDiv');
+		downReasonDiv.style.dispaly='';
+		//location.href='/membership/membershipDown';
 	}
 	}
 	if(continueBtn){

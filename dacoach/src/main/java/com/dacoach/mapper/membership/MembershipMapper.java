@@ -3,10 +3,13 @@ package com.dacoach.mapper.membership;
 import java.util.*;
 
 import com.dacoach.kakaopay.PayDTO;
+import com.dacoach.model.admin.ReasonTypeDTO;
 import com.dacoach.model.company.AdDTO;
 import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
 public interface MembershipMapper {
+	
+	public List<ReasonTypeDTO> downReason() throws Exception;
 	
 	public int defaultMembership(int idx) throws Exception;
 	
