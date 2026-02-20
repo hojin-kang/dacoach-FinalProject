@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dacoach.kakaopay.PayDTO;
 import com.dacoach.mapper.membership.MembershipMapper;
+import com.dacoach.model.admin.ReasonTypeDTO;
 import com.dacoach.model.company.AdDTO;
 import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
@@ -16,6 +17,10 @@ public class MembershipServiceImple implements MembershipService {
 	
 	@Autowired
 	private MembershipMapper membership;
+	
+	public List<ReasonTypeDTO> downReason() throws Exception{
+		return membership.downReason();
+	}
 	@Override
 	public int defaultMembership(int idx) throws Exception {
 		

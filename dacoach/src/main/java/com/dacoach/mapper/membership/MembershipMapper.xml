@@ -3,7 +3,12 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.dacoach.mapper.membership.MembershipMapper">
-  
+  	
+  	
+  	<select id="downReason">
+  		select * from reason_type where type_name='멤버십'
+  	</select>
+  	
   	<insert id="defaultMembership">
   	insert into membership values (
   	seq_membership.nextval,#{idx},1,sysdate,null,null
