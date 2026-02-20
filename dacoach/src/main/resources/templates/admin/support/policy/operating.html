@@ -47,19 +47,20 @@
             font-weight: 500;
         }
 
-        /* [리스트 헤더] */
+        /* [리스트 헤더 - 유동적 레이아웃 적용] */
         .list-header {
             display: flex;
-            padding: 0 20px 10px;
+            padding: 0 25px 10px;
             border-bottom: 1px solid #eee;
             margin-bottom: 15px;
             font-size: 12px;
             font-weight: 800;
             color: #9ca3af;
             text-align: center;
+            gap: 10px;
         }
 
-        /* [카드형 리스트 스타일] */
+        /* [카드형 리스트 스타일 - 유동적 레이아웃 적용] */
         .policy-item-card {
             display: flex;
             align-items: center;
@@ -70,6 +71,7 @@
             margin-bottom: 12px;
             transition: 0.2s;
             text-align: center;
+            gap: 10px;
         }
 
         .policy-item-card:hover {
@@ -78,37 +80,44 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
         }
 
-        /* 열 너비 설정 */
+        /* 열 너비 설정 - Flex 비율로 유동성 확보 */
         .col-idx {
-            width: 80px;
+            width: 60px;
+            flex-shrink: 0;
             font-weight: 800;
             color: var(--mint-main);
             font-size: 13px;
         }
 
         .col-title {
-            flex: 1;
+            flex: 1; /* 제목이 화면 폭에 맞춰 확장 */
             text-align: left;
             padding: 0 20px;
             font-weight: 700;
             font-size: 15px;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .col-writer {
-            width: 150px;
+            width: 120px;
+            flex-shrink: 0;
             font-weight: 600;
         }
 
-        /* ✨ 추가된 작성일자 CSS ✨ */
         .col-date {
-            width: 120px;
+            width: 110px;
+            flex-shrink: 0;
             color: #9ca3af;
             font-size: 13px;
             font-weight: 500;
         }
 
         .col-manage {
-            width: 200px;
+            width: 180px;
+            flex-shrink: 0;
             display: flex;
             gap: 8px;
             justify-content: center;
@@ -122,6 +131,11 @@
             border-radius: 12px;
             font-size: 11px;
             font-weight: 700;
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* 버튼 스타일 */
@@ -215,7 +229,7 @@
         }
     </style>
 
-    <div class="max-w-[1200px] mx-auto p-10 policy-admin-container">
+    <div class="w-full px-10 py-10 policy-admin-container">
         <div class="admin-top-bar">
             <h1>Policy Management</h1>
             <span class="current-path">Support / Policy & Terms</span>
@@ -247,11 +261,11 @@
 
                 <div class="col-title">
                     <a th:href="@{/admin/support/policy/detail(qna_idx=${p['QNA_IDX']})}" 
-                       th:text="${p['TITLE']}" class="hover:text-[#9dbbb5]"></a>
+                       th:text="${p['TITLE']}" th:title="${p['TITLE']}" class="hover:text-[#9dbbb5]"></a>
                 </div>
 
                 <div class="col-writer">
-                    <span class="author-tag" th:text="${p['LOGIN_ID']}">admin</span>
+                    <span class="author-tag" th:text="${p['LOGIN_ID']}" th:title="${p['LOGIN_ID']}">admin</span>
                 </div>
 
                 <div class="col-date" 

@@ -1,6 +1,93 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<aside class="admin-aside" th:fragment="adminAside">
+<aside class="admin-aside" th:fragment="siteAside">
+    <style>
+        /* 사이드바 기본 레이아웃 */
+        .admin-aside {
+            width: 256px; /* w-64 */
+            min-height: 100vh; /* min-h-screen */
+            background-color: #ffffff; /* bg-white */
+            border-right: 1px solid #e5e7eb; /* border-r border-gray-200 */
+            padding-top: 40px; /* py-10 */
+            padding-bottom: 40px;
+            flex-shrink: 0; /* flex-shrink-0 */
+        }
+
+        .admin-aside__list {
+            display: flex;
+            flex-direction: column; /* flex flex-col */
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* 메뉴 공통 아이템 스타일 */
+        .admin-aside__menu-item, 
+        .admin-aside__trigger {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 16px 40px; /* px-10 py-4 */
+            color: #374151; /* text-gray-700 */
+            font-weight: 500; /* font-medium */
+            text-decoration: none;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-left: 4px solid transparent; /* border-l-4 border-transparent */
+            transition: all 0.3s; /* transition-all duration-300 */
+        }
+
+        /* 마우스 호버 시 */
+        .admin-aside__menu-item:hover,
+        .admin-aside__trigger:hover {
+            background-color: #f0f9f7; /* hover:bg-[#f0f9f7] */
+            color: #4a7c74; /* hover:text-[#4a7c74] */
+            border-left-color: #4a7c74; /* hover:border-[#4a7c74] */
+        }
+
+        /* 활성화된 메뉴 상태 (activeMenu) */
+        .admin-aside__menu-item--active,
+        .admin-aside__trigger--active {
+            background-color: #f0f9f7;
+            color: #4a7c74;
+            border-left-color: #4a7c74;
+            font-weight: 600; /* font-semibold */
+        }
+
+        /* 서브메뉴 레이아웃 */
+        .admin-aside__submenu {
+            background-color: #f9fafb; /* bg-gray-50 */
+            padding-bottom: 8px; /* pb-2 */
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .admin-aside__submenu.hidden {
+            display: none; /* hidden */
+        }
+
+        /* 서브메뉴 개별 링크 */
+        .admin-aside__submenu-link {
+            display: block;
+            padding: 8px 56px; /* px-14 py-2 */
+            font-size: 14px; /* text-sm */
+            color: #4b5563; /* text-gray-600 */
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .admin-aside__submenu-link:hover {
+            color: #4a7c74; /* hover:text-[#4a7c74] */
+        }
+
+        /* 활성화된 서브메뉴 상태 (activeSubmenu) */
+        .admin-aside__submenu-link--active {
+            color: #4a7c74;
+            font-weight: 700; /* font-bold */
+            text-decoration: underline; /* underline */
+        }
+    </style>
 
     <nav>
         <ul class="admin-aside__list">

@@ -17,7 +17,7 @@
             font-family: 'Pretendard', sans-serif;
             color: var(--slate-text);
             background-color: white;
-            min-height: 800px;
+            min-height: 100vh;
         }
 
         /* [상단 헤더 영역] */
@@ -43,29 +43,32 @@
             font-weight: 500;
         }
 
-        /* [리스트 헤더 스타일] */
-        .list-header {
+        /* [유동적 리스트 레이아웃] */
+        .list-header, .refund-item-card {
             display: flex;
-            padding: 0 20px 10px;
+            width: 100%;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+            gap: 10px; /* 각 칸 사이 최소 간격 */
+        }
+
+        .list-header {
+            padding: 0 25px 10px;
             border-bottom: 1px solid #eee;
             margin-bottom: 15px;
             font-size: 12px;
             font-weight: 800;
             color: #9ca3af;
-            text-align: center;
         }
 
-        /* [카드형 리스트 아이템] */
         .refund-item-card {
-            display: flex;
-            align-items: center;
             padding: 18px 25px;
             background-color: white;
             border-radius: 15px;
             border: 1px solid #f3f4f6;
             margin-bottom: 12px;
             transition: 0.2s;
-            text-align: center;
         }
 
         .refund-item-card:hover {
@@ -74,16 +77,18 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
         }
 
-        /* 열 너비 설정 (데이터 비중에 맞게 조절) */
-        .col-order { width: 120px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
-        .col-user { width: 100px; font-weight: 600; }
-        .col-item { flex: 1; text-align: left; padding: 0 20px; font-weight: 700; }
-        .col-amount { width: 120px; font-weight: 800; }
-        .col-reason { width: 180px; }
-        .col-date { width: 130px; color: #9ca3af; font-size: 13px; }
-        .col-manage { width: 120px; }
+        /* [컬럼 설정] 스크롤바 방지를 위해 고정 width 대신 비율(flex)과 % 사용 */
+        .col-order { width: 15%; min-width: 0; font-weight: 800; color: var(--mint-main); font-size: 13px; overflow: hidden; text-overflow: ellipsis; }
+        .col-user  { width: 10%; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+        .col-item  { flex: 1.5; min-width: 0; text-align: left; padding: 0 10px; font-weight: 700; overflow: hidden; }
+        .col-item span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        .col-amount { width: 10%; min-width: 80px; font-weight: 800; flex-shrink: 0; }
+        .col-reason { width: 15%; min-width: 0; flex-shrink: 1; }
+        .col-date   { width: 15%; min-width: 0; color: #9ca3af; font-size: 13px; }
+        .col-manage { width: 110px; flex-shrink: 0; } /* 버튼은 찌그러지면 안 되므로 고정 */
 
-        /* 상태 배지 (환불요청 전용) */
+        /* 상태 배지 */
         .badge-refund {
             background-color: var(--warning-peach);
             color: var(--warning-text);
@@ -92,7 +97,7 @@
             font-size: 11px;
             font-weight: 800;
             display: inline-block;
-            max-width: 150px;
+            max-width: 100%; /* 부모 너비를 넘지 않도록 */
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -109,6 +114,7 @@
             border: none;
             cursor: pointer;
             transition: 0.2s;
+            white-space: nowrap;
         }
 
         .btn-refund-approve:hover {
@@ -124,7 +130,6 @@
             font-style: italic;
         }
 
-        /* [페이징 CSS 추가] */
         .paging-container {
             margin-top: 30px;
             display: flex;
@@ -147,7 +152,7 @@
         }
     </style>
 
-    <div class="max-w-[1250px] mx-auto p-10 refund-admin-container">
+    <div class="w-full px-10 py-8 refund-admin-container">
         <div class="admin-top-bar">
             <h1>Refund Management</h1>
             <span class="current-path">Revenue / Refund Request List</span>
@@ -171,12 +176,12 @@
 
         <div class="refund-list-content">
             <div th:if="${not #lists.isEmpty(refund_list)}" th:each="list : ${refund_list}" class="refund-item-card">
-                <div class="col-order" th:text="${list['partner_order_id']}">ORD-000</div>
+                <div class="col-order" th:title="${list['partner_order_id']}" th:text="${list['partner_order_id']}">ORD-000</div>
                 
-                <div class="col-user" th:text="${list['partner_user_id']}">user01</div>
+                <div class="col-user" th:title="${list['partner_user_id']}" th:text="${list['partner_user_id']}">user01</div>
                 
                 <div class="col-item">
-                    <span th:text="${list['item_name']}" class="truncate">프리미엄 멤버십</span>
+                    <span th:text="${list['item_name']}" th:title="${list['item_name']}">프리미엄 멤버십</span>
                 </div>
                 
                 <div class="col-amount" th:text="${#numbers.formatInteger(list['total'], 0, 'COMMA')} + '원'">
