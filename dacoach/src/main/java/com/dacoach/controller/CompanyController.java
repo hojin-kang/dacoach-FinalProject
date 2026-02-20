@@ -399,9 +399,14 @@ public class CompanyController {
 
 	    String type = n.getNoti_type();
 	    int provider = n.getProvider_idx();
+	    String url="";
+	    switch (type) {
 	    
-	    
-	    return "";
+	    case "MEMBERSHIP": url = "redirect:/membership/membershipForm"; break;
+	   
+	    }
+	    notificationService.notiDelete(noti_idx);
+	    return url;
 	}
 	
 	public int easyNotifi(int Receiver_idx,int provider_idx,String noti_type,String content) {

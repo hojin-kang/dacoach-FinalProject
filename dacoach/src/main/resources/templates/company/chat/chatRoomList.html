@@ -105,7 +105,7 @@
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
 			    
-			    <button type="button" class="quickItem danger" id="leaveRoomBtn">
+			    <button type="button" class="quickItem danger" id="leaveRoomBtn" th:if="${tab != 'CLASS'}">
 			      <img class="qiIcon" src="/img/icon/exit.png">
 			      <span class="qiText">채팅방<br>나가기</span>
 			    </button>
@@ -503,7 +503,7 @@ function makeSystemRow(msg) {
 	
 	  const roomIdx = win.dataset.roomIdx;
 	
-	  const res = await fetch(`/company/chat/room/${roomIdx}/leave`, {
+	  const res = await fetch(`/chat/room/${roomIdx}/leave`, {
 	    method: 'POST',
 	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 	  });
