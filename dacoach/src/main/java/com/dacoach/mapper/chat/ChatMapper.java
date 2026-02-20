@@ -73,4 +73,7 @@ public interface ChatMapper {
     int getAgreeIdx(HashMap<String, Object> map);
     
     int deleteAgree(int agreement_idx);
+    
+    // 안읽은 메세지 개수
+    Integer countUnread(@Param("myIdx") int myIdx);
 }

@@ -244,5 +244,12 @@ public class ChatServiceImple implements ChatService {
 	public Integer findRoom(int myIdx, int targetIdx) {
 	    return chatMapper.findRoom(myIdx, targetIdx);
 	}
+	
+	// 안읽은 메세지 개수
+	@Override
+	public Integer countUnread(int myIdx) {
+	    Integer cnt = chatMapper.countUnread(myIdx);
+	    return (cnt == null) ? 0 : cnt;
+	}
 
 }

@@ -40,7 +40,7 @@ public class MailService {
 			String htmlContent = templateEngine.process("mail/auth", context);
 
 			helper.setText(htmlContent, true);
-			helper.setFrom(new InternetAddress("dacoach@dacoach.com", "다코치 팀", "UTF-8"));
+			helper.setFrom(new InternetAddress("dacoach@dacoach.kr", "다코치 팀", "UTF-8"));
 			// 프로젝트의 src/main/resources/static/img/logo.png
 
 			ClassPathResource logoImage = new ClassPathResource("static/img/logo.png");

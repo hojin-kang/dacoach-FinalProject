@@ -33,4 +33,7 @@ public interface ChatService {
     int deleteMatch(int user_idx, int target_idx);
     
     Integer findRoom(int myIdx, int targetIdx);
+    
+    // 안읽은 메세지 개수
+    Integer countUnread(int myIdx);
 }
