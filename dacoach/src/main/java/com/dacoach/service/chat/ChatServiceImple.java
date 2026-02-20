@@ -248,7 +248,7 @@ public class ChatServiceImple implements ChatService {
 	// 안읽은 메세지 개수
 	@Override
 	public Integer countUnread(int myIdx) {
-	    Integer cnt = chatMapper.countUnread(myIdx);
+	    Integer cnt = chatMapper.countUnreads(myIdx);
 	    return (cnt == null) ? 0 : cnt;
 	}
 

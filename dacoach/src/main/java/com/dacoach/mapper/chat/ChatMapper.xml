@@ -196,7 +196,7 @@
   (user1_idx = #{target_idx} and user2_idx = #{my_idx})
 </select>
 
-<select id="countUnread" resultType="Integer">
+<select id="countUnreads" resultType="Integer">
   SELECT NVL(SUM(
     CASE
       WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1, 0)

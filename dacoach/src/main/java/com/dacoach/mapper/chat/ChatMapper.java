@@ -75,5 +75,5 @@ public interface ChatMapper {
     int deleteAgree(int agreement_idx);
     
     // 안읽은 메세지 개수
-    Integer countUnread(@Param("myIdx") int myIdx);
+    Integer countUnreads(@Param("myIdx") int myIdx);
 }
