@@ -31,7 +31,7 @@
   <div class="sectionHeader">
     <span>실시간 <b class="accent">인기 코치</b></span>
   <div class="infoWrap">
-    <img src="/img/icon/info.png" class="infoIcon" data-tooltip="coach">
+    <img th:src="@{/img/icon/info.png}" class="infoIcon" data-tooltip="coach">
     <div class="infoBubble" data-tooltip-box="coach">
       최근 7일 찜 수가 많은 코치 순으로 선정돼요.
     </div>
@@ -94,7 +94,7 @@
       	<div class="sectionHeader">
     <span>실시간 <b class="accent">인기 분야</b></span>
 	<div class="infoWrap">
-    <img src="/img/icon/info.png" class="infoIcon" data-tooltip="field">
+    <img th:src="@{/img/icon/info.png}" class="infoIcon" data-tooltip="field">
     <div class="infoBubble" data-tooltip-box="field">
       가장 많이 선택된 관심분야 TOP5예요.
     </div>
@@ -134,7 +134,7 @@
       <section class="adBanner">
       <form name="bannerForm" id="bannerForm" action="/company/profile/companyProfileForm" method="post">
       <div id="banner">
-      	<img src="/img/banner/banner.png">
+      	<img th:src="@{/img/banner/banner.png}">
       </div>	
       </form>
       </section>
@@ -143,7 +143,7 @@
       	<div class="sectionHeader">
     <span>실시간 <b class="accent2">인기 클래스</b></span>
 	<div class="infoWrap">
-    <img src="/img/icon/info.png" class="infoIcon" data-tooltip="class">
+    <img th:src="@{/img/icon/info.png}" class="infoIcon" data-tooltip="class">
     <div class="infoBubble" data-tooltip-box="class">
       최근 7일 찜 수가 많은 클래스 순으로 선정돼요.
     </div>
@@ -189,6 +189,7 @@
 <script th:inline="javascript">
   function showBanner(){
     const list = /*[[${list}]]*/ [];
+    const CTX = /*[[@{/}]]*/ "/";
     const banner = document.getElementById('banner');
 
     if(!list || list.length === 0) return;
@@ -196,7 +197,7 @@
     const num = Math.floor(Math.random() * list.length);
 
     banner.innerHTML =
-      '<img src="/uploads/' + list[num].photo + '" onclick="sendForm()">' +
+    	'<img src="' + CTX + 'uploads/' + list[num].photo + '" onclick="sendForm()">' +
       '<input type="hidden" name="idx" value="'+ list[num].member_idx +'">' +
       '<input type="hidden" name="fromName" value="banner">';
   }
