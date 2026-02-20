@@ -208,20 +208,18 @@
 						<div class="reviewSlider">
 							<div class="reviewCards">
 								<!-- 리뷰 1개 -->
-								<div class="reviewCard" style="cursor:pointer;" th:each="r : ${reviewList}" th:onclick="|location.href='@{/coach/reviewDetail(reviewIdx=${r.REVIEW_CLASS_IDX}, classId=${classDTO.class_idx})}'|">
+								<div class="reviewCard" style="cursor: pointer;"
+									th:each="r : ${reviewList}"
+									th:onclick="|location.href='@{/coach/reviewDetail(reviewIdx=${r.REVIEW_CLASS_IDX}, classId=${classDTO.class_idx})}'|">
 									<div class="reviewTop">
 										<!-- 왼쪽: 프로필 사진 + 이름 -->
 										<div class="reviewAuthor">
 											<div class="reviewAvatar">
 												<a class="reviewerLink"
 													th:href="@{/coach/detail(user_idx=${r.REVIEWER_IDX})}">
-													<span
-													th:if="${r.REVIEWER_PHOTO == null or r.REVIEWER_PHOTO == ''}"
-													class="no-media-message"
-													style="width: 40px; height: 40px; border-radius: 50%; font-size: 11px;">👤</span>
-													<img
-													th:if="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''}"
-													th:src="'/uploads/' + ${r.REVIEWER_PHOTO}" alt="reviewer" />
+													<img class="userImg"
+													th:src="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''} ? @{'/uploads/' + ${r.REVIEWER_PHOTO}} : @{/img/profile/defaultProfile.jpg}"
+													alt="reviewer" />
 												</a>
 											</div>
 											<div class="reviewerName" th:text="${r.REVIEWER_NAME}"></div>
@@ -236,7 +234,7 @@
 										</div>
 									</div>
 
-								<!-- 하단: 태그 + 전체보기 -->
+									<!-- 하단: 태그 + 전체보기 -->
 									<div class="reviewBottom">
 										<div class="reviewTag"
 											th:if="${r.TAG != null and r.TAG != ''}" th:text="${r.TAG}"></div>
