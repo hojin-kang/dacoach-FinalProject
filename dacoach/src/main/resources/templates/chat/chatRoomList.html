@@ -97,7 +97,7 @@
 							<img src="/img/icon/dakcoach.png" class="btn-icon">×3<br>매칭<br>신청
 						 </button>
 					</th:block>			    
-			    <a th:href="@{/schedule/create(agreement_idx=${agreement_idx})}" class="quickItem" th:if="${isLeft == false && status == 'MATCHED' && agreement_idx != null}">
+			    <a th:href="@{/schedule/create(agreement_idx=${agreement_idx}, roomIdx=${activeRoom.chatRoomIdx})}" class="quickItem" th:if="${isLeft == false && status == 'MATCHED' && agreement_idx != null}">
 			      <img class="qiIcon" src="/img/icon/calendarPlus.png">
 			      <span class="qiText">일정<br>등록</span>
 			    </a>
@@ -424,6 +424,19 @@ function renderHistory(raw) {
             return;
         }
         if (data.type === 'AGREESUBMIT') {
+            if (data.senderIdx !== myIdx) {
+                // 1. 화면에 메시지 즉시 뿌리기
+                const node = makeSystemRow(data.message);
+                msgBox.appendChild(node);
+                msgBox.scrollTop = msgBox.scrollHeight;
+
+                location.reload(); // 매칭 상태 바뀌면 새로고침해서 버튼 상태 업데이트
+
+            }
+            
+            return;
+        }
+        if (data.type === 'SCHEDULE') {
             if (data.senderIdx !== myIdx) {
                 // 1. 화면에 메시지 즉시 뿌리기
                 const node = makeSystemRow(data.message);
