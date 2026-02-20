@@ -215,7 +215,7 @@
 
         <div class="flex justify-between items-center mb-6">
             <div class="text-gray-400 text-sm font-medium">
-                총 <span class="text-[#9dbbb5] font-bold" th:text="${#lists.size(policyList)}">0</span>건의 정책이 등록되어 있습니다.
+                총 <span class="text-[#9dbbb5] font-bold" th:text="${#lists.size(policyList) ?: 0}">0</span>건의 정책이 등록되어 있습니다.
             </div>
             <button type="button" class="btn-mint" onclick="openPolicyModal()">+ 새 정책 등록</button>
         </div>
@@ -247,7 +247,7 @@
 
                 <div class="col-manage">
                     <button type="button" class="btn-outline"
-                        th:onclick="openPolicyModal([[${p['QNA_IDX']}]], [[${p['TITLE']}]], [[${p['QUESTION']}]], [[${p['LOGIN_ID']}]])">
+                        th:onclick="openPolicyModal([[${p['QNA_IDX']}]], '[[${p['TITLE']}]]', '[[${p['QUESTION']}]]', '[[${p['LOGIN_ID']}]]')">
                         상세보기
                     </button>
                     <button type="button" class="btn-outline"
@@ -259,7 +259,7 @@
             </div>
         </div>
 
-        <div class="paging-container" th:utext="${pageStr}"></div>
+        <div th:unless="${policyList == null || #lists.isEmpty(policyList)}" class="paging-container" th:utext="${pageStr}"></div>
 
         <div class="modal" id="policyModal" onclick="if(event.target == this) closePolicyModal()">
             <div class="modal-box">

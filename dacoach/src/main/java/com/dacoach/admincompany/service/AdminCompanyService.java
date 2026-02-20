@@ -24,7 +24,7 @@ public interface AdminCompanyService {
 	//boolean hasCert(int userIdx);
     
     //클래스 관리
-    List<Map<String, Object>> getClassPage(Map<String, Object> param);
+    List<Map<String, Object>> getClassPage(int startRow,int endRow);
     int getClassTotalCnt();
     Map<String, Object> getClassDetail(int classIdx);
     List<Map<String, Object>> getClassReviews(int classIdx);

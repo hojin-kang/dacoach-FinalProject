@@ -20,8 +20,8 @@ public class AdminAdManagementServiceImple implements AdminAdManagementService {
 	NotificationService notificationService;
 
 	@Override
-	public List<Map<String, Object>> getAdRequestList(Map<String,Object> param) {
-		return admapper.getAdRequestList(param);
+	public List<Map<String, Object>> getAdRequestList(int startRow,int endRow) {
+		return admapper.getAdRequestList(startRow,endRow);
 	}
 	
 

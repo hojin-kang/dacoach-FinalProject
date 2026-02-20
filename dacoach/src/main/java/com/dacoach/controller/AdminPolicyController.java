@@ -1,5 +1,6 @@
 package com.dacoach.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,19 +35,18 @@ public class AdminPolicyController {
 		if (session.getAttribute("loginAdmin") == null) {
 			return "redirect:/admin";
 		}
+		
+		List<Map<String,Object>> policyList = new ArrayList<>();
 
-		int listSize = 5;
+		int listSize = 10;
 		int pageSize = 5;
+		//int policyTotalCnt=0;
 		int totalCnt = service.getNoticeTotalCnt();
-		int startRow = (cp - 1) * listSize + 1;
-		int endRow = cp * listSize;
+		int start = (cp - 1) * listSize + 1;
+		int end = cp * listSize;
 
-		Map<String, Object> map = new HashMap<>();
-		map.put("startRow", startRow);
-		map.put("endRow", endRow);
-		List<Map<String, Object>> policyList = service.getPolicyList(map);
-
-		String pageStr = PageModule.makePage("/admin/support/policy", totalCnt, listSize, pageSize, cp);
+		policyList=service.getPolicyList(start, end);
+		String pageStr = PageModule.makePage("policy", totalCnt, listSize, pageSize, cp);
 
 		model.addAttribute("policyList", policyList);
 		model.addAttribute("pageStr", pageStr);

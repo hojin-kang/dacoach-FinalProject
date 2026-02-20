@@ -35,8 +35,8 @@ public class AdminPolicyServiceImple implements AdminPolicyService {
 	}
 
 	@Override
-	public List<Map<String,Object>> getPolicyList(Map<String, Object>param) {
-		return mapper.getNoticeList(param);
+	public List<Map<String,Object>> getPolicyList(int start,int end) {
+		return mapper.getPolicyList(start,end);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import com.dacoach.model.adminPolicy.PolicyDTO;
 
 @Mapper
 public interface AdminPolicyMapper {
-    List<Map<String,Object>> getPolicyList(Map<String,Object>param);
+    List<Map<String,Object>> getPolicyList(int start,int end);
     int insertPolicy(PolicyDTO policy);
     int updatePolicy(PolicyDTO policy); 
     int deletePolicy(int qna_idx);

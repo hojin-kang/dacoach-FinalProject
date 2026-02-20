@@ -7,41 +7,42 @@
 	namespace="com.dacoach.mapper.admin.company.AdminCompanyMapper">
 
 	<!-- 1. 클래스 목록 (페이징) -->
-	<select id="selectClassPage" parameterType="map"
-		resultType="map">
+	<select id="selectClassPage" resultType="map">
   <![CDATA[
-  SELECT *
-  FROM (
-    SELECT
-      c.CLASS_IDX,
-      c.TITLE,
-      c.CREATED_AT,
-      c.PHOTO,
-      c.START_DATE,
-      c.END_DATE,
-      c.VIDEO,
-      u.USER_NAME AS PROVIDER_NAME,
-      NVL(r.AVG_RATING, 0) AS AVG_RATING,
-      NVL(r.REVIEW_COUNT, 0) AS REVIEW_COUNT,
-      CASE
-        WHEN c.START_DATE IS NOT NULL AND SYSDATE < c.START_DATE THEN '예정'
-        WHEN c.END_DATE IS NOT NULL AND SYSDATE > c.END_DATE THEN '종료'
-        ELSE '진행중'
-      END AS PROGRESS_STATUS,
-      ROW_NUMBER() OVER (ORDER BY c.CLASS_IDX DESC) AS RN
-    FROM CLASS c
-    LEFT JOIN USERS u ON u.USER_IDX = c.PROVIDER_IDX
-    LEFT JOIN (
+  SELECT * FROM (
+    SELECT rownum rnum, a.* FROM (
       SELECT
-        CLASS_IDX,
-        ROUND(AVG(RATING), 1) AS AVG_RATING,
-        COUNT(*) AS REVIEW_COUNT
-      FROM REVIEW_CLASS
-      GROUP BY CLASS_IDX
-    ) r ON r.CLASS_IDX = c.CLASS_IDX
-  ) t
-  WHERE t.RN BETWEEN #{startRow} AND #{endRow}]]>
-	</select>
+        c.CLASS_IDX,
+        c.TITLE,
+        c.CREATED_AT,
+        c.PHOTO,
+        c.START_DATE,
+        c.END_DATE,
+        c.VIDEO,
+        u.USER_NAME AS PROVIDER_NAME,
+        NVL(r.AVG_RATING, 0) AS AVG_RATING,
+        NVL(r.REVIEW_COUNT, 0) AS REVIEW_COUNT,
+        CASE
+          WHEN c.START_DATE IS NOT NULL AND SYSDATE < c.START_DATE THEN '예정'
+          WHEN c.END_DATE IS NOT NULL AND SYSDATE > c.END_DATE THEN '종료'
+          ELSE '진행중'
+        END AS PROGRESS_STATUS
+      FROM CLASS c
+      LEFT JOIN USERS u ON u.USER_IDX = c.PROVIDER_IDX
+      LEFT JOIN (
+        SELECT
+          CLASS_IDX,
+          ROUND(AVG(RATING), 1) AS AVG_RATING,
+          COUNT(*) AS REVIEW_COUNT
+        FROM REVIEW_CLASS
+        GROUP BY CLASS_IDX
+      ) r ON r.CLASS_IDX = c.CLASS_IDX
+      ORDER BY c.CLASS_IDX DESC
+    ) a
+  ) 
+  WHERE rnum BETWEEN #{startRow} AND #{endRow}
+  ]]>
+</select>
 
 	<!-- 2. 클래스 전체 개수 -->
 	<select id="countClassTotal" resultType="int">
