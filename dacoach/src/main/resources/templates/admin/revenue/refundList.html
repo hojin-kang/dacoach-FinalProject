@@ -123,6 +123,28 @@
             color: #d1d5db;
             font-style: italic;
         }
+
+        /* [페이징 CSS 추가] */
+        .paging-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .paging-container a, .paging-container b {
+            padding: 8px 14px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #999;
+            font-weight: bold;
+        }
+
+        .paging-container b {
+            background: var(--mint-main);
+            color: white;
+        }
     </style>
 
     <div class="max-w-[1250px] mx-auto p-10 refund-admin-container">
@@ -133,7 +155,7 @@
 
         <div class="flex justify-between items-center mb-6 px-2">
             <div class="text-gray-400 text-sm font-medium">
-                대기 중인 환불 요청: <span class="text-[#9dbbb5] font-bold" th:text="${#lists.size(refund_list)}">0</span>건
+                대기 중인 환불 요청: <span class="text-[#9dbbb5] font-bold" th:text="${#lists.size(refund_list) ?: 0}">0</span>건
             </div>
         </div>
 
@@ -182,6 +204,9 @@
                 현재 승인 대기 중인 환불 요청이 없습니다.
             </div>
         </div>
+
+        <div th:unless="${refund_list == null || #lists.isEmpty(refund_list)}" class="paging-container" th:utext="${pageStr}"></div>
+
     </div>
 
     <script th:inline="javascript">

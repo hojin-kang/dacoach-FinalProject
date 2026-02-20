@@ -21,9 +21,9 @@ public class AdminRefundServiceImple implements AdminRefundService{
 	@Autowired
 	private KakaoPayService kakaoPayService;
 	@Override
-	public List<Map<String, Object>> getRefundList() {
+	public List<Map<String, Object>> getRefundList(int startRow,int endRow) {
 		try {
-			return kakakaoMapper.selectRefundList();
+			return kakakaoMapper.selectRefundList(startRow,endRow);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<>();
@@ -61,6 +61,11 @@ public class AdminRefundServiceImple implements AdminRefundService{
 		}
 		
 		return "FAIL";
+	}
+
+	@Override
+	public int getRefundTotalCnt() {
+		return kakakaoMapper.getRefundTotalCnt();
 	}
 
 }

@@ -70,20 +70,36 @@
   </select>
   
   <select id="selectRefundList" resultType="map">
-    select
-        p.partner_order_id  as "partner_order_id",
-        p.partner_user_id   as "partner_user_id",
-        p.item_name         as "item_name",
-        p.total             as "total",
-        p.approved_at       as "approved_at",
-        p.pay_idx           as "pay_idx",
-        ps.tid              as "tid",
-        ps.status           as "status",
-        ps.payload          as "payload"
-    from pay_status ps
-    join pay p on ps.tid = p.tid
-    where ps.status = '환불요청'
+    <![CDATA[
+    SELECT * FROM (
+        SELECT rownum rnum, a.* FROM (
+            SELECT
+                p.partner_order_id  as "partner_order_id",
+                p.partner_user_id   as "partner_user_id",
+                p.item_name         as "item_name",
+                p.total             as "total",
+                p.approved_at       as "approved_at",
+                p.pay_idx           as "pay_idx",
+                ps.tid              as "tid",
+                ps.status           as "status",
+                ps.payload          as "payload"
+            FROM pay_status ps
+            JOIN pay p ON ps.tid = p.tid
+            WHERE ps.status = '환불요청'
+            ORDER BY p.pay_idx DESC
+        ) a
+    )
+    WHERE rnum BETWEEN #{startRow} AND #{endRow}
+    ]]>
 </select>
+
+<select id="getRefundTotalCnt" resultType="int">
+    SELECT COUNT(*)
+    FROM pay_status ps
+    JOIN pay p ON ps.tid = p.tid
+    WHERE ps.status = '환불요청'
+</select>
+
   
   <select id="selectPayStatus" resultType="com.dacoach.kakaopay.PayDTO">
   	select 
