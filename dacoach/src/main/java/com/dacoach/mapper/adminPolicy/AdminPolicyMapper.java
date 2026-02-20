@@ -3,6 +3,7 @@ package com.dacoach.mapper.adminPolicy;
 import java.util.*;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.dacoach.model.adminPolicy.PolicyDTO;
 
@@ -13,7 +14,9 @@ public interface AdminPolicyMapper {
     int updatePolicy(PolicyDTO policy); 
     int deletePolicy(int qna_idx);
     PolicyDTO getLatestPolicy();
-    List<Map<String,Object>> getNoticeList(Map<String, Object>param);
+    List<Map<String,Object>> getNoticeList(@Param("type") String type,
+    		@Param("startRow")int startRow,
+    		@Param("endRow")int endRow);
     int getNoticeTotalCnt();
-    int getNoticeAllCnt();
+    int getNoticeAllCnt(String type);
 }

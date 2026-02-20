@@ -78,29 +78,31 @@
 		) where ROWNUM = 1
 	</select>
 
-	<!-- 공지사항 목록 페이징 (수정) -->
-	<select id="getNoticeList" parameterType="map" resultType="map">
-<![CDATA[
-SELECT * FROM (
-    SELECT 
-        q.qna_idx       AS "QNA_IDX",
-        q.title         AS "TITLE",
-        q.qna_type      AS "QNA_TYPE",
-        q.created_at    AS "CREATED_AT",
-        u.login_id      AS "LOGIN_ID",
-        ROW_NUMBER() OVER (ORDER BY q.qna_idx DESC) AS RN
-    FROM qna q
-    LEFT JOIN users u ON q.user_idx = u.user_idx
-    WHERE q.qna_type IN ('서비스', '안내', '이벤트', '점검')
-) t
-WHERE t.RN BETWEEN #{startRow} AND #{endRow}
-]]>
-	</select>
+	<select id="getNoticeList" resultType="map">
+  <![CDATA[
+  SELECT * FROM (
+    SELECT ROWNUM rnum, a.* FROM (
+      SELECT
+        q.qna_idx    AS "qna_idx",
+        q.title      AS "title",
+        q.qna_type   AS "qna_type",
+        q.question   AS "question",
+        q.created_at AS "created_at"
+      FROM qna q
+      WHERE q.qna_type = #{type}
+      ORDER BY q.qna_idx DESC
+    ) a
+    WHERE ROWNUM <= #{endRow}
+  )
+  WHERE rnum >= #{startRow}
+  ]]>
+</select>
 
 	<!-- 공지사항 전체 개수 -->
 	<select id="getNoticeAllCnt" resultType="int">
-		SELECT COUNT(*) FROM qna
-		WHERE qna_type IN ('서비스', '안내', '이벤트', '점검')
+		SELECT COUNT(*)
+		FROM qna 
+		WHERE qna_type=#{type}
 	</select>
 
 	<!-- 운영정책 전체 개수 -->

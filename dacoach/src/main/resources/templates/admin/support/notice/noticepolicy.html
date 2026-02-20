@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="contentPage">
-	<style>
-/* [사용자용 공지사항 - 민트 테마] */
+<head>
+<meta charset="UTF-8">
+<title>공지사항 - 다코치</title>
+
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/header.css}" />
+<link rel="stylesheet" th:href="@{/css/footer.css}" />
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
 :root {
 	--mint-bg: #f0f8f7;
 	--mint-main: #9dbbb5;
@@ -17,14 +26,13 @@
 	min-height: 800px;
 }
 
-/* [상단 헤더] */
 .notice-top-bar {
 	display: flex;
 	align-items: flex-end;
 	gap: 15px;
 	padding-bottom: 20px;
 	border-bottom: 3px solid var(--mint-bg);
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 }
 
 .notice-top-bar h1 {
@@ -40,7 +48,32 @@
 	font-weight: 500;
 }
 
-/* [리스트 헤더] */
+/* 카테고리 탭 */
+.category-tabs {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+.category-tab {
+	padding: 8px 22px;
+	border-radius: 20px;
+	border: 2px solid var(--mint-main);
+	color: var(--mint-main);
+	background-color: white;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: 0.2s;
+	text-decoration: none;
+}
+
+.category-tab:hover, .category-tab.active {
+	background-color: var(--mint-main);
+	color: white;
+}
+
+/* 리스트 스타일 */
 .list-header {
 	display: flex;
 	padding: 0 20px 10px;
@@ -52,7 +85,6 @@
 	text-align: center;
 }
 
-/* [공지사항 카드] */
 .notice-item-card {
 	display: flex;
 	align-items: center;
@@ -72,12 +104,11 @@
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
 }
 
-/* 열 너비 */
+/* 컬럼 너비 */
 .col-idx {
 	width: 80px;
 	font-weight: 800;
 	color: var(--mint-main);
-	font-size: 13px;
 }
 
 .col-type {
@@ -89,16 +120,14 @@
 	text-align: left;
 	padding: 0 20px;
 	font-weight: 700;
-	font-size: 15px;
 }
 
 .col-date {
 	width: 130px;
 	color: #9ca3af;
-	font-size: 13px;
 }
 
-/* 타입 배지 */
+/* 배지 스타일 */
 .type-badge {
 	padding: 4px 12px;
 	border-radius: 12px;
@@ -126,7 +155,25 @@
 	color: #991b1b;
 }
 
-/* [모달 - 읽기 전용] */
+/* 페이징 */
+.pagination-wrap {
+	text-align: center;
+	margin-top: 40px;
+	font-size: 15px;
+}
+
+.pagination-wrap a {
+	color: var(--slate-text);
+	text-decoration: none;
+	padding: 5px 10px;
+}
+
+.pagination-wrap a:hover {
+	color: var(--mint-main);
+	font-weight: 800;
+}
+
+/* 읽기 모달 */
 .modal {
 	display: none;
 	position: fixed;
@@ -157,89 +204,85 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 25px;
-	padding-bottom: 20px;
 	border-bottom: 2px solid var(--mint-bg);
-}
-
-.modal-type {
-	display: inline-block;
-	margin-bottom: 10px;
-}
-
-.modal-title-text {
-	font-size: 22px;
-	font-weight: 900;
-	color: var(--slate-text);
-	margin-bottom: 15px;
-}
-
-.modal-date {
-	font-size: 13px;
-	color: #9ca3af;
+	padding-bottom: 20px;
 }
 
 .modal-content {
 	line-height: 1.8;
-	color: var(--slate-text);
-	white-space: pre-wrap;
 	padding: 20px 0;
+	white-space: pre-wrap;
 }
 
 .btn-close {
-	background-color: var(--mint-main);
+	background: var(--mint-main);
 	color: white;
-	padding: 12px 30px;
-	border-radius: 12px;
-	font-weight: 900;
-	border: none;
-	cursor: pointer;
-	transition: 0.2s;
 	width: 100%;
-	margin-top: 20px;
-}
-
-.btn-close:hover {
-	background-color: var(--mint-dark);
+	padding: 12px;
+	border-radius: 12px;
+	border: none;
+	font-weight: 900;
+	cursor: pointer;
 }
 </style>
+</head>
+<body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
 
-	<div class="max-w-[1200px] mx-auto p-10 notice-container">
-		<div class="notice-top-bar">
-			<h1>공지사항</h1>
-			<span class="current-path">Notice</span>
-		</div>
+	<main class="notice-container">
+		<div class="max-w-[1200px] mx-auto p-10"
+			style="width: 1200px; margin: 0 auto; padding: 40px;">
+			<div class="notice-top-bar">
+				<h1>공지사항</h1>
+				<span class="current-path">Notice Policy</span>
+			</div>
 
-		<div class="list-header">
-			<div class="col-idx">번호</div>
-			<div class="col-type">유형</div>
-			<div class="col-title">제목</div>
-			<div class="col-date">등록일</div>
-		</div>
+			<div class="category-tabs">
+				<a th:href="@{/admin/noticepolicy(type='서비스')}" class="category-tab"
+					th:classappend="${type == '서비스' ? 'active' : ''}">서비스</a> <a
+					th:href="@{/admin/noticepolicy(type='안내')}" class="category-tab"
+					th:classappend="${type == '안내' ? 'active' : ''}">안내</a> <a
+					th:href="@{/admin/noticepolicy(type='이벤트')}" class="category-tab"
+					th:classappend="${type == '이벤트' ? 'active' : ''}">이벤트</a> <a
+					th:href="@{/admin/noticepolicy(type='점검')}" class="category-tab"
+					th:classappend="${type == '점검' ? 'active' : ''}">점검</a>
+			</div>
 
-		<div class="notice-content">
-			<div th:if="${#lists.isEmpty(noticeList)}"
-				class="py-32 text-center text-gray-300 italic">
-				<i class="fa-regular fa-bell mb-3 block text-5xl opacity-20"></i>
-				등록된 공지사항이 없습니다.
+			<div class="list-header">
+				<div class="col-idx">번호</div>
+				<div class="col-type">유형</div>
+				<div class="col-title">제목</div>
+				<div class="col-date">등록일</div>
+			</div>
+
+			<div class="notice-content">
+				<div th:if="${#lists.isEmpty(noticeList)}"
+					class="py-32 text-center text-gray-300 italic"
+					style="padding: 100px 0; text-align: center; color: #ccc;">
+					<i class="fa-regular fa-bell"
+						style="font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.3;"></i>
+					등록된 공지사항이 없습니다
+				</div>
+
+				<div th:if="${not #lists.isEmpty(noticeList)}"
+					th:each="n : ${noticeList}" class="notice-item-card"
+					th:onclick="openNoticeModal([[${n['qna_type']}]], [[${n['title']}]], [[${n['question']}]], [[${n['created_at']}]])">
+					<div class="col-idx" th:text="${n['RNUM']}"></div>
+					<div class="col-type">
+						<span class="type-badge"
+							th:classappend="'type-' + ${n['qna_type']}"
+							th:text="${n['qna_type']}"></span>
+					</div>
+					<div class="col-title" th:text="${n['title']}"></div>
+					<div class="col-date"
+						th:text="${#dates.format(n['created_at'], 'yyyy-MM-dd')}"></div>
+				</div>
 			</div>
 
 			<div th:if="${not #lists.isEmpty(noticeList)}"
-				th:each="n : ${noticeList}" class="notice-item-card"
-				th:onclick="openNoticeModal([[${n.qna_type}]], [[${n.title}]], [[${n.question}]], [[${n.created_at}]])">
-
-				<div class="col-idx" th:text="${n.qna_idx}"></div>
-				<div class="col-type">
-					<span class="type-badge" th:classappend="'type-' + ${n.qna_type}"
-						th:text="${n.qna_type}"></span>
-				</div>
-				<div class="col-title" th:text="${n.title}"></div>
-				<div class="col-date"
-					th:text="${#dates.format(n.created_at, 'yyyy-MM-dd')}"></div>
-			</div>
+				class="pagination-wrap" th:utext="${pageStr}"></div>
 		</div>
 
-		<!-- 읽기 전용 모달 -->
 		<div class="modal" id="noticeModal"
 			onclick="if(event.target == this) closeNoticeModal()">
 			<div class="modal-box">
@@ -248,46 +291,40 @@
 						<div class="modal-type">
 							<span class="type-badge" id="modalType">서비스</span>
 						</div>
-						<div class="modal-title-text" id="modalTitle">공지사항 제목</div>
-						<div class="modal-date" id="modalDate">2024-02-18</div>
+						<div class="modal-title-text" id="modalTitle"
+							style="font-size: 20px; font-weight: 900; margin: 10px 0;">제목</div>
+						<div class="modal-date" id="modalDate"
+							style="color: #9ca3af; font-size: 13px;">2026-02-21</div>
 					</div>
 					<button type="button" onclick="closeNoticeModal()"
-						style="border: none; background: none; cursor: pointer; font-size: 28px; color: #ccc; margin-left: 20px;">&times;</button>
+						style="border: none; background: none; font-size: 30px; cursor: pointer; color: #ccc;">&times;</button>
 				</div>
-
-				<div class="modal-content" id="modalContent">공지사항 내용이 여기에
-					표시됩니다.</div>
-
-				<button type="button" class="btn-close" onclick="closeNoticeModal()">닫기</button>
+				<div class="modal-content" id="modalContent">내용</div>
+				<button type="button" class="btn-close" onclick="closeNoticeModal()">확인</button>
 			</div>
 		</div>
-	</div>
+	</main>
+
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
 
 	<script th:inline="javascript">
-    function openNoticeModal(qnaType, title, content, createdAt) {
-        const modal = document.getElementById('noticeModal');
-        
-        // 타입 배지 설정
-        const typeBadge = document.getElementById('modalType');
-        typeBadge.textContent = qnaType;
-        typeBadge.className = 'type-badge type-' + qnaType;
-        
-        document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalContent').textContent = content;
-        
-        // 날짜 포맷팅
-        const date = new Date(createdAt);
-        const formattedDate = date.getFullYear() + '-' + 
-                              String(date.getMonth() + 1).padStart(2, '0') + '-' + 
-                              String(date.getDate()).padStart(2, '0');
-        document.getElementById('modalDate').textContent = formattedDate;
-        
-        modal.classList.add('show');
-    }
-    
-    function closeNoticeModal() {
-        document.getElementById('noticeModal').classList.remove('show');
-    }
+        function openNoticeModal(qnaType, title, content, createdAt) {
+            const modal = document.getElementById('noticeModal');
+            document.getElementById('modalType').textContent = qnaType;
+            document.getElementById('modalType').className = 'type-badge type-' + qnaType;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalContent').textContent = content || '내용이 없습니다.';
+
+            const date = new Date(createdAt);
+            document.getElementById('modalDate').textContent = 
+                date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+            
+            modal.classList.add('show');
+        }
+
+        function closeNoticeModal() {
+            document.getElementById('noticeModal').classList.remove('show');
+        }
     </script>
-</div>
+</body>
 </html>
