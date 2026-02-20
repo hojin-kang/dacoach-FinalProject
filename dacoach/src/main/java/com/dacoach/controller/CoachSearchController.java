@@ -180,6 +180,7 @@ public class CoachSearchController {
 	 	        result.put("status", "login_required");
 	 	        return result;
 	 	    }
+	 	    //알림에 들어갈 유저 이름 조회
 	 	   String myName="";
 	 	    try {
 				myName=coachService.getUserInfo(me).getUser_name();
@@ -214,26 +215,54 @@ public class CoachSearchController {
 		 	    }
 	 	    }
 			
-	 	   
-	 	    
 	 	    //채팅 및 매칭 수락
 	 	    try {
 				CoachDTO coach=coachService.getCoachInfo(me);
 	 	        if (type.equals("A_CHAT")) {
+	 	        // 2. 토큰 체크
+		 	        CoachDTO coachInfo = coachService.getCoachInfo(me);
+		 	        int mytoken = (coachInfo != null) ? coachInfo.getToken_balance() : 0;
+
+		 	        if (type.equals("A_CHAT") && mytoken < 1) {
+		 	            result.put("status", "no_token");
+		 	            return result;
+		 	        } else if (!type.equals("A_CHAT") && mytoken < 3) {
+		 	            result.put("status", "no_token");
+		 	            return result;
+		 	        }
 	 	        	int chatOk=coachSearchService.acceptChat(me, target_idx);
 	 	        	coachSearchService.useTokens(me, type.equals("A_CHAT") ? 1 : 3);
+	 	        // 4. token_history 데이터 삽입
+		 	        coachSearchService.addTokenHistory(me, type.equals("A_CHAT")?"채팅 수락":"매칭 수락", type.equals("A_CHAT")?-1:-3, type.equals("A_CHAT")?mytoken-1:mytoken-3);
+		 	        result.put("status", "success");
 	 	        	//채팅방 개설
 	 	        	if(chatOk>0) {
 	 	        		chatService.getOrCreateRoom(me, target_idx);
+	 	        		
+	 	        		
 	 	        	}
 	 	            result.put("status", "chat_accepted");
 	 	            return result;
 	 	        }
 	 	        if (type.equals("A_MATCH")) {
+	 	        // 2. 토큰 체크
+		 	        CoachDTO coachInfo = coachService.getCoachInfo(me);
+		 	        int mytoken = (coachInfo != null) ? coachInfo.getToken_balance() : 0;
+
+		 	        if (type.equals("A_CHAT") && mytoken < 1) {
+		 	            result.put("status", "no_token");
+		 	            return result;
+		 	        } else if (!type.equals("A_CHAT") && mytoken < 3) {
+		 	            result.put("status", "no_token");
+		 	            return result;
+		 	        }
 	 	        	int matchOk=coachSearchService.acceptMatch(me, target_idx);
-	 	        	coachSearchService.useTokens(me, type.equals("A_MATCH") ? 1 : 3);
+	 	        	coachSearchService.useTokens(me, type.equals("A_CHAT") ? 1 : 3);
+	 	        	coachSearchService.addTokenHistory(me, type.equals("A_CHAT")?"채팅 수락":"매칭 수락", type.equals("A_CHAT")?-1:-3, type.equals("A_CHAT")?mytoken-1:mytoken-3);
 	 	        	if(matchOk>0) {
 	 	        		chatService.getOrCreateRoom(me, target_idx);
+	 	        		
+	 	        		
 	 	        	}
 	 	        	if(roomIdx!=0) {
 	 		 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
