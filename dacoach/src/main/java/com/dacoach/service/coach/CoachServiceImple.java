@@ -373,4 +373,9 @@ public class CoachServiceImple implements CoachService {
 		return result;
 	}
 
+	@Override
+	public UsersDTO getUserInfo(int user_idx) throws Exception {
+		return coachMapper.getUserInfo(user_idx);
+	}
+
 }

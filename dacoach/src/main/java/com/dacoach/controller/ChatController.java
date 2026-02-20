@@ -76,7 +76,6 @@ public class ChatController {
 
 		model.addAttribute("rooms", chatService.listRooms(my));
 		ChatRoomDTO activeRoom = chatService.selectRoomByIdx(roomIdx, my);
-		
 		int target_idx=activeRoom.getOtherIdx();
 		
 		boolean isLeft=chatService.isLeft(roomIdx, my);

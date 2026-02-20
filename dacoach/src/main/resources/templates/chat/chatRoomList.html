@@ -82,7 +82,7 @@
           <div class="chatInputRow">
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
-			    <a th:href="@{/dicipline(target_idx=${activeRoom.otherIdx})}" class="quickItem" th:if="${isLeft == false && status == 'MATCHED'}">
+			    <a th:href="@{/dicipline(target_idx=${activeRoom.otherIdx},roomIdx=${activeRoom.chatRoomIdx})}" class="quickItem" th:if="${isLeft == false && status == 'MATCHED'}">
 			      <img class="qiIcon" src="/img/icon/write.png">
 			      <span class="qiText">서약<br>하기</span>
 			    </a>
@@ -398,6 +398,32 @@ function renderHistory(raw) {
             return;
         }
         if (data.type === 'A_MATCH') {
+            if (data.senderIdx !== myIdx) {
+                // 1. 화면에 메시지 즉시 뿌리기
+                const node = makeSystemRow(data.message);
+                msgBox.appendChild(node);
+                msgBox.scrollTop = msgBox.scrollHeight;
+
+                location.reload(); // 매칭 상태 바뀌면 새로고침해서 버튼 상태 업데이트
+
+            }
+            
+            return;
+        }
+        if (data.type === 'AGREEACCEPT') {
+            if (data.senderIdx !== myIdx) {
+                // 1. 화면에 메시지 즉시 뿌리기
+                const node = makeSystemRow(data.message);
+                msgBox.appendChild(node);
+                msgBox.scrollTop = msgBox.scrollHeight;
+
+                location.reload(); // 매칭 상태 바뀌면 새로고침해서 버튼 상태 업데이트
+
+            }
+            
+            return;
+        }
+        if (data.type === 'AGREESUBMIT') {
             if (data.senderIdx !== myIdx) {
                 // 1. 화면에 메시지 즉시 뿌리기
                 const node = makeSystemRow(data.message);

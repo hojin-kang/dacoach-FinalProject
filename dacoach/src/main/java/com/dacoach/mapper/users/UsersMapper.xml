@@ -33,4 +33,5 @@
         set status = 'ACTIVE'
         where user_idx = #{user_idx}
     </update>
+
 </mapper>

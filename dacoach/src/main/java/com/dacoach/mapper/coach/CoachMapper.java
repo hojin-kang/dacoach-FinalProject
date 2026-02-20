@@ -111,4 +111,6 @@ public interface CoachMapper {
     public List<ScheduleDTO> getSchedule(int agreement_idx) throws Exception;
     
     int deleteAgree(HashMap map) throws Exception;
+    
+    public UsersDTO getUserInfo(int user_idx) throws Exception;
 }
