@@ -1,4 +1,4 @@
-package com.dacoach.adminad.service;
+package com.dacoach.service.adminad;
 
 import java.util.*;
 public interface AdminAdManagementService {

@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.dacoach.adminRegions.service.AdminRegionsService;
 import com.dacoach.majorregion.model.MajorRegionDTO;
 import com.dacoach.minorregion.model.MinorRegionDTO;
+import com.dacoach.service.adminRegions.AdminRegionsService;
 
 @Controller
 @RequestMapping("/admin/filter")

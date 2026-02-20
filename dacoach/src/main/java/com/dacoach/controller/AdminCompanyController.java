@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.dacoach.admincompany.service.AdminCompanyService;
 import com.dacoach.model.admin.EmbeddedUserDTO;
 import com.dacoach.page.PageModule;
+import com.dacoach.service.admincompany.AdminCompanyService;
 
 import jakarta.servlet.http.HttpSession;
 
