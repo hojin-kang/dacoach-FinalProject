@@ -74,5 +74,7 @@ public interface CoachService {
     public List<ScheduleDTO> getSchedule(int agreement_idx) throws Exception;
     
     public int deleteAgree(int user_idx, int target_idx) throws Exception;
+    
+    public UsersDTO getUserInfo(int user_idx) throws Exception;
 
 }

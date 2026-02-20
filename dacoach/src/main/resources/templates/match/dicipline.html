@@ -159,6 +159,7 @@
 
          <form th:action="@{/dicipline/submit}" method="post" th:if="${status == 'none'}" class="pledge-form">
             <input type="hidden" name="receiver_idx" th:value="${target_idx}" />
+            <input type="hidden" name="roomIdx" th:value="${roomIdx}" />
             <textarea name="content" class="pledge-textarea" placeholder="서약 내용을 상세히 입력하세요.&#10;(엔터를 입력하여 줄을 바꿀 수 있습니다.)" required></textarea>
             <button type="submit" class="btn-submit">서약서 제출 및 요청</button>
          </form>
@@ -181,6 +182,7 @@
                   </div>
                </div>
                <input type="hidden" name="agreement_idx" th:value="${dto.agreement_idx}">
+               <input type="hidden" name="roomIdx" th:value="${roomIdx}" />
                <button type="submit" class="btn-submit" style="background-color: #ff9f43; width: 100%;">위 내용에 동의합니다</button>
             </form>
          </div>

@@ -446,4 +446,8 @@
 	  or
 	  (receiver_idx = #{user_idx} and writer_idx = #{target_idx})
 	 </delete>
+	<select id="getUserInfo" parameterType="int" resultType="com.dacoach.model.users.UsersDTO">
+        select * from users
+        where user_idx = #{user_idx}
+    </select>
 </mapper>

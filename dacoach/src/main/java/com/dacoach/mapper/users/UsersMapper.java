@@ -11,4 +11,5 @@ public interface UsersMapper {
 	public List<UsersDTO> getExpiredLogs(int user_idx) throws Exception;
 	public int changeStatusToActive(int user_idx) throws Exception;
 	
+	
 }

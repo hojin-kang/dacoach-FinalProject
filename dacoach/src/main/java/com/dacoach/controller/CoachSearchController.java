@@ -22,11 +22,13 @@ import com.dacoach.service.chat.ChatService;
 import com.dacoach.service.coach.CoachService;
 import com.dacoach.service.coachSearch.CoachSearchService;
 import com.dacoach.service.review.ReviewService;
-
+import com.dacoach.service.users.UsersServiceImple;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CoachSearchController {
+
+    private final UsersServiceImple usersServiceImple;
 		@Autowired
 		private CoachService coachService;
 		@Autowired
@@ -37,6 +39,10 @@ public class CoachSearchController {
 		private ChatService chatService;
 		@Autowired
 		private SimpMessagingTemplate messagingTemplate;
+
+    CoachSearchController(UsersServiceImple usersServiceImple) {
+        this.usersServiceImple = usersServiceImple;
+    }
 		
 	 	@GetMapping("/coach/search")
 	public ModelAndView coachSearchForm(@RequestParam(value="cp", defaultValue = "1") int cp,
@@ -174,6 +180,13 @@ public class CoachSearchController {
 	 	        result.put("status", "login_required");
 	 	        return result;
 	 	    }
+	 	   String myName="";
+	 	    try {
+				myName=coachService.getUserInfo(me).getUser_name();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	 	   int count=0;
 	 	    //상대방에게 받은 신청 존재 여부 체크
 	 	    if(!type.equals("A_CHAT")) {
@@ -227,7 +240,7 @@ public class CoachSearchController {
 	 		 	   	    ChatMessageDTO in = new ChatMessageDTO();
 	 		 	   	    in.setRoomIdx(roomIdx);
 	 		 	   	    in.setSenderIdx(0);
-	 		 	   	    in.setMessage("매칭이 수락되었습니다.");
+	 		 	   	    in.setMessage(myName+"님이 매칭을 수락했습니다.");
 	 		 	   	    
 	 		 	   	    // [추가] 만약 서비스에서 시간을 자동으로 안 넣어준다면 수동으로 세팅
 	 		 	   	    String nowTs = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -241,7 +254,7 @@ public class CoachSearchController {
 	 		 	   	    Map<String, Object> matchNotice = new HashMap<>();
 	 		 	   	    matchNotice.put("type", "A_MATCH");
 	 		 	   	    matchNotice.put("senderIdx", 0); 
-	 		 	   	    matchNotice.put("message", "매칭이 수락되었습니다.");
+	 		 	   	    matchNotice.put("message", myName+"님이 매칭을 수락했습니다.");
 	 		 	   	    matchNotice.put("ts", nowTs);
 	 		 	   	    messagingTemplate.convertAndSend("/topic/room." + roomIdx, (Object) matchNotice);
 	 		 	        }
@@ -274,13 +287,12 @@ public class CoachSearchController {
 	 	        coachSearchService.addTokenHistory(me, type.equals("CHAT")?"채팅 신청":"매칭 신청", type.equals("CHAT")?-1:-3, type.equals("CHAT")?mytoken-1:mytoken-3);
 	 	        result.put("status", "success");
 	 	        // 5. 실시간 알림
-	 	        String what = type.equals("CHAT") ? "채팅" : "매칭";
 	 	        if(roomIdx!=0) {
 	 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
 	 	   	    ChatMessageDTO in = new ChatMessageDTO();
 	 	   	    in.setRoomIdx(roomIdx);
 	 	   	    in.setSenderIdx(0);
-	 	   	    in.setMessage("매칭이 신청되었습니다.");
+	 	   	    in.setMessage(myName+"님이 매칭을 신청했습니다.");
 	 	   	    
 	 	   	    // [추가] 만약 서비스에서 시간을 자동으로 안 넣어준다면 수동으로 세팅
 	 	   	    String nowTs = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -294,7 +306,7 @@ public class CoachSearchController {
 	 	   	    Map<String, Object> matchNotice = new HashMap<>();
 	 	   	    matchNotice.put("type", "MATCH");
 	 	   	    matchNotice.put("senderIdx", 0); 
-	 	   	    matchNotice.put("message", what+"이 신청되었습니다.");
+	 	   	    matchNotice.put("message",myName+"님이 매칭을 신청했습니다.");
 	 	   	    matchNotice.put("ts", nowTs);
 	 	   	    messagingTemplate.convertAndSend("/topic/room." + roomIdx, (Object) matchNotice);
 	 	        }
