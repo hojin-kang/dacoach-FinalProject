@@ -75,20 +75,9 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
         return mapper.deleteReview(reviewIdx);
     }
 
-    //파일 부분
-	@Override
-	public String getCertFilePath(int userIdx) {
-		return mapper.getCertFilePath(userIdx);
-	}
-
 	@Override
 	public int saveCert(CertDTO dto) {
 		return mapper.insertCert(dto);
-	}
-
-	@Override
-	public boolean hasCert(int userIdx) {
-		return mapper.hasCert(userIdx)>0?true:false;
 	}
 
 	//기업 계정상태 관리
@@ -139,4 +128,5 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
 	public int getCompanyTotalCnt() {
 		return mapper.countCompanyTotal();
 	}
+
 }
