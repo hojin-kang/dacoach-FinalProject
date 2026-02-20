@@ -20,11 +20,12 @@
         .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
         .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
 
-        /* [메인 레이아웃: 2컬럼 구성] */
-        .content-layout { display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
+        /* [메인 레이아웃: 유동적 2컬럼 구성] */
+        .content-layout { display: flex; gap: 30px; width: 100%; }
 
-        /* [왼쪽: 대분류 사이드 메뉴 스타일] */
+        /* [왼쪽: 대분류 사이드 메뉴 - 고정 너비 유지] */
         .sidebar-panel { 
+            width: 280px; flex-shrink: 0;
             background-color: var(--mint-bg); border-radius: 25px; padding: 20px 15px;
             height: fit-content; position: sticky; top: 20px;
         }
@@ -40,10 +41,10 @@
         .major-item:hover:not(.active) { border-color: var(--mint-main); color: var(--mint-main); }
         .major-item.active { background-color: var(--mint-main); color: white; box-shadow: 0 4px 10px rgba(157, 187, 181, 0.3); }
 
-        /* [오른쪽: 소분류 관리 공간] */
-        .main-panel { flex: 1; }
+        /* [오른쪽: 소분류 관리 공간 - 유동적 확장] */
+        .main-panel { flex: 1; min-width: 0; }
 
-        /* 소분류 헤더/추가 버튼 영역 (코치 관리 요약 박스 스타일) */
+        /* 소분류 헤더/추가 버튼 영역 */
         .sub-control-box {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 25px; background-color: var(--mint-bg); 
@@ -57,24 +58,26 @@
         }
         .btn-add-sub:hover { background-color: var(--mint-dark); transform: translateY(-1px); }
 
-        /* 소분류 리스트 카드형 */
+        /* 소분류 리스트 카드형 - 유동적 폭 적용 */
         .list-header { 
-            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
+            display: flex; padding: 0 25px 10px; border-bottom: 1px solid #eee; 
             margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; 
         }
         .sub-item-card {
             display: flex; align-items: center; padding: 15px 25px;
             background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
             margin-bottom: 10px; transition: 0.2s;
+            gap: 15px;
         }
         .sub-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         
-        .sub-name { flex: 1; font-weight: 700; font-size: 15px; }
+        .sub-name { flex: 1; font-weight: 700; font-size: 15px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         
         /* 버튼 스타일 */
         .btn-edit {
             background: white; border: 1px solid #eee; padding: 6px 14px; border-radius: 8px; 
             font-size: 11px; font-weight: 700; color: #6b7280; cursor: pointer; transition: 0.2s;
+            flex-shrink: 0;
         }
         .btn-edit:hover { background-color: var(--mint-bg); color: var(--mint-main); border-color: var(--mint-main); }
 
@@ -93,10 +96,13 @@
         
         .empty-state { padding: 60px; text-align: center; color: #d1d5db; font-style: italic; font-size: 14px; }
 
-        @media (max-width: 900px) { .content-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { 
+            .content-layout { flex-direction: column; } 
+            .sidebar-panel { width: 100%; position: static; }
+        }
     </style>
 
-    <div class="max-w-[1100px] mx-auto p-10 region-admin-container">
+    <div class="w-full px-10 py-10 region-admin-container">
         <div class="admin-top-bar">
             <h1>Region Management</h1>
             <span class="current-path">Setting / Region Filters</span>
@@ -126,7 +132,7 @@
 
                 <div class="list-header">
                     <div style="flex: 1; padding-left: 10px;">DISTRICT NAME</div>
-                    <div style="width: 80px; text-align: center;">ACTION</div>
+                    <div style="width: 80px; text-align: center; flex-shrink: 0;">ACTION</div>
                 </div>
 
                 <div th:if="${subRegions == null or #lists.isEmpty(subRegions)}" class="empty-state">

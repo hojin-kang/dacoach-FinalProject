@@ -24,10 +24,11 @@
         .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
         .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
 
-        /* 수익 요약 카드 (4열) */
+        /* [수익 요약 카드 4열 유동적 수정] */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            /* 고정 너비 제한(240px)을 풀고 4열 비율로 설정하여 화면 따라 줄어들게 함 */
+            grid-template-columns: repeat(4, 1fr); 
             gap: 20px;
             margin-bottom: 40px;
         }
@@ -37,11 +38,13 @@
             border-radius: 20px;
             padding: 25px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            min-width: 0; /* 내부 콘텐츠가 카드를 밀어내지 못하게 방어 */
         }
-        .summary-label { font-size: 13px; font-weight: 700; color: #9ca3af; margin-bottom: 12px; display: block; }
-        .summary-value { font-size: 24px; font-weight: 900; color: var(--slate-text); letter-spacing: -0.5px; }
+        /* 카드 내 텍스트가 겹치지 않게 줄어들 때 처리 */
+        .summary-label { font-size: 13px; font-weight: 700; color: #9ca3af; margin-bottom: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .summary-value { font-size: 24px; font-weight: 900; color: var(--slate-text); letter-spacing: -0.5px; white-space: nowrap; }
         .summary-unit { font-size: 14px; font-weight: 500; color: #9ca3af; margin-left: 2px; }
-        .trend { font-size: 12px; font-weight: 700; margin-top: 8px; }
+        .trend { font-size: 12px; font-weight: 700; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .trend-up { color: var(--success); }
         .trend-down { color: var(--danger); }
 
@@ -63,7 +66,7 @@
             margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* 매출 차트 영역 (기존 코드 유지) */
+        /* 매출 차트 영역 */
         .revenue-chart-container {
             height: 250px;
             display: flex;
@@ -109,12 +112,12 @@
             <div class="summary-card">
                 <span class="summary-label">당월 총 매출액</span>
                 <div class="summary-value">
-                    <span th:text="${monthlySales != null ? #numbers.formatInteger(monthlySales, 1, 'COMMA') : '0'}">42,500,000</span>
+                    <span th:text="${monthlySales != null ? #numbers.formatInteger(monthlySales, 1, 'COMMA') : '0'}">0</span>
                     <span class="summary-unit">원</span>
                 </div>
                 <div class="trend" th:if="${growth != null}" th:classappend="${growth >= 0} ? 'trend-up' : 'trend-down'">
                     <span th:text="${growth >= 0 ? '▲' : '▼'}">▲</span>
-                    <span th:text="${#numbers.formatDecimal(growth < 0 ? -growth : growth, 1, 1)} + '%'">15.2%</span>
+                    <span th:text="${#numbers.formatDecimal(growth < 0 ? -growth : growth, 1, 1)} + '%'">0%</span>
                     <span>(전월 대비)</span>
                 </div>
             </div>
@@ -122,7 +125,7 @@
             <div class="summary-card">
                 <span class="summary-label">멤버십 구독 매출</span>
                 <div class="summary-value">
-                    <span th:text="${membershipRevenue != null ? #numbers.formatInteger(membershipRevenue, 1, 'COMMA') : '12,500,000'}">12,500,000</span>
+                    <span th:text="${membershipRevenue != null ? #numbers.formatInteger(membershipRevenue, 1, 'COMMA') : '0'}">0</span>
                     <span class="summary-unit">원</span>
                 </div>
                 <div class="trend" style="color: var(--mint-dark);">정기 결제 고객 기반</div>
@@ -131,7 +134,7 @@
             <div class="summary-card">
                 <span class="summary-label">결제 건당 평균 금액</span>
                 <div class="summary-value">
-                    <span th:text="${avgPayAmount != null ? #numbers.formatInteger(avgPayAmount, 1, 'COMMA') : '85,000'}">85,000</span>
+                    <span th:text="${avgPayAmount != null ? #numbers.formatInteger(avgPayAmount, 1, 'COMMA') : '0'}">0</span>
                     <span class="summary-unit">원</span>
                 </div>
                 <div class="trend" style="color: #9ca3af;">전체 결제건 평균</div>
@@ -140,7 +143,7 @@
             <div class="summary-card">
                 <span class="summary-label">환불 진행건</span>
                 <div class="summary-value" style="color: var(--danger);">
-                    <span th:text="${pendingRefundCount != null ? pendingRefundCount : '0'}">3</span>
+                    <span th:text="${pendingRefundCount != null ? pendingRefundCount : '0'}">0</span>
                     <span class="summary-unit">건</span>
                 </div>
                 <div class="trend" style="color: #9ca3af;">검토 대기 중</div>
@@ -186,16 +189,15 @@
                         </thead>
                         <tbody>
                             <tr th:each="stat : ${revenueByField}">
-                                <td style="font-weight: 600;" th:text="${stat.FIELD_NAME}">골프</td>
-                                <td th:text="${stat.PAY_COUNT + '건'}">42건</td>
-                                <td class="text-right price-text" th:text="${#numbers.formatInteger(stat.TOTAL_SUM, 0, 'COMMA') + '원'}">5,000,000원</td>
-                                <td class="text-right"><span class="badge badge-mint" th:text="${stat.RATIO}">25%</span></td>
+                                <td style="font-weight: 600;" th:text="${stat.FIELD_NAME}">분야</td>
+                                <td th:text="${stat.PAY_COUNT + '건'}">0건</td>
+                                <td class="text-right price-text" th:text="${#numbers.formatInteger(stat.TOTAL_SUM, 0, 'COMMA') + '원'}">0원</td>
+                                <td class="text-right"><span class="badge badge-mint" th:text="${stat.RATIO}">0%</span></td>
                             </tr>
-                            <tr th:if="${#lists.isEmpty(revenueByField)}">
-                                <td style="font-weight: 600;">테니스</td>
-                                <td>88건</td>
-                                <td class="text-right price-text">11,200,000원</td>
-                                <td class="text-right"><span class="badge badge-mint">36%</span></td>
+                            <tr th:if="${revenueByField == null or #lists.isEmpty(revenueByField)}">
+                                <td colspan="4" style="text-align: center; padding: 40px; color: #9ca3af; font-style: italic;">
+                                    집계된 매출 데이터가 없습니다.
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -207,28 +209,16 @@
                     <div class="box-title"><span>📊 매출 유형별 분석</span></div>
                     <div th:each="type : ${payTypeStats}" style="margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                            <span th:text="${type.PAY_TYPE}" style="font-weight: 600;">CLASS</span>
-                            <span th:text="${type.PERCENT + '%'}">60%</span>
+                            <span th:text="${type.PAY_TYPE}" style="font-weight: 600;">유형</span>
+                            <span th:text="${type.PERCENT + '%'}">0%</span>
                         </div>
                         <div class="progress-container">
                             <div class="progress-bar" th:style="'width:' + ${type.PERCENT} + '%;'"></div>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(payTypeStats)}">
-                        <div style="margin-bottom: 20px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                                <span style="font-weight: 600;">CLASS</span>
-                                <span>70%</span>
-                            </div>
-                            <div class="progress-container"><div class="progress-bar" style="width: 70%;"></div></div>
-                        </div>
-                        <div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;">
-                                <span style="font-weight: 600;">MEMBERSHIP</span>
-                                <span>30%</span>
-                            </div>
-                            <div class="progress-container"><div class="progress-bar" style="width: 30%;"></div></div>
-                        </div>
+                    <div th:if="${payTypeStats == null or #lists.isEmpty(payTypeStats)}" 
+                         style="text-align: center; padding: 30px 0; color: #9ca3af; font-size: 13px;">
+                        결제 수단별 분석 데이터가 없습니다.
                     </div>
                 </div>
 
@@ -237,7 +227,7 @@
                         <span>⚠️ 이번 달 환불 손실액</span>
                     </div>
                     <div class="summary-value" style="font-size: 20px; color: var(--danger);">
-                        <span th:text="${monthlyCancelAmount != null ? #numbers.formatInteger(monthlyCancelAmount, 1, 'COMMA') : '1,200,000'}">1,200,000</span>
+                        <span th:text="${monthlyCancelAmount != null ? #numbers.formatInteger(monthlyCancelAmount, 1, 'COMMA') : '0'}">0</span>
                         <span style="font-size: 14px;">원</span>
                     </div>
                     <p style="font-size: 11px; color: #c53030; margin-top: 10px; font-weight: 500;">
@@ -251,7 +241,7 @@
                     </div>
                     <p style="font-size: 12px; line-height: 1.6; color: #9a3412; font-weight: 500;">
                         오는 <b>25일</b>은 정기 정산일입니다.<br> 
-                        현재까지 <span style="color: var(--danger); font-weight: 700;" th:text="${pendingRefundCount + '건'}">3건</span>의 환불 요청이 존재합니다. 정산 처리 전 확인이 필요합니다.
+                        현재까지 <span style="color: var(--danger); font-weight: 700;" th:text="${(pendingRefundCount != null ? pendingRefundCount : 0) + '건'}">0건</span>의 환불 요청이 존재합니다. 정산 처리 전 확인이 필요합니다.
                     </p>
                 </div>
             </div>

@@ -42,21 +42,23 @@
 /* [리스트 제어 영역] */
 .control-panel {
 	background-color: white;
+	width: 100%;
 }
 
-/* 테이블 헤더 스타일 */
+/* 테이블 헤더 스타일 - 유동적 레이아웃 적용 */
 .list-header {
 	display: flex;
-	padding: 0 15px 10px;
+	padding: 0 20px 10px;
 	border-bottom: 1px solid #eee;
 	margin-bottom: 15px;
 	font-size: 12px;
 	font-weight: 800;
 	color: #9ca3af;
 	text-align: center;
+	gap: 10px;
 }
 
-/* 클래스 리스트 카드형 스타일 */
+/* 클래스 리스트 카드형 스타일 - 유동적 레이아웃 적용 */
 .class-item-card {
 	display: flex;
 	align-items: center;
@@ -67,6 +69,7 @@
 	margin-bottom: 10px;
 	transition: 0.2s;
 	text-align: center;
+	gap: 10px;
 }
 
 .class-item-card:hover {
@@ -75,9 +78,10 @@
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
 }
 
-/* 열 너비 설정 (코치 리스트 비율 참고) */
+/* 열 너비 설정 - 비율(flex)과 고정너비를 적절히 섞어 유동성 확보 */
 .col-idx {
-	width: 80px;
+	width: 60px;
+	flex-shrink: 0;
 	font-weight: 800;
 	color: var(--mint-main);
 	font-size: 13px;
@@ -85,36 +89,48 @@
 
 .col-thumb {
 	width: 80px;
+	flex-shrink: 0;
 	display: flex;
 	justify-content: center;
 }
 
 .col-title {
-	flex: 1;
+	flex: 2; /* 제목이 가장 많이 늘어나도록 설정 */
 	text-align: left;
 	padding: 0 15px;
 	font-weight: 700;
+	min-width: 0; /* 텍스트 생략 기능을 위한 필수 설정 */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .col-company {
-	width: 150px;
+	width: 15%; /* 화면 대비 비율로 조절 */
+	min-width: 100px;
 	color: var(--slate-text);
 	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .col-rating {
 	width: 80px;
+	flex-shrink: 0;
 	font-weight: 800;
 	color: #f59e0b;
 }
 
 .col-date {
-	width: 120px;
+	width: 110px;
+	flex-shrink: 0;
 	color: #9ca3af;
 }
 
 .col-status {
 	width: 100px;
+	flex-shrink: 0;
 }
 
 /* 이미지 썸네일 스타일 */
@@ -174,7 +190,7 @@
 }
 </style>
 
-	<div class="max-w-[1100px] mx-auto p-10 class-admin-container">
+	<div class="w-full px-10 py-10 class-admin-container">
 		<div class="admin-top-bar">
 			<h1>Class Management</h1>
 			<span class="current-path">Contents / Class List</span>
@@ -212,10 +228,12 @@
 				<div class="col-title">
 					<a th:href="@{/admin/classDetail/{idx}(idx=${row['CLASS_IDX']})}"
 						th:text="${row['TITLE'] != null ? row['TITLE'] : '-'}"
+						th:title="${row['TITLE']}"
 						class="hover:text-[#9dbbb5] transition-colors"></a>
 				</div>
 
 				<div class="col-company"
+					th:title="${row['PROVIDER_NAME']}"
 					th:text="${row['PROVIDER_NAME'] != null ? row['PROVIDER_NAME'] : '-'}"></div>
 
 				<div class="col-rating">
