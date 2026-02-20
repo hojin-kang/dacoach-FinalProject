@@ -195,4 +195,22 @@
   or
   (user1_idx = #{target_idx} and user2_idx = #{my_idx})
 </select>
+
+<select id="countUnread" resultType="Integer">
+  SELECT NVL(SUM(
+    CASE
+      WHEN r.user1_idx = #{myIdx} THEN NVL(r.unread_count1, 0)
+      WHEN r.user2_idx = #{myIdx} THEN NVL(r.unread_count2, 0)
+      ELSE 0
+    END
+  ), 0)
+  FROM chat_room r
+  WHERE #{myIdx} IN (r.user1_idx, r.user2_idx)
+    AND (
+      (r.user1_idx = #{myIdx} AND NVL(r.left1_yn, 'N') = 'N')
+      OR
+      (r.user2_idx = #{myIdx} AND NVL(r.left2_yn, 'N') = 'N')
+    )
+</select>
+
 </mapper>
