@@ -42,6 +42,7 @@
 /* [검색 및 제어 영역] */
 .control-panel {
 	margin-bottom: 25px;
+	width: 100%;
 }
 
 .search-box {
@@ -83,19 +84,20 @@
 	background-color: var(--mint-dark);
 }
 
-/* 테이블 헤더 스타일 */
+/* 테이블 헤더 스타일 - 유동적 레이아웃 적용 */
 .list-header {
 	display: flex;
-	padding: 0 15px 10px;
+	padding: 0 20px 10px;
 	border-bottom: 1px solid #eee;
 	margin-bottom: 15px;
 	font-size: 12px;
 	font-weight: 800;
 	color: #9ca3af;
 	text-align: center;
+	gap: 10px;
 }
 
-/* 리스트 카드형 스타일 */
+/* 리스트 카드형 스타일 - 유동적 레이아웃 적용 */
 .notice-item-card {
 	display: flex;
 	align-items: center;
@@ -106,6 +108,7 @@
 	margin-bottom: 10px;
 	transition: 0.2s;
 	text-align: center;
+	gap: 10px;
 }
 
 .notice-item-card:hover {
@@ -114,28 +117,38 @@
 	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
 }
 
-/* 열 너비 설정 */
+/* 열 너비 설정 - flex 비율로 유동성 확보 */
 .col-idx {
-	width: 80px;
+	width: 60px;
+	flex-shrink: 0;
 	font-weight: 800;
 	color: var(--mint-main);
 	font-size: 13px;
 }
 
 .col-title {
-	flex: 1;
+	flex: 1; /* 제목이 화면 폭에 맞춰 늘어남 */
 	text-align: left;
 	padding: 0 20px;
 	font-weight: 700;
+	min-width: 0; /* 말줄임 작동 필수 설정 */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .col-writer {
-	width: 150px;
+	width: 15%; /* 고정px 대신 %로 유동성 부여 */
+	min-width: 120px;
 	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .col-date {
 	width: 120px;
+	flex-shrink: 0;
 	color: #9ca3af;
 }
 
@@ -200,7 +213,7 @@
 }
 </style>
 
-	<div class="max-w-[1100px] mx-auto p-10 notice-admin-container">
+	<div class="w-full px-10 py-10 notice-admin-container">
 		<div class="admin-top-bar">
 			<h1>Notice Management</h1>
 			<span class="current-path">Support / Notice List</span>
@@ -231,6 +244,7 @@
 					<a
 						th:href="@{/admin/support/notice/content(qna_idx=${notice.QNA_IDX})}"
 						th:text="|[${notice.QNA_TYPE}] ${notice.TITLE}|"
+						th:title="|[${notice.QNA_TYPE}] ${notice.TITLE}|"
 						class="hover:text-[#9dbbb5] transition-colors"></a>
 				</div>
 
@@ -242,7 +256,6 @@
 
 			<div th:if="${#lists.isEmpty(noticeList)}"
 				class="text-center py-24 text-gray-300 italic">등록된 공지사항이 없습니다.
-
 			</div>
 		</section>
 
@@ -257,7 +270,6 @@
 				<button type="button" class="btn-write"
 					onclick="location.href='/admin/support/notice/write'">글쓰기</button>
 			</div>
-
 		</div>
 	</div>
 

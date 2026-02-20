@@ -39,6 +39,7 @@
             min-height: 800px;
         }
 
+        /* [카드형 리스트 스타일 - 유동적 레이아웃 적용] */
         .ad-item-card {
             display: flex;
             align-items: center;
@@ -48,19 +49,58 @@
             border: 1px solid #f3f4f6;
             margin-bottom: 10px;
             text-align: center;
+            gap: 10px;
         }
 
+        .ad-item-card:hover {
+            border-color: var(--mint-main);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: 0.2s;
+        }
+
+        /* 열 너비 설정 - Flex 비율로 유동성 확보 */
         .col-idx {
             width: 60px;
+            flex-shrink: 0;
             font-weight: 800;
             color: var(--mint-main);
         }
 
         .col-user {
-            width: 180px;
+            width: 15%; /* 고정px 대신 비율 사용 */
+            min-width: 120px;
             font-weight: 700;
             text-align: left;
             padding-left: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .col-thumb-wrap {
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        .col-membership {
+            flex: 1; /* 가변 너비 영역 */
+            min-width: 100px;
+            font-weight: 600;
+        }
+
+        .col-date {
+            width: 120px;
+            flex-shrink: 0;
+            color: #9ca3af;
+        }
+
+        .col-action {
+            width: 180px;
+            flex-shrink: 0;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
         }
 
         .ad-thumb {
@@ -70,6 +110,11 @@
             border-radius: 8px;
             border: 1px solid #eee;
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .ad-thumb:hover {
+            transform: scale(1.05);
         }
 
         .btn-action {
@@ -83,7 +128,7 @@
         }
     </style>
 
-    <div class="max-w-[1200px] mx-auto p-10 ad-admin-container">
+    <div class="w-full px-10 py-10 ad-admin-container">
         <div class="admin-top-bar"
             style="border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px; padding-bottom: 20px;">
             <h1 style="font-size: 24px; font-weight: 900; color: var(--mint-main);">Ad Approval Management</h1>
@@ -100,13 +145,13 @@
             </div>
 
             <div class="list-header"
-                style="display: flex; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; color: #9ca3af; font-size: 12px; font-weight: 800; text-align: center;">
-                <div style="width: 60px;">번호</div>
-                <div style="width: 180px; text-align: left; padding-left: 10px;">광고주(이름)</div>
-                <div style="width: 180px;">배너 미리보기</div>
+                style="display: flex; border-bottom: 1px solid #eee; padding: 0 20px 10px; margin-bottom: 15px; color: #9ca3af; font-size: 12px; font-weight: 800; text-align: center; gap: 10px;">
+                <div style="width: 60px; flex-shrink: 0;">번호</div>
+                <div style="width: 15%; min-width: 120px; text-align: left; padding-left: 10px;">광고주(이름)</div>
+                <div style="width: 180px; flex-shrink: 0;">배너 미리보기</div>
                 <div style="flex: 1;">멤버십 타입</div>
-                <div style="width: 120px;">신청일</div>
-                <div style="width: 180px;">승인/반려</div>
+                <div style="width: 120px; flex-shrink: 0;">신청일</div>
+                <div style="width: 180px; flex-shrink: 0;">승인/반려</div>
             </div>
 
             <div th:if="${#lists.isEmpty(adList)}" class="text-center py-20 text-gray-300 italic">
@@ -115,16 +160,16 @@
 
             <div th:each="ad : ${adList}" class="ad-item-card">
                 <div class="col-idx" th:text="${ad['AD_IDX']}"></div>
-                <div class="col-user" th:text="${ad['USER_NAME']}"></div>
-                <div style="width: 180px;">
+                <div class="col-user" th:text="${ad['USER_NAME']}" th:title="${ad['USER_NAME']}"></div>
+                <div class="col-thumb-wrap">
                     <img th:if="${ad['PHOTO'] != null}"
                         th:src="@{|/uploads/${ad['PHOTO']}|}" class="ad-thumb"
                         onclick="window.open(this.src)">
                 </div>
-                <div style="flex: 1;" th:text="${ad['MEMBER_TYPE']}"></div>
+                <div class="col-membership" th:text="${ad['MEMBER_TYPE']}"></div>
                 <div class="col-date" th:text="${#dates.format(ad['CREATED_AT'], 'yyyy-MM-dd')}"></div>
 
-                <div style="width: 180px; display: flex; gap: 8px; justify-content: center;">
+                <div class="col-action">
                     <button class="btn-action bg-[#f0f8f7] text-[#7a9a94] hover:bg-[#9dbbb5] hover:text-white"
                         th:onclick="|processAd(${ad['AD_IDX']}, ${ad['USER_IDX']}, 'APPROVE')|">승인</button>
                     <button class="btn-action bg-[#fff0f0] text-[#ff7675] hover:bg-[#ff7675] hover:text-white"

@@ -1,176 +1,182 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="contentPage">
-	<style>
-/* [코치 관리 페이지 디자인 시스템 1:1 적용] */
-:root {
-	--mint-bg: #f0f8f7;
-	--mint-main: #9dbbb5;
-	--mint-dark: #7a9a94;
-	--slate-text: #374151;
-}
+    <style>
+        /* [기업 관리 페이지 디자인 시스템] */
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+        }
 
-.paging-container {
-	margin-top: 30px;
-	display: flex;
-	justify-content: center;
-}
+        .company-admin-container {
+            font-family: 'Pretendard', sans-serif;
+            color: var(--slate-text);
+            background-color: white;
+            min-height: 100vh; /* 화면 전체 높이 대응 */
+        }
 
-.company-admin-container {
-	font-family: 'Pretendard', sans-serif;
-	color: var(--slate-text);
-	background-color: white;
-	min-height: 800px;
-}
+        /* [상단 헤더 영역] */
+        .admin-top-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--mint-bg);
+            margin-bottom: 30px;
+        }
 
-/* [상단 헤더 영역] */
-.admin-top-bar {
-	display: flex;
-	align-items: flex-end;
-	gap: 15px;
-	padding-bottom: 20px;
-	border-bottom: 3px solid var(--mint-bg);
-	margin-bottom: 30px;
-}
+        .admin-top-bar h1 {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--mint-main);
+            margin: 0;
+        }
 
-.admin-top-bar h1 {
-	font-size: 24px;
-	font-weight: 900;
-	color: var(--mint-main);
-	margin: 0;
-}
+        .current-path {
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
 
-.current-path {
-	font-size: 14px;
-	color: #9ca3af;
-	font-weight: 500;
-}
+        /* [메인 레이아웃] */
+        .control-panel {
+            background-color: white;
+        }
 
-/* [메인 레이아웃] */
-.control-panel {
-	background-color: white;
-}
+        /* 유동적 리스트 레이아웃 설정 */
+        .list-header, .item-card {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            text-align: center;
+            box-sizing: border-box;
+        }
 
-/* 리스트 헤더 스타일 */
-.list-header {
-	display: flex;
-	padding: 0 15px 10px;
-	border-bottom: 1px solid #eee;
-	margin-bottom: 15px;
-	font-size: 12px;
-	font-weight: 800;
-	color: #9ca3af;
-	text-align: center;
-}
+        .list-header {
+            padding: 0 20px 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #9ca3af;
+        }
 
-/* 기업 리스트 카드형 스타일 (coach-item-card와 동일) */
-.item-card {
-	display: flex;
-	align-items: center;
-	padding: 15px 20px;
-	background-color: white;
-	border-radius: 15px;
-	border: 1px solid #f3f4f6;
-	margin-bottom: 10px;
-	transition: 0.2s;
-	text-align: center;
-}
+        .item-card {
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: 15px;
+            border: 1px solid #f3f4f6;
+            margin-bottom: 10px;
+            transition: 0.2s;
+        }
 
-.item-card:hover {
-	border-color: var(--mint-main);
-	transform: translateY(-2px);
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-}
+        .item-card:hover {
+            border-color: var(--mint-main);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
 
-/* 테이블 열 너비 고정 (기업 데이터에 맞게 조정) */
-.col-idx {
-	width: 80px;
-	font-weight: 800;
-	color: var(--mint-main);
-	font-size: 13px;
-}
+        /* 컬럼 설정: 유동적 너비(flex) 적용 */
+        .col-idx {
+            width: 70px;
+            flex-shrink: 0;
+            font-weight: 800;
+            color: var(--mint-main);
+            font-size: 13px;
+        }
 
-.col-name {
-	flex: 1;
-	font-weight: 700;
-	text-align: left;
-	padding-left: 10px;
-}
+        .col-name {
+            flex: 3; /* 기업 이름이 가장 많은 공간을 차지하며 유동적으로 늘어남 */
+            min-width: 200px;
+            font-weight: 700;
+            text-align: left;
+            padding-left: 15px;
+        }
 
-.col-biz-num {
-	width: 250px;
-}
+        .col-biz-num {
+            flex: 1.5; /* 사업자 번호도 화면에 따라 적절히 늘어남 */
+            min-width: 180px;
+        }
 
-.col-status {
-	width: 120px;
-}
+        .col-status {
+            width: 120px;
+            flex-shrink: 0;
+        }
 
-.col-action {
-	width: 100px;
-}
+        .col-action {
+            width: 120px;
+            flex-shrink: 0;
+        }
 
-/* 상태 배지 */
-.pill-badge {
-	display: inline-block;
-	padding: 4px 10px;
-	border-radius: 8px;
-	font-size: 11px;
-	font-weight: 700;
-}
-</style>
+        /* 상태 배지 */
+        .pill-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+        }
 
-	<div class="max-w-[1100px] mx-auto p-10 company-admin-container">
-		<div class="admin-top-bar">
-			<h1>Company Management</h1>
-			<span class="current-path">Customer / Company List</span>
-		</div>
+        .paging-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
 
-		<section class="control-panel">
-			<div class="list-header">
-				<div class="col-idx">NO</div>
-				<div class="col-name">COMPANY NAME</div>
-				<div class="col-biz-num">BUSINESS NUMBER</div>
-				<div class="col-status">STATUS</div>
-				<div class="col-action">ACTION</div>
-			</div>
+    <div class="w-full px-10 py-8 company-admin-container">
+        <div class="admin-top-bar">
+            <h1>Company Management</h1>
+            <span class="current-path">Customer / Company List</span>
+        </div>
 
-			<div th:if="${#lists.isEmpty(list)}"
-				class="text-center py-20 text-gray-300 italic">등록된 데이터가 없습니다.
-			</div>
+        <section class="control-panel">
+            <div class="list-header">
+                <div class="col-idx">NO</div>
+                <div class="col-name">COMPANY NAME</div>
+                <div class="col-biz-num">BUSINESS NUMBER</div>
+                <div class="col-status">STATUS</div>
+                <div class="col-action">ACTION</div>
+            </div>
 
-			<div th:each="row, stat : ${list}" class="item-card">
-				<div class="col-idx" th:text="${stat.count}"></div>
+            <div th:if="${#lists.isEmpty(list)}"
+                class="text-center py-20 text-gray-300 italic">등록된 데이터가 없습니다.
+            </div>
 
-				<div class="col-name">
-					<span
-						th:text="${row['USER_NAME'] != null ? row['USER_NAME'] : '-'}"></span>
-				</div>
+            <div th:each="row, stat : ${list}" class="item-card">
+                <div class="col-idx" th:text="${stat.count}"></div>
 
-				<div class="col-biz-num"
-					th:text="${row['COMPANY_NUM'] != null ? row['COMPANY_NUM'] : '-'}"></div>
+                <div class="col-name">
+                    <span th:text="${row['USER_NAME'] != null ? row['USER_NAME'] : '-'}"></span>
+                </div>
 
-				<div class="col-status">
-					<span class="pill-badge"
-						th:classappend="${row['STATUS'] == 'ACTIVE' ? 'bg-green-100 text-green-600' : 
-                      (row['STATUS'] == 'WARNING' ? 'bg-yellow-100 text-yellow-600' : 
-                      (row['STATUS'] == 'DANGER' ? 'bg-orange-100 text-orange-600' : 
-                      (row['STATUS'] == 'SUSPENDED' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600')))}"
-						th:text="${row['STATUS'] == 'ACTIVE' ? '사용' : 
-               (row['STATUS'] == 'WARNING' ? '주의' : 
-               (row['STATUS'] == 'DANGER' ? '위험' : 
-               (row['STATUS'] == 'SUSPENDED' ? '정지' : '대기')))}">
-					</span>
-				</div>
+                <div class="col-biz-num"
+                    th:text="${row['COMPANY_NUM'] != null ? row['COMPANY_NUM'] : '-'}"></div>
 
-				<div class="col-action">
-					<a
-						class="text-xs font-bold text-white bg-[#9dbbb5] px-3 py-1.5 rounded-lg hover:bg-[#7a9a94] transition-colors"
-						th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row['USER_IDX']})}">
-						상세보기 </a>
-				</div>
-			</div>
-		</section>
-		<div th:unless="${list==null || #lists.isEmpty(list)}" class="paging-container" th:utext="${pageStr}"></div>
-	</div>
+                <div class="col-status">
+                    <span class="pill-badge"
+                        th:classappend="${row['STATUS'] == 'ACTIVE' ? 'bg-green-100 text-green-600' : 
+                                      (row['STATUS'] == 'WARNING' ? 'bg-yellow-100 text-yellow-600' : 
+                                      (row['STATUS'] == 'DANGER' ? 'bg-orange-100 text-orange-600' : 
+                                      (row['STATUS'] == 'SUSPENDED' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600')))}"
+                        th:text="${row['STATUS'] == 'ACTIVE' ? '사용' : 
+                               (row['STATUS'] == 'WARNING' ? '주의' : 
+                               (row['STATUS'] == 'DANGER' ? '위험' : 
+                               (row['STATUS'] == 'SUSPENDED' ? '정지' : '대기')))}">
+                    </span>
+                </div>
+
+                <div class="col-action">
+                    <a class="text-xs font-bold text-white bg-[#9dbbb5] px-4 py-2 rounded-lg hover:bg-[#7a9a94] transition-colors"
+                       th:href="@{/admin/companyDetail/{usersIdx}(usersIdx=${row['USER_IDX']})}">
+                        상세보기 </a>
+                </div>
+            </div>
+        </section>
+        
+        <div th:unless="${list==null || #lists.isEmpty(list)}" class="paging-container" th:utext="${pageStr}"></div>
+    </div>
 </div>
 </html>

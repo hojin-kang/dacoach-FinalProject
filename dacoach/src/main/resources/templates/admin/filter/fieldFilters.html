@@ -20,11 +20,11 @@
         .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
         .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
 
-        /* [메인 레이아웃: 사이드바 너비 통일] */
-        .content-layout { display: flex; gap: 30px; }
+        /* [메인 레이아웃: 유동적 너비 확보] */
+        .content-layout { display: flex; gap: 30px; width: 100%; }
 
-        /* [왼쪽: 사이드 메뉴 스타일 통일] */
-        .sidebar-menu-wrapper { width: 180px; shrink: 0; }
+        /* [왼쪽: 사이드 메뉴 - 고정 너비 유지] */
+        .sidebar-menu-wrapper { width: 180px; flex-shrink: 0; }
         .sidebar-menu { 
             display: flex; flex-direction: column; gap: 8px; 
             padding: 15px; background-color: var(--mint-bg); border-radius: 20px;
@@ -39,8 +39,8 @@
         .major-link:hover:not(.active) { border-color: var(--mint-main); color: var(--mint-main); }
         .major-link.active { background-color: var(--mint-main); color: white; box-shadow: 0 4px 10px rgba(157, 187, 181, 0.3); }
 
-        /* [오른쪽: 메인 컨트롤러 공간] */
-        .control-panel { flex: 1; }
+        /* [오른쪽: 메인 컨트롤러 - 유동적 확장] */
+        .control-panel { flex: 1; min-width: 0; }
 
         /* 등록 폼: 코치 관리 요약 박스 스타일 응용 */
         .registration-box {
@@ -57,39 +57,48 @@
         }
         .reg-btn:hover { background-color: var(--mint-dark); }
 
-        /* 리스트 헤더 스타일 통일 */
+        /* 리스트 헤더 스타일 통일 - 유동적 비율 적용 */
         .minor-list-header { 
-            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
+            display: flex; padding: 0 20px 10px; border-bottom: 1px solid #eee; 
             margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; text-align: center;
+            gap: 10px;
         }
         
-        /* 아이템 카드 스타일 통일 */
+        /* 아이템 카드 스타일 통일 - 유동적 레이아웃 적용 */
         .minor-item-card {
             display: flex; align-items: center; padding: 15px 20px;
             background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
             margin-bottom: 10px; transition: 0.2s;
+            gap: 10px;
         }
-        .minor-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .minor-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03); }
         
-        .idx-tag { width: 60px; font-weight: 800; color: var(--mint-main); font-size: 13px; text-align: center; }
-        .name-area { flex: 1; font-weight: 700; font-size: 14px; padding-left: 10px; }
-        .btn-group { display: flex; gap: 8px; width: 120px; justify-content: flex-end; }
+        .idx-tag { width: 60px; flex-shrink: 0; font-weight: 800; color: var(--mint-main); font-size: 13px; text-align: center; }
+        .name-area { 
+            flex: 1; font-weight: 700; font-size: 14px; padding-left: 10px;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-group { display: flex; gap: 8px; width: 130px; flex-shrink: 0; justify-content: flex-end; }
 
         /* 버튼 커스텀 스타일 통일 */
         .pill-btn {
             border: 1px solid #eee; padding: 6px 12px; border-radius: 8px; 
             font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; background: white; color: #6b7280;
+            white-space: nowrap;
         }
         .btn-m-edit:hover { background-color: var(--mint-bg); color: var(--mint-main); border-color: var(--mint-main); }
         .btn-m-save { background-color: var(--mint-main); color: white; display: none; border: none; }
         
         .inline-edit-input { 
-            width: 90%; padding: 6px 12px; border: 2px solid var(--mint-main); 
+            width: 100%; padding: 6px 12px; border: 2px solid var(--mint-main); 
             border-radius: 8px; font-weight: 700; display: none; font-size: 14px; outline: none;
         }
     </style>
 
-    <div class="max-w-[1100px] mx-auto p-10 field-admin-container">
+    <div class="w-full px-10 py-10 field-admin-container">
         <div class="admin-top-bar">
             <h1>Field Management</h1>
             <span class="current-path" th:text="'Category / ' + ${selectedMajorName}">Category / IT/전자</span>
@@ -119,9 +128,9 @@
                 </div>
 
                 <div class="minor-list-header">
-                    <div style="width: 60px;">IDX</div>
+                    <div style="width: 60px; flex-shrink: 0;">IDX</div>
                     <div style="flex: 1; text-align: left; padding-left: 10px;">SUB-CATEGORY NAME</div>
-                    <div style="width: 120px;">ACTIONS</div>
+                    <div style="width: 130px; flex-shrink: 0;">ACTIONS</div>
                 </div>
 
                 <div th:if="${#lists.isEmpty(minorField)}" class="text-center py-20 text-gray-300 italic">

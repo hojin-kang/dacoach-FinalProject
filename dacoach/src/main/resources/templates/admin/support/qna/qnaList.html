@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="qnaList">
     <style>
@@ -43,6 +42,7 @@
         /* [검색 및 제어 영역] */
         .control-panel {
             margin-bottom: 25px;
+            width: 100%;
         }
 
         .search-box {
@@ -101,19 +101,20 @@
             color: white;
         }
 
-        /* 테이블 헤더 스타일 */
+        /* 테이블 헤더 스타일 - 유동적 레이아웃 적용 */
         .list-header {
             display: flex;
-            padding: 0 15px 10px;
+            padding: 0 20px 10px;
             border-bottom: 1px solid #eee;
             margin-bottom: 15px;
             font-size: 12px;
             font-weight: 800;
             color: #9ca3af;
             text-align: center;
+            gap: 10px;
         }
 
-        /* 리스트 카드형 스타일 */
+        /* 리스트 카드형 스타일 - 유동적 레이아웃 적용 */
         .qna-item-card {
             display: flex;
             align-items: center;
@@ -125,6 +126,7 @@
             transition: 0.2s;
             text-align: center;
             cursor: pointer;
+            gap: 10px;
         }
 
         .qna-item-card:hover {
@@ -133,11 +135,27 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
         }
 
-        /* 열 너비 설정 (공지사항과 통일) */
-        .col-status { width: 100px; }
-        .col-title { flex: 1; text-align: left; padding: 0 20px; font-weight: 700; }
-        .col-writer { width: 150px; font-weight: 600; }
-        .col-date { width: 120px; color: #9ca3af; }
+        /* 열 너비 설정 - 유동성 확보를 위한 Flex 설정 */
+        .col-status { width: 90px; flex-shrink: 0; }
+        .col-title { 
+            flex: 1; 
+            text-align: left; 
+            padding: 0 20px; 
+            font-weight: 700;
+            min-width: 0; /* 말줄임 작동을 위한 설정 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .col-writer { 
+            width: 15%; 
+            min-width: 120px; 
+            font-weight: 600; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .col-date { width: 110px; flex-shrink: 0; color: #9ca3af; }
         
         /* 문의 유형 텍스트 */
         .type-tag {
@@ -146,14 +164,13 @@
             margin-right: 5px;
         }
         
-        /* [페이지네이션 - 공지사항과 동일한 스타일 적용] */
+        /* [페이지네이션] */
         .pagination-wrap {
             display: flex;
             justify-content: center;
             margin-top: 30px;
         }
 
-        /* PageModule에서 생성된 HTML에 대응하는 스타일 */
         .pagination-wrap a, .pagination-wrap span {
             display: inline-block;
             padding: 8px 14px;
@@ -181,7 +198,7 @@
         }
     </style>
 
-    <div class="max-w-[1100px] mx-auto p-10 qna-admin-container">
+    <div class="w-full px-10 py-10 qna-admin-container">
         <div class="admin-top-bar">
             <h1>1:1 Q&A Management</h1>
             <span class="current-path">Support / Q&A List</span>
@@ -214,7 +231,7 @@
 					</span>
 				</div>
 
-				<div class="col-title">
+				<div class="col-title" th:title="'[' + ${qna.QNA_TYPE} + '] ' + ${qna.TITLE}">
                     <span class="type-tag" th:text="'[' + ${qna.QNA_TYPE} + ']'"></span>
                     <span th:text="${qna.TITLE}" class="hover:text-[#9dbbb5] transition-colors"></span>
                 </div>
