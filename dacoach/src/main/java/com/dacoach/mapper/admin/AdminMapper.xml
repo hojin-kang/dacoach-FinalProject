@@ -220,29 +220,51 @@
 	delete from qna where qna_idx=#{qna_idx}
 	</delete>
 	
-	<select id="getQnaList" resultType="map" parameterType="String">
-	select 
-	q.qna_idx,
-	u.user_name,
-	q.qna_type,
-	q.title,
-	q.created_at,
-	case when a.qna_a_idx is null then '대기' else '완료' end as status
-	from qna q
-	join users u on q.user_idx=u.user_idx
-	left join qna_a a on q.qna_idx= a.qna_idx
-		<where>
-		(u.user_type='COACH' or u.user_type='COMPANY')
-		    <if test="keyword != null and keyword != ''">
-			and (
-			q.title like '%' || #{keyword} || '%' or
-			q.qna_type like '%' || #{keyword} || '%' or
-			u.user_name like '%' || #{keyword} || '%' or
-			(case when a.qna_a_idx is null then '대기' else '완료' end) = #{keyword}
-			)
-		    </if>
-		</where>
-	order by q.qna_idx desc
+	<select id="getQnaTotalCnt">
+	SELECT COUNT(*)
+    FROM qna q
+    JOIN users u ON q.user_idx = u.user_idx
+    LEFT JOIN qna_a a ON q.qna_idx = a.qna_idx
+    <where>
+        (u.user_type = 'COACH' OR u.user_type = 'COMPANY')
+        <if test="keyword != null and keyword != ''">
+            AND (
+                q.title LIKE '%' || #{keyword} || '%' OR
+                q.qna_type LIKE '%' || #{keyword} || '%' OR
+                u.user_name LIKE '%' || #{keyword} || '%' OR
+                (CASE WHEN a.qna_a_idx IS NULL THEN '대기' ELSE '완료' END) = #{keyword}
+            )
+        </if>
+    </where>
+	</select>
+	
+	<select id="getQnaList" resultType="map">
+	select * from (
+		select rownum rnum,a.* from(
+			select 
+			q.qna_idx,
+			u.user_name,
+			q.qna_type,
+			q.title,
+			q.created_at,
+			case when a.qna_a_idx is null then '대기' else '완료' end as status
+			from qna q
+			join users u on q.user_idx=u.user_idx
+			left join qna_a a on q.qna_idx= a.qna_idx
+				<where>
+				(u.user_type='COACH' or u.user_type='COMPANY')
+				    <if test="keyword != null and keyword != ''">
+					and (
+					q.title like '%' || #{keyword} || '%' or
+					q.qna_type like '%' || #{keyword} || '%' or
+					u.user_name like '%' || #{keyword} || '%' or
+					(case when a.qna_a_idx is null then '대기' else '완료' end) = #{keyword}
+					)
+				    </if>
+				</where>
+			order by q.qna_idx desc
+		)a
+	)where rnum between #{start} and #{end}
 	</select>
 	
 	<select id="getQnaContent" parameterType="int" resultType="map">
@@ -290,24 +312,41 @@
 	update minor_field set minor_field_nm =#{minor_field_nm} where minor_field_idx=#{minor_field_idx}
 	</update>
 	
+	<select id="getReportTotalCnt">
+	SELECT COUNT(*)
+    FROM report r
+    JOIN users u1 ON r.reporter_idx = u1.user_idx
+    JOIN users u2 ON r.reported_idx = u2.user_idx
+    JOIN reason_type rt ON r.reason_type_idx = rt.reason_type_idx
+    <where>
+        <if test="status != null and status != ''">
+            AND r.status = #{status}
+        </if>
+    </where>
+	</select>
+	
 	<select id="reportList">
-	select
-	r.report_idx,
-	rt.content,
-	u1.user_name as reporter_name,
-	u2.user_name as reported_name,
-	r.status,
-	r.created_at
-	from report r
-	join users u1 on r.reporter_idx=u1.user_idx
-	join users u2 on r.reported_idx=u2.user_idx
-	join reason_type rt on r.reason_type_idx=rt.reason_type_idx
-	<where>
-		<if test="status != null and status != ''">
-			and r.status=#{status}
-		</if>
-	</where>
-	order by r.report_idx desc
+	select * from(
+		select rownum rnum,a.* from(
+			select
+			r.report_idx,
+			rt.content,
+			u1.user_name as reporter_name,
+			u2.user_name as reported_name,
+			r.status,
+			r.created_at
+			from report r
+			join users u1 on r.reporter_idx=u1.user_idx
+			join users u2 on r.reported_idx=u2.user_idx
+			join reason_type rt on r.reason_type_idx=rt.reason_type_idx
+			<where>
+				<if test="status != null and status != ''">
+					and r.status=#{status}
+				</if>
+			</where>
+			order by r.report_idx desc
+		)a
+	)where rnum between #{start} and #{end}
 	</select>
 	
 	<select id="reportContent">

@@ -162,8 +162,14 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> getQnaList(String keyword) throws Exception {
-		return adminMapper.getQnaList(keyword);
+	public int getQnaTotalCnt() throws Exception {
+		int count=adminMapper.getQnaTotalCnt();
+		return (count==0)?1:count;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getQnaList(String keyword,int start,int end) throws Exception {
+		return adminMapper.getQnaList(keyword,start,end);
 	}
 	
 	@Override
@@ -207,8 +213,14 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> reportList(String status) throws Exception {
-		return adminMapper.reportList(status);
+	public int getReportTotalCnt() throws Exception {
+		int count=adminMapper.getReportTotalCnt();
+		return (count==0)?1:count;
+	}
+	
+	@Override
+	public List<Map<String, Object>> reportList(String status,int start,int end) throws Exception {
+		return adminMapper.reportList(status,start,end);
 	}
 	
 	@Override
