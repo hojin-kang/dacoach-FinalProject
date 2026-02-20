@@ -14,7 +14,7 @@
 		SELECT
 		A.user_idx, A.coach_idx, A.nickname, A.photo,
 		RANK.rank_name AS rank_name,
-		ROUND(NVL(AVG(distinct rt.rating), 0), 1) AS rating,
+		ROUND(NVL(AVG(rt.rating), 0), 1) AS rating,
 		COUNT(distinct rt.content) AS review_count, MAX(cr.chat_room_idx) AS chat_room_idx,
 		<choose>
 			<when test="login_idx != null and login_idx != 0">
