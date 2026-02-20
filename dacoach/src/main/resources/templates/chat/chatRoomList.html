@@ -371,7 +371,7 @@ function renderHistory(raw) {
                 msgBox.scrollTop = msgBox.scrollHeight;
 
                 // 2. 입력창과 전송버튼을 물리적으로 막기 (이게 핵심)
-                input.disabled = true; 
+                input.disabled = true;
                 sendBtn.style.display = 'none';
                 input.placeholder = "상대방이 퇴장했습니다.";
 
@@ -381,9 +381,35 @@ function renderHistory(raw) {
                 });
 
             }
+            
             return;
         }
+        if (data.type === 'MATCH') {
+            if (data.senderIdx !== myIdx) {
+                // 1. 화면에 메시지 즉시 뿌리기
+                const node = makeSystemRow(data.message);
+                msgBox.appendChild(node);
+                msgBox.scrollTop = msgBox.scrollHeight;
 
+                location.reload(); // 매칭 상태 바뀌면 새로고침해서 버튼 상태 업데이트
+
+            }
+            
+            return;
+        }
+        if (data.type === 'A_MATCH') {
+            if (data.senderIdx !== myIdx) {
+                // 1. 화면에 메시지 즉시 뿌리기
+                const node = makeSystemRow(data.message);
+                msgBox.appendChild(node);
+                msgBox.scrollTop = msgBox.scrollHeight;
+
+                location.reload(); // 매칭 상태 바뀌면 새로고침해서 버튼 상태 업데이트
+
+            }
+            
+            return;
+        }
         // 일반 메시지 처리
         appendMsg(data.ts, data.senderIdx, data.message);
     } catch(e) { }
