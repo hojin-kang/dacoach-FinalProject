@@ -174,34 +174,34 @@
 								<!-- 리뷰 1개 -->
 								<div class="reviewCard" style="cursor: pointer;"
 									th:each="r : ${reviewList}"
-									th:onclick="|location.href='@{/coach/reviewDetail(reviewIdx=${r.REVIEW_CLASS_IDX}, classId=${classDTO.class_idx})}'|">
+									th:onclick="|location.href='@{/coach/reviewDetail(reviewIdx=${r['REVIEW_CLASS_IDX']}, classId=${classDTO.class_idx})}'|">
 									<div class="reviewTop">
 										<!-- 왼쪽: 프로필 사진 + 이름 -->
 										<div class="reviewAuthor">
 											<div class="reviewAvatar">
 												<a class="reviewerLink"
-													th:href="@{/coach/detail(user_idx=${r.REVIEWER_IDX})}">
+													th:href="@{/coach/detail(user_idx=${r['REVIEWER_IDX']})}">
 													<img class="userImg"
-													th:src="${r.REVIEWER_PHOTO != null and r.REVIEWER_PHOTO != ''} ? @{'/uploads/' + ${r.REVIEWER_PHOTO}} : @{/img/profile/defaultProfile.jpg}"
+													th:src="${r['REVIEWER_PHOTO'] != null and r['REVIEWER_PHOTO'] != ''} ? @{'/uploads/' + ${r['REVIEWER_PHOTO']}} : @{/img/profile/defaultProfile.jpg}"
 													alt="reviewer" />
 												</a>
 											</div>
-											<div class="reviewerName" th:text="${r.REVIEWER_NAME}"></div>
+											<div class="reviewerName" th:text="${r['REVIEWER_NAME']}"></div>
 										</div>
 
 										<!-- 오른쪽: 별점 + 내용 -->
 										<div class="reviewMeta">
 											<div class="reviewStars">
-												<span class="stars" th:text="|★ ${r.RATING}|"></span>
+												<span class="stars" th:text="|★ ${r['RATING']}|"></span>
 											</div>
-											<div class="reviewText" th:text="${r.CONTENT}"></div>
+											<div class="reviewText" th:text="${r['CONTENT']}"></div>
 										</div>
 									</div>
 
 									<!-- 하단: 태그 -->
 									<div class="reviewBottom">
 										<div class="reviewTag"
-											th:if="${r.TAG != null and r.TAG != ''}" th:text="${r.TAG}"></div>
+											th:if="${r['TAG'] != null and r['TAG'] != ''}" th:text="${r['TAG']}"></div>
 									</div>
 								</div>
 
