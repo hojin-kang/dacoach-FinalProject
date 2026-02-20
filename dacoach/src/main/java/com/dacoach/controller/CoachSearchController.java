@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dacoach.model.chat.ChatMessageDTO;
 import com.dacoach.model.coach.CoachDTO;
 import com.dacoach.model.company.CertDTO;
 import com.dacoach.model.review.ReviewCoachDTO;
@@ -33,6 +35,8 @@ public class CoachSearchController {
 		private ReviewService reviewService;
 		@Autowired
 		private ChatService chatService;
+		@Autowired
+		private SimpMessagingTemplate messagingTemplate;
 		
 	 	@GetMapping("/coach/search")
 	public ModelAndView coachSearchForm(@RequestParam(value="cp", defaultValue = "1") int cp,
@@ -218,6 +222,29 @@ public class CoachSearchController {
 	 	        	if(matchOk>0) {
 	 	        		chatService.getOrCreateRoom(me, target_idx);
 	 	        	}
+	 	        	if(roomIdx!=0) {
+	 		 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
+	 		 	   	    ChatMessageDTO in = new ChatMessageDTO();
+	 		 	   	    in.setRoomIdx(roomIdx);
+	 		 	   	    in.setSenderIdx(0);
+	 		 	   	    in.setMessage("매칭이 수락되었습니다.");
+	 		 	   	    
+	 		 	   	    // [추가] 만약 서비스에서 시간을 자동으로 안 넣어준다면 수동으로 세팅
+	 		 	   	    String nowTs = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	 		 	   	    in.setTs(nowTs); 
+	 		 	   	    
+	 		 	   	    // 2. 파일 저장 실행
+	 		 	   	    // 이 메서드가 ChatWsController에서 성공했던 바로 그 메서드이므로 동일하게 동작해야 합니다.
+	 		 	   	    chatService.saveAndBuildBroadcast(in);
+
+	 		 	   	    // 3. 실시간 알림 (상대방의 UI를 즉시 비활성화시키기 위함)
+	 		 	   	    Map<String, Object> matchNotice = new HashMap<>();
+	 		 	   	    matchNotice.put("type", "A_MATCH");
+	 		 	   	    matchNotice.put("senderIdx", 0); 
+	 		 	   	    matchNotice.put("message", "매칭이 수락되었습니다.");
+	 		 	   	    matchNotice.put("ts", nowTs);
+	 		 	   	    messagingTemplate.convertAndSend("/topic/room." + roomIdx, (Object) matchNotice);
+	 		 	        }
 	 	            result.put("status", "match_accepted");
 	 	            return result;
 	 	        }				
@@ -246,6 +273,31 @@ public class CoachSearchController {
 	 	        // 4. token_history 데이터 삽입
 	 	        coachSearchService.addTokenHistory(me, type.equals("CHAT")?"채팅 신청":"매칭 신청", type.equals("CHAT")?-1:-3, type.equals("CHAT")?mytoken-1:mytoken-3);
 	 	        result.put("status", "success");
+	 	        // 5. 실시간 알림
+	 	        String what = type.equals("CHAT") ? "채팅" : "매칭";
+	 	        if(roomIdx!=0) {
+	 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
+	 	   	    ChatMessageDTO in = new ChatMessageDTO();
+	 	   	    in.setRoomIdx(roomIdx);
+	 	   	    in.setSenderIdx(0);
+	 	   	    in.setMessage("매칭이 신청되었습니다.");
+	 	   	    
+	 	   	    // [추가] 만약 서비스에서 시간을 자동으로 안 넣어준다면 수동으로 세팅
+	 	   	    String nowTs = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	 	   	    in.setTs(nowTs); 
+	 	   	    
+	 	   	    // 2. 파일 저장 실행
+	 	   	    // 이 메서드가 ChatWsController에서 성공했던 바로 그 메서드이므로 동일하게 동작해야 합니다.
+	 	   	    chatService.saveAndBuildBroadcast(in);
+
+	 	   	    // 3. 실시간 알림 (상대방의 UI를 즉시 비활성화시키기 위함)
+	 	   	    Map<String, Object> matchNotice = new HashMap<>();
+	 	   	    matchNotice.put("type", "MATCH");
+	 	   	    matchNotice.put("senderIdx", 0); 
+	 	   	    matchNotice.put("message", what+"이 신청되었습니다.");
+	 	   	    matchNotice.put("ts", nowTs);
+	 	   	    messagingTemplate.convertAndSend("/topic/room." + roomIdx, (Object) matchNotice);
+	 	        }
 
 	 	    } catch (Exception e) {
 	 	        e.printStackTrace();
