@@ -1,4 +1,4 @@
-package com.dacoach.adminRegions.service;
+package com.dacoach.service.adminRegions;
 
 import java.util.List;
 

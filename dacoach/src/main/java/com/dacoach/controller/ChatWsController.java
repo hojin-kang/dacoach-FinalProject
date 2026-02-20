@@ -2,6 +2,7 @@ package com.dacoach.controller;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -9,15 +10,21 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.dacoach.model.chat.ChatMessageDTO;
+import com.dacoach.model.chat.ChatRoomDTO;
+import com.dacoach.model.notification.NotificationDTO;
 import com.dacoach.service.chat.ChatService;
 import com.dacoach.service.company.CompanyService;
+import com.dacoach.service.notification.NotificationService;
 
 @Controller
 public class ChatWsController {
-
+	
+	
 	private final CompanyService companyService;
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private NotificationService nService;
 
     public ChatWsController(ChatService chatService, SimpMessagingTemplate messagingTemplate,CompanyService companyService) {
         this.chatService = chatService;
@@ -67,5 +74,21 @@ public class ChatWsController {
         if (out == null) return;
 
         messagingTemplate.convertAndSend("/topic/room." + out.getRoomIdx(), out);
+        
+        try {
+			ChatRoomDTO roomDto= companyService.getClassRoom(payload.getRoomIdx());
+		if(roomDto.getUser2Idx()>0) {
+			NotificationDTO n=new NotificationDTO();
+	        n.setReceiver_idx(roomDto.getUser2Idx());
+	        n.setProvider_idx(roomDto.getUser1Idx());
+	        n.setNoti_type("CLASS_NOTICE");
+	        n.setContent("수강하시는 클래스에서 새 공지사항이 있습니다");
+	        nService.insertNotification(n);
+		}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
     }
 }

@@ -20,8 +20,10 @@ public interface KakaopayMapper {
 	
 	public int cancelOk(KakaoCancelResponse kcr) throws Exception;
 	
-	public List<Map<String,Object>> selectRefundList() throws Exception;
+	public List<Map<String,Object>> selectRefundList(int startRow,int endRow) throws Exception;
 	
 	PayDTO selectPayStatus(int pay_idx) throws Exception;
+	
+	int getRefundTotalCnt();
 	
 }

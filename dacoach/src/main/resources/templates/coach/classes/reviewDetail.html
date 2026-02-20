@@ -29,11 +29,9 @@
 				<!-- 작성자 프로필 -->
 				<div class="reviewerProfile">
 					<div class="reviewerAvatar">
-						<span
-							th:if="${review['REVIEWER_PHOTO'] == null or review['REVIEWER_PHOTO'] == ''}"
-							class="defaultIcon">👤</span> <img
-							th:if="${review['REVIEWER_PHOTO'] != null and review['REVIEWER_PHOTO'] != ''}"
-							th:src="'/uploads/' + ${review['REVIEWER_PHOTO']}" alt="reviewer" />
+						<img class="userImg"
+							th:src="${review['REVIEWER_PHOTO'] != null and review['REVIEWER_PHOTO'] != ''} ? @{'/uploads/' + ${review['REVIEWER_PHOTO']}} : @{/img/profile/defaultProfile.jpg}"
+							alt="reviewer" />
 					</div>
 					<div class="reviewerInfo">
 						<div class="reviewerName">

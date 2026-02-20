@@ -138,21 +138,23 @@
         .col-title { flex: 1; text-align: left; padding: 0 20px; font-weight: 700; }
         .col-writer { width: 150px; font-weight: 600; }
         .col-date { width: 120px; color: #9ca3af; }
-
-        /* 페이지네이션 */
+        
+        /* 문의 유형 텍스트 */
+        .type-tag {
+            color: var(--mint-main);
+            font-weight: 800;
+            margin-right: 5px;
+        }
+        
+        /* [페이지네이션 - 공지사항과 동일한 스타일 적용] */
         .pagination-wrap {
             display: flex;
             justify-content: center;
             margin-top: 30px;
         }
 
-        .pagination {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .page-item {
+        /* PageModule에서 생성된 HTML에 대응하는 스타일 */
+        .pagination-wrap a, .pagination-wrap span {
             display: inline-block;
             padding: 8px 14px;
             border-radius: 10px;
@@ -163,23 +165,19 @@
             transition: 0.2s;
             border: 1px solid transparent;
             background-color: white;
+            margin: 0 4px;
         }
 
-        .page-item:hover {
+        .pagination-wrap a:hover {
             background-color: var(--mint-bg);
             color: var(--mint-main);
         }
 
-        .page-item.active {
+        .pagination-wrap .active, .pagination-wrap b {
             background-color: var(--mint-main);
             color: white;
-        }
-        
-        /* 문의 유형 텍스트 */
-        .type-tag {
-            color: var(--mint-main);
-            font-weight: 800;
-            margin-right: 5px;
+            padding: 8px 14px;
+            border-radius: 10px;
         }
     </style>
 
@@ -231,12 +229,8 @@
             </div>
         </section>
 
-        <div class="pagination-wrap">
-            <div class="pagination">
-                <a href="#" class="page-item">&lt;&lt;</a>
-                <a href="#" class="page-item active">1</a>
-                <a href="#" class="page-item">&gt;&gt;</a>
-            </div>
+        <div class="pagination-wrap" th:if="${not #lists.isEmpty(qnaList)}">
+            <div th:utext="${pageStr}"></div>
         </div>
     </div>
 </div>

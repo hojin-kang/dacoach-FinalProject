@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<aside class="admin-aside" th:fragment="adminAside">
+
+    <nav>
+        <ul class="admin-aside__list">
+            <li>
+                <a th:href="@{/admin/coach/coachList}" 
+                   class="admin-aside__menu-item"
+                   th:classappend="${activeMenu == 'coach'} ? ' admin-aside__menu-item--active'">
+                    개인고객관리
+                </a>
+            </li>
+            
+            <li>
+                <a th:href="@{/admin/companyList}"
+                   class="admin-aside__menu-item"
+                   th:classappend="${activeMenu == 'company'} ? ' admin-aside__menu-item--active'">
+                    기업고객관리
+                </a>
+            </li>
+
+            <li>
+                <button type="button"
+                        class="admin-aside__trigger"
+                        th:classappend="${activeMenu == 'profit'} ? ' admin-aside__trigger--active'"
+                        onclick="toggleSubMenu('profitSubmenu')">
+                    수익관리
+                </button>
+                <ul id="profitSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'profit'} ? ' hidden'">
+                    <li><a th:href="@{/admin/refund}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'payment'} ? ' admin-aside__submenu-link--active'">결제관리</a></li>
+                    <li><a th:href="@{/admin/statistics}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'statistics'} ? ' admin-aside__submenu-link--active'">통계관리</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <button type="button"
+                        class="admin-aside__trigger"
+                        th:classappend="${activeMenu == 'monitoring'} ? ' admin-aside__trigger--active'"
+                        onclick="toggleSubMenu('monitoringSubmenu')">
+                    모니터링
+                </button>
+                <ul id="monitoringSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'monitoring'} ? ' hidden'">
+                    <li><a th:href="@{/admin/companyClassList}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'class'} ? ' admin-aside__submenu-link--active'">클래스 상세정보</a></li>
+                    <li><a th:href="@{/admin/coach/coachInfoList}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'content'} ? ' admin-aside__submenu-link--active'">코치 상세정보</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <button type="button"
+                        class="admin-aside__trigger"
+                        th:classappend="${activeMenu == 'support'} ? ' admin-aside__trigger--active'"
+                        onclick="toggleSubMenu('supportSubmenu')">
+                    고객센터
+                </button>
+                <ul id="supportSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'support'} ? ' hidden'">
+                    <li><a th:href="@{/admin/support/notice}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'notice'} ? ' admin-aside__submenu-link--active'">공지</a></li>
+                    <li><a th:href="@{/admin/support/qna}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'qna'} ? ' admin-aside__submenu-link--active'">Q&A</a></li>
+                    <li><a th:href="@{/admin/support/policy}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'policy'} ? ' admin-aside__submenu-link--active'">운영정책</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a th:href="@{/admin/adView}" 
+                   class="admin-aside__menu-item"
+                   th:classappend="${activeMenu == 'ads'} ? ' admin-aside__menu-item--active'">
+                    광고관리
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/admin/keyword/keyword}" 
+                   class="admin-aside__menu-item"
+                   th:classappend="${activeMenu == 'keyword'} ? ' admin-aside__menu-item--active'">
+                    키워드관리
+                </a>
+            </li>
+
+            <li>
+                <button type="button"
+                        class="admin-aside__trigger"
+                        th:classappend="${activeMenu == 'filter'} ? ' admin-aside__trigger--active'"
+                        onclick="toggleSubMenu('filterSubmenu')">
+                    필터관리
+                </button>
+                <ul id="filterSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'filter'} ? ' hidden'">
+                    <li><a th:href="@{/admin/filter/field}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'category'} ? ' admin-aside__submenu-link--active'">분야 필터</a></li>
+                    <li><a th:href="@{/admin/filter/regions}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'region'} ? ' admin-aside__submenu-link--active'">지역 필터</a></li>
+                </ul>
+            </li>
+            <li>
+                <a th:href="@{/admin/report}" 
+                   class="admin-aside__menu-item"
+                   th:classappend="${activeMenu == 'reports'} ? ' admin-aside__menu-item--active'">
+                    신고관리
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <script>
+        function toggleSubMenu(id) {
+            const submenu = document.getElementById(id);
+            submenu.classList.toggle('hidden');
+        }
+    </script>
+</aside>
+</html>

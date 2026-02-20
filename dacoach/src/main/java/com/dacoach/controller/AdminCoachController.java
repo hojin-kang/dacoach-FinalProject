@@ -537,23 +537,34 @@ public class AdminCoachController {
 	@GetMapping("/support/qna")
 	public String qnaList(Model model,
 			@RequestParam(value="keyword", required=false) String keyword,
+			@RequestParam(value="cp", defaultValue="1") int cp,
 			HttpSession session) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
-			List<Map<String, Object>> qnaList = new ArrayList<>();
+		int listSize=10;
+		int pageSize=5;
+		int qnaTotalCnt=0;
+		List<Map<String, Object>> qnaList = new ArrayList<>();
 			
-			try {
-				qnaList = adminService.getQnaList(keyword);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			qnaTotalCnt=adminService.getQnaTotalCnt();
+			
+			int start = (cp - 1) * listSize + 1;
+			int end = cp * listSize;
+			
+			qnaList = adminService.getQnaList(keyword,start,end);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String pageStr=com.dacoach.page.PageModule.makePage("qna", qnaTotalCnt, listSize, pageSize, cp);
 				
 		model.addAttribute("qnaList", qnaList);
 		model.addAttribute("keyword", keyword);
+		model.addAttribute("pageStr", pageStr);
 		model.addAttribute("contentPage", "admin/support/qna/qnaList");
 		model.addAttribute("contentFragment", "qnaList");
 		
@@ -786,23 +797,35 @@ public class AdminCoachController {
 	
 	@GetMapping("/report")
 	public String reportList(Model model, HttpSession session,
-			@RequestParam(value="status", required=false) String status) {
+			@RequestParam(value="status", required=false) String status,
+			@RequestParam(value="cp", defaultValue="1")int cp) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
+		int listSize=10;
+		int pageSize=5;
+		int reportTotalCnt = 0;
 		List<Map<String, Object>> reportList = new ArrayList<>();
 		
 		try {
-			reportList = adminService.reportList(status);
+			reportTotalCnt=adminService.getReportTotalCnt();
+			
+			int start = (cp - 1) * listSize + 1;
+			int end = cp * listSize;
+			
+			reportList = adminService.reportList(status, start, end);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		String pageStr=com.dacoach.page.PageModule.makePage("report", reportTotalCnt, listSize, pageSize, cp);
+		
 		model.addAttribute("reportList",reportList);
 		model.addAttribute("selectedStatus", status);
+		model.addAttribute("pageStr",pageStr);
+		
 		model.addAttribute("contentPage", "admin/report/reportList");
 		model.addAttribute("contentFragment", "reportList");
 

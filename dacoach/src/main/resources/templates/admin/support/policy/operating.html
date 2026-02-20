@@ -99,6 +99,14 @@
             font-weight: 600;
         }
 
+        /* ✨ 추가된 작성일자 CSS ✨ */
+        .col-date {
+            width: 120px;
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
         .col-manage {
             width: 200px;
             display: flex;
@@ -224,6 +232,7 @@
             <div class="col-idx">IDX</div>
             <div class="col-title">POLICY TITLE</div>
             <div class="col-writer">WRITER</div>
+            <div class="col-date">DATE</div>
             <div class="col-manage">MANAGEMENT</div>
         </div>
 
@@ -243,6 +252,10 @@
 
                 <div class="col-writer">
                     <span class="author-tag" th:text="${p['LOGIN_ID']}">admin</span>
+                </div>
+
+                <div class="col-date" 
+                     th:text="${#strings.toString(p['CREATED_AT']).length() > 10 ? #strings.substring(p['CREATED_AT'], 0, 10) : p['CREATED_AT']}">
                 </div>
 
                 <div class="col-manage">
@@ -277,7 +290,7 @@
                         </div>
                         <div>
                             <label class="form-label">정책 구분</label> 
-                            <input type="text" class="form-input" value="Terms & Policy" readonly style="color: #999;">
+                            <input type="text" class="form-input" value="운영정책" readonly style="color: #999;">
                         </div>
                     </div>
 
@@ -311,7 +324,6 @@
         if (loginId) {
             document.getElementById('modalAuthor').value = loginId;
         } else {
-            // session에 저장된 admin 정보를 기반으로 세팅
             const currentAdmin = /*[[${session.loginAdmin?.login_id}]]*/ 'Admin';
             document.getElementById('modalAuthor').value = currentAdmin;
         }

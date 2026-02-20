@@ -51,7 +51,8 @@ public interface AdminService {
 	public int deleteNotice(int qna_idx) throws Exception;
 	
 	//QnA 관리
-	List<Map<String, Object>> getQnaList(String keyword) throws Exception;
+	public int getQnaTotalCnt() throws Exception;
+	List<Map<String, Object>> getQnaList(String keyword,int start,int end) throws Exception;
 	Map<String, Object> getQnaContent(int qna_idx) throws Exception;
 	public int insertQnaAnswer(Qna_aDTO dto) throws Exception;
 	public int updateQnaAnswer(Qna_aDTO dto) throws Exception;
@@ -64,7 +65,8 @@ public interface AdminService {
 	public int updateMinorField(Map<String, Object> params) throws Exception;
 	
 	//신고관리
-	List<Map<String,Object>> reportList(String status) throws Exception;
+	public int getReportTotalCnt() throws Exception;
+	List<Map<String,Object>> reportList(String status,int start,int end) throws Exception;
 	Map<String, Object> reportContent(int report_idx) throws Exception;
 	public int getCoachIdx (int user_idx) throws Exception;
 	public int getCompanyIdx (int user_idx) throws Exception;

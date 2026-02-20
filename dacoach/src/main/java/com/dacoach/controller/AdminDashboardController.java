@@ -50,7 +50,7 @@ public class AdminDashboardController {
 	                return "redirect:/admin";
 	            }
 				
-				return "redirect:/admin/mainStats";
+				return "redirect:/admin/index";
 				
 			}else {
 				rttr.addFlashAttribute("msg", "아이디 또는 비밀번호가 일치하지 않습니다.");
@@ -65,7 +65,7 @@ public class AdminDashboardController {
 		}
 	}
 	
-	@GetMapping("/admin/mainStats")
+	@GetMapping("/admin/index")
 	public String dashboard(Model model,
 			HttpSession session) {
 		
@@ -92,7 +92,7 @@ public class AdminDashboardController {
 		model.addAttribute("newUsersCount",newUsersCount);
 		model.addAttribute("pendingReportCount",pendingReportCount);
 		model.addAttribute("inactiveCompanyCount",inactiveCompanyCount);
-        model.addAttribute("contentPage", "admin/mainStats"); // 보여줄 파일
+        model.addAttribute("contentPage", "admin/index"); // 보여줄 파일
         model.addAttribute("contentFragment", "statsContent"); // 보여줄 조각
         return "admin/dashboard"; 
     }

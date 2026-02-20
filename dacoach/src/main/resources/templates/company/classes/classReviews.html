@@ -165,9 +165,7 @@
 				const stars = '⭐'.repeat(Math.floor(review.RATING));
 				
 				// 프로필 이미지 경로 처리
-				const profileImg = review.REVIEWER_PHOTO 
-					? '/uploads/' + review.REVIEWER_PHOTO 
-					: '/images/default_profile.png';
+				const profileImg = review.REVIEWER_PHOTO ? '/uploads/' + review.REVIEWER_PHOTO : '/img/profile/defaultProfile.jpg';
 				
 				// 해시태그 파싱 및 표시 로직
 				let tagHtml = '';
@@ -193,7 +191,7 @@
 							<img src="${profileImg}" 
 								 alt="reviewer" 
 								 class="reviewerAvatar"
-								 onerror="this.src='/images/default_profile.png'">
+									 onerror="this.src='/img/profile/defaultProfile.jpg'">
 							</a>
 							<div class="reviewerMeta">
 								<div class="reviewerName">${review.REVIEWER_NAME}</div>

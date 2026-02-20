@@ -1,4 +1,4 @@
-package com.dacoach.admincompany.service;
+package com.dacoach.service.admincompany;
 
 import java.util.HashMap;
 import java.util.List;

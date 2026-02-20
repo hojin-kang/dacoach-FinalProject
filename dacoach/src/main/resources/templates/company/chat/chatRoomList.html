@@ -302,28 +302,29 @@ var stompClient = null;
   }
 
   // 기존 TXT 히스토리 렌더 (yyyy-MM-dd HH:mm:ss|senderIdx|message)
-  function renderHistory(raw){
+  function renderHistory(raw) {
     msgBox.innerHTML = '';
-
     const lines = raw.split(/\r?\n/).filter(Boolean);
-    for(const line of lines){
-      const parts = line.split('|');
-      if(parts.length < 3) continue;
+    
+    for(const line of lines) {
+        const parts = line.split('|');
+        if(parts.length < 3) continue;
 
-      const ts = parts[0];
-      const sender = parseInt(parts[1],10);
-      const msg = parts.slice(2).join('|');
+        const sender = parseInt(parts[1], 10);
+        const msg = parts.slice(2).join('|');
+        const hhmm = parts[0].length >= 16 ? parts[0].substring(11, 16) : '';
 
-      const hhmm = ts.length >= 16 ? ts.substring(11,16) : '';
-
-      const node = (sender === myIdx)
-        ? makeMineRow(hhmm, msg)
-        : makeYouRow(hhmm, msg);
-
-      msgBox.appendChild(node);
+        if (sender === 0) {
+            // 시스템 메시지 (중앙 정렬)
+            msgBox.appendChild(makeSystemRow(msg));
+        } else {
+            // 일반 메시지 (나/상대방)
+            const node = (sender === myIdx) ? makeMineRow(hhmm, msg) : makeYouRow(hhmm, msg);
+            msgBox.appendChild(node);
+        }
     }
     msgBox.scrollTop = msgBox.scrollHeight;
-  }
+}
 
   // WS로 받은 단일 메시지 append
   function appendMsg(ts, sender, msg){
@@ -440,6 +441,18 @@ var stompClient = null;
   loadHistory();
   connectWs();
 })();
+
+function makeSystemRow(msg) {
+    const row = document.createElement('div');
+    row.className = 'msgRow system';
+
+    const span = document.createElement('span');
+    span.className = 'systemMsg';
+    span.textContent = msg;
+
+    row.appendChild(span);
+    return row;
+}
 </script>
 <script>
 /* =========================

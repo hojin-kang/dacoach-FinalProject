@@ -44,7 +44,7 @@
 		    <input type="hidden" name="reported_idx" th:value="${dto.user_idx}">
 		    <input type="hidden" name="returnUrl" th:value="@{/coach/detail(user_idx=${dto.user_idx})}">
 		    <button type="submit" class="iconBtn" aria-label="신고">
-		      <img src="/img/icon/siren.png" alt="siren">
+		      <img th:src="@{/img/icon/siren.png}" alt="siren">
 		    </button>
 		  </form>
 		</div>
