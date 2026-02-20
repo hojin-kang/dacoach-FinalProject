@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>dacoach</title>
+
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
+  <link rel="stylesheet" th:href="@{/css/mypage.css}" />
+</head>
+<body>
+  <div th:replace="~{layout/header :: siteHeader}"></div>
+
+  <main class="main">
+    <div class="container">
+
+      <!-- breadcrumb -->
+      <div class="breadcrumb">
+        <a th:href="@{/mypage}">마이페이지</a>
+        <span class="sep">&gt;</span>
+        <a th:href="@{/myQnaList}">1:1 문의</a>
+        <span class="sep">&gt;</span>
+        <span>문의 작성</span>
+      </div>
+
+      <h2 class="pageTitle">1:1 문의 작성</h2>
+      <hr class="line" />
+
+      <!-- 문의 작성 폼 -->
+      <form th:action="@{/myQnaNew}" method="post" class="qnaFormWrap">
+
+        <!-- 문의 유형 -->
+        <div class="formRow">
+          <label>문의 유형</label>
+          <select name="qna_type" required>
+            <option value="">선택해주세요</option>
+            <option value="채팅">채팅</option>
+            <option value="결제">결제</option>
+            <option value="클래스">클래스</option>
+            <option value="계정">계정</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+
+        <!-- 제목 -->
+        <div class="formRow">
+          <label>제목</label>
+          <input type="text"
+                 name="title"
+                 placeholder="문의 제목을 입력해주세요"
+                 required />
+        </div>
+
+        <!-- 내용 -->
+        <div class="formRow">
+          <label>문의 내용</label>
+          <textarea name="question"
+                    rows="8"
+                    placeholder="문의 내용을 자세히 작성해주세요"
+                    required></textarea>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="formActions">
+          <a th:href="@{/myQnaList}" class="btnLine">취소</a>
+          <button type="submit" class="btnPrimary">작성</button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <div th:replace="~{layout/footer :: siteFooter}"></div>
+</body>
+</html>
