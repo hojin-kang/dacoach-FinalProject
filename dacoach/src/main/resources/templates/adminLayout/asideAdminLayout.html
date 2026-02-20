@@ -57,7 +57,7 @@
                     고객센터
                 </button>
                 <ul id="supportSubmenu" class="bg-gray-50 pb-2" th:classappend="${activeMenu != 'support'} ? ' hidden'">
-                    <li><a th:href="@{/admin/support/noticepolicy}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'notice'} ? ' text-[#4a7c74] font-bold underline'">공지</a></li>
+                    <li><a th:href="@{/admin/support/notice}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'notice'} ? ' text-[#4a7c74] font-bold underline'">공지</a></li>
                     <li><a th:href="@{/admin/support/qna}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'qna'} ? ' text-[#4a7c74] font-bold underline'">Q&A</a></li>
                     <li><a th:href="@{/admin/support/policy}" class="block px-14 py-2 text-sm text-gray-600 hover:text-[#4a7c74]" th:classappend="${activeSubmenu == 'policy'} ? ' text-[#4a7c74] font-bold underline'">운영정책</a></li>
                 </ul>

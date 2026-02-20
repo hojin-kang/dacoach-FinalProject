@@ -19,10 +19,9 @@ public interface AdminCompanyService {
     //기업 디테일
     void approveCompanyLogic(Map<String, Object> params);
     int getCompanyTotalCnt();
-    
-	String getCertFilePath(int userIdx);
+
 	int saveCert(CertDTO dto);
-	boolean hasCert(int userIdx);
+	//boolean hasCert(int userIdx);
     
     //클래스 관리
     List<Map<String, Object>> getClassPage(Map<String, Object> param);
