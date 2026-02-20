@@ -35,7 +35,7 @@
 
   <tbody>
     <tr th:each="p : ${payList}">
-      <td th:text="${#strings.replace(p.approved_at,'T',' ')}">2026-02-12 14:24:28</td>
+      <td th:text="${#dates.format(p.approved_at,'yyyy-MM-dd HH:mm:ss')}">2026-02-12 14:24:28</td>
       <td th:text="${p.item_name}">닭꼬치 10개</td>
       <td th:text="${p.quantity}">10</td>
       <td th:text="${#numbers.formatInteger(p.total, 0, 'COMMA')} + '원'">9,000원</td>
