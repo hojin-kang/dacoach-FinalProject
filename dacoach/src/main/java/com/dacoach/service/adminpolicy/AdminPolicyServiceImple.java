@@ -28,7 +28,7 @@ public class AdminPolicyServiceImple implements AdminPolicyService {
 	public void deletePolicy(int qna_idx) {
 		mapper.deletePolicy(qna_idx);
 	}
-
+	
 	@Override
 	public PolicyDTO getLatestPolicy() {
 		return mapper.getLatestPolicy();
@@ -45,13 +45,13 @@ public class AdminPolicyServiceImple implements AdminPolicyService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getNoticeList(Map<String, Object>param) {
-		return mapper.getNoticeList(param);
+	public List<Map<String, Object>> getNoticeList(String type,int startRow,int endRow) {
+		return mapper.getNoticeList(type,startRow,endRow);
 	}
 
 	@Override
-	public int getNoticeAllCnt() {
-		return mapper.getNoticeAllCnt();
+	public int getNoticeAllCnt(String type) {
+		return mapper.getNoticeAllCnt(type);
 	}
 
 }

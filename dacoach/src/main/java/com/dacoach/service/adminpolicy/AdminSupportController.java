@@ -21,6 +21,6 @@ public class AdminSupportController {
 	public String viewOperatingPolicy(Model model) {
 		PolicyDTO latestPolicy = service.getLatestPolicy();
 		model.addAttribute("latestPolicy", latestPolicy);
-		return "admin/support/notice/policies";
+		return "admin/support/policy/policies";
 	}
 }
