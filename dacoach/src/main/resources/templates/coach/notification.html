@@ -37,8 +37,8 @@
 	
 	<!-- 컴퍼니용 알람 -->
 	<a class="notiLink"
-       th:if="${(n.noti_type == 'CLASS'
-       			or n.noti_type == 'MAMBERSHIP')}"
+       th:if="${n.noti_type == 'CLASS'
+       			or n.noti_type == 'MEMBERSHIP'}"
        th:href="@{/company/notification/open(noti_idx=${n.noti_idx})}">
       <span th:text="${n.content}"></span>
     </a>
@@ -50,7 +50,9 @@
                   or n.noti_type == 'CLASS_NOTICE'
                   or n.noti_type == 'REVIEW'
                   or n.noti_type == 'QNA'
-                  or n.noti_type == 'ENROLLMENT')}"
+                  or n.noti_type == 'ENROLLMENT'
+                  or n.noti_type == 'CLASS'
+       			  or n.noti_type == 'MEMBERSHIP')}"
           th:text="${n.content}"></span>
 
     <!-- 삭제(읽음 처리) -->
