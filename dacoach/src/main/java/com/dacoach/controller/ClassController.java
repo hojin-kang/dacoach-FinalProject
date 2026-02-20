@@ -170,10 +170,10 @@ public class ClassController {
 	    int totalCnt = classService.countClassesByProvider(providerIdx, sort);
 	    List<ClassDTO> classList = classService.getClassesByProvider(providerIdx, sort, cp);
 
-	    // PageModule: listSize=6, pageSize=5 (페이지 버튼 5개)
+	    // PageModule: listSize=4, pageSize=5 (페이지 버튼 5개)
 	    String pageStr = com.dacoach.page.PageModule.makePagewithParams(
 	        "/class/company/classList?sort=" + sort,
-	        totalCnt, 6, 5, cp
+	        totalCnt, 4, 5, cp
 	    );
 
 	    mav.addObject("classList", classList);
