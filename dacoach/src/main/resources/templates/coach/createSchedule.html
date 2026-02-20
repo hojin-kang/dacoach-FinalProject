@@ -141,7 +141,7 @@
                <label>장소</label>
                <input type="text" name="location" class="input-field" placeholder="장소를 입력하세요" required>
             </div>
-
+			<input type="hidden" name="roomIdx" th:value="${roomIdx}">
             <button type="submit" id="submitBtn" class="btn-submit" disabled>일정 등록하기</button>
          </form>
       </div>

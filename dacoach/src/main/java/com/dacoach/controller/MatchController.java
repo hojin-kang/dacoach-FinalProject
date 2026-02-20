@@ -204,7 +204,8 @@ public class MatchController {
 		return mav;
 	}
 	@GetMapping("/schedule/create")
-	public ModelAndView createSchedule(HttpSession session, @RequestParam(value="agreement_idx", defaultValue = "0") int agreement_idx) {
+	public ModelAndView createSchedule(HttpSession session, @RequestParam(value="agreement_idx", defaultValue = "0") int agreement_idx,
+			@RequestParam(value = "roomIdx", defaultValue = "0") int roomIdx) {
 		ModelAndView mav = new ModelAndView();
 		Integer user=(Integer)session.getAttribute("user_idx");
 		int user_idx=0;
@@ -213,19 +214,32 @@ public class MatchController {
 			return mav;
 		}
 		mav.addObject("agreement_idx", agreement_idx);
+		mav.addObject("roomIdx", roomIdx);
+		
 		
 		mav.setViewName("coach/createSchedule");
 		return mav;
 	}
 	@PostMapping("/schedule/create")
 	public ModelAndView createSchduleSubmit(HttpSession session,
-			ScheduleDTO dto) {
+			ScheduleDTO dto, @RequestParam(value = "roomIdx", defaultValue = "0") int roomIdx) {
 		ModelAndView mav = new ModelAndView();
 		Integer user=(Integer)session.getAttribute("user_idx");
+		int user_idx=0;
+		String myName="";
 		if(user==null) {
 			mav.setViewName("redirect:/login");
 			return mav;
+		}else {
+			user_idx=user.intValue();
+			try {
+				myName=coachService.getUserInfo(user_idx).getUser_name();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
 		int result=0;
 		try {
 			result = coachService.createSchedule(dto);
@@ -233,10 +247,39 @@ public class MatchController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(result>0) {
+			mav.addObject("url", "/schedule/list?agreement_idx="+dto.getAgreement_idx());
+			mav.addObject("msg", "일정이 성공적으로 등록되었습니다.");
+			mav.setViewName("/alert");
+			if(roomIdx!=0) {
+	 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
+	 	   	    ChatMessageDTO in = new ChatMessageDTO();
+	 	   	    in.setRoomIdx(roomIdx);
+	 	   	    in.setSenderIdx(0);
+	 	   	    in.setMessage(myName+"님이 새로운 일정을 등록했습니다.");
+	 	   	    
+	 	   	    // [추가] 만약 서비스에서 시간을 자동으로 안 넣어준다면 수동으로 세팅
+	 	   	    String nowTs = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	 	   	    in.setTs(nowTs); 
+	 	   	    
+	 	   	    // 2. 파일 저장 실행
+	 	   	    // 이 메서드가 ChatWsController에서 성공했던 바로 그 메서드이므로 동일하게 동작해야 합니다.
+	 	   	    chatService.saveAndBuildBroadcast(in);
+
+	 	   	    // 3. 실시간 알림 (상대방의 UI를 즉시 비활성화시키기 위함)
+	 	   	    Map<String, Object> matchNotice = new HashMap<>();
+	 	   	    matchNotice.put("type", "SCHEDULE");
+	 	   	    matchNotice.put("senderIdx", 0); 
+	 	   	    matchNotice.put("message",myName+"님이 새로운 일정을 등록했습니다.");
+	 	   	    matchNotice.put("ts", nowTs);
+	 	   	    messagingTemplate.convertAndSend("/topic/room." + roomIdx, (Object) matchNotice);
+	 	        }
+		}else {
+			mav.addObject("url", "/schedule/create?agreement_idx="+dto.getAgreement_idx());
+			mav.addObject("msg", "일정 등록에 실패하였습니다.");
+			mav.setViewName("/alert");
+		}
 		
-		mav.addObject("url", "/schedule/list?agreement_idx="+dto.getAgreement_idx());
-		mav.addObject("msg", "일정이 성공적으로 등록되었습니다.");
-		mav.setViewName("/alert");
 		return mav;
 	}
 	@GetMapping("/schedule/list")
