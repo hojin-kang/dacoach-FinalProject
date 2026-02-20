@@ -80,7 +80,7 @@
 							</p>
 						</div>
 					</div>
-					<div id="pageStr" th:unless="${#strings.isEmpty(pageStr)}" th:utext="${pageStr}"></div>
+					<div th:unless="${classList == null || #lists.isEmpty(classList)}" id="pageStr" th:utext="${pageStr}"></div>
 				</section>
 			</div>
 		</div>
