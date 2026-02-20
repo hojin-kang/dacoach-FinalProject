@@ -170,7 +170,7 @@
 				</div>
 			</div>
 		</section>
-		<div class="paging-container" th:utext="${pageStr}"></div>
+		<div th:unless="${list==null || #lists.isEmpty(list)}" class="paging-container" th:utext="${pageStr}"></div>
 	</div>
 </div>
 </html>

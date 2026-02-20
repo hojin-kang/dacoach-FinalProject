@@ -36,7 +36,7 @@ public interface AdminCompanyMapper {
     //int insertCertStatus(@Param("user_idx") int userIdx, @Param("cert_status") String certStatus);	
     
     // 클래스 목록
-    List<Map<String, Object>> selectClassPage(Map<String, Object> param);
+    List<Map<String, Object>> selectClassPage(int startRow,int endRow);
     int countClassTotal();
     
     

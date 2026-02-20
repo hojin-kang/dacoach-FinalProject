@@ -1,147 +1,142 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="contentPage">
-	<style>
-:root {
-	--mint-bg: #f0f8f7;
-	--mint-main: #9dbbb5;
-	--mint-dark: #7a9a94;
-	--slate-text: #374151;
-	--reject-red: #ff7675;
-}
+    <style>
+        :root {
+            --mint-bg: #f0f8f7;
+            --mint-main: #9dbbb5;
+            --mint-dark: #7a9a94;
+            --slate-text: #374151;
+            --reject-red: #ff7675;
+        }
 
-.paging-container {
-	margin-top: 30px;
-	display: flex;
-	justify-content: center;
-}
+        /* 오타 수정: pagging -> paging */
+        .paging-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 5px; /* 페이징 버튼 사이 간격 추가 */
+        }
 
-.pagging-container a, .pagging-container b {
-	padding: 8px 14px;
-	border: 1px solid #eee;
-	border-radius: 8px;
-	text-decoration: none;
-	color: #999;
-	font-weight: bold;
-}
+        .paging-container a, .paging-container b {
+            padding: 8px 14px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #999;
+            font-weight: bold;
+        }
 
-.pagging-container b {
-	background: var(--mint-main);
-	color: white;
-}
+        .paging-container b {
+            background: var(--mint-main);
+            color: white;
+        }
 
-.ad-admin-container {
-	font-family: 'Pretendard', sans-serif;
-	color: var(--slate-text);
-	background-color: white;
-	min-height: 800px;
-}
+        .ad-admin-container {
+            font-family: 'Pretendard', sans-serif;
+            color: var(--slate-text);
+            background-color: white;
+            min-height: 800px;
+        }
 
-.ad-item-card {
-	display: flex;
-	align-items: center;
-	padding: 15px 20px;
-	background-color: white;
-	border-radius: 15px;
-	border: 1px solid #f3f4f6;
-	margin-bottom: 10px;
-	text-align: center;
-}
+        .ad-item-card {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: 15px;
+            border: 1px solid #f3f4f6;
+            margin-bottom: 10px;
+            text-align: center;
+        }
 
-.col-idx {
-	width: 60px;
-	font-weight: 800;
-	color: var(--mint-main);
-}
+        .col-idx {
+            width: 60px;
+            font-weight: 800;
+            color: var(--mint-main);
+        }
 
-.col-user {
-	width: 180px;
-	font-weight: 700;
-	text-align: left;
-	padding-left: 10px;
-}
+        .col-user {
+            width: 180px;
+            font-weight: 700;
+            text-align: left;
+            padding-left: 10px;
+        }
 
-.ad-thumb {
-	width: 90px;
-	height: 60px;
-	object-fit: cover;
-	border-radius: 8px;
-	border: 1px solid #eee;
-	cursor: pointer;
-}
+        .ad-thumb {
+            width: 90px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            cursor: pointer;
+        }
 
-.btn-action {
-	padding: 8px 16px;
-	border-radius: 10px;
-	font-size: 12px;
-	font-weight: 800;
-	cursor: pointer;
-	border: none;
-	transition: 0.2s;
-}
-</style>
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+    </style>
 
-	<div class="max-w-[1200px] mx-auto p-10 ad-admin-container">
-		<div class="admin-top-bar"
-			style="border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px; padding-bottom: 20px;">
-			<h1
-				style="font-size: 24px; font-weight: 900; color: var(--mint-main);">Ad
-				Approval Management</h1>
-		</div>
+    <div class="max-w-[1200px] mx-auto p-10 ad-admin-container">
+        <div class="admin-top-bar"
+            style="border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px; padding-bottom: 20px;">
+            <h1 style="font-size: 24px; font-weight: 900; color: var(--mint-main);">Ad Approval Management</h1>
+        </div>
 
-		<section class="control-panel">
-			<div class="summary-box"
-				style="background: var(--mint-bg); padding: 15px 25px; border-radius: 20px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
-				<span style="font-size: 20px;">📢</span> <span
-					style="font-weight: 800; color: var(--mint-dark);">신규 광고 승인
-					대기</span>
-				<div
-					style="background: white; padding: 4px 12px; border-radius: 10px; color: var(--mint-main); font-weight: 900;">
-					<span th:text="${#lists.size(adList)}">0</span>건
-				</div>
-			</div>
+        <section class="control-panel">
+            <div class="summary-box"
+                style="background: var(--mint-bg); padding: 15px 25px; border-radius: 20px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 20px;">📢</span> 
+                <span style="font-weight: 800; color: var(--mint-dark);">신규 광고 승인 대기</span>
+                <div style="background: white; padding: 4px 12px; border-radius: 10px; color: var(--mint-main); font-weight: 900;">
+                    <span th:text="${#lists.size(adList)}">0</span>건
+                </div>
+            </div>
 
-			<div class="list-header"
-				style="display: flex; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; color: #9ca3af; font-size: 12px; font-weight: 800; text-align: center;">
-				<div style="width: 60px;">번호</div>
-				<div style="width: 180px; text-align: left; padding-left: 10px;">광고주(이름)</div>
-				<div style="width: 180px;">배너 미리보기</div>
-				<div style="flex: 1;">멤버십 타입</div>
-				<div style="width: 120px;">신청일</div>
-				<div style="width: 180px;">승인/반려</div>
-			</div>
+            <div class="list-header"
+                style="display: flex; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; color: #9ca3af; font-size: 12px; font-weight: 800; text-align: center;">
+                <div style="width: 60px;">번호</div>
+                <div style="width: 180px; text-align: left; padding-left: 10px;">광고주(이름)</div>
+                <div style="width: 180px;">배너 미리보기</div>
+                <div style="flex: 1;">멤버십 타입</div>
+                <div style="width: 120px;">신청일</div>
+                <div style="width: 180px;">승인/반려</div>
+            </div>
 
-			<div th:if="${#lists.isEmpty(adList)}"
-				class="text-center py-20 text-gray-300 italic">승인 대기 중인 광고 신청이
-				없습니다.</div>
+            <div th:if="${#lists.isEmpty(adList)}" class="text-center py-20 text-gray-300 italic">
+                승인 대기 중인 광고 신청이 없습니다.
+            </div>
 
-			<div th:each="ad : ${adList}" class="ad-item-card">
-				<div class="col-idx" th:text="${ad['AD_IDX']}"></div>
-				<div class="col-user" th:text="${ad['USER_NAME']}"></div>
-				<div style="width: 180px;">
-					<img th:if="${ad['PHOTO'] != null}"
-						th:src="@{|/uploads/${ad['PHOTO']}|}" class="ad-thumb"
-						th:onclick="'window.open(this.src)'">
-				</div>
-				<div style="flex: 1;" th:text="${ad['MEMBER_TYPE']}"></div>
-				<div class="col-date"
-					th:text="${#dates.format(ad['CREATED_AT'], 'yyyy-MM-dd')}"></div>
+            <div th:each="ad : ${adList}" class="ad-item-card">
+                <div class="col-idx" th:text="${ad['AD_IDX']}"></div>
+                <div class="col-user" th:text="${ad['USER_NAME']}"></div>
+                <div style="width: 180px;">
+                    <img th:if="${ad['PHOTO'] != null}"
+                        th:src="@{|/uploads/${ad['PHOTO']}|}" class="ad-thumb"
+                        onclick="window.open(this.src)">
+                </div>
+                <div style="flex: 1;" th:text="${ad['MEMBER_TYPE']}"></div>
+                <div class="col-date" th:text="${#dates.format(ad['CREATED_AT'], 'yyyy-MM-dd')}"></div>
 
-				<div
-					style="width: 180px; display: flex; gap: 8px; justify-content: center;">
-					<button
-						class="btn-action bg-[#f0f8f7] text-[#7a9a94] hover:bg-[#9dbbb5] hover:text-white"
-						th:onclick="processAd([[${ad['AD_IDX']}]], [[${ad['USER_IDX']}]], 'APPROVE')">승인</button>
-					<button
-						class="btn-action bg-[#fff0f0] text-[#ff7675] hover:bg-[#ff7675] hover:text-white"
-						th:onclick="processAd([[${ad['AD_IDX']}]], [[${ad['USER_IDX']}]], 'REJECT')">반려</button>
-				</div>
-			</div>
-		</section>
-		<div class="pagging-container" th:utext="${pageStr}"></div>
-	</div>
+                <div style="width: 180px; display: flex; gap: 8px; justify-content: center;">
+                    <button class="btn-action bg-[#f0f8f7] text-[#7a9a94] hover:bg-[#9dbbb5] hover:text-white"
+                        th:onclick="|processAd(${ad['AD_IDX']}, ${ad['USER_IDX']}, 'APPROVE')|">승인</button>
+                    <button class="btn-action bg-[#fff0f0] text-[#ff7675] hover:bg-[#ff7675] hover:text-white"
+                        th:onclick="|processAd(${ad['AD_IDX']}, ${ad['USER_IDX']}, 'REJECT')|">반려</button>
+                </div>
+            </div>
+        </section>
+        
+        <div th:unless="${adList == null || #lists.isEmpty(adList)}" class="paging-container" th:utext="${pageStr}"></div>
+    </div>
 
-	<script th:inline="javascript">
+    <script th:inline="javascript">
         function processAd(adIdx, userIdx, action) {
             const actionText = (action === 'APPROVE') ? '승인' : '반려';
             if (confirm(adIdx + "번 광고를 " + actionText + "하시겠습니까?")) {
@@ -149,9 +144,11 @@
             }
         }
         
-        /* 알림 메시지 */
-        const msg = [[${msg}]];
-        if(msg) alert(msg);
+        /* 알림 메시지가 null일 경우 자바스크립트가 깨지지 않도록 안전하게 수정 */
+        const msg = /*[[${msg}]]*/ null;
+        if(msg) {
+            alert(msg);
+        }
     </script>
 </div>
 </html>

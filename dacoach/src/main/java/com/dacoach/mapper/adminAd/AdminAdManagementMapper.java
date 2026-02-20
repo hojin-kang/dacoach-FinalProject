@@ -6,7 +6,7 @@ import java.util.*;
 @Mapper
 public interface AdminAdManagementMapper {
 
-	List<Map<String, Object>> getAdRequestList(Map<String,Object> param);
+	List<Map<String, Object>> getAdRequestList(int startRow,int endRow);
 
 	int deleteAdRequest(int ad_idx);
 	

@@ -126,13 +126,9 @@ public class AdminCompanyController {
         int startRow = (cp - 1) * listSize + 1;
         int endRow = cp * listSize;
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("startRow", startRow);
-        map.put("endRow", endRow);
 
-        List<Map<String, Object>> list = service.getClassPage(map);
-
-        String pageStr = PageModule.makePage("/admin/companyClassList", totalCnt, listSize, pageSize, cp);
+        List<Map<String,Object>> list = service.getClassPage(startRow, endRow);
+        String pageStr = PageModule.makePage("companyClassList", totalCnt, listSize, pageSize, cp);
 
         model.addAttribute("list", list);
         model.addAttribute("pageStr", pageStr);

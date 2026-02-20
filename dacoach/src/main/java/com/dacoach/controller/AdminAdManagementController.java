@@ -31,20 +31,14 @@ public class AdminAdManagementController {
         int listSize = 10; 
         int pageSize = 5;  
 
-        // 전체 데이터 개수 조회
         int totalCnt = adminAdService.getAdTotalCnt();
         
         int startRow = (cp - 1) * listSize + 1;
         int endRow = cp * listSize;
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("startRow", startRow);
-        map.put("endRow", endRow);
+       List<Map<String,Object>> adList = adminAdService.getAdRequestList(startRow, endRow);
 
-        List<Map<String, Object>> adList = adminAdService.getAdRequestList(map);
-
-        // 수정된 PageModule 호출
-        String pageStr = PageModule.makePage("/admin/adView", totalCnt, listSize, pageSize, cp);
+        String pageStr = PageModule.makePage("adView", totalCnt, listSize, pageSize, cp);
 
         model.addAttribute("adList", adList);
         model.addAttribute("pageStr", pageStr);

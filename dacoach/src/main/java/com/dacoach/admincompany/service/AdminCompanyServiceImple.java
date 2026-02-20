@@ -33,8 +33,8 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
     //클래스 관리
     
     @Override
-    public List<Map<String, Object>> getClassPage(Map<String, Object> param) {
-        return mapper.selectClassPage(param);
+    public List<Map<String, Object>> getClassPage(int startRow,int endRow) {
+        return mapper.selectClassPage(startRow,endRow);
     }
 
     @Override

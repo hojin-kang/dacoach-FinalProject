@@ -7,22 +7,23 @@
 
 	<select id="getAdRequestList" resultType="map">
 <![CDATA[
-    SELECT *
-    FROM (
-        SELECT
-            A.AD_IDX,
-            U.USER_NAME,
-            A.PHOTO,
-            MD.MEMBER_TYPE, 
-            A.CREATED_AT, 
-            U.USER_IDX,
-            ROW_NUMBER() OVER (ORDER BY A.AD_IDX DESC) AS RN
-        FROM AD A
-        JOIN MEMBERSHIP M ON A.MEMBER_IDX = M.MEMBER_IDX
-        JOIN USERS U ON M.USER_IDX = U.USER_IDX
-        JOIN MEMBERSHIP_DETAIL MD ON M.MEMBER_DETAIL_IDX = MD.MEMBER_DETAIL_IDX
-    ) t
-    WHERE t.RN BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}
+    SELECT * FROM (
+        SELECT rownum rnum, a.* FROM (
+            SELECT
+                A.AD_IDX,
+                U.USER_NAME,
+                A.PHOTO,
+                MD.MEMBER_TYPE, 
+                A.CREATED_AT, 
+                U.USER_IDX
+            FROM AD A
+            JOIN MEMBERSHIP M ON A.MEMBER_IDX = M.MEMBER_IDX
+            JOIN USERS U ON M.USER_IDX = U.USER_IDX
+            JOIN MEMBERSHIP_DETAIL MD ON M.MEMBER_DETAIL_IDX = MD.MEMBER_DETAIL_IDX
+            ORDER BY A.AD_IDX DESC
+        ) a
+    )
+    WHERE rnum BETWEEN #{startRow, jdbcType=NUMERIC} AND #{endRow, jdbcType=NUMERIC}
 ]]>
 </select>
 	<select id="getAdTotalCnt" resultType="int">
