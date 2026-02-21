@@ -4,6 +4,14 @@
 
    <meta charset="UTF-8" />
    <title>dacoach</title>
+   <style type="text/css">
+ .crownImg {
+    width: 25px;         
+    height: auto;        
+    vertical-align: middle;
+    }
+   </style>
+   
    <link rel="stylesheet" th:href="@{/css/main.css}" />
    <link rel="stylesheet" th:href="@{/css/company/companyProfile.css}" />
   
@@ -18,10 +26,12 @@
       	
       	<span id="photoSpan">
       		<img th:src="${!#strings.isEmpty(profile[PHOTO])}?@{/uploads/}+${profile.PHOTO}:@{/img/profile/defaultProfile.jpg}" id="photoImgTag">
+      		
       	</span>
       	
       	<span id="nameSpan">
       		[[${profile.USER_NAME}]]
+      		<img th:if="${profile.MEMBER_DETAIL_IDX==2}" alt="프리미엄 멤버십" th:src="@{/img/icon/crown.png}" class="crownImg">
       	</span>
       	<span id="introSpan">
       		[[${profile.INTRO}]]

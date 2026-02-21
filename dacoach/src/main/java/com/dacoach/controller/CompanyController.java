@@ -70,7 +70,7 @@ public class CompanyController {
 
 	    Integer user_idx = (Integer) session.getAttribute("user_idx");
 	    if (user_idx == null || user_idx == 0) {
-	        mav.setViewName("/needLogin");
+	        mav.setViewName("needLogin");
 	        return mav;
 	    }
 
@@ -84,7 +84,7 @@ public class CompanyController {
 	        e.printStackTrace();
 	    }
 
-	    mav.setViewName("/company/profile/myPayment");
+	    mav.setViewName("company/profile/myPayment");
 	    return mav;
 	}
 	
@@ -93,7 +93,7 @@ public class CompanyController {
 		
 		ModelAndView mav=new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/needLogin");
+			mav.setViewName("needLogin");
 			return mav;
 		}
 		
@@ -106,14 +106,21 @@ public class CompanyController {
 			e.printStackTrace();
 		}
 		mav.addObject("user_name",session.getAttribute("user_name"));
-		mav.setViewName("/company/profile/mypage");
+		mav.setViewName("company/profile/mypage");
 		return mav;
 	}
 	
 	@GetMapping("/company/mypage/myInfo")
 	public ModelAndView myInfo(HttpSession session) {
 		ModelAndView mav=new ModelAndView();
+		
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("needLogin");
+			return mav;
+		}
+		
 		int userIdx=(int)session.getAttribute("user_idx");
+		
 		int companyIdx=(int)session.getAttribute("company_idx");
 		try {
 			CompanyDTO companyDto=companyService.getCompanyInfo(userIdx);
@@ -137,7 +144,7 @@ public class CompanyController {
 			e.printStackTrace();
 		}
 		
-		mav.setViewName("/company/profile/myInfo");
+		mav.setViewName("company/profile/myInfo");
 		return mav;
 	}
 	
@@ -146,7 +153,13 @@ public class CompanyController {
 			CompanyProvideDTO provideDto,
 			CompanyDTO companyDto,
 			HttpSession session) {
+		
 		ModelAndView mav=new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("needLogin");
+			return mav;
+		}
+		
 		companyDto.setUser_idx((int)session.getAttribute("user_idx"));
 		provideDto.setCompany_idx((int)session.getAttribute("company_idx"));
 		if (photoFile != null && !photoFile.isEmpty()) {
@@ -177,7 +190,7 @@ public class CompanyController {
 		return mav;
 	}
 	
-	@PostMapping("company/join/loginInfoOK")
+	@PostMapping("/company/join/loginInfoOK")
 	public ModelAndView LoginInfoOk(UsersDTO dto) {
 		try {
 			int idx = companyService.joinOk(dto);
@@ -197,7 +210,7 @@ public class CompanyController {
 
 		ModelAndView mav = new ModelAndView();
 
-		mav.setViewName("/company/profile/companyInfo");
+		mav.setViewName("company/profile/companyInfo");
 		return mav;
 	}
 
@@ -256,7 +269,7 @@ public class CompanyController {
 			mav.addObject("field_con", field);
 			mav.addObject("region_con", region);
 			mav.addObject("company_num",companyNum);
-			mav.setViewName("/company/profile/profileForm");
+			mav.setViewName("company/profile/profileForm");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -271,7 +284,7 @@ public class CompanyController {
 			int result=companyService.provideOk(dto);
 			String msg=result>0?"회원가입 감사드립니다":"회원가입 실패하였습니다 관리자에게 문의부탁드립니다";
 			mav.addObject("msg",msg);
-			mav.setViewName("/company/join/companyJoinOkMsg");
+			mav.setViewName("company/join/companyJoinOkMsg");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -355,7 +368,7 @@ public class CompanyController {
 	@RequestMapping("/company/profile/companyProfileForm")
 	public ModelAndView companyProfileForm(Integer idx,@RequestParam(value="fromName",defaultValue = "noParam") String fromName){
 		ModelAndView mav=new ModelAndView();
-		System.out.println(idx);
+		
 		Calendar now=Calendar.getInstance();
 		int year=now.get(Calendar.YEAR);
 		int month=now.get(Calendar.MONTH)+1;
@@ -390,7 +403,7 @@ public class CompanyController {
 			e.printStackTrace();
 		}
 		
-		mav.setViewName("/company/profile/companyProfileForm");
+		mav.setViewName("company/profile/companyProfileForm");
 		return mav;
 	}
 	
