@@ -18,6 +18,10 @@ public class MembershipServiceImple implements MembershipService {
 	@Autowired
 	private MembershipMapper membership;
 	
+	public int bannerDel(int member_idx) throws Exception{
+		return membership.bannerDel(member_idx);
+	}
+	
 	public List<ReasonTypeDTO> downReason() throws Exception{
 		return membership.downReason();
 	}

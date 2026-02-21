@@ -74,7 +74,7 @@ public class MembershipApiController {
 			Map<String,String> map=new HashMap<String,String>();
 			map.put("status", "완료");
 			map.put("tid", kakaoApprove.getTid());
-			//kakaoApprove.setSid("담에추가");
+			
 			kakaoApprove.setItem_code("MembershipCode");
 			kakaoApprove.setPayment_method_type("MEMBERSHIP");
 			//kakaopayMapper.upPayStatus(map);
@@ -183,7 +183,7 @@ public class MembershipApiController {
 			return new ResponseEntity<String>(msg,HttpStatus.OK);
 		}
 		
-		@Scheduled(cron = "00 00 00 * * *", zone = "Asia/Seoul")
+		@Scheduled(cron = "00 57 07 * * *", zone = "Asia/Seoul")
 		public void memebershipSubscription() {
 			
 			 
@@ -256,10 +256,16 @@ public class MembershipApiController {
 							parameter.put("sid", payDto.getSid());
 							KakaopayCancelSubscriptionResponse ksr=kakaoPayService.subscriptionCancel(parameter);
 							if(ksr!=null) {
-								//디비에 넣을거 상의
-							membershipService.autoDown(mDto.getUser_idx());
-							companyController.easyNotifi(mDto.getUser_idx(),1, 
-									"MEMBERSHIP", "멤버십 구독 해지가 완료되었습니다");
+								
+							int dResult= membershipService.autoDown(mDto.getUser_idx());
+							if(dResult>0) {
+								int bResult=membershipService.bannerDel(mDto.getMember_idx());
+								if(bResult>0) {
+									companyController.easyNotifi(mDto.getUser_idx(),1, 
+											"MEMBERSHIP", "멤버십 구독 해지가 완료되었습니다");
+								}
+							}
+							
 						}
 					}
 		}catch(Exception e){
