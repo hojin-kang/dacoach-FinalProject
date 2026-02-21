@@ -352,9 +352,10 @@ public class CompanyController {
 		return re;
 	}
 	
-	@PostMapping("/company/profile/companyProfileForm")
-	public ModelAndView companyProfileForm(Integer idx){
+	@RequestMapping("/company/profile/companyProfileForm")
+	public ModelAndView companyProfileForm(Integer idx,@RequestParam(value="fromName",defaultValue = "noParam") String fromName){
 		ModelAndView mav=new ModelAndView();
+		System.out.println(idx);
 		Calendar now=Calendar.getInstance();
 		int year=now.get(Calendar.YEAR);
 		int month=now.get(Calendar.MONTH)+1;
@@ -363,7 +364,14 @@ public class CompanyController {
 		Date nowDay=Date.valueOf(strDate);
 		Map<String,Object> classMap=new HashMap<>();
 		try {
-			Map<String,Object> map=companyService.companyProfile(idx);
+			Map<String,Object> map=null;
+			if(fromName.equalsIgnoreCase("banner")) {
+				int user_idx=companyService.memberToUser(idx);
+				map=companyService.companyProfile(user_idx);
+			}else {
+				map=companyService.companyProfile(idx);
+			}
+			
 			
 			int userIdx=Integer.parseInt(String.valueOf(map.get("USER_IDX")));
 			classMap.put("idx", userIdx);

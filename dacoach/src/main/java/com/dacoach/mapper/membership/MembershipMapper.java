@@ -9,6 +9,8 @@ import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
 public interface MembershipMapper {
 	
+	public int insertDownReason(int reason_type_idx) throws Exception;
+	
 	public List<ReasonTypeDTO> downReason() throws Exception;
 	
 	public int defaultMembership(int idx) throws Exception;
@@ -40,4 +42,6 @@ public interface MembershipMapper {
 	public List<MembershipDTO> autoDownTarget() throws Exception;
 	
 	public int membershipContinue(int user_idx) throws Exception;
+	
+	
 }

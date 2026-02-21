@@ -47,6 +47,10 @@ public class CompanyServiceImple implements CompanyService {
 	@Autowired
 	private CompanyMapper companyMapper;
 	
+	public int memberToUser(int membership_idx) throws Exception{
+		return companyMapper.memberToUser(membership_idx);
+	}
+	
 	@Override
     @Transactional
     public ChatMessageDTO saveAndBuildBroadcast(ChatMessageDTO msg) {

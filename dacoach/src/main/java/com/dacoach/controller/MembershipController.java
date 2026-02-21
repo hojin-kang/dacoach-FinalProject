@@ -69,8 +69,8 @@ public class MembershipController {
 		return mav;
 		
 	}
-	@GetMapping("/membershipDown")
-	public ModelAndView membershipDown(MembershipDTO dto)	{
+	@PostMapping("/membershipDown")
+	public ModelAndView membershipDown(MembershipDTO dto,Integer reason_type_idx)	{
 		ModelAndView mav=new ModelAndView();
 					
 		try {
@@ -78,8 +78,18 @@ public class MembershipController {
 			if(this.dto.getStatus()!=null&& this.dto.getStatus().equals("취소")) {
 				mav.addObject("msg","멤버십 해지 예정입니다");
 			}else {
-				membershipService.membershipDown(dto);
-			mav.addObject("msg","멤버십 해지가 완료되었습니다");
+				boolean result=false;
+				int downResult=membershipService.membershipDown(dto);
+				if(downResult>0) {
+					result=true;
+					int reasonResult=membershipService.insertDownReason(reason_type_idx);
+					if(reasonResult>0) {
+						result=true;
+					}else result=false;
+				}else result=false;
+				
+				String msg=result?"멤버십 해지가 완료되었습니다":"멤버십 해지가 실패하였습니다";
+				mav.addObject("msg",msg);
 			}
 			mav.addObject("url","/membership/membershipForm");
 			
@@ -134,7 +144,7 @@ public class MembershipController {
 			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
 			String action) {
 		ModelAndView mav=new ModelAndView();
-		System.out.println(action);
+		//System.out.println(action);
 		if (photoFile != null && !photoFile.isEmpty()) {
 			
 			try {
