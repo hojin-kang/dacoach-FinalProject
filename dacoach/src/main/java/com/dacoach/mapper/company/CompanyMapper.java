@@ -11,7 +11,9 @@ import com.dacoach.model.company.CompanyProvideDTO;
 import com.dacoach.model.company.CompanyRegionDTO;
 import com.dacoach.model.users.UsersDTO;
 public interface CompanyMapper {
-
+	
+	public int memberToUser(int membership_idx) throws Exception;
+	
 	public List<Map<String, Object>> fieldTag() throws Exception;
 	
 	public List<Map<String, Object>> regionTag() throws Exception;

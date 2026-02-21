@@ -21,6 +21,11 @@ public class MembershipServiceImple implements MembershipService {
 	public List<ReasonTypeDTO> downReason() throws Exception{
 		return membership.downReason();
 	}
+	
+	public int insertDownReason(int reason_type_idx) throws Exception{
+		return membership.insertDownReason(reason_type_idx);
+	}
+	
 	@Override
 	public int defaultMembership(int idx) throws Exception {
 		

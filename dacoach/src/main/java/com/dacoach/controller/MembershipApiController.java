@@ -151,9 +151,9 @@ public class MembershipApiController {
 			String msg="결제 취소요청이 실패하였습니다 관리자에게 문의 부탁드립니다";
 			
 			try {
-				//System.out.println((int)cancelData.get("payIdx"));
+				
 				PayDTO payDto=kakaopayMapper.paySelect((int)cancelData.get("payIdx"));
-				//System.out.println(payDto);
+				
 				
 				Map<String,Object> parameters=new HashMap<String,Object>();
 				parameters.put("cid", payDto.getCid());
@@ -183,7 +183,7 @@ public class MembershipApiController {
 			return new ResponseEntity<String>(msg,HttpStatus.OK);
 		}
 		
-		@Scheduled(cron = "00 29 11 * * *", zone = "Asia/Seoul")
+		@Scheduled(cron = "00 00 00 * * *", zone = "Asia/Seoul")
 		public void memebershipSubscription() {
 			
 			 

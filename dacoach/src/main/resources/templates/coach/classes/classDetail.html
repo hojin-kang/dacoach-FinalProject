@@ -21,10 +21,12 @@
 				<div class="topLeft">
 					<!-- 프로필 이미지 (provider) -->
 					<div class="providerAvatar">
+					<a th:href="@{/company/profile/companyProfileForm(idx=${classDTO.provider_idx})}">
 						<img th:if="${providerPhoto != null and providerPhoto != ''}"
 							th:src="'/uploads/' + ${providerPhoto}" alt="provider" /> <img
 							th:unless="${providerPhoto != null and providerPhoto != ''}"
 							th:src="@{/img/profile/defaultProfile.jpg}" alt="provider" />
+					</a>		
 					</div>
 
 					<div class="topInfo">
