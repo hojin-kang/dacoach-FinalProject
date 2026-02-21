@@ -47,7 +47,7 @@ public class MatchController {
 		if(!chatService.isMatched(user_idx, target_idx).equals("MATCHED")){
 			mav.addObject("msg", "매칭된 상대가 아닙니다.");
 			mav.addObject("url", "/");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			return mav;
 		}
 		
@@ -79,7 +79,7 @@ public class MatchController {
 		} catch (Exception e) {
 			mav.addObject("msg", "서약서 정보를 불러오는 중 오류가 발생했습니다.");
 			mav.addObject("url", "/");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			e.printStackTrace();
 		}
 		
@@ -116,7 +116,7 @@ public class MatchController {
 		if(result>0) {
 			mav.addObject("msg", "서약서가 성공적으로 제출되었습니다.");
 			mav.addObject("url", "/dicipline?target_idx="+dto.getReceiver_idx());
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			if(roomIdx!=0) {
 	 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
 	 	   	    ChatMessageDTO in = new ChatMessageDTO();
@@ -172,7 +172,7 @@ public class MatchController {
 		if(result>0) {
 			mav.addObject("msg", "서약서에 동의하였습니다.");
 			mav.addObject("url", "/chat");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			if(roomIdx!=0) {
 	 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
 	 	   	    ChatMessageDTO in = new ChatMessageDTO();
@@ -199,7 +199,7 @@ public class MatchController {
 		}else {
 			mav.addObject("msg", "서약서 동의에 실패하였습니다.");
 			mav.addObject("url", "/chat");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 		}
 		return mav;
 	}
@@ -250,7 +250,7 @@ public class MatchController {
 		if(result>0) {
 			mav.addObject("url", "/schedule/list?agreement_idx="+dto.getAgreement_idx());
 			mav.addObject("msg", "일정이 성공적으로 등록되었습니다.");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			if(roomIdx!=0) {
 	 	      	 // 1. ChatMessageDTO 완벽하게 수동 조립
 	 	   	    ChatMessageDTO in = new ChatMessageDTO();
@@ -277,7 +277,7 @@ public class MatchController {
 		}else {
 			mav.addObject("url", "/schedule/create?agreement_idx="+dto.getAgreement_idx());
 			mav.addObject("msg", "일정 등록에 실패하였습니다.");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 		}
 		
 		return mav;
@@ -306,7 +306,7 @@ public class MatchController {
 			e.printStackTrace();
 			mav.addObject("msg", "일정 정보를 불러오는 중 오류가 발생했습니다.");
 			mav.addObject("url", "/");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			return mav;
 		}
 		

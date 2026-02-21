@@ -72,7 +72,7 @@ public class MypageController {
 		ModelAndView mav = new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
 			System.out.println(session.getAttribute("user_idx"));
-			mav.setViewName("/needLogin");
+			mav.setViewName("needLogin");
 			return mav;
 		}
 		int user_idx = (Integer)session.getAttribute("user_idx");
@@ -94,7 +94,7 @@ public class MypageController {
 		mav.addObject("user_rank", user_rank);
 		
 	    
-		mav.setViewName("/coach/mypage/mypage");
+		mav.setViewName("coach/mypage/mypage");
 		return mav;
 	}
 	
@@ -119,7 +119,7 @@ public class MypageController {
         ModelAndView mav = new ModelAndView();
 
         if (session.getAttribute("user_idx") == null || (Integer) session.getAttribute("user_idx") == 0) {
-            mav.setViewName("/needLogin");
+            mav.setViewName("needLogin");
             return mav;
         }
 
@@ -147,7 +147,7 @@ public class MypageController {
             e.printStackTrace();
         }
 
-        mav.setViewName("/coach/mypage/myInfo");
+        mav.setViewName("coach/mypage/myInfo");
         return mav;
     }
 
@@ -173,7 +173,7 @@ public class MypageController {
         ModelAndView mav = new ModelAndView();
 
         if (session.getAttribute("user_idx") == null || (Integer) session.getAttribute("user_idx") == 0) {
-            mav.setViewName("/needLogin");
+            mav.setViewName("needLogin");
             return mav;
         }
 
@@ -224,7 +224,7 @@ public class MypageController {
 
 	    Integer userIdx = (Integer) session.getAttribute("user_idx");
 	    if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/needLogin");
+			mav.setViewName("needLogin");
 			return mav;
 		}
 
@@ -245,7 +245,7 @@ public class MypageController {
 	public ModelAndView myReviewList(HttpSession session) {
 	    ModelAndView mav = new ModelAndView();
 	    if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-	        mav.setViewName("/needLogin");
+	        mav.setViewName("needLogin");
 	        return mav;
 	    }
 
@@ -268,7 +268,7 @@ public class MypageController {
 
 	    mav.addObject("receivedClassReviews", Collections.emptyList());
 
-	    mav.setViewName("/coach/mypage/myReview");
+	    mav.setViewName("coach/mypage/myReview");
 	    return mav;
 	}
 
@@ -281,7 +281,7 @@ public class MypageController {
 
 	    Integer user_idx = (Integer) session.getAttribute("user_idx");
 	    if (user_idx == null || user_idx == 0) {
-	        mav.setViewName("/needLogin");
+	        mav.setViewName("needLogin");
 	        return mav;
 	    }
 
@@ -305,7 +305,7 @@ public class MypageController {
 	        e.printStackTrace();
 	    }
 
-	    mav.setViewName("/coach/mypage/myPayment");
+	    mav.setViewName("coach/mypage/myPayment");
 	    return mav;
 	}
 	
@@ -318,7 +318,7 @@ public class MypageController {
 	public ModelAndView myQnaList(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/needLogin");
+			mav.setViewName("needLogin");
 			return mav;
 		}
 		int user_idx = (Integer)session.getAttribute("user_idx");
@@ -328,7 +328,7 @@ public class MypageController {
 			e.printStackTrace();
 		}
 		
-		mav.setViewName("/coach/mypage/myQna");
+		mav.setViewName("coach/mypage/myQna");
 		
 		return mav;
 	}
@@ -337,7 +337,7 @@ public class MypageController {
 	public ModelAndView myQnaDetail(@RequestParam(value="qna_idx", defaultValue = "0") Integer qna_idx, HttpSession session) {
 	    ModelAndView mav = new ModelAndView();
 	    if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/needLogin");
+			mav.setViewName("needLogin");
 			return mav;
 		}
 	    int user_idx = (Integer) session.getAttribute("user_idx");
@@ -350,14 +350,14 @@ public class MypageController {
 
 	    mav.addObject("qna", data.get("qna"));
 	    mav.addObject("answer", data.get("answer"));
-	    mav.setViewName("/coach/mypage/myQnaDetail");
+	    mav.setViewName("coach/mypage/myQnaDetail");
 	    return mav;
 	}
 	
 	@GetMapping("/myQnaForm")
 	public String myQnaForm(HttpSession session) {
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			return "/needLogin";
+			return "needLogin";
 		}
 		return "/coach/mypage/myQnaForm";
 	}
@@ -366,7 +366,7 @@ public class MypageController {
 	public ModelAndView myQnaNew(QnaDTO qdto, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/needLogin");
+			mav.setViewName("needLogin");
 			return mav;
 		}
 		qdto.setUser_idx((Integer) session.getAttribute("user_idx"));
@@ -379,7 +379,7 @@ public class MypageController {
 		if (result > 0) {
 	        mav.setViewName("redirect:/myQnaList");
 	    } else {
-	        mav.setViewName("/coach/mypage/myQnaForm");
+	        mav.setViewName("coach/mypage/myQnaForm");
 	    }
 		return mav;
 	}
@@ -392,14 +392,14 @@ public class MypageController {
 			mav.addObject("url", "/login");
 			return mav;
 		}
-		mav.setViewName("/coach/mypage/cert");
+		mav.setViewName("coach/mypage/cert");
 		return mav;
 	}
 	@PostMapping("/cert")
 	public ModelAndView certPage(CertDTO dto, HttpSession session, MultipartFile certFile) {
 		ModelAndView mav = new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			mav.addObject("msg", "로그인이 필요합니다.");
 			mav.addObject("url", "/login");
 			return mav;
@@ -426,7 +426,7 @@ public class MypageController {
 	public ModelAndView myCertList(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			mav.addObject("msg", "로그인이 필요합니다.");
 			mav.addObject("url", "/login");
 			return mav;
@@ -456,7 +456,7 @@ public class MypageController {
 		mav.addObject("certificatedList", certificatedList);
 		mav.addObject("pendingList", pendingList);
 		mav.addObject("rejectedList", rejectedList);
-		mav.setViewName("/coach/mypage/myCert");
+		mav.setViewName("coach/mypage/myCert");
 		return mav;
 	}
 	@GetMapping("/myChallenge")
@@ -465,7 +465,7 @@ public class MypageController {
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
 			mav.addObject("msg", "로그인이 필요합니다.");
 			mav.addObject("url", "/login");
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 			return mav;
 		}
 		int user_idx = (Integer)session.getAttribute("user_idx");
@@ -502,7 +502,7 @@ public class MypageController {
 					
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
-					mav.setViewName("/alert");
+					mav.setViewName("alert");
 					return mav;
 				}else if(challengeList.get(i).getType().equals("LIKE")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=likes) {
 					challengeList.get(i).setUser_idx(user_idx);
@@ -520,7 +520,7 @@ public class MypageController {
 					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
-					mav.setViewName("/alert");
+					mav.setViewName("alert");
 					return mav;
 				}else if(challengeList.get(i).getType().equals("REVIEW")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=reviews) {
 					challengeList.get(i).setUser_idx(user_idx);
@@ -538,7 +538,7 @@ public class MypageController {
 					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
-					mav.setViewName("/alert");
+					mav.setViewName("alert");
 					return mav;
 				}else if(challengeList.get(i).getType().equals("MATCH")&&challengeList.get(i).getAchieve().equals("N")&&challengeList.get(i).getQuantity()<=matches) {
 					challengeList.get(i).setUser_idx(user_idx);
@@ -556,7 +556,7 @@ public class MypageController {
 					}
 					mav.addObject("msg", challengeList.get(i).getName()+" 챌린지를 달성하였습니다!");
 					mav.addObject("url", "/myChallenge");
-					mav.setViewName("/alert");
+					mav.setViewName("alert");
 					return mav;
 				}
 			}	
@@ -580,7 +580,7 @@ public class MypageController {
 			mav.addObject("challengeList", challengeList);
 			mav.addObject("achievedList", achievedList);
 			mav.addObject("notAchievedList", notAchievedList);
-			mav.setViewName("/coach/mypage/myChallenge");
+			mav.setViewName("coach/mypage/myChallenge");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
