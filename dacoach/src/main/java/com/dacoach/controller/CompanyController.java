@@ -414,7 +414,7 @@ public class CompanyController {
 	    }
 	    int user_idx = (Integer) session.getAttribute("user_idx");
 
-	    // 내 알림 맞는지 확인용 조회 (새로 추가)
+	    
 	    NotificationDTO n = notificationService.getNotiForUser(noti_idx, user_idx);
 	    if (n == null) return "redirect:/notification";
 

@@ -141,7 +141,7 @@ public class CompanyChatController {
 	}
 	
 	
-	// 채팅방 나가기
+	
 	@PostMapping("/chat/room/{roomIdx}/leave")
 	@ResponseBody
 	public String leaveRoom(@PathVariable int roomIdx, HttpSession session){
