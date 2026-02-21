@@ -1,19 +1,98 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="adminHeader" class="w-full flex justify-between items-center p-4 border-b">
-    
-    <a th:href="@{/admin/index}" class="text-2xl font-bold text-[#4a7c74] hover:opacity-80 transition-all">
-        dacoach
-    </a>
+<div th:fragment="adminHeader"
+	class="w-full flex justify-between items-center p-4 border-b bg-white">
 
-    <div class="relative w-1/2">
-        <input type="text" class="w-full bg-gray-100 border-none rounded-full py-2 px-6 pr-10 focus:ring-2 focus:ring-[#4a7c74]" placeholder="검색어를 입력하세요">
-        <i class="fa-solid fa-magnifying-glass absolute right-4 top-2.5 text-gray-500"></i>
-    </div>
+	<a th:href="@{/admin/index}"
+		class="text-2xl font-bold text-[#4a7c74] hover:opacity-80 transition-all">
+		dacoach </a>
+
+	<div class="relative w-1/2">
+		<input type="text" id="adminMenuSearch"
+			class="w-full bg-gray-100 border-none rounded-full py-2 px-6 pr-10 focus:outline-none focus:ring-2 focus:ring-[#4a7c74] transition-shadow"
+			placeholder="메뉴 검색 카테고리도 가능" autocomplete="off"> <i
+			class="fa-solid fa-magnifying-glass absolute right-4 top-3 text-gray-500"></i>
+
+		<div id="adminSuggestionBox"
+			class="hidden absolute top-full left-0 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+		</div>
+	</div>
 
 	<div class="text-gray-600 text-sm">
 		관리자 <span class="font-bold text-gray-900"
 			th:text="${session.loginAdmin != null ? session.loginAdmin.user_name : '관리자'}">
-			홍길동 </span>님 | <a th:href="@{/admin/logout}" class="hover:underline ml-2">로그아웃</a>
+		</span>님 | <a th:href="@{/admin/logout}"
+			class="hover:text-[#4a7c74] hover:underline ml-2 transition-colors">로그아웃</a>
 	</div>
+
+	<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuData = [
+            { name: "개인고객관리", url: "/admin/coach/coachList", category: "개인고객" },
+            { name: "기업고객관리", url: "/admin/companyList", category: "기업고객" },
+            { name: "결제관리", url: "/admin/refund", category: "수익관리" },
+            { name: "통계관리", url: "/admin/statistics", category: "수익관리" },
+            { name: "클래스 상세정보", url: "/admin/companyClassList", category: "모니터링" },
+            { name: "코치 상세정보", url: "/admin/coach/coachInfoList", category: "모니터링" },
+            { name: "공지사항", url: "/admin/support/notice", category: "고객센터" },
+            { name: "Q&A", url: "/admin/support/qna", category: "고객센터" },
+            { name: "운영정책", url: "/admin/support/policy", category: "고객센터" },
+            { name: "광고관리", url: "/admin/adView", category: "광고관리" },
+            { name: "키워드관리", url: "/admin/keyword/keyword", category: "키워드관리" },
+            { name: "분야 필터", url: "/admin/filter/field", category: "필터관리" },
+            { name: "지역 필터", url: "/admin/filter/regions", category: "필터관리" },
+            { name: "신고관리", url: "/admin/report", category: "신고관리" }
+        ];
+
+        const searchInput = document.getElementById('adminMenuSearch');
+        const suggestionBox = document.getElementById('adminSuggestionBox');
+
+        if(!searchInput || !suggestionBox) return;
+
+        //한글자 입력 할 때마다 실행
+        searchInput.addEventListener('input', function() {
+            const keyword = this.value.trim();
+            suggestionBox.innerHTML = ''; 
+
+            //입력값이 빈값이면 하단 메뉴? 숨김
+            if (!keyword) {
+                suggestionBox.classList.add('hidden');
+                return;
+            }
+
+            //배열에 포함되어 있다면 true 없으면 false 반환f
+            const matchedMenus = [];
+			for (let i = 0; i < menuData.length; i++) {
+    			let menu = menuData[i];
+    			let isNameMatched = menu.name.includes(keyword);
+    			let isCategoryMatched = menu.category.includes(keyword);
+
+			    if (isNameMatched || isCategoryMatched) {
+			        matchedMenus.push(menu); 
+			    }
+		    }
+
+			if (matchedMenus.length > 0) {
+			    //검색 결과 있을 시
+			    matchedMenus.forEach(menu => {
+			        const itemDiv = document.createElement('div');
+			        
+			        itemDiv.innerText = `[${menu.category}] ${menu.name}`;
+
+			        // 해당 페이지 이동
+			        itemDiv.onclick = function() {
+			            window.location.href = menu.url; 
+			        };
+			        suggestionBox.appendChild(itemDiv);
+			    });
+			    suggestionBox.classList.remove('hidden'); 
+			    
+			} else {
+			    suggestionBox.innerHTML = '<div>검색 결과가 없습니다.</div>';
+			    suggestionBox.classList.remove('hidden');
+			}
+        });
+
+    });
+    </script>
 </div>
 </html>
