@@ -1,125 +1,115 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>운영정책</title>
-  <style>
-    /* 기본 폰트 설정 (Pretendard 추천) */
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+<meta charset="UTF-8">
+<title>운영정책 - 다코치</title>
 
-    body {
-      font-family: 'Pretendard', sans-serif;
-      background-color: #f8fafc;
-      margin: 0;
-      padding: 0;
-      color: #334155;
-      line-height: 1.6;
-    }
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/header.css}" />
+<link rel="stylesheet" th:href="@{/css/footer.css}" />
 
-    /* 컨테이너 */
-    .policy-container {
-      max-width: 800px;
-      margin: 60px auto;
-      background: #ffffff;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    /* 타이틀 */
-    .policy-container h2 {
-      font-size: 28px;
-      font-weight: 800;
-      color: #1e293b;
-      margin-bottom: 40px;
-      text-align: center;
-      border-bottom: 3px solid #9dbbb5; /* 기존 민트색 포인트 */
-      display: inline-block;
-      padding-bottom: 8px;
-    }
+<style>
+:root {
+	--mint-bg: #f0f8f7;
+	--mint-main: #9dbbb5;
+	--mint-dark: #7a9a94;
+	--slate-text: #374151;
+}
 
-    .policy-header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
+.policy-container {
+	font-family: 'Pretendard', sans-serif;
+	color: var(--slate-text);
+	background-color: white;
+	min-height: 800px;
+}
 
-    /* 정책 아이템 박스 */
-    .policy-item {
-      margin-top: 20px;
-    }
+/* 상단 타이틀 바 (공지사항 페이지와 동일한 스타일 적용) */
+.policy-top-bar {
+	display: flex;
+	align-items: flex-end;
+	gap: 15px;
+	padding-bottom: 20px;
+	border-bottom: 3px solid var(--mint-bg);
+	margin-bottom: 40px;
+}
 
-    .policy-item h3 {
-      font-size: 20px;
-      color: #0f172a;
-      margin-bottom: 15px;
-      padding-left: 12px;
-      border-left: 4px solid #9dbbb5;
-    }
+.policy-top-bar h1 {
+	font-size: 24px;
+	font-weight: 900;
+	color: var(--mint-main);
+	margin: 0;
+}
 
-    /* 본문 내용 */
-    .content {
-      font-size: 15px;
-      color: #475569;
-      white-space: pre-wrap; /* 줄바꿈 유지 */
-      word-break: break-all;
-      background-color: #f1f5f9;
-      padding: 25px;
-      border-radius: 12px;
-      min-height: 300px;
-    }
+.current-path {
+	font-size: 14px;
+	color: #9ca3af;
+	font-weight: 500;
+}
 
-    hr {
-      border: 0;
-      height: 1px;
-      background: #e2e8f0;
-      margin: 40px 0;
-    }
+/* 정책 아이템 박스 */
+.policy-item {
+	margin-top: 20px;
+}
 
-    /* 푸터 */
-    footer {
-      text-align: center;
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 50px;
-    }
+.policy-item h3 {
+	font-size: 20px;
+	color: #0f172a;
+	margin-bottom: 15px;
+	padding-left: 12px;
+	border-left: 4px solid var(--mint-main);
+}
 
-    /* 모바일 대응 */
-    @media (max-width: 768px) {
-      .policy-container {
-        margin: 20px;
-        padding: 20px;
-      }
-      .policy-container h2 {
-        font-size: 22px;
-      }
-    }
-  </style>
+/* 본문 내용 */
+.content {
+	font-size: 15px;
+	color: var(--slate-text);
+	white-space: pre-wrap; /* 줄바꿈 유지 */
+	word-break: break-all;
+	background-color: #f8fafc;
+	padding: 30px;
+	border-radius: 15px;
+	min-height: 400px;
+	border: 1px solid #f3f4f6;
+	line-height: 1.8;
+}
+
+.empty-state {
+	padding: 100px 0;
+	text-align: center;
+	color: #ccc;
+	font-style: italic;
+}
+</style>
 </head>
 <body>
+	<div th:replace="~{layout/header :: siteHeader}"></div>
 
-<div class="policy-container">
-    <div class="policy-header">
-        <h2>이용약관 및 정책</h2>
-    </div>
-    
-    <div th:if="${latestPolicy != null}" class="policy-item">
-        <h3 th:text="${latestPolicy.title}">정책 제목</h3>
-        <div class="content" th:text="${latestPolicy.question}">
-            여기에 정책 상세 내용이 출력됩니다.
-        </div>
-    </div>
-    
-    <div th:if="${latestPolicy == null}" style="text-align:center; padding: 50px; color: #94a3b8;">
-        등록된 정책 데이터가 없습니다.
-    </div>
+	<main class="policy-container">
+		<div class="max-w-[1200px] mx-auto p-10" style="width: 1200px; margin: 0 auto; padding: 40px;">
+			
+			<div class="policy-top-bar">
+				<h1>이용약관 및 정책</h1>
+				<span class="current-path">Operations Policy</span>
+			</div>
+			
+			<div th:if="${latestPolicy != null}" class="policy-item">
+				<h3 th:text="${latestPolicy.title}">정책 제목</h3>
+				<div class="content" th:text="${latestPolicy.question}">
+					여기에 정책 상세 내용이 출력됩니다.
+				</div>
+			</div>
+			
+			<div th:if="${latestPolicy == null}" class="empty-state">
+				<i class="fa-regular fa-file-lines" style="font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.3;"></i>
+				등록된 정책 데이터가 없습니다.
+			</div>
+			
+		</div>
+	</main>
 
-    <hr>
-    
-    <footer>
-      © 2026 다코치 운영정책. 모든 이용자는 본 정책을 숙지하고 준수해야 합니다.
-    </footer>
-</div>
+	<div th:replace="~{layout/footer :: siteFooter}"></div>
 
 </body>
 </html>
