@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.admin.AdminService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -23,15 +26,20 @@ public class AdminDashboardController {
 	private AdminService adminService;
 	
 	@GetMapping("/admin")
-	public String adminLoginForm() {
-		return "admin/login";
+	public String adminLoginForm(
+	        @CookieValue(value = "savedAdminId", defaultValue = "") String savedId,
+	        Model model) {
+	    model.addAttribute("savedId", savedId);
+	    return "admin/login";
 	}
 	
 	@PostMapping("/admin/login")
 	public String adminLogin(@RequestParam String login_id,
 			@RequestParam String password,
 			HttpSession session,
-			RedirectAttributes rttr) {
+			RedirectAttributes rttr,
+			HttpServletResponse response,
+			@RequestParam(value = "rememberId", required = false) String rememberId) {
 		
 		Map<String, String> loginMap = new HashMap<>();
 		loginMap.put("login_id", login_id);
@@ -49,6 +57,15 @@ public class AdminDashboardController {
 	                rttr.addFlashAttribute("msg", "관리자 권한이 없습니다.");
 	                return "redirect:/admin";
 	            }
+				Cookie cookie = new Cookie("savedAdminId", "");
+	            if ("on".equals(rememberId)) {
+	                cookie.setValue(login_id);
+	                cookie.setMaxAge(60 * 60 * 24 * 30);
+	            } else {
+	                cookie.setMaxAge(0); 
+	            }
+	            cookie.setPath("/");
+	            response.addCookie(cookie);
 				
 				return "redirect:/admin/index";
 				

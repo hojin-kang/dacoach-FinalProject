@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.dacoach.page.PageModule;
 import com.dacoach.service.adminpolicy.AdminPolicyService;
 
+import jakarta.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -19,6 +21,7 @@ public class AdminNoticeController {
     @Autowired
     AdminPolicyService service;
     
+    //사용자 공지 페이지 부분
     @GetMapping("/noticepolicy")
     public String notice(@RequestParam(value = "cp", required = false, defaultValue = "1") int cp,
     		Model model,@RequestParam(value="type", defaultValue = "서비스")String type) {
