@@ -14,6 +14,8 @@ import com.dacoach.majorregion.model.MajorRegionDTO;
 import com.dacoach.minorregion.model.MinorRegionDTO;
 import com.dacoach.service.adminRegions.AdminRegionsService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/admin/filter")
 public class AdminRegionsController {
@@ -23,7 +25,10 @@ public class AdminRegionsController {
 
     // 지역 필터 관리 페이지 (초기 로드)
     @GetMapping("/regions")
-    public String regionFilter(Model model) {
+    public String regionFilter(Model model,HttpSession session) {
+    	if(session.getAttribute("loginAdmin") == null) {
+    	    return "redirect:/admin";
+    	}
         List<MajorRegionDTO> majorRegions = service.getMajorRegions();
         model.addAttribute("majorRegions", majorRegions);
         
