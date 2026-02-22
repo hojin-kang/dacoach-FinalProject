@@ -4,6 +4,10 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.dacoach.mapper.company.CompanyMapper">
   	
+  	<select id="memberToUser">
+  		select user_idx from membership where member_idx=#{member_idx} 
+  	</select>
+  	
   	<select id="getClassRoom">
   		SELECT 
         chat_room_idx AS chatRoomIdx,
@@ -205,11 +209,11 @@
 		from minor_field,
 		(select 
 		company.user_idx,company.company_idx,company.phone,users.user_name,
-		company.address,company.email,company.intro,company.photo,minor_field_idx
+		company.address,company.email,company.intro,company.photo,minor_field_idx,member_detail_idx 
 		from users,company,company_provide,
-		(select user_idx 
+		(select user_idx,member_detail_idx 
 		from membership 
-		where member_idx=#{member_idx}) a
+		where user_idx=#{idx}) a
 		where users.user_idx=a.user_idx and 
 		company.user_idx=a.user_idx and 
 		company_provide.company_idx=company.company_idx) b

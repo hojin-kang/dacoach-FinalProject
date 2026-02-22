@@ -91,7 +91,7 @@ public class CoachController {
 			e.printStackTrace();
 		}
 		if (result > 0) {
-			mav.setViewName("/coach/coachProfile");
+			mav.setViewName("coach/coachProfile");
 			mav.addObject("login_id", udto.getLogin_id());
 			mav.addObject("mail", mail);
 			mav.addObject("majorFields", majorFields);

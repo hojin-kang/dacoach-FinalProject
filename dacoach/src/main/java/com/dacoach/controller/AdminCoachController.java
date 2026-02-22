@@ -21,6 +21,7 @@ import com.dacoach.model.qna.QnaDTO;
 import com.dacoach.model.qna.Qna_aDTO;
 import com.dacoach.model.report.ReportDTO;
 import com.dacoach.service.admin.AdminService;
+import com.dacoach.service.adminRefund.AdminRefundService;
 import com.dacoach.service.notification.NotificationService;
 
 import jakarta.servlet.http.HttpSession;
@@ -35,10 +36,11 @@ public class AdminCoachController {
 	@Autowired
 	private NotificationService notificationService;
 	
-	
 	@GetMapping("/coach/coachList")
 	public String coachList(Model model, HttpSession session,
-			@RequestParam(value="cp", defaultValue="1") int cp) {
+			@RequestParam(value="cp", defaultValue="1") int cp,
+			@RequestParam(value="sortColumn", required=false) String sortColumn,
+			@RequestParam(value="keyword", required=false) String keyword) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
@@ -51,22 +53,37 @@ public class AdminCoachController {
 	    int certCount = 0;
 	    
 		try {
-		    coachTotalCnt=adminService.getCoachTotalCnt();
+		    coachTotalCnt=adminService.getCoachTotalCnt(keyword);
 		    	
 		    int start = (cp - 1) * listSize + 1;
 		    int end = cp * listSize;
 		    	
-		    coachList = adminService.getCoachList(start, end);
+		    coachList = adminService.getCoachList(keyword, sortColumn, start, end);
 		    certCount = adminService.getCertCount();
 		} catch (Exception e) {
 		    e.printStackTrace();
 		}
 		
-		String pageStr=com.dacoach.page.PageModule.makePage("coachList", coachTotalCnt, listSize, pageSize, cp);
+		String pageStr = "";
+	    if ((keyword != null && !keyword.isEmpty()) || (sortColumn != null && !sortColumn.isEmpty())) {
+	        StringBuilder urlBuilder = new StringBuilder("coachList?");
+	        if (keyword != null && !keyword.isEmpty()) {
+	            urlBuilder.append("keyword=").append(keyword);
+	        }
+	        if (sortColumn != null && !sortColumn.isEmpty()) {
+	            if (urlBuilder.length() > 10) urlBuilder.append("&");
+	            urlBuilder.append("sortColumn=").append(sortColumn);
+	        }
+	        pageStr = com.dacoach.page.PageModule.makePagewithParams(urlBuilder.toString(), coachTotalCnt, listSize, pageSize, cp);
+	    } else {
+	        pageStr = com.dacoach.page.PageModule.makePage("coachList", coachTotalCnt, listSize, pageSize, cp);
+	    }
 	
 	    model.addAttribute("coachList", coachList);
+	    model.addAttribute("keyword", keyword);
 	    model.addAttribute("certCount", certCount);
 	    model.addAttribute("pageStr", pageStr);
+	    model.addAttribute("sortColumn", sortColumn);
 	    
 	    model.addAttribute("contentPage", "admin/coach/coachList");
 	    model.addAttribute("contentFragment", "coachContent");
@@ -242,6 +259,55 @@ public class AdminCoachController {
 
 	}
 	
+	@GetMapping("/coach/matchList")
+	public String getMatchList(Model model, HttpSession session,
+			@RequestParam(value="cp", defaultValue="1") int cp,
+			@RequestParam(value="keyword", required=false) String keyword) {
+		
+		if(session.getAttribute("loginAdmin")==null) {
+			return "redirect:/admin";
+		}
+		
+		int listSize = 10;
+	    int pageSize = 5;
+	    int matchTotalCnt = 0;
+	    List<Map<String, Object>> matchList = new ArrayList<>();
+	    
+	    try {
+			matchTotalCnt = adminService.getMatchTotalCnt(keyword);
+			
+			int start = (cp - 1) * listSize + 1;
+	        int end = cp * listSize;
+	        
+	        matchList = adminService.getMatchList(keyword, start, end);
+	        
+	     // (선택사항) 상단 요약 바를 위한 상태별 카운트가 필요하다면 추가
+	        // Map<String, Integer> statusCounts = adminService.getMatchStatusCounts();
+	        // model.addAttribute("statusCounts", statusCounts);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	    
+	    String pageStr = "";
+	    if (keyword != null && !keyword.isEmpty()) {
+	        String urlWithParams = "matchList?keyword=" + keyword;
+	        pageStr = com.dacoach.page.PageModule.makePagewithParams(urlWithParams, matchTotalCnt, listSize, pageSize, cp);
+	    } else {
+	        pageStr = com.dacoach.page.PageModule.makePage("matchList", matchTotalCnt, listSize, pageSize, cp);
+	    }
+	    
+	    model.addAttribute("matchList", matchList);
+	    model.addAttribute("totalCount", matchTotalCnt);
+	    model.addAttribute("keyword", keyword);
+	    model.addAttribute("pageStr", pageStr);
+		
+		model.addAttribute("contentPage", "admin/coach/matchList");
+	    model.addAttribute("contentFragment", "matchContent");
+	    
+	    return "admin/dashboard";
+		
+	}
+	
 	
 	
 	@GetMapping("/keyword/keyword")
@@ -371,23 +437,42 @@ public class AdminCoachController {
 	@GetMapping("/support/notice")
 	public String noticeList(Model model,
 			@RequestParam(value="keyword", required=false) String keyword,
+			@RequestParam(value="cp", defaultValue="1") int cp,
 			HttpSession session) {
 		
 		if(session.getAttribute("loginAdmin")==null) {
 			return "redirect:/admin";
 		}
 		
+		int listSize=10;
+		int pageSize=5;
+		int noticeTotalCnt=0;
 		List<Map<String, Object>> noticeList = new ArrayList<>();
 		
 		try {
-			noticeList = adminService.getNoticeList(keyword);
+			noticeTotalCnt=adminService.getNoticeTotalCnt(keyword);
+			
+			int start = (cp - 1) * listSize + 1;
+			int end = cp * listSize;
+			
+			noticeList = adminService.getNoticeList(keyword,start,end);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		String url = "notice";
+		String pageStr = "";
+
+		if (keyword != null && !keyword.isEmpty()) {
+		    url += "?keyword=" + keyword;
+		    pageStr = com.dacoach.page.PageModule.makePagewithParams(url, noticeTotalCnt, listSize, pageSize, cp);
+		} else {
+		    pageStr = com.dacoach.page.PageModule.makePage(url, noticeTotalCnt, listSize, pageSize, cp);
 		}
 		
 		model.addAttribute("noticeList", noticeList);
 		model.addAttribute("keyword", keyword);
+		model.addAttribute("pageStr",pageStr);
 		model.addAttribute("contentPage", "admin/support/notice/noticeList");
 		model.addAttribute("contentFragment", "noticeList");
 		
@@ -550,7 +635,7 @@ public class AdminCoachController {
 		List<Map<String, Object>> qnaList = new ArrayList<>();
 			
 		try {
-			qnaTotalCnt=adminService.getQnaTotalCnt();
+			qnaTotalCnt=adminService.getQnaTotalCnt(keyword);
 			
 			int start = (cp - 1) * listSize + 1;
 			int end = cp * listSize;
@@ -560,7 +645,15 @@ public class AdminCoachController {
 			e.printStackTrace();
 		}
 		
-		String pageStr=com.dacoach.page.PageModule.makePage("qna", qnaTotalCnt, listSize, pageSize, cp);
+		String url="qna";
+		String pageStr="";
+		
+		if(keyword != null && !keyword.isEmpty()) {
+			url += "?keyword=" + keyword;
+			pageStr = com.dacoach.page.PageModule.makePagewithParams(url, qnaTotalCnt, listSize, pageSize, cp);
+		} else {
+			pageStr = com.dacoach.page.PageModule.makePage(url, qnaTotalCnt, listSize, pageSize, cp);
+		}
 				
 		model.addAttribute("qnaList", qnaList);
 		model.addAttribute("keyword", keyword);
@@ -810,7 +903,7 @@ public class AdminCoachController {
 		List<Map<String, Object>> reportList = new ArrayList<>();
 		
 		try {
-			reportTotalCnt=adminService.getReportTotalCnt();
+			reportTotalCnt=adminService.getReportTotalCnt(status);
 			
 			int start = (cp - 1) * listSize + 1;
 			int end = cp * listSize;
@@ -820,7 +913,14 @@ public class AdminCoachController {
 			e.printStackTrace();
 		}
 		
-		String pageStr=com.dacoach.page.PageModule.makePage("report", reportTotalCnt, listSize, pageSize, cp);
+		String url="report";
+		String pageStr="";
+		if(status != null && !status.isEmpty()) {
+			url += "?status=" + status;
+			pageStr = com.dacoach.page.PageModule.makePagewithParams(url, reportTotalCnt, listSize, pageSize, cp);
+		} else {
+			pageStr = com.dacoach.page.PageModule.makePage(url, reportTotalCnt, listSize, pageSize, cp);
+		}
 		
 		model.addAttribute("reportList",reportList);
 		model.addAttribute("selectedStatus", status);
@@ -917,6 +1017,7 @@ public class AdminCoachController {
 		
 		int monthlySales=0;
 		int lastMonthSales=0;
+		int monthlyMembershipSales=0;
 		long avgPayAmount=0;
 		int pendingRefundCount=0;
 		double growth=0.0;
@@ -929,6 +1030,7 @@ public class AdminCoachController {
 			// 성장률 공식: (이번달 - 지난달) / 지난달 * 100
 			monthlySales=adminService.monthlySales();
 			lastMonthSales=adminService.lastMonthSales();
+			monthlyMembershipSales=adminService.monthlyMembershipSales();
 			avgPayAmount=adminService.avgPayAmount();
 			pendingRefundCount=adminService.pendingRefundCount();
 			weeklySales = adminService.weeklySales();
@@ -951,6 +1053,7 @@ public class AdminCoachController {
 		
 		model.addAttribute("monthlySales",monthlySales);
 		model.addAttribute("growth",growth);
+		model.addAttribute("membershipRevenue",monthlyMembershipSales);
 		model.addAttribute("avgPayAmount",avgPayAmount);
 		model.addAttribute("pendingRefundCount",pendingRefundCount);
 		model.addAttribute("weeklySales", weeklySales);

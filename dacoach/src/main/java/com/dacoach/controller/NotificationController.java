@@ -28,7 +28,7 @@ public class NotificationController {
 	public ModelAndView notification(HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
-			mav.setViewName("/needLogin");
+			mav.setViewName("needLogin");
 			return mav;
 		}
 		int user_idx = (Integer)session.getAttribute("user_idx");
@@ -39,7 +39,7 @@ public class NotificationController {
 			e.printStackTrace();
 		}
 		mav.addObject("ndtos", ndtos);
-		mav.setViewName("/coach/notification");
+		mav.setViewName("coach/notification");
 		return mav;
 	}
 	

@@ -3,11 +3,19 @@ package com.dacoach.service.membership;
 import java.util.List;
 
 import com.dacoach.kakaopay.PayDTO;
+import com.dacoach.model.admin.ReasonTypeDTO;
 import com.dacoach.model.company.AdDTO;
 import com.dacoach.model.membership.MembershipDTO;
 import com.dacoach.model.membership.MembershipDetailDTO;
 
 public interface MembershipService {
+	
+	public int bannerDel(int member_idx) throws Exception;
+	
+	public int insertDownReason(int reason_type_idx) throws Exception;
+	
+	public List<ReasonTypeDTO> downReason() throws Exception;
+	
 	public int defaultMembership(int idx) throws Exception;
 	
 	public MembershipDTO userMembershipInfo(int idx) throws Exception;

@@ -105,7 +105,7 @@
           	<img src="/img/icon/menu.png" id="menuBtn">
           	<div class="quickMenu" id="quickMenu" aria-hidden="true">
 			    
-			    <button type="button" class="quickItem danger" id="leaveRoomBtn">
+			    <button type="button" class="quickItem danger" id="leaveRoomBtn" th:if="${tab != 'CLASS'}">
 			      <img class="qiIcon" src="/img/icon/exit.png">
 			      <span class="qiText">채팅방<br>나가기</span>
 			    </button>
@@ -130,9 +130,7 @@
 
 <script>
 var stompClient = null;
-/* =========================
-   1) 탭 필터 (COACH/COMPANY)
-   ========================= */
+
 (function(){
 	  const tabs = document.querySelectorAll('.chatTab1, .chatTab2');
 	  const items = Array.from(document.querySelectorAll('.roomItem'));
@@ -145,12 +143,12 @@ var stompClient = null;
 
 	  function apply(type){
 	    items.forEach(el => {
-	      const t = (el.dataset.otherType || '').trim(); // COACH / COMPANY
+	      const t = (el.dataset.otherType || '').trim(); 
 	      el.style.display = (t === type) ? '' : 'none';
 	    });
 	  }
 
-	  // URL ?tab=COMPANY 우선
+	  
 	  const params = new URLSearchParams(location.search);
 	  const initial = (params.get('tab') || '').toUpperCase();
 
@@ -161,10 +159,9 @@ var stompClient = null;
 	  tabs.forEach(btn => {
 	    btn.addEventListener('click', () => {
 	      const type = btn.dataset.type;
-	      setActive(type);
-	      apply(type);
+	      location.href = '/company/chat?tab=' + type;
 
-	      // 탭 바꿀 때도 URL 유지(새로고침해도 유지됨)
+	     
 	      const url = new URL(location.href);
 	      url.searchParams.set('tab', type);
 	      history.replaceState(null, '', url);
@@ -173,17 +170,6 @@ var stompClient = null;
 })();
 
 
-/* =========================
-   2) WebSocket(STOMP) 채팅
-   - 최초 1회만 히스토리 로드
-   - 이후 실시간으로 append
-   ========================= */
-   /* =========================
-   2) WebSocket(STOMP) 채팅
-   - 최초 1회만 히스토리 로드
-   - 이후 실시간으로 append
-   - avatar DOM을 미리 만들고 cloneNode로 재사용
-   ========================= */
 (function(){
   const win = document.querySelector('.chatWindow');
   if(!win) return;
@@ -206,11 +192,11 @@ var stompClient = null;
   const otherPhoto = win.dataset.otherPhoto || 'default_profile.png';
 
   function resolvePhoto(p){
-    if(!p || p === 'default_profile.png') return '/img/profile/defaultProfile.jpg';
-    return `/uploads/profile/${encodeURIComponent(p)}`;
+    if(!p || p === 'default_profile.png' || p==='') return '/img/profile/defaultProfile.jpg';
+    return '/uploads/' + p;
   }
 
-  /* 1) 상대 아바타 DOM을 "한 번만" 만들어둔다 */
+ 
   const baseYouAvatar = document.createElement('div');
   baseYouAvatar.className = 'youAvatar';
 
@@ -225,8 +211,7 @@ var stompClient = null;
   baseYouAvatar.appendChild(baseYouImg);
 
   function createYouAvatarNode(){
-    // cloneNode(true)로 DOM 복제
-    // img src는 그대로, onerror는 clone에 안 복사될 수 있어서 다시 걸어줌
+    
     const node = baseYouAvatar.cloneNode(true);
     const img = node.querySelector('img');
     if(img){
@@ -238,7 +223,7 @@ var stompClient = null;
     return node;
   }
 
-  /* 2) 메시지 Row를 DOM으로 만든다 (문자열 insertAdjacentHTML X) */
+  
   function makeMineRow(hhmm, msg){
     const row = document.createElement('div');
     row.className = 'msgRow me';
@@ -248,7 +233,7 @@ var stompClient = null;
 
     const text = document.createElement('div');
     text.className = 'text';
-    text.innerHTML = escapeHtml(msg);
+    text.innerHTML = escapeHtml(msg);text.innerHTML = escapeHtml(msg).replace("[공지사항]", "[공지사항]&nbsp;&nbsp;&nbsp;<br>");
 
     bubble.appendChild(text);
 
@@ -301,7 +286,7 @@ var stompClient = null;
     return row;
   }
 
-  // 기존 TXT 히스토리 렌더 (yyyy-MM-dd HH:mm:ss|senderIdx|message)
+  
   function renderHistory(raw) {
     msgBox.innerHTML = '';
     const lines = raw.split(/\r?\n/).filter(Boolean);
@@ -315,10 +300,10 @@ var stompClient = null;
         const hhmm = parts[0].length >= 16 ? parts[0].substring(11, 16) : '';
 
         if (sender === 0) {
-            // 시스템 메시지 (중앙 정렬)
+           
             msgBox.appendChild(makeSystemRow(msg));
         } else {
-            // 일반 메시지 (나/상대방)
+            
             const node = (sender === myIdx) ? makeMineRow(hhmm, msg) : makeYouRow(hhmm, msg);
             msgBox.appendChild(node);
         }
@@ -326,7 +311,7 @@ var stompClient = null;
     msgBox.scrollTop = msgBox.scrollHeight;
 }
 
-  // WS로 받은 단일 메시지 append
+  
   function appendMsg(ts, sender, msg){
     const hhmm = (ts && ts.length >= 16) ? ts.substring(11,16) : '';
 
@@ -341,23 +326,23 @@ var stompClient = null;
   }
   
   function updateLeftList(targetRoomIdx, lastMsg) {
-	    // data-room-idx 속성이나 href를 이용해 해당 방 요소를 찾습니다.
+	    
 	    const roomItems = document.querySelectorAll('.roomItem');
 	    roomItems.forEach(item => {
-	        // href에 해당 방 번호가 포함되어 있는지 확인
+	        
 	        if (item.getAttribute('href').includes('/room/' + targetRoomIdx)) {
-	            // 미리보기 텍스트 업데이트
+	            
 	            const preview = item.querySelector('.roomPreview');
 	            if (preview) preview.textContent = lastMsg;
 
-	            // 안 읽은 배지(Badge) 처리 (현재 내가 보고 있는 방이 아닐 때만 숫자를 올림)
+	           
 	            const currentWin = document.querySelector('.chatWindow');
 	            const currentRoomIdx = currentWin ? currentWin.dataset.roomIdx : null;
 
 	            if (targetRoomIdx != currentRoomIdx) {
 	                let badge = item.querySelector('.roomBadge');
 	                if (!badge) {
-	                    // 배지가 없으면 새로 생성
+	                   
 	                    const bottomLine = item.querySelector('.roomBottomLine');
 	                    badge = document.createElement('span');
 	                    badge.className = 'roomBadge';
@@ -368,14 +353,14 @@ var stompClient = null;
 	                badge.style.display = 'block';
 	            }
 
-	            // 가장 최근 메시지가 왔으므로 목록 맨 위로 올리기 (선택 사항)
+	            
 	            const parent = item.parentNode;
 	            parent.prepend(item);
 	        }
 	    });
 	}
   
-  // 최초 1회만 히스토리 로딩
+  
   async function loadHistory(){
     const res = await fetch(`/company/chat/messages/${roomIdx}`, { cache: 'no-store' });
     const raw = await res.text();
@@ -405,7 +390,7 @@ var stompClient = null;
               }
           }
         }catch(e){
-          // 무시
+         
         }
       });
     });
@@ -431,8 +416,7 @@ var stompClient = null;
 	    input.addEventListener('keydown', (e) => {
 	      if(e.key === 'Enter'){
 	        e.preventDefault();
-	        // CLASS 탭이면 classSendWs를, 아니면 sendWs를 호출하거나 
-	        // 그냥 현재 클릭 가능한 버튼을 클릭하게 만듭니다.
+	        
 	        const activeBtn = document.getElementById('classSendBtn') || document.getElementById('sendBtn');
 	        if(activeBtn) activeBtn.click();
 	      }
@@ -455,9 +439,7 @@ function makeSystemRow(msg) {
 }
 </script>
 <script>
-/* =========================
-   3) 메뉴(quickMenu) 토글
-   ========================= */
+
 (() => {
   const btn = document.getElementById('menuBtn');
   const menu = document.getElementById('quickMenu');
@@ -482,19 +464,19 @@ function makeSystemRow(msg) {
     toggle();
   });
 
-  // 메뉴 클릭은 닫히지 않게
+  
   menu.addEventListener('click', (e) => e.stopPropagation());
 
-  // 바깥 클릭 시 닫기
+ 
   document.addEventListener('click', close);
 
-  // ESC 닫기
+  
   document.addEventListener('keydown', (e) => {
     if(e.key === 'Escape') close();
   });
 })();
    
-   // 채팅방 나가기
+   
    document.getElementById('leaveRoomBtn')?.addEventListener('click', async () => {
 	  if(!confirm('채팅방을 나가시겠습니까?')) return;
 	
@@ -503,14 +485,14 @@ function makeSystemRow(msg) {
 	
 	  const roomIdx = win.dataset.roomIdx;
 	
-	  const res = await fetch(`/company/chat/room/${roomIdx}/leave`, {
+	  const res = await fetch(`/chat/room/${roomIdx}/leave`, {
 	    method: 'POST',
 	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 	  });
 	
 	  const text = await res.text();
 	  if(text === 'OK'){
-	    location.href = '/company/chat'; // 나가고 채팅 메인
+	    location.href = '/company/chat'; 
 	  }else{
 	    alert('나가기 실패');
 	  }
@@ -525,7 +507,7 @@ function classSendWs(userRoom){
     if(!message || !stompClient) return;
     stompClient.send('/app/class.send', {}, JSON.stringify({
       roomIdx: parseInt(userRoom, 10),
-      message: message
+      message: "[공지사항]"+ message
     }));
 }
 
@@ -556,12 +538,12 @@ function tapSet(){
 
 	  function apply(type){
 	    items.forEach(el => {
-	      const t = (el.dataset.otherType || '').trim(); // COACH / class
+	      const t = (el.dataset.otherType || '').trim(); 
 	      el.style.display = (t === type) ? '' : 'none';
 	    });
 	  }
 
-	  // URL ?tab=COMPANY 우선
+	  
 	  const params = new URLSearchParams(location.search);
 	  const initial = (params.get('tab') || '').toUpperCase();
 
@@ -572,10 +554,9 @@ function tapSet(){
 	  tabs.forEach(btn => {
 	    btn.addEventListener('click', () => {
 	      const type = btn.dataset.type;
-	      setActive(type);
-	      apply(type);
+	      location.href = '/company/chat?tab=' + type;
 
-	      // 탭 바꿀 때도 URL 유지(새로고침해도 유지됨)
+	      
 	      const url = new URL(location.href);
 	      url.searchParams.set('tab', type);
 	      history.replaceState(null, '', url);
@@ -644,11 +625,9 @@ chatSearch.onkeyup=function(){
 				const userName=u.USER_NAME;
 				const nickName=u.NICKNAME;
 				
-					u.PHOTO='default_profile.png';//변경해야됨
-				
 				if(userName.startsWith(searchValue)||nickName.startsWith(searchValue)){
 					count++;
-					const userImgPath = (u.PHOTO === 'default_profile.png') 
+					const userImgPath =!u.PHOTO || u.PHOTO === 'default_profile.png' || u.PHOTO === '' 
                     ? '/img/profile/defaultProfile.jpg' 
                     : `/uploads/${u.PHOTO}`;
 					

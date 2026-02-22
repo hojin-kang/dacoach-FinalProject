@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="coachContent">
     <style>
-        /* [기본 테마 변수] */
+        /* [기존 스타일 유지] */
         :root {
             --mint-bg: #f0f8f7;
             --mint-main: #9dbbb5;
@@ -10,81 +10,59 @@
             --slate-text: #374151;
         }
 
-        /* 컨테이너: min-height로 최소 높이 확보 및 배경색 유지 */
-        .coach-admin-container { 
-            font-family: 'Pretendard', sans-serif; 
-            color: var(--slate-text); 
-            background-color: white; 
-            min-height: 100vh; 
-        }
-
-        /* [상단 헤더 영역] */
+        .coach-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; min-height: 800px; }
         .admin-top-bar { 
             display: flex; align-items: flex-end; gap: 15px; 
             padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
         }
         .admin-top-bar h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
         .current-path { font-size: 14px; color: #9ca3af; font-weight: 500; }
-
         .control-panel { background-color: white; }
-
         .summary-box {
             display: flex; gap: 15px; padding: 15px 25px; background-color: var(--mint-bg); 
             border-radius: 20px; margin-bottom: 25px; align-items: center;
         }
         .summary-label { font-weight: 800; color: var(--mint-dark); font-size: 14px; }
         .summary-count { background: white; padding: 4px 12px; border-radius: 10px; color: var(--mint-main); font-weight: 900; }
-
-        /* [유동적 리스트 레이아웃] */
-        .list-header, .coach-item-card { 
-            display: flex; 
-            width: 100%; 
-            align-items: center; 
-            text-align: center;
-            box-sizing: border-box;
-        }
-
         .list-header { 
-            padding: 0 20px 10px; 
-            border-bottom: 1px solid #eee; 
-            margin-bottom: 15px; 
-            font-size: 12px; 
-            font-weight: 800; 
-            color: #9ca3af; 
+            display: flex; padding: 0 15px 10px; border-bottom: 1px solid #eee; 
+            margin-bottom: 15px; font-size: 12px; font-weight: 800; color: #9ca3af; 
+            text-align: center;
         }
-
         .coach-item-card {
-            padding: 15px 20px;
+            display: flex; align-items: center; padding: 15px 20px;
             background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
-            margin-bottom: 10px; transition: 0.2s;
+            margin-bottom: 10px; transition: 0.2s; text-align: center;
         }
         .coach-item-card:hover { border-color: var(--mint-main); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-        
-        /* 컬럼 설정: 고정값과 유동값(flex)의 조화 */
-        .col-idx { width: 70px; flex-shrink: 0; font-weight: 800; color: var(--mint-main); font-size: 13px; }
-        .col-name { flex: 1.5; min-width: 120px; font-weight: 700; } /* 이름: 유동적 확장 */
-        .col-nick { flex: 2; min-width: 150px; } /* 닉네임: 가장 많이 확장 */
-        .col-phone { width: 160px; flex-shrink: 0; } /* 전화번호: 고정 */
-        .col-date { width: 120px; flex-shrink: 0; color: #9ca3af; } /* 날짜: 고정 */
-        .col-status { width: 100px; flex-shrink: 0; } /* 상태: 고정 */
-        .col-cert { width: 140px; flex-shrink: 0; cursor: pointer; color: var(--mint-dark); font-weight: 800; } /* 자격증: 고정 */
-
-        .pill-badge {
-            display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
-        }
-
-        /* 페이지네이션 */
-        .pagination-wrap {
-            display: flex; justify-content: center; margin-top: 30px;
-        }
+        .col-idx { width: 80px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
+        .col-name { width: 120px; font-weight: 700; }
+        .col-nick { flex: 1; }
+        .col-phone { width: 150px; }
+        .col-date { width: 120px; color: #9ca3af; }
+        .col-status { width: 100px; }
+        .col-cert { width: 150px; cursor: pointer; color: var(--mint-dark); font-weight: 800; transition: color 0.2s; }
+        .col-cert:hover { color: var(--mint-main); } /* 클릭 가능하다는 느낌 부여 */
+        .pill-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+        .pagination-wrap { display: flex; justify-content: center; margin-top: 30px; }
         .pagination-wrap a, .pagination-wrap span {
             display: inline-block; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700;
-            text-decoration: none; color: #9ca3af; transition: 0.2s; border: 1px solid transparent;
-            background-color: white; margin: 0 4px;
+            text-decoration: none; color: #9ca3af; transition: 0.2s; border: 1px solid transparent; background-color: white; margin: 0 4px;
         }
         .pagination-wrap a:hover { background-color: var(--mint-bg); color: var(--mint-main); }
-        .pagination-wrap .active, .pagination-wrap b {
-            background-color: var(--mint-main); color: white; padding: 8px 14px; border-radius: 10px;
+        .pagination-wrap .active, .pagination-wrap b { background-color: var(--mint-main); color: white; padding: 8px 14px; border-radius: 10px; }
+
+        /* [추가된 검색창 관련 스타일] */
+        .search-area { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .search-form { display: flex; gap: 8px; width: 300px; }
+        .search-input { 
+            width: 100%; padding: 10px 15px; border-radius: 12px; border: 1px solid #e5e7eb; 
+            font-size: 13px; outline: none; transition: border-color 0.2s; 
+        }
+        .search-input:focus { border-color: var(--mint-main); box-shadow: 0 0 0 3px var(--mint-bg); }
+        .search-btn { 
+            background-color: var(--mint-main); color: white; border: none; padding: 0 15px; 
+            border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 13px; white-space: nowrap; 
         }
     </style>
 
@@ -92,6 +70,15 @@
         <div class="admin-top-bar">
             <h1>Coach Management</h1>
             <span class="current-path">Customer / Coach List</span>
+        </div>
+
+        <div class="search-area">
+            <form action="" method="get" class="search-form">
+                <input type="hidden" name="sortColumn" th:value="${sortColumn}">
+                <input type="text" name="keyword" th:value="${keyword}" 
+                       class="search-input" placeholder="이름, 닉네임 또는 IDX 검색">
+                <button type="submit" class="search-btn">검색</button>
+            </form>
         </div>
 
         <section class="control-panel">
@@ -110,7 +97,10 @@
                 <div class="col-phone">PHONE</div>
                 <div class="col-date">CREATED</div>
                 <div class="col-status">STATUS</div>
-                <div class="col-cert" onclick="sortCertCount()">CERT <span id="sortIcon">↕️</span></div>
+                <div class="col-cert" onclick="sortCertCount()">
+                    CERT 
+                    <span id="sortIcon" th:text="${sortColumn == 'cert_wait_count' ? '🔻' : '↕️'}">↕️</span>
+                </div>
             </div>
 
             <div th:if="${#lists.isEmpty(coachList)}" class="text-center py-20 text-gray-300 italic">
@@ -158,23 +148,23 @@
     </div>
 
     <script th:inline="javascript">
-        let isAsc = false;
         function sortCertCount() {
-            const container = document.querySelector('section.control-panel');
-            const rows = Array.from(container.querySelectorAll('.coach-item-card'));
-            const icon = document.getElementById('sortIcon');
+            const url = new URL(window.location.href);
+            const params = url.searchParams;
 
-            if (rows.length === 0) return;
+            const currentSort = params.get('sortColumn');
+            const keyword = params.get('keyword');
 
-            rows.sort((a, b) => {
-                const valA = parseInt(a.querySelector('.col-cert span span')?.innerText || 0);
-                const valB = parseInt(b.querySelector('.col-cert span span')?.innerText || 0);
-                return isAsc ? valA - valB : valB - valA;
-            });
+            if (currentSort === 'cert_wait_count') {
+                params.delete('sortColumn');
+            } else {
+                params.set('sortColumn', 'cert_wait_count');
+            }
+            
+            if (keyword) params.set('keyword', keyword);
+            params.set('cp', '1');
 
-            rows.forEach(row => container.appendChild(row));
-            isAsc = !isAsc;
-            icon.innerText = isAsc ? '🔺' : '🔻';
+            window.location.href = url.pathname + '?' + params.toString();
         }
     </script>
 </div>

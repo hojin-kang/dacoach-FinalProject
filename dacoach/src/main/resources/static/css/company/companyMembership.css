@@ -479,3 +479,181 @@ form[name="bannerForm"] {
         font-size: 0.9375rem;
     }
 }
+
+   
+#downReasonDiv {
+    margin: 40px auto;
+    padding: 35px;
+    max-width: 480px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f3f5;
+    text-align: left;
+}
+
+
+.reason-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 14px 18px;
+    border: 1px solid #edf2f7;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+
+.reason-item:hover {
+    background-color: #f8faff;
+    border-color: #cbd5e0;
+}
+
+
+.reason-item input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+    cursor: pointer;
+   
+    accent-color: #4a5568; 
+}
+
+
+.reason-item label {
+    font-size: 15px;
+    color: #4a5568;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1; 
+}
+
+
+#submitReasonBtn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* 해지하기 버튼과 동일한 컬러감 */
+    background-color: #8912d3; 
+    color: #ffffff;
+}
+
+
+#submitReasonBtn:disabled {
+    background-color: #e2e8f0;
+    color: #a0aec0;
+    cursor: not-allowed;
+}
+
+
+#submitReasonBtn:not(:disabled):hover {
+    background-color: #6f0ea9;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.premium-info-box {
+    margin-top: 30px;
+    padding: 24px 32px;
+    background: linear-gradient(135deg, var(--premium-light) 0%, #fff9eb 100%);
+    border: 1px solid #fde68a;
+    border-radius: var(--radius-lg);
+    color: #92400e; 
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    animation: fadeInUp 0.5s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.premium-info-box::before {
+    content: '⚠️';
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+
+.premium-info-box b {
+    color: var(--premium-hover);
+    font-weight: 700;
+}
+
+
+.premium-info-box span.highlight-text {
+    display: block;
+    margin-top: 12px;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+
+.cancel-warning-container {
+    display: flex !important;
+    flex-direction: column !important; 
+    align-items: center !important;    
+    width: 100% !important;
+    margin: 40px auto !important;
+    clear: both !important;           
+}
+
+
+.membership-benefit-notice {
+    width: 100% !important;
+    max-width: 550px !important;      
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--premium-color);
+    padding: 24px 30px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    text-align: left !important;       
+    margin-bottom: 24px !important;   
+    box-sizing: border-box;
+}
+.notice-title {
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 12px !important;
+    font-size: 1.1rem !important;
+    display: block !important; 
+}
+
+.notice-desc {
+    font-size: 0.95rem !important;
+    color: var(--text-secondary) !important;
+    line-height: 1.7 !important;
+}
+
+
+.membership-benefit-notice strong {
+    color: var(--premium-hover) !important; 
+    font-weight: 700 !important;
+}
+
+.notice-sub {
+    font-size: 0.9rem !important;
+    color: var(--primary-color) !important; 
+    font-weight: 600 !important;
+    display: block !important;
+    margin-top: 10px !important;
+}
+
+#membershipDownBtn {
+    float: none !important;            
+    margin: 0 auto !important;         
+    display: block !important;         
+    width: 200px !important;           
+}

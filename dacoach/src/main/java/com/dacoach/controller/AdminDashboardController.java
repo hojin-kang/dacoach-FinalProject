@@ -1,6 +1,8 @@
 package com.dacoach.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.admin.AdminService;
+import com.dacoach.service.adminRefund.AdminRefundService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +27,9 @@ public class AdminDashboardController {
 	
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
+	private AdminRefundService adminRefundService;
 	
 	@GetMapping("/admin")
 	public String adminLoginForm(
@@ -95,11 +101,52 @@ public class AdminDashboardController {
 		int pendingReportCount=0;
 		int inactiveCompanyCount=0;
 		
+		//To-Do List
+		int reportCount=0;
+		int certCount=0;
+		int companyWaitCount=0;
+		int refundCount=0;
+		
+		//최근 게시물 관리
+		int keywordReviewCount=0;
+		int qnaWaitCount=0;
+		
+		//운영팁
+		List<Map<String, Object>> topInterests = new ArrayList<>();
+		String tipMessage = "";
+		
 		try {
 			dailySales=adminService.dailySales();
 			newUsersCount=adminService.newUsers();
 			pendingReportCount=adminService.pendingReports();
 			inactiveCompanyCount=adminService.inactiveCompany();
+			
+			//To-Do List
+			reportCount=adminService.reportCount();
+			certCount=adminService.getCertCount();
+			companyWaitCount=adminService.companyWaitCount();
+			refundCount=adminRefundService.getRefundTotalCnt();
+			
+			//최근 게시물 관리
+			keywordReviewCount=adminService.keywordReviewCount();
+			qnaWaitCount=adminService.getQnaWaitCount();
+			
+			//운영팁
+			topInterests=adminService.getTopCoachInterests();
+			
+			if(topInterests == null || topInterests.isEmpty()) {
+				tipMessage = "현재 <b>코치 관심 키워드</b>를 집계 중입니다. 서비스 활성화를 위해 신규 코치 유치를 위한 집중 마케팅이 필요한 시점입니다.";
+			}else {
+				if(topInterests.size() == 1) {
+					String field1 = String.valueOf(topInterests.get(0).get("MINOR_FIELD_NM"));
+					tipMessage = "최근 코치들의 주요 관심 키워드는 <b>"+field1+"</b> 입니다. 해당 분야의 프로모션을 기획하기 좋은 시점입니다.";
+				}else {
+					String field1 = String.valueOf(topInterests.get(0).get("MINOR_FIELD_NM"));
+					String field2 = String.valueOf(topInterests.get(1).get("MINOR_FIELD_NM"));
+					tipMessage = "최근 코치들의 주요 관심 키워드는 <b>"+field1+"/"+field2+"</b> 입니다. 해당 분야의 프로모션을 기획하기 좋은 시점입니다.";
+				}
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,8 +156,22 @@ public class AdminDashboardController {
 		model.addAttribute("newUsersCount",newUsersCount);
 		model.addAttribute("pendingReportCount",pendingReportCount);
 		model.addAttribute("inactiveCompanyCount",inactiveCompanyCount);
-        model.addAttribute("contentPage", "admin/index"); // 보여줄 파일
-        model.addAttribute("contentFragment", "statsContent"); // 보여줄 조각
+		
+		//To-Do List
+		model.addAttribute("reportCount",reportCount);
+		model.addAttribute("certCount", certCount);
+		model.addAttribute("companyWaitCount",companyWaitCount);
+		model.addAttribute("refundCount",refundCount);
+		
+		//최근 게시물 관리
+		model.addAttribute("keywordReviewCount",keywordReviewCount);
+		model.addAttribute("qnaWaitCount",qnaWaitCount);
+		
+		//운영팁
+		model.addAttribute("fullTipMessage", tipMessage);
+		
+        model.addAttribute("contentPage", "admin/index");
+        model.addAttribute("contentFragment", "statsContent");
         return "admin/dashboard"; 
     }
 	

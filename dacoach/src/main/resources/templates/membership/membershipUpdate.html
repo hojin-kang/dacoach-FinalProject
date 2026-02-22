@@ -4,6 +4,7 @@
 
    <meta charset="UTF-8" />
    <title>dacoach</title>
+
 <script src="/js/kakaopayModule.js"></script>
    <link rel="stylesheet" th:href="@{/css/main.css}" />
    <link rel="stylesheet" th:href="@{/css/company/companyMembership.css}" />
@@ -23,10 +24,47 @@
       	
       </div>
       <div th:if="${dto.member_detail_idx==2}">
-      	
-      	 <input th:if="${dto.status==null}" type="button" value="멤버십 해지하기" id="membershipDownBtn"> 
-      	 <input th:unless="${dto.status==null}" type="button" value="멤버십 갱신하기" id="membershipContinueBtn">
       
+      	
+      
+      	 <div th:if="${dto.status==null}" class="cancel-warning-container">
+      	 <div th:if="${dto.status==null}" class="membership-benefit-notice">
+         <p class="notice-title">💡 해지 전 꼭 확인해주세요!</p>
+         <p class="notice-desc">
+            지금 해지하시면 프리미엄 회원님만을 위한 <br>
+            <strong>'수업 상단 노출'</strong> 혜택과 <strong>전문 마케팅 지원</strong>이 중단됩니다.
+         </p>
+         <p class="notice-sub">회원님만의 클래스를 홍보할 기회를 유지해 보세요.</p>
+         
+      </div>
+      	 	<input th:if="${dto.status==null}" type="button" value="멤버십 해지하기" id="membershipDownBtn">
+      	</div> 	
+      	 	
+      	 <div class="downReasonDiv" id="downReasonDiv" style="display: none">
+      	 	<form name="fm" th:if="${downReason!=null}" action="/membership/membershipDown" method="post">
+      	 		<div th:each="down, status : ${downReason}" class="reason-item">
+            
+	            <input type="radio" name="reason_type_idx" 
+	                   th:id="${'reason_' + status.index}" 
+	                   th:value="${down.reason_type_idx}">
+	            
+	            <label th:for="${'reason_' + status.index}">
+	                [[${down.content}]]
+	            </label>
+	            
+	       		 </div>
+      	 		<input type="submit" id="submitReasonBtn" value="해지하기" disabled>
+      	 	</form>
+      	 </div>
+      	 
+      	 <div class="premium-info-box" th:unless="${dto.status==null}">
+	        프리미엄 회원님만을 위한 <b>'수업 상단 노출'</b> 혜택과<br>
+	        <b>전문 마케팅 지원</b>이 곧 종료될 예정입니다.
+	        <span class="highlight-text">지금 재가입하고 회원님만의 클래스를 더 넓게 전파해 보세요.</span>
+    	</div>
+    	 
+      	 <input th:unless="${dto.status==null}" type="button" value="멤버십 갱신하기" id="membershipContinueBtn">
+     	
       </div>
    </div>
    </main>
@@ -44,9 +82,32 @@
 	}
 	if(downBtn){
 	downBtn.onclick=function(){
-		location.href='/membership/membershipDown';
+		const downReasonDiv=document.getElementById('downReasonDiv');
+		downReasonDiv.style.display='';
+		
 	}
+	document.addEventListener('change', function(e) {
+	    
+	    if (e.target && e.target.name === 'reason_type_idx' && e.target.type === 'radio') {
+	        const submitBtn = document.getElementById('submitReasonBtn');
+	        const radios = document.getElementsByName('reason_type_idx');
+	        
+	        
+	        let isChecked = false;
+	        for (let i = 0; i < radios.length; i++) {
+	            if (radios[i].checked) {
+	                isChecked = true;
+	                break;
+	            }
+	        }
+	        
+	        
+	        submitBtn.disabled = !isChecked;
+	    }
+	});
 	}
+	
+	
 	if(continueBtn){
 		continueBtn.onclick=function(){
 			location.href='/membership/membershipContinue';

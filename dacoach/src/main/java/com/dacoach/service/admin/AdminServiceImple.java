@@ -27,14 +27,39 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public int getCoachTotalCnt() throws Exception {
-		int count=adminMapper.getCoachTotalCnt();
+	public int reportCount() throws Exception {
+		return adminMapper.reportCount();
+	}
+	
+	@Override
+	public int companyWaitCount() throws Exception {
+		return adminMapper.companyWaitCount();
+	}
+	
+	@Override
+	public int keywordReviewCount() throws Exception {
+		return adminMapper.keywordReviewCount();
+	}
+	
+	@Override
+	public int getQnaWaitCount() throws Exception {
+		return adminMapper.getQnaWaitCount();
+	}
+	
+	@Override
+	public List<Map<String, Object>> getTopCoachInterests() throws Exception {
+		return adminMapper.getTopCoachInterests();
+	}
+	
+	@Override
+	public int getCoachTotalCnt(String keyword) throws Exception {
+		int count=adminMapper.getCoachTotalCnt(keyword);
 		return (count==0)?1:count;
 	}
 	
 	@Override
-	public List<Map<String, Object>> getCoachList(int start,int end) throws Exception {
-		return adminMapper.getCoachList(start,end);
+	public List<Map<String, Object>> getCoachList(String keyword,String sortColumn,int start,int end) throws Exception {
+		return adminMapper.getCoachList(keyword,sortColumn,start,end);
 	}
 	
 	@Override
@@ -88,6 +113,17 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
+	public int getMatchTotalCnt(String keyword) throws Exception {
+		int count=adminMapper.getMatchTotalCnt(keyword);
+		return (count==0)?1:count;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getMatchList(String keyword, int start, int end) throws Exception {
+		return adminMapper.getMatchList(keyword, start, end);
+	}
+	
+	@Override
 	public List<Map<String, Object>> getKeywordType() throws Exception {
 		return adminMapper.getKeywordType();
 	}
@@ -137,8 +173,14 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public List<Map<String, Object>> getNoticeList(String keyword) throws Exception {
-		return adminMapper.getNoticeList(keyword);
+	public int getNoticeTotalCnt(String keyword) throws Exception {
+		int count=adminMapper.getNoticeTotalCnt(keyword);
+		return (count==0)?1:count;
+	}
+	
+	@Override
+	public List<Map<String, Object>> getNoticeList(String keyword,int start,int end) throws Exception {
+		return adminMapper.getNoticeList(keyword,start,end);
 	}
 	
 	@Override
@@ -162,8 +204,8 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public int getQnaTotalCnt() throws Exception {
-		int count=adminMapper.getQnaTotalCnt();
+	public int getQnaTotalCnt(String keyword) throws Exception {
+		int count=adminMapper.getQnaTotalCnt(keyword);
 		return (count==0)?1:count;
 	}
 	
@@ -213,8 +255,8 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
-	public int getReportTotalCnt() throws Exception {
-		int count=adminMapper.getReportTotalCnt();
+	public int getReportTotalCnt(String status) throws Exception {
+		int count=adminMapper.getReportTotalCnt(status);
 		return (count==0)?1:count;
 	}
 	
@@ -273,6 +315,12 @@ public class AdminServiceImple implements AdminService {
 	@Override
 	public int lastMonthSales() throws Exception {
 		Integer result=adminMapper.lastMonthSales();
+		return (result==null)?0:result;
+	}
+	
+	@Override
+	public int monthlyMembershipSales() throws Exception {
+		Integer result=adminMapper.monthlyMembershipSales();
 		return (result==null)?0:result;
 	}
 	

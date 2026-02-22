@@ -37,14 +37,17 @@ public class MembershipController {
 	public ModelAndView membershipForm() {
 		
 		ModelAndView mav=new ModelAndView();
-		
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("needLogin");
+			return mav;
+		}
 		
 		try {
 			dto=membershipService.userMembershipInfo((Integer)session.getAttribute("user_idx"));
 			mav.addObject("detail",membershipService.detail(dto.getMember_detail_idx()));
 			mav.addObject("session",session);
 			mav.addObject("dto",dto);
-			mav.setViewName("/membership/membershipForm");
+			mav.setViewName("membership/membershipForm");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,12 +58,16 @@ public class MembershipController {
 	@GetMapping("/membershipUpForm")
 	public ModelAndView membershipUpForm() {
 		ModelAndView mav=new ModelAndView();
-		
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("needLogin");
+			return mav;
+		}
 		try {
+			mav.addObject("downReason", membershipService.downReason());
 			mav.addObject("detail",membershipService.detailInfo(dto.getMember_detail_idx()));
 			mav.addObject("session",session);
 			mav.addObject("dto",dto);
-			mav.setViewName("/membership/membershipUpdate");
+			mav.setViewName("membership/membershipUpdate");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,8 +75,8 @@ public class MembershipController {
 		return mav;
 		
 	}
-	@GetMapping("/membershipDown")
-	public ModelAndView membershipDown(MembershipDTO dto)	{
+	@PostMapping("/membershipDown")
+	public ModelAndView membershipDown(MembershipDTO dto,Integer reason_type_idx)	{
 		ModelAndView mav=new ModelAndView();
 					
 		try {
@@ -77,12 +84,22 @@ public class MembershipController {
 			if(this.dto.getStatus()!=null&& this.dto.getStatus().equals("취소")) {
 				mav.addObject("msg","멤버십 해지 예정입니다");
 			}else {
-				membershipService.membershipDown(dto);
-			mav.addObject("msg","멤버십 해지가 완료되었습니다");
+				boolean result=false;
+				int downResult=membershipService.membershipDown(dto);
+				if(downResult>0) {
+					result=true;
+					int reasonResult=membershipService.insertDownReason(reason_type_idx);
+					if(reasonResult>0) {
+						result=true;
+					}else result=false;
+				}else result=false;
+				
+				String msg=result?"멤버십 해지가 완료되었습니다":"멤버십 해지가 실패하였습니다";
+				mav.addObject("msg",msg);
 			}
 			mav.addObject("url","/membership/membershipForm");
 			
-			mav.setViewName("/alert");
+			mav.setViewName("alert");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -107,12 +124,16 @@ public class MembershipController {
 		
 		mav.addObject("url","/membership/membershipForm");
 		
-		mav.setViewName("/alert");
+		mav.setViewName("alert");
 		return mav;
 	}
 	@GetMapping("/banner")
 	public ModelAndView bannerForm() {
 		ModelAndView mav=new ModelAndView();
+		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
+			mav.setViewName("needLogin");
+			return mav;
+		}
 		
 		List<AdDTO> adDTO=null	;
 		try {
@@ -124,7 +145,7 @@ public class MembershipController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		mav.setViewName("/membership/banner");
+		mav.setViewName("membership/banner");
 		return mav;
 	}
 	
@@ -133,7 +154,7 @@ public class MembershipController {
 			@RequestParam(value = "photoFile", required = false) MultipartFile photoFile,
 			String action) {
 		ModelAndView mav=new ModelAndView();
-		System.out.println(action);
+		
 		if (photoFile != null && !photoFile.isEmpty()) {
 			
 			try {

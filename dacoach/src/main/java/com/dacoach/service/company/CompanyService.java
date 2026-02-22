@@ -15,6 +15,7 @@ import com.dacoach.model.users.UsersDTO;
 
 public interface CompanyService {
 	
+	public int memberToUser(int membership_idx) throws Exception;
 	public List<Map<String, Object>> fieldTeg() throws Exception;
 	public List<Map<String, Object>> regionTeg() throws Exception;
 	public List<Map<String, Object>> getRegionTag(int idx) throws Exception;

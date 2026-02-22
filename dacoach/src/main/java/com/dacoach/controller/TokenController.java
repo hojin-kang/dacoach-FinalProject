@@ -40,7 +40,7 @@ public class TokenController {
 			e.printStackTrace();
 		}
 		
-		mav.setViewName("/coach/token/tokenHistory");
+		mav.setViewName("coach/token/tokenHistory");
 		
 		return mav;
 	}
@@ -55,7 +55,7 @@ public class TokenController {
         	return mav;
         }
         
-        mav.setViewName("/coach/token/tokenChargeForm");
+        mav.setViewName("coach/token/tokenChargeForm");
 		
 		return mav;
 	}

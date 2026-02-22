@@ -293,6 +293,15 @@ public class UserController {
 					usersService.changeStatusToActive(loginUser.getUser_idx());
 				}
 				
+				if(loginUser.getStatus().equals("INACTIVE")) {
+				
+					mav.addObject("msg", "아직 가입이 수락되지 않았습니다");
+					mav.addObject("url", "/login");
+					mav.setViewName("alert");
+					return mav;
+				
+				}
+								
 				session.setAttribute("user_idx", loginUser.getUser_idx());
 				session.setAttribute("user_type", loginUser.getUser_type());
 				session.setAttribute("user_name", loginUser.getUser_name());
