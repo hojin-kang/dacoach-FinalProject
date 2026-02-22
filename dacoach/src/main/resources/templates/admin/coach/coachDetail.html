@@ -325,7 +325,7 @@
                                             <input type="date" name="get_date" class="i-txt-c" th:value="${cert.get_date}">
                                         </td>
                                         <td class="br-g f-bold">
-                                            <input type="text" name="cert_name" th:value="${cert.cert_name}" class="i-txt-c f-bold">
+                                            <input type="text" name="cert_name" th:value="${cert.cert_name}" class="i-txt-c f-bold" required>
                                         </td>
                                         <td class="br-g">
                                             <input type="text" name="cert_from" th:value="${cert.cert_from}" class="i-txt-c" placeholder="기관 입력">
@@ -338,7 +338,7 @@
                                             </th:block>
                                             <span th:unless="${cert.cert_file != null and cert.cert_file != ''}" class="text-gray-300">-</span>
                                         </td>
-                                        <td><select name="cert_status" class="s-status">
+                                        <td><select name="cert_status" class="s-status" required>
 												<option value="승인">승인</option>
 												<option value="반려">반려</option>
 										</select></td>
