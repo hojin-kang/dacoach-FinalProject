@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.service.admin.AdminService;
 import com.dacoach.service.adminRefund.AdminRefundService;
+import com.dacoach.service.adminad.AdminAdManagementService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +31,9 @@ public class AdminDashboardController {
 	
 	@Autowired
 	private AdminRefundService adminRefundService;
+	
+	@Autowired
+	private AdminAdManagementService adminAdManagementService;
 	
 	@GetMapping("/admin")
 	public String adminLoginForm(
@@ -106,6 +110,7 @@ public class AdminDashboardController {
 		int certCount=0;
 		int companyWaitCount=0;
 		int refundCount=0;
+		int adWaitCount=0;
 		
 		//최근 게시물 관리
 		int keywordReviewCount=0;
@@ -126,6 +131,7 @@ public class AdminDashboardController {
 			certCount=adminService.getCertCount();
 			companyWaitCount=adminService.companyWaitCount();
 			refundCount=adminRefundService.getRefundTotalCnt();
+			adWaitCount=adminAdManagementService.getAdTotalCnt();
 			
 			//최근 게시물 관리
 			keywordReviewCount=adminService.keywordReviewCount();
@@ -162,6 +168,7 @@ public class AdminDashboardController {
 		model.addAttribute("certCount", certCount);
 		model.addAttribute("companyWaitCount",companyWaitCount);
 		model.addAttribute("refundCount",refundCount);
+		model.addAttribute("adWaitCount",adWaitCount);
 		
 		//최근 게시물 관리
 		model.addAttribute("keywordReviewCount",keywordReviewCount);

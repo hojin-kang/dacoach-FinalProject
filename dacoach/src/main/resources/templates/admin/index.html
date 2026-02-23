@@ -372,8 +372,13 @@
 							class="todo-title">환불 요청 처리 [<span
 								th:text="${refundCount}">0</span>건]
 						</span> <span class="todo-desc">결제 취소 및 환불 승인 검토가 필요합니다.</span></li>
+						
+						<li class="todo-item" th:if="${adWaitCount > 0}"><span
+                            class="todo-title">광고 검수 대기 [<span
+                                th:text="${adWaitCount}">0</span>건]
+                        </span> <span class="todo-desc">광고 콘텐츠 검토 및 승인 처리</span></li>
 						<li
-							th:if="${reportCount == 0 && certCount == 0 && companyWaitCount == 0 && refundCount == 0}"
+							th:if="${reportCount == 0 && certCount == 0 && companyWaitCount == 0 && refundCount == 0 && adWaitCount == 0}"
 							style="text-align: center; color: #9ca3af; padding: 20px;">
 							<i class="fa-solid fa-mug-hot"></i> 현재 처리할 업무가 없습니다.
 						</li>
