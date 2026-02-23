@@ -168,7 +168,11 @@ public class CompanyController {
 			companyDto.setPhoto(photoPath);								
 		}else {
 			
-			companyDto.setPhoto((String)session.getAttribute("photo"));
+			if(session.getAttribute("photo")!=null) {
+				companyDto.setPhoto((String)session.getAttribute("photo"));
+			}else {
+				companyDto.setPhoto(null);
+			}
 		}
 		try {
 			boolean result=companyService.companyUp(companyDto, provideDto);

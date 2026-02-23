@@ -263,7 +263,7 @@
   		address=#{address},
   		email=#{email},
   		intro=#{intro},
-  		photo=#{photo}
+  		photo=#{photo, jdbcType=VARCHAR}
   		where user_idx=#{user_idx}
   		
   	</update>
