@@ -62,7 +62,7 @@ public class CompanyController {
 	@GetMapping("/companyJoin")
 	public String joinForm() {
 
-		return "/company/join/companyJoin";
+		return "company/join/companyJoin";
 	}
 	@GetMapping("/company/mypage/myPayment")
 	public ModelAndView myPaymentList(HttpSession session) {
