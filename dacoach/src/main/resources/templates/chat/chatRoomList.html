@@ -338,7 +338,7 @@
 
     const text = document.createElement('div');
     text.className = 'text';
-    text.innerHTML = escapeHtml(msg);
+    text.innerHTML = escapeHtml(msg);text.innerHTML = escapeHtml(msg).replace("[공지사항]", "[공지사항]&nbsp;&nbsp;&nbsp;<br>");
 
     bubble.appendChild(text);
 
