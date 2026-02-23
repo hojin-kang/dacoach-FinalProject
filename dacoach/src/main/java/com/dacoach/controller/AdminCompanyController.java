@@ -54,11 +54,7 @@ public class AdminCompanyController {
 
         List<Map<String, Object>> list = service.getCompanyList(map);
 
-        String pageUrl = "companyList";
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            pageUrl += "?keyword=" + keyword; 
-        }
-        String pageStr = PageModule.makePage("pageUrl", totalCnt, listSize, pageSize, cp);
+        String pageStr = PageModule.makePage("companyList", totalCnt, listSize, pageSize, cp);
 
         model.addAttribute("list", list);
         model.addAttribute("pageStr", pageStr);
