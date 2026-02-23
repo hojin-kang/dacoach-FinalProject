@@ -8,6 +8,6 @@ public class FooterConroller {
 
 	@GetMapping("/howItWorks")
 	public String howItWorks() {
-		return "/howItWorks";
+		return "howItWorks";
 	}
 }
