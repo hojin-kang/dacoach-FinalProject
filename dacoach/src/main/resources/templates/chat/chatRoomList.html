@@ -171,7 +171,64 @@
 	  });
 })();
 
+   /* =========================
+   1-1) 탭 + 검색 통합 필터링
+   ========================= */
+(function(){
+  const searchInput = document.querySelector('.chatSearchInput');
+  const tabs = document.querySelectorAll('.chatTab1, .chatTab2');
+  const items = Array.from(document.querySelectorAll('.roomItem'));
+  const roomEmpty = document.querySelector('.roomEmpty');
 
+  // 현재 활성화된 탭 타입과 검색어를 기준으로 필터링하는 함수
+  function filterRooms() {
+    const activeTab = document.querySelector('.chatTabs button.active');
+    const currentType = activeTab ? activeTab.dataset.type : 'COACH';
+    const searchTerm = searchInput.value.toLowerCase().trim();
+
+    let visibleCount = 0;
+
+    items.forEach(item => {
+      const roomType = (item.dataset.otherType || '').trim();
+      const roomName = item.querySelector('.roomName').textContent.toLowerCase();
+      
+      // 조건: 탭 타입이 일치하고 + 검색어를 포함하고 있는지
+      const isTabMatch = (roomType === currentType);
+      const isSearchMatch = roomName.includes(searchTerm);
+
+      if (isTabMatch && isSearchMatch) {
+        item.style.display = '';
+        visibleCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // 검색 결과가 없을 때 "아직 채팅방이 없습니다" 문구 제어
+    if (roomEmpty) {
+      roomEmpty.style.display = (visibleCount === 0) ? 'block' : 'none';
+      if (visibleCount === 0 && searchTerm !== "") {
+        roomEmpty.textContent = `'${searchTerm}'에 대한 검색 결과가 없습니다.`;
+      } else if (visibleCount === 0) {
+        roomEmpty.textContent = "아직 채팅방이 없습니다.";
+      }
+    }
+  }
+
+  // 검색창에 입력할 때마다 실행
+  searchInput.addEventListener('input', filterRooms);
+
+  // 탭 클릭 시에도 필터링 실행
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // (기존 탭 활성화 로직은 그대로 두고 filterRooms만 추가 호출)
+      setTimeout(filterRooms, 10); // 클래스 변경 시간을 고려한 미세한 지연
+    });
+  });
+  
+  // 초기 실행
+  filterRooms();
+})();
 /* =========================
    2) WebSocket(STOMP) 채팅
    - 최초 1회만 히스토리 로드
