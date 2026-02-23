@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="matchContent">
+    <style>
+        :root {
+            --mint-bg: #f0f8f7; --mint-main: #9dbbb5; --mint-dark: #7a9a94;
+            --slate-text: #374151; --gray-light: #9ca3af;
+            --bg-일정확정: #ede9fe; --text-일정확정: #6d28d9;
+            --bg-서약완료: #d1fae5; --text-서약완료: #059669;
+            --bg-매칭완료: #fef3c7; --text-매칭완료: #d97706;
+            --bg-채팅중: #dbeafe; --text-채팅중: #2563eb;
+            --bg-대기: #f3f4f6; --text-대기: #6b7280;
+        }
+
+        .match-admin-container { font-family: 'Pretendard', sans-serif; color: var(--slate-text); background-color: white; padding: 40px; }
+
+        /* 상단 헤더 & 검색바 레이아웃 */
+        .admin-header-row {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding-bottom: 20px; border-bottom: 3px solid var(--mint-bg); margin-bottom: 30px;
+        }
+        .header-title h1 { font-size: 24px; font-weight: 900; color: var(--mint-main); margin: 0; }
+        .header-title span { font-size: 14px; color: #9ca3af; font-weight: 500; }
+
+        /* 검색창 스타일 */
+        .search-form { display: flex; gap: 8px; align-items: center; }
+        .search-input {
+            padding: 10px 15px; border: 1px solid #e5e7eb; border-radius: 10px;
+            font-size: 14px; width: 220px; outline: none; transition: border-color 0.2s;
+        }
+        .search-input:focus { border-color: var(--mint-main); }
+        .btn-search {
+            background: var(--mint-main); color: white; border: none; padding: 10px 20px;
+            border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px;
+        }
+        .btn-search:hover { background: var(--mint-dark); }
+
+        /* 요약 섹션 */
+        .summary-row { display: flex; gap: 15px; margin-bottom: 30px; }
+        .stat-card { flex: 1; background: var(--mint-bg); padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-label { font-size: 12px; font-weight: 700; color: var(--mint-dark); display: block; }
+        .stat-value { font-size: 20px; font-weight: 900; color: var(--mint-main); }
+
+        /* 리스트 테이블 스타일 */
+        .list-header { 
+            display: flex; padding: 15px 25px; background-color: #fcfdfd;
+            border-bottom: 2px solid var(--mint-bg); margin-bottom: 10px;
+            font-size: 13px; font-weight: 800; color: var(--gray-light); text-align: center;
+        }
+        .match-item-card {
+            display: flex; align-items: center; padding: 20px 25px;
+            background-color: white; border-radius: 15px; border: 1px solid #f3f4f6;
+            margin-bottom: 10px; text-align: center; transition: transform 0.2s;
+        }
+        .match-item-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+        .col-idx { width: 80px; font-weight: 800; color: var(--mint-main); font-size: 13px; }
+        .col-user { flex: 2; display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .col-status { width: 150px; }
+        .col-date { width: 200px; color: var(--gray-light); font-size: 13px; }
+
+        .status-pill { display: inline-block; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 800; width: 100px; text-align: center; }
+        .status-일정확정 { background-color: var(--bg-일정확정); color: var(--text-일정확정); }
+        .status-서약완료 { background-color: var(--bg-서약완료); color: var(--text-서약완료); }
+        .status-매칭완료 { background-color: var(--bg-매칭완료); color: var(--text-매칭완료); }
+        .status-채팅중 { background-color: var(--bg-채팅중); color: var(--text-채팅중); }
+        .status-대기 { background-color: var(--bg-대기); color: var(--text-대기); }
+
+        .name-tag { font-size: 15px; font-weight: 700; color: var(--slate-text); min-width: 80px; }
+        .match-arrow { color: var(--mint-main); font-size: 18px; font-weight: 900; }
+        
+        .pagination-wrap { display: flex; justify-content: center; margin-top: 30px; }
+        .pagination-wrap a, .pagination-wrap span {
+            display: inline-block; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            text-decoration: none; color: #9ca3af; transition: 0.2s; border: 1px solid transparent; background-color: white; margin: 0 4px;
+        }
+        .pagination-wrap a:hover { background-color: var(--mint-bg); color: var(--mint-main); }
+        .pagination-wrap .active, .pagination-wrap b { background-color: var(--mint-main); color: white; padding: 8px 14px; border-radius: 10px; }
+    </style>
+
+    <div class="match-admin-container">
+        <div class="admin-header-row">
+            <div class="header-title">
+                <h1>Match Tracking</h1>
+                <span>Real-time Monitoring</span>
+            </div>
+            
+            <form th:action="@{/admin/coach/matchList}" method="get" class="search-form">
+                <input type="text" name="keyword" th:value="${keyword}" 
+                       class="search-input" placeholder="참여자 이름 검색...">
+                <button type="submit" class="btn-search">검색</button>
+            </form>
+        </div>
+
+		<div class="summary-row">
+			<div class="stat-card">
+				<span class="stat-label">Total</span> <span class="stat-value"
+					th:text="${statusCounts != null ? (statusCounts['Total'] ?: statusCounts['TOTAL'] ?: 0) : 0}">0</span>
+			</div>
+			<div class="stat-card" style="background: var(--bg-채팅중);">
+				<span class="stat-label" style="color: var(--text-채팅중);">채팅중</span>
+				<span class="stat-value" style="color: var(--text-채팅중);"
+					th:text="${statusCounts != null ? (statusCounts['채팅중'] ?: statusCounts['채팅중'] ?: 0) : 0}">0</span>
+			</div>
+			<div class="stat-card" style="background: var(--bg-매칭완료);">
+				<span class="stat-label" style="color: var(--text-매칭완료);">매칭완료</span>
+				<span class="stat-value" style="color: var(--text-매칭완료);"
+					th:text="${statusCounts != null ? (statusCounts['매칭완료'] ?: statusCounts['매칭완료'] ?: 0) : 0}">0</span>
+			</div>
+			<div class="stat-card" style="background: var(--bg-일정확정);">
+				<span class="stat-label" style="color: var(--text-일정확정);">일정확정</span>
+				<span class="stat-value" style="color: var(--text-일정확정);"
+					th:text="${statusCounts != null ? (statusCounts['일정확정'] ?: statusCounts['일정확정'] ?: 0) : 0}">0</span>
+			</div>
+		</div>
+
+		<div class="list-header">
+            <div class="col-idx">IDX</div>
+            <div class="col-user">SENDER & RECEIVER</div>
+            <div class="col-status">CURRENT STATUS</div>
+            <div class="col-date">UPDATE TIME</div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(matchList)}" class="py-20 text-center" style="padding: 50px 0;">
+            <p style="color: #9ca3af; font-style: italic;">조회된 매칭 내역이 없습니다.</p>
+        </div>
+
+        <div th:each="match : ${matchList}" class="match-item-card">
+            <div class="col-idx" th:text="${match['MATCH_IDX']}">101</div>
+
+			<div class="col-user">
+				<span class="name-tag" th:text="${match['SENDER']}">신청자</span> <span
+					class="match-arrow"> <small
+					style="font-size: 10px; display: block; margin-bottom: -5px;"
+					th:text="${match['INITIATOR_TYPE']}"></small> →
+				</span> <span class="name-tag" th:text="${match['RECEIVER']}">상대방</span>
+			</div>
+
+			<div class="col-status">
+                <span class="status-pill"
+                      th:classappend="'status-' + ${match['PROGRESS_STATUS']}"
+                      th:text="${match['PROGRESS_STATUS']}">상태</span>
+            </div>
+
+            <div class="col-date">
+                <span th:text="${match['LAST_ACTION_DATE'] != null ? #dates.format(match['LAST_ACTION_DATE'], 'yyyy.MM.dd HH:mm') : '-'}">시간</span>
+            </div>
+        </div>
+
+        <div class="pagination-wrap" th:if="${not #lists.isEmpty(matchList)}">
+            <div th:utext="${pageStr}"></div>
+        </div>
+    </div>
+</div>
+</html>

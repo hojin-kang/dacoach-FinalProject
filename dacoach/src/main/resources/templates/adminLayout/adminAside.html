@@ -4,18 +4,18 @@
     <style>
         /* 사이드바 기본 레이아웃 */
         .admin-aside {
-            width: 256px; /* w-64 */
-            min-height: 100vh; /* min-h-screen */
-            background-color: #ffffff; /* bg-white */
-            border-right: 1px solid #e5e7eb; /* border-r border-gray-200 */
-            padding-top: 40px; /* py-10 */
+            width: 256px;
+            min-height: 100vh;
+            background-color: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding-top: 40px;
             padding-bottom: 40px;
-            flex-shrink: 0; /* flex-shrink-0 */
+            flex-shrink: 0;
         }
 
         .admin-aside__list {
             display: flex;
-            flex-direction: column; /* flex flex-col */
+            flex-direction: column;
             list-style: none;
             padding: 0;
             margin: 0;
@@ -27,168 +27,163 @@
             display: block;
             width: 100%;
             text-align: left;
-            padding: 16px 40px; /* px-10 py-4 */
-            color: #374151; /* text-gray-700 */
-            font-weight: 500; /* font-medium */
+            padding: 16px 40px;
+            color: #374151;
+            font-weight: 500;
             text-decoration: none;
             border: none;
             background: none;
             cursor: pointer;
-            border-left: 4px solid transparent; /* border-l-4 border-transparent */
-            transition: all 0.3s; /* transition-all duration-300 */
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
         }
 
         /* 마우스 호버 시 */
         .admin-aside__menu-item:hover,
         .admin-aside__trigger:hover {
-            background-color: #f0f9f7; /* hover:bg-[#f0f9f7] */
-            color: #4a7c74; /* hover:text-[#4a7c74] */
-            border-left-color: #4a7c74; /* hover:border-[#4a7c74] */
+            background-color: #f0f9f7;
+            color: #4a7c74;
+            border-left-color: #4a7c74;
         }
 
-        /* 활성화된 메뉴 상태 (activeMenu) */
+        /* 활성화된 메뉴 상태 */
         .admin-aside__menu-item--active,
         .admin-aside__trigger--active {
             background-color: #f0f9f7;
             color: #4a7c74;
             border-left-color: #4a7c74;
-            font-weight: 600; /* font-semibold */
+            font-weight: 600;
         }
 
         /* 서브메뉴 레이아웃 */
         .admin-aside__submenu {
-            background-color: #f9fafb; /* bg-gray-50 */
-            padding-bottom: 8px; /* pb-2 */
+            background-color: #f9fafb;
+            padding-bottom: 8px;
             list-style: none;
             padding-left: 0;
         }
 
         .admin-aside__submenu.hidden {
-            display: none; /* hidden */
+            display: none;
         }
 
         /* 서브메뉴 개별 링크 */
         .admin-aside__submenu-link {
             display: block;
-            padding: 8px 56px; /* px-14 py-2 */
-            font-size: 14px; /* text-sm */
-            color: #4b5563; /* text-gray-600 */
+            padding: 8px 56px;
+            font-size: 14px;
+            color: #4b5563;
             text-decoration: none;
             transition: color 0.2s;
         }
 
         .admin-aside__submenu-link:hover {
-            color: #4a7c74; /* hover:text-[#4a7c74] */
+            color: #4a7c74;
         }
 
-        /* 활성화된 서브메뉴 상태 (activeSubmenu) */
+        /* 활성화된 서브메뉴 상태 */
         .admin-aside__submenu-link--active {
             color: #4a7c74;
-            font-weight: 700; /* font-bold */
-            text-decoration: underline; /* underline */
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        /* 아이콘 스타일 */
+        .admin-aside__trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-aside__trigger::after {
+            content: '+';
+            font-size: 18px;
+            font-weight: bold;
+            color: #9ca3af;
+        }
+
+        .admin-aside__trigger.is-open::after {
+            content: '-';
+            color: #4a7c74;
         }
     </style>
 
     <nav>
         <ul class="admin-aside__list">
             <li>
-                <a th:href="@{/admin/coach/coachList}" 
-                   class="admin-aside__menu-item"
-                   th:classappend="${activeMenu == 'coach'} ? ' admin-aside__menu-item--active'">
-                    개인고객관리
-                </a>
+                <button type="button" class="admin-aside__trigger" onclick="toggleSubMenu('personalSubmenu', this)">
+                    개인서비스관리
+                </button>
+                <ul id="personalSubmenu" class="admin-aside__submenu hidden">
+                    <li><a th:href="@{/admin/coach/coachList}" class="admin-aside__submenu-link">개인고객관리</a></li>
+                    <li><a th:href="@{/admin/coach/matchList}" class="admin-aside__submenu-link">매칭관리</a></li>
+                </ul>
             </li>
             
             <li>
-                <a th:href="@{/admin/companyList}"
-                   class="admin-aside__menu-item"
-                   th:classappend="${activeMenu == 'company'} ? ' admin-aside__menu-item--active'">
+                <a th:href="@{/admin/companyList}" class="admin-aside__menu-item">
                     기업고객관리
                 </a>
             </li>
 
             <li>
-                <button type="button"
-                        class="admin-aside__trigger"
-                        th:classappend="${activeMenu == 'profit'} ? ' admin-aside__trigger--active'"
-                        onclick="toggleSubMenu('profitSubmenu')">
+                <button type="button" class="admin-aside__trigger" onclick="toggleSubMenu('profitSubmenu', this)">
                     수익관리
                 </button>
-                <ul id="profitSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'profit'} ? ' hidden'">
-                    <li><a th:href="@{/admin/refund}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'payment'} ? ' admin-aside__submenu-link--active'">결제관리</a></li>
-                    <li><a th:href="@{/admin/statistics}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'statistics'} ? ' admin-aside__submenu-link--active'">통계관리</a></li>
+                <ul id="profitSubmenu" class="admin-aside__submenu hidden">
+                    <li><a th:href="@{/admin/refund}" class="admin-aside__submenu-link">결제관리</a></li>
+                    <li><a th:href="@{/admin/statistics}" class="admin-aside__submenu-link">통계관리</a></li>
                 </ul>
             </li>
 
             <li>
-                <button type="button"
-                        class="admin-aside__trigger"
-                        th:classappend="${activeMenu == 'monitoring'} ? ' admin-aside__trigger--active'"
-                        onclick="toggleSubMenu('monitoringSubmenu')">
+                <button type="button" class="admin-aside__trigger" onclick="toggleSubMenu('monitoringSubmenu', this)">
                     모니터링
                 </button>
-                <ul id="monitoringSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'monitoring'} ? ' hidden'">
-                    <li><a th:href="@{/admin/companyClassList}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'class'} ? ' admin-aside__submenu-link--active'">클래스 상세정보</a></li>
-                    <li><a th:href="@{/admin/coach/coachInfoList}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'content'} ? ' admin-aside__submenu-link--active'">코치 상세정보</a></li>
+                <ul id="monitoringSubmenu" class="admin-aside__submenu hidden">
+                    <li><a th:href="@{/admin/companyClassList}" class="admin-aside__submenu-link">클래스 프로필 검수</a></li>
+                    <li><a th:href="@{/admin/coach/coachInfoList}" class="admin-aside__submenu-link">코치 프로필 검수</a></li>
                 </ul>
             </li>
 
             <li>
-                <button type="button"
-                        class="admin-aside__trigger"
-                        th:classappend="${activeMenu == 'support'} ? ' admin-aside__trigger--active'"
-                        onclick="toggleSubMenu('supportSubmenu')">
+                <button type="button" class="admin-aside__trigger" onclick="toggleSubMenu('supportSubmenu', this)">
                     고객센터
                 </button>
-                <ul id="supportSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'support'} ? ' hidden'">
-                    <li><a th:href="@{/admin/support/notice}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'notice'} ? ' admin-aside__submenu-link--active'">공지</a></li>
-                    <li><a th:href="@{/admin/support/qna}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'qna'} ? ' admin-aside__submenu-link--active'">Q&A</a></li>
-                    <li><a th:href="@{/admin/support/policy}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'policy'} ? ' admin-aside__submenu-link--active'">운영정책</a></li>
+                <ul id="supportSubmenu" class="admin-aside__submenu hidden">
+                    <li><a th:href="@{/admin/support/notice}" class="admin-aside__submenu-link">공지</a></li>
+                    <li><a th:href="@{/admin/support/qna}" class="admin-aside__submenu-link">Q&A</a></li>
+                    <li><a th:href="@{/admin/support/policy}" class="admin-aside__submenu-link">운영정책</a></li>
                 </ul>
             </li>
 
-            <li>
-                <a th:href="@{/admin/adView}" 
-                   class="admin-aside__menu-item"
-                   th:classappend="${activeMenu == 'ads'} ? ' admin-aside__menu-item--active'">
-                    광고관리
-                </a>
-            </li>
+            <li><a th:href="@{/admin/adView}" class="admin-aside__menu-item">광고관리</a></li>
+            <li><a th:href="@{/admin/keyword/keyword}" class="admin-aside__menu-item">키워드관리</a></li>
 
             <li>
-                <a th:href="@{/admin/keyword/keyword}" 
-                   class="admin-aside__menu-item"
-                   th:classappend="${activeMenu == 'keyword'} ? ' admin-aside__menu-item--active'">
-                    키워드관리
-                </a>
-            </li>
-
-            <li>
-                <button type="button"
-                        class="admin-aside__trigger"
-                        th:classappend="${activeMenu == 'filter'} ? ' admin-aside__trigger--active'"
-                        onclick="toggleSubMenu('filterSubmenu')">
+                <button type="button" class="admin-aside__trigger" onclick="toggleSubMenu('filterSubmenu', this)">
                     필터관리
                 </button>
-                <ul id="filterSubmenu" class="admin-aside__submenu" th:classappend="${activeMenu != 'filter'} ? ' hidden'">
-                    <li><a th:href="@{/admin/filter/field}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'category'} ? ' admin-aside__submenu-link--active'">분야 필터</a></li>
-                    <li><a th:href="@{/admin/filter/regions}" class="admin-aside__submenu-link" th:classappend="${activeSubmenu == 'region'} ? ' admin-aside__submenu-link--active'">지역 필터</a></li>
+                <ul id="filterSubmenu" class="admin-aside__submenu hidden">
+                    <li><a th:href="@{/admin/filter/field}" class="admin-aside__submenu-link">분야 필터관리</a></li>
+                    <li><a th:href="@{/admin/filter/regions}" class="admin-aside__submenu-link">지역 필터관리</a></li>
                 </ul>
             </li>
-            <li>
-                <a th:href="@{/admin/report}" 
-                   class="admin-aside__menu-item"
-                   th:classappend="${activeMenu == 'reports'} ? ' admin-aside__menu-item--active'">
-                    신고관리
-                </a>
-            </li>
+
+            <li><a th:href="@{/admin/report}" class="admin-aside__menu-item">신고관리</a></li>
         </ul>
     </nav>
 
     <script>
-        function toggleSubMenu(id) {
+        function toggleSubMenu(id, btn) {
             const submenu = document.getElementById(id);
-            submenu.classList.toggle('hidden');
+            const isHidden = submenu.classList.toggle('hidden');
+            
+            if (isHidden) {
+                btn.classList.remove('is-open');
+            } else {
+                btn.classList.add('is-open');
+            }
         }
     </script>
 </aside>

@@ -18,14 +18,15 @@
 	--slate-text: #374151;
 }
 
-.policy-container {
+.policy-box {
 	font-family: 'Pretendard', sans-serif;
 	color: var(--slate-text);
 	background-color: white;
-	min-height: 800px;
+	min-height: 600px;
+	padding: 20px 0; 
 }
 
-/* 상단 타이틀 바 (공지사항 페이지와 동일한 스타일 적용) */
+/* 상단 타이틀 바 */
 .policy-top-bar {
 	display: flex;
 	align-items: flex-end;
@@ -65,7 +66,7 @@
 .content {
 	font-size: 15px;
 	color: var(--slate-text);
-	white-space: pre-wrap; /* 줄바꿈 유지 */
+	white-space: pre-wrap;
 	word-break: break-all;
 	background-color: #f8fafc;
 	padding: 30px;
@@ -86,26 +87,28 @@
 <body>
 	<div th:replace="~{layout/header :: siteHeader}"></div>
 
-	<main class="policy-container">
-		<div class="max-w-[1200px] mx-auto p-10" style="width: 1200px; margin: 0 auto; padding: 40px;">
-			
-			<div class="policy-top-bar">
-				<h1>이용약관 및 정책</h1>
-				<span class="current-path">Operations Policy</span>
-			</div>
-			
-			<div th:if="${latestPolicy != null}" class="policy-item">
-				<h3 th:text="${latestPolicy.title}">정책 제목</h3>
-				<div class="content" th:text="${latestPolicy.question}">
-					여기에 정책 상세 내용이 출력됩니다.
+    <main class="main">
+		<div class="container">
+            
+            <div class="policy-box">
+				<div class="policy-top-bar">
+					<h1>이용약관 및 정책</h1>
+					<span class="current-path">Operations Policy</span>
+				</div>
+				
+				<div th:if="${latestPolicy != null}" class="policy-item">
+					<h3 th:text="${latestPolicy.title}">정책 제목</h3>
+					<div class="content" th:text="${latestPolicy.question}">
+						여기에 정책 상세 내용이 출력됩니다.
+					</div>
+				</div>
+				
+				<div th:if="${latestPolicy == null}" class="empty-state">
+					<i class="fa-regular fa-file-lines" style="font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.3;"></i>
+					등록된 정책 데이터가 없습니다.
 				</div>
 			</div>
-			
-			<div th:if="${latestPolicy == null}" class="empty-state">
-				<i class="fa-regular fa-file-lines" style="font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.3;"></i>
-				등록된 정책 데이터가 없습니다.
-			</div>
-			
+            
 		</div>
 	</main>
 

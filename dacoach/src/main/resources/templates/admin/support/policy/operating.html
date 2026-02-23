@@ -10,12 +10,19 @@
             --slate-text: #374151;
             --red-point: #ef4444;
         }
-
+        .pagination-wrap { display: flex; justify-content: center; margin-top: 30px; }
+        .pagination-wrap a, .pagination-wrap span {
+            display: inline-block; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            text-decoration: none; color: #9ca3af; transition: 0.2s; border: 1px solid transparent; background-color: white; margin: 0 4px;
+        }
+        .pagination-wrap a:hover { background-color: var(--mint-bg); color: var(--mint-main); }
+        .pagination-wrap .active, .pagination-wrap b { background-color: var(--mint-main); color: white; padding: 8px 14px; border-radius: 10px; }
+/* 
         .paging-container {
             margin-top: 30px;
             display: flex;
             justify-content: center;
-        }
+        } */
 
         .policy-admin-container {
             font-family: 'Pretendard', sans-serif;
@@ -286,7 +293,7 @@
             </div>
         </div>
 
-        <div th:unless="${policyList == null || #lists.isEmpty(policyList)}" class="paging-container" th:utext="${pageStr}"></div>
+        <div th:unless="${policyList == null || #lists.isEmpty(policyList)}" class="pagination-wrap" th:utext="${pageStr}"></div>
 
         <div class="modal" id="policyModal" onclick="if(event.target == this) closePolicyModal()">
             <div class="modal-box">

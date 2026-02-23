@@ -16,9 +16,12 @@
             <h4 class="login-title">로그인</h4>
 
             <form action="/loginOk" method="post">
-				<div class="소연아 꾸며줘">
-					<input type="radio" name="user_type" value="COACH" checked="checked">코치 회원
-					<input type="radio" name="user_type" value="COMPANY">컴퍼니 회원
+				<div class="radio-select">
+				    <input type="radio" name="user_type" id="coach" value="COACH" checked="checked">
+				    <label for="coach">코치 회원</label>
+				    
+				    <input type="radio" name="user_type" id="company" value="COMPANY">
+				    <label for="company">컴퍼니 회원</label>
 				</div>
                 <div class="login-row">
                     <div class="input-group-stack">
