@@ -20,13 +20,22 @@
    	<a th:if="${dto.member_detail_idx==2}" href="/membership/banner">배너광고</a>
    </div>
       <div th:if="${dto.member_detail_idx==1}">
-      	<input type="button" value="프리미엄 회원 가입하기" id="membershipUpBtn"> 
-      	
+      
+      <div  class="cancel-warning-container">
+      <div class="membership-benefit-notice">
+         <p class="notice-title">💡 멤버십 가입 혜택!</p>
+         <p class="notice-desc">
+            프리미엄 회원님만을 위한 특별한 혜택<br>
+            <strong>'수업 상단 노출'</strong> 혜택과 <strong>전문 마케팅 지원</strong>
+         </p>
+         <p class="notice-sub">월 가격:[[${detail.cost}]]원</p>
+         
+      </div>
+      	<input type="button" value="프리미엄 회원 가입하기" id="membershipUpBtn"> 	
+      </div>
       </div>
       <div th:if="${dto.member_detail_idx==2}">
-      
-      	
-      
+           
       	 <div th:if="${dto.status==null}" class="cancel-warning-container">
       	 <div th:if="${dto.status==null}" class="membership-benefit-notice">
          <p class="notice-title">💡 해지 전 꼭 확인해주세요!</p>
