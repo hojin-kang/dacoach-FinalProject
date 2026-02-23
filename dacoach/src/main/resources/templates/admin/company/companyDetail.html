@@ -397,6 +397,20 @@
                     }
                 }
             }
+            
+            const certStartDateInput = document.getElementById('get_date');
+            if(certStartDateInput && certStartDateInput.value !== '') {
+                const certStartDate = new Date(certStartDateInput.value);
+                certStartDate.setHours(0, 0, 0, 0);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0)
+
+                if (certStartDate > today) {
+                    alert('발급일자는 오늘 날짜를 초과할 수 없습니다.');
+                    certStartDateInput.focus();
+                    return false;
+                }
+            }
 
             return true;
         }
