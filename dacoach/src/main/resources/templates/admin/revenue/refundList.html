@@ -130,7 +130,7 @@
             font-style: italic;
         }
 
-        .paging-container {
+        /* .paging-container {
             margin-top: 30px;
             display: flex;
             justify-content: center;
@@ -149,7 +149,15 @@
         .paging-container b {
             background: var(--mint-main);
             color: white;
+        } */
+        
+        .pagination-wrap { display: flex; justify-content: center; margin-top: 30px; }
+        .pagination-wrap a, .pagination-wrap span {
+            display: inline-block; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            text-decoration: none; color: #9ca3af; transition: 0.2s; border: 1px solid transparent; background-color: white; margin: 0 4px;
         }
+        .pagination-wrap a:hover { background-color: var(--mint-bg); color: var(--mint-main); }
+        .pagination-wrap .active, .pagination-wrap b { background-color: var(--mint-main); color: white; padding: 8px 14px; border-radius: 10px; }
     </style>
 
     <div class="w-full px-10 py-8 refund-admin-container">
@@ -210,7 +218,7 @@
             </div>
         </div>
 
-        <div th:unless="${refund_list == null || #lists.isEmpty(refund_list)}" class="paging-container" th:utext="${pageStr}"></div>
+        <div th:unless="${refund_list == null || #lists.isEmpty(refund_list)}" class=pagination-wrap th:utext="${pageStr}"></div>
 
     </div>
 

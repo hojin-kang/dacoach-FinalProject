@@ -10,27 +10,13 @@
             --reject-red: #ff7675;
         }
 
-        /* 오타 수정: pagging -> paging */
-        .paging-container {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 5px; /* 페이징 버튼 사이 간격 추가 */
+        .pagination-wrap { display: flex; justify-content: center; margin-top: 30px; }
+        .pagination-wrap a, .pagination-wrap span {
+            display: inline-block; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            text-decoration: none; color: #9ca3af; transition: 0.2s; border: 1px solid transparent; background-color: white; margin: 0 4px;
         }
-
-        .paging-container a, .paging-container b {
-            padding: 8px 14px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #999;
-            font-weight: bold;
-        }
-
-        .paging-container b {
-            background: var(--mint-main);
-            color: white;
-        }
+        .pagination-wrap a:hover { background-color: var(--mint-bg); color: var(--mint-main); }
+        .pagination-wrap .active, .pagination-wrap b { background-color: var(--mint-main); color: white; padding: 8px 14px; border-radius: 10px; }
 
         .ad-admin-container {
             font-family: 'Pretendard', sans-serif;
@@ -170,15 +156,15 @@
                 <div class="col-date" th:text="${#dates.format(ad['CREATED_AT'], 'yyyy-MM-dd')}"></div>
 
                 <div class="col-action">
-                    <button class="btn-action bg-[#f0f8f7] text-[#7a9a94] hover:bg-[#9dbbb5] hover:text-white"
-                        th:onclick="|processAd(${ad['AD_IDX']}, ${ad['USER_IDX']}, 'APPROVE')|">승인</button>
+                   <!--  <button class="btn-action bg-[#f0f8f7] text-[#7a9a94] hover:bg-[#9dbbb5] hover:text-white"
+                        th:onclick="|processAd(${ad['AD_IDX']}, ${ad['USER_IDX']}, 'APPROVE')|">승인</button> -->
                     <button class="btn-action bg-[#fff0f0] text-[#ff7675] hover:bg-[#ff7675] hover:text-white"
                         th:onclick="|processAd(${ad['AD_IDX']}, ${ad['USER_IDX']}, 'REJECT')|">반려</button>
                 </div>
             </div>
         </section>
         
-        <div th:unless="${adList == null || #lists.isEmpty(adList)}" class="paging-container" th:utext="${pageStr}"></div>
+        <div th:unless="${adList == null || #lists.isEmpty(adList)}" class="pagination-wrap" th:utext="${pageStr}"></div>
     </div>
 
     <script th:inline="javascript">
