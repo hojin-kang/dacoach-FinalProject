@@ -273,8 +273,8 @@
 		DELETE FROM user_hashtag_like WHERE user_idx = #{user_idx}
 	</delete>
 	<insert id="likeCoach" parameterType="HashMap">
-        INSERT INTO likes_user (likes_user_idx, liker_idx, liked_user_idx)
-        VALUES (seq_likes_user.nextval,#{login_idx}, #{target_idx})
+        INSERT INTO likes_user (likes_user_idx, liker_idx, liked_user_idx, created_at)
+  VALUES (seq_likes_user.nextval, #{login_idx}, #{target_idx}, SYSDATE)
     </insert>
     <delete id="unlikeCoach" parameterType="HashMap">
         DELETE FROM likes_user
@@ -283,65 +283,47 @@
     </delete>
 
 	<!-- 인기 코치 불러오기 -->
-	<select id="getPopularCoach" resultType="com.dacoach.model.coach.CoachDTO">
+	<select id="getPopularCoach"
+		resultType="com.dacoach.model.coach.CoachDTO">
 		<![CDATA[
-		SELECT *
-		FROM (
-		    SELECT
-		        c.coach_idx,
-		        c.user_idx,
-		        c.birth_date,
-		        c.nickname,
-		        c.phone,
-		        c.mail,
-		        c.intro,
-		        c.photo,
-		        c.video,
-		        c.point_score,
-		        c.token_balance,
-		        c.kakao_key,
-		
-		        /* 등급 */
-		        r.rank_name AS rank_name,
-		
-		        /* 최근 7일 찜 */
-		        NVL(l.like_count, 0) AS like_count,
-		
-		        /* 누적 리뷰수 */
-		        NVL(rv.review_count, 0) AS review_count,
-		
-		        /* 평균 평점 */
-		        NVL(rv.avg_rating, 0) AS rating
-		
-		    FROM coach c
-		
-		    /* ⭐ rank 범위 조인 */
-		    LEFT JOIN rank r
-		      ON c.point_score >= r.min_score
-		     AND (r.max_score IS NULL OR c.point_score < r.max_score)
-		
-		    /* ⭐ 최근 7일 찜수 */
-		    LEFT JOIN (
-		        SELECT liked_user_idx AS user_idx,
-		               COUNT(*) AS like_count
-		        FROM likes_user
-		        WHERE created_at >= SYSDATE - 7
-		        GROUP BY liked_user_idx
-		    ) l ON l.user_idx = c.user_idx
-		
-		    /* ⭐ 리뷰 통계 */
-		    LEFT JOIN (
-		        SELECT reviewee_idx AS user_idx,
-		               COUNT(*) AS review_count,
-		               ROUND(AVG(rating), 1) AS avg_rating
-		        FROM review_coach
-		        GROUP BY reviewee_idx
-		    ) rv ON rv.user_idx = c.user_idx
-		
-		    /* ⭐ 인기 기준 = 찜 */
-		    ORDER BY NVL(l.like_count, 0) DESC, c.coach_idx DESC
-		)
-		WHERE ROWNUM <= 5
+			SELECT *
+FROM (
+    SELECT t.*, ROWNUM rn
+    FROM (
+        SELECT
+            c.coach_idx,
+            c.user_idx,
+            c.nickname,
+
+            NVL(l.like_count, 0) AS like_count,
+            NVL(rv.review_count, 0) AS review_count,
+            NVL(rv.avg_rating, 0) AS rating,
+            r.rank_name
+        FROM coach c
+
+        LEFT JOIN rank r
+          ON NVL(c.point_score,0) >= r.min_score
+         AND (r.max_score IS NULL OR NVL(c.point_score,0) < r.max_score)
+
+        LEFT JOIN (
+            SELECT liked_user_idx user_idx, COUNT(*) like_count
+            FROM likes_user
+            WHERE created_at >= TRUNC(SYSDATE) - 7
+            GROUP BY liked_user_idx
+        ) l ON l.user_idx = c.user_idx
+
+        LEFT JOIN (
+            SELECT reviewee_idx user_idx,
+                   COUNT(*) review_count,
+                   ROUND(AVG(rating),1) avg_rating
+            FROM review_coach
+            GROUP BY reviewee_idx
+        ) rv ON rv.user_idx = c.user_idx
+
+        ORDER BY like_count DESC, c.coach_idx DESC
+    ) t
+)
+WHERE rn <= 5
 		]]>
 	</select>
 
