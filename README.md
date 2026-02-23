@@ -48,17 +48,6 @@ spring.mail.properties.mail.smtp.writetimeout=5000
 
 ---
 
-### 🔑 주요 설정 항목
-
-| 항목 | 설명 |
-|------|------|
-| `spring.datasource.username` | Oracle DB 사용자 이름 |
-| `spring.datasource.password` | Oracle DB 비밀번호 |
-| `spring.mail.username` | 발신에 사용할 Gmail 주소 |
-| `spring.mail.password` | Gmail **앱 비밀번호** (계정 비밀번호 ❌) |
-
----
-
 ### 📌 Gmail 앱 비밀번호 발급 방법
 
 1. [Google 계정 보안 설정](https://myaccount.google.com/security) 접속
