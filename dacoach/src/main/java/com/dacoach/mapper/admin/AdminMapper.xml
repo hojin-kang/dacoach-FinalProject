@@ -7,10 +7,69 @@
 	where login_id=#{login_id} and password=#{password}
 	</select>
 
+	<select id="reportCount">
+	select count(*) from report where status='WAIT'
+	</select>
+	
+	<select id="companyWaitCount">
+	select count(*)
+	from users u
+	join cert c on u.user_idx=c.user_idx
+	where u.user_type='COMPANY' and u.status='INACTIVE' and c.cert_status='대기'
+	</select>
+	
+	<select id="keywordReviewCount">
+    SELECT COUNT(*) 
+    FROM (
+        SELECT r.review_idx, r.role
+        FROM (
+            SELECT review_coach_idx AS review_idx, content, 'COACH' AS role FROM review_coach
+            UNION ALL
+            SELECT review_class_idx AS review_idx, content, 'CLASS' AS role FROM review_class
+        ) r
+        JOIN (
+            SELECT keyword_name FROM keyword
+        ) k ON r.content LIKE '%' || k.keyword_name || '%'
+        GROUP BY r.review_idx, r.role
+    )
+	</select>
+	
+	<select id="getQnaWaitCount">
+    SELECT COUNT(*)
+    FROM qna q
+    JOIN users u ON q.user_idx = u.user_idx
+    LEFT JOIN qna_a a ON q.qna_idx = a.qna_idx
+    WHERE a.qna_a_idx IS NULL 
+    AND (u.user_type = 'COACH' OR u.user_type = 'COMPANY')
+	</select>
+	
+	<select id="getTopCoachInterests">
+	SELECT *
+	FROM (
+	SELECT
+	mf.minor_field_nm,
+	COUNT(ci.coach_idx) AS interest_count
+	FROM coach_interest ci
+	JOIN minor_field mf ON ci.minor_field_idx = mf.minor_field_idx
+	GROUP BY mf.minor_field_idx, mf.minor_field_nm
+	ORDER BY interest_count DESC
+	)
+	WHERE ROWNUM <![CDATA[<=]]> 2
+	</select>
+
 	<select id="getCoachTotalCnt">
 	select count(*)
 	from users u
 	join coach c on u.user_idx=c.user_idx 
+	<where>
+        <if test="keyword != null and keyword != ''">
+            AND (
+                c.coach_idx LIKE '%' || #{keyword} || '%' OR
+                u.user_name LIKE '%' || #{keyword} || '%' OR
+                c.nickname LIKE '%' || #{keyword} || '%'
+            )
+        </if>
+    </where>
 	</select>
 	
 	<select id="getCoachList" resultType="map"> 
@@ -28,12 +87,27 @@
 				from cert c_sub
 				where c_sub.user_idx = c.user_idx
 				and cert_status = '대기') as cert_wait_count
-			from
-			coach c
-			join
-			users u on c.user_idx = u.user_idx
-			order by
-			c.coach_idx desc
+			from coach c
+			join users u on c.user_idx = u.user_idx
+			
+			<where>
+                <if test="keyword != null and keyword != ''">
+                    AND (
+                        c.coach_idx LIKE '%' || #{keyword} || '%' OR
+                        u.user_name LIKE '%' || #{keyword} || '%' OR
+                        c.nickname LIKE '%' || #{keyword} || '%'
+                    )
+                </if>
+            </where>
+			
+			<choose>
+				<when test="sortColumn == 'cert_wait_count'">
+					order by cert_wait_count desc, c.coach_idx desc
+				</when>
+            	<otherwise>
+            		order by c.coach_idx desc
+            	</otherwise>
+            </choose>
 		)a
 	)where rnum between #{start} and #{end}
 	</select>
@@ -111,6 +185,101 @@
 	order by cert_status desc
 	</select>
 	
+	<select id="getMatchStatusCounts">
+	SELECT
+	COUNT(DISTINCT m.MATCH_IDX) AS "Total",
+	COUNT(DISTINCT CASE
+	WHEN m.IS_CHAT = 'Y' AND (m.IS_MATCH IS NULL OR m.IS_MATCH = 'N')
+	THEN m.MATCH_IDX
+	END) AS "채팅중",
+	COUNT(DISTINCT CASE
+	WHEN m.IS_MATCH = 'Y' AND a.AGREEMENT_IDX IS NULL
+	THEN m.MATCH_IDX
+	END) AS "매칭완료",
+	COUNT(DISTINCT CASE
+	WHEN s.SCHEDULE_IDX IS NOT NULL
+	THEN m.MATCH_IDX
+	END) AS "일정확정"
+	FROM MATCH m
+	LEFT JOIN AGREEMENT a ON (
+	(m.USER1_IDX = a.WRITER_IDX AND m.USER2_IDX = a.RECEIVER_IDX)
+	OR (m.USER1_IDX = a.RECEIVER_IDX AND m.USER2_IDX = a.WRITER_IDX)
+	)
+	LEFT JOIN SCHEDULE s ON a.AGREEMENT_IDX = s.AGREEMENT_IDX
+	</select>
+	
+	<select id="getMatchTotalCnt">
+    SELECT COUNT(*)
+    FROM MATCH m
+    JOIN USERS u1 ON m.USER1_IDX = u1.USER_IDX
+    JOIN USERS u2 ON m.USER2_IDX = u2.USER_IDX
+    <where>
+        <if test="keyword != null and keyword != ''">
+            (u1.USER_NAME LIKE '%' || #{keyword} || '%' 
+             OR u2.USER_NAME LIKE '%' || #{keyword} || '%')
+        </if>
+    </where>
+	</select>
+	
+	<select id="getMatchList">
+	SELECT * FROM (
+	SELECT
+	ROW_NUMBER() OVER (ORDER BY m.MATCH_IDX DESC) AS rnum,
+	m.MATCH_IDX,
+	CASE
+	WHEN m.MATCH_APPLICANT IS NOT NULL THEN
+	(CASE WHEN m.MATCH_APPLICANT = m.USER1_IDX THEN u1.USER_NAME ELSE
+	u2.USER_NAME END)
+	ELSE
+	(CASE WHEN m.CHAT_APPLICANT = m.USER1_IDX THEN u1.USER_NAME ELSE
+	u2.USER_NAME END)
+	END AS SENDER,
+	CASE
+	WHEN m.MATCH_APPLICANT IS NOT NULL THEN
+	(CASE WHEN m.MATCH_APPLICANT = m.USER1_IDX THEN u2.USER_NAME ELSE
+	u1.USER_NAME END)
+	ELSE
+	(CASE WHEN m.CHAT_APPLICANT = m.USER1_IDX THEN u2.USER_NAME ELSE
+	u1.USER_NAME END)
+	END AS RECEIVER,
+	CASE
+	WHEN m.MATCH_APPLICANT IS NOT NULL THEN '매칭신청'
+	ELSE '채팅신청'
+	END AS INITIATOR_TYPE,
+	CASE
+	WHEN s.SCHEDULE_IDX IS NOT NULL THEN '일정확정'
+	WHEN a.AGREEMENT_IDX IS NOT NULL AND a.STATUS = 'Y' THEN '서약완료'
+	WHEN m.IS_MATCH = 'Y' THEN '매칭완료'
+	WHEN m.IS_CHAT = 'Y' THEN '채팅중'
+	ELSE '대기'
+	END AS PROGRESS_STATUS,
+	NVL(s.START_DATE, a.CREATED_AT) AS LAST_ACTION_DATE
+	FROM MATCH m
+	JOIN USERS u1 ON m.USER1_IDX = u1.USER_IDX
+	JOIN USERS u2 ON m.USER2_IDX = u2.USER_IDX
+	LEFT JOIN AGREEMENT a ON (
+	(m.USER1_IDX = a.WRITER_IDX AND m.USER2_IDX = a.RECEIVER_IDX)
+	OR
+	(m.USER1_IDX = a.RECEIVER_IDX AND m.USER2_IDX = a.WRITER_IDX)
+	)
+	LEFT JOIN (
+	SELECT * FROM (
+	SELECT
+	SCHEDULE_IDX, AGREEMENT_IDX, START_DATE,
+	ROW_NUMBER() OVER (PARTITION BY AGREEMENT_IDX ORDER BY SCHEDULE_IDX DESC) as rk
+	FROM SCHEDULE
+	) WHERE rk = 1
+	) s ON a.AGREEMENT_IDX = s.AGREEMENT_IDX
+	<where>
+		<if test="keyword != null and keyword != ''">
+			(u1.USER_NAME LIKE '%' || #{keyword} || '%'
+			OR u2.USER_NAME LIKE '%' || #{keyword} || '%')
+		</if>
+	</where>
+	)
+	WHERE rnum BETWEEN #{start} AND #{end}
+	</select>
+	
 	<select id="getKeywordType" resultType="map">
 	select keyword_type,count(*) as cnt
 	from keyword
@@ -176,29 +345,52 @@
 	delete from review_class where review_class_idx=#{review_idx}
 	</delete>
 	
+	<select id="getNoticeTotalCnt">
+    select count(*)
+    from qna q
+    join users u on q.user_idx = u.user_idx
+	    <where>
+	        u.user_type = 'ADMIN'
+	        and q.qna_type != '운영정책'
+	        
+	        <if test="keyword != null and keyword != ''">
+	            and (
+	                q.title like '%' || #{keyword} || '%' or
+	                q.qna_type like '%' || #{keyword} || '%' or
+	                u.user_name like '%' || #{keyword} || '%' or
+	                q.qna_idx like '%' || #{keyword} || '%'
+	            )
+	        </if>
+	    </where>
+	</select>
+	
 	<select id="getNoticeList" resultType="map" parameterType="String">
-	select 
-	q.qna_idx,
-	q.qna_type,
-	q.title,
-	u.user_name,
-	q.created_at
-	from qna q
-	join users u on q.user_idx = u.user_idx
-		<where>
-		u.user_type='ADMIN'
-		and q.qna_type!='운영정책'
-		
-			<if test="keyword != null and keyword != ''">
-			and (
-				q.title like '%' || #{keyword} || '%' or
-				q.qna_type like '%' || #{keyword} || '%' or
-				u.user_name like '%' || #{keyword} || '%' or
-				q.qna_idx like '%' || #{keyword} || '%'
-			)
-			</if>
-		</where>
-		order by q.qna_idx desc
+	select * from (
+		select rownum rnum,a.* from(
+			select 
+			q.qna_idx,
+			q.qna_type,
+			q.title,
+			u.user_name,
+			q.created_at
+			from qna q
+			join users u on q.user_idx = u.user_idx
+			<where>
+			u.user_type='ADMIN'
+			and q.qna_type!='운영정책'
+			
+				<if test="keyword != null and keyword != ''">
+				and (
+					q.title like '%' || #{keyword} || '%' or
+					q.qna_type like '%' || #{keyword} || '%' or
+					u.user_name like '%' || #{keyword} || '%' or
+					q.qna_idx like '%' || #{keyword} || '%'
+				)
+				</if>
+			</where>
+			order by q.qna_idx desc
+		)a
+	)where rnum between #{start} and #{end}
 	</select>
 	
 	<insert id="insertNotice" parameterType="com.dacoach.model.qna.QnaDTO">
@@ -426,6 +618,16 @@
 	where (ps.status='완료' or ps.status='환불요청')
 	and p.approved_at >= add_months(trunc(sysdate,'MM'),-1)
 	and p.approved_at <![CDATA[<]]> trunc(sysdate,'MM')
+  	</select>
+  	
+  	<select id="monthlyMembershipSales">
+	select sum(p.total) as totals
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where p.pay_type='MEMBERSHIP'
+	and ps.status='완료'
+	and p.approved_at >= trunc(sysdate,'MM')
+	and p.approved_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
   	</select>
   	
   	<select id="avgPayAmount">

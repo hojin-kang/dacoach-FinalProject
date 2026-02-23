@@ -176,20 +176,14 @@
 	transform: translateY(-1px);
 }
 
-/* 페이지네이션 */
+/* [페이지네이션] */
 .pagination-wrap {
 	display: flex;
 	justify-content: center;
 	margin-top: 30px;
 }
 
-.pagination {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-}
-
-.page-item {
+.pagination-wrap a, .pagination-wrap span {
 	display: inline-block;
 	padding: 8px 14px;
 	border-radius: 10px;
@@ -200,17 +194,21 @@
 	transition: 0.2s;
 	border: 1px solid transparent;
 	background-color: white;
+	margin: 0 4px;
 }
 
-.page-item:hover {
+.pagination-wrap a:hover {
 	background-color: var(--mint-bg);
 	color: var(--mint-main);
 }
 
-.page-item.active {
+.pagination-wrap .active, .pagination-wrap b {
 	background-color: var(--mint-main);
 	color: white;
+	padding: 8px 14px;
+	border-radius: 10px;
 }
+
 </style>
 
 	<div class="w-full px-10 py-10 notice-admin-container">
@@ -260,12 +258,10 @@
 		</section>
 
 		<div class="relative">
-			<div class="pagination-wrap">
-				<div class="pagination">
-					<a href="#" class="page-item">&lt;&lt;</a> <a href="#"
-						class="page-item active">1</a> <a href="#" class="page-item">&gt;&gt;</a>
-				</div>
-			</div>
+			
+			<div class="pagination-wrap" th:if="${not #lists.isEmpty(noticeList)}">
+            	<div th:utext="${pageStr}"></div>
+       		</div>
 			<div class="btn-write-wrap">
 				<button type="button" class="btn-write"
 					onclick="location.href='/admin/support/notice/write'">글쓰기</button>

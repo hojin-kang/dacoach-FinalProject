@@ -16,9 +16,23 @@ public interface AdminService {
 	//로그인 관리
 	public UsersDTO adminLogin(Map<String, String> params) throws Exception;
 	
+	//메인화면(대시보드)
+	public int dailySales() throws Exception;
+	public int newUsers() throws Exception;
+	public int pendingReports() throws Exception;
+	public int inactiveCompany() throws Exception;
+	
+	public int reportCount() throws Exception;
+	public int companyWaitCount() throws Exception;
+	
+	public int keywordReviewCount() throws Exception;
+	public int getQnaWaitCount() throws Exception;
+	
+	public List<Map<String,Object>> getTopCoachInterests() throws Exception;
+	
 	// 코치 프로필 및 상태 관리
-	public int getCoachTotalCnt() throws Exception;
-	List<Map<String,Object>> getCoachList(int start,int end) throws Exception;
+	public int getCoachTotalCnt(String keyword) throws Exception;
+	List<Map<String,Object>> getCoachList(String keyword,String sortColumn,int start,int end) throws Exception;
 	public int getCertCount() throws Exception;
 	Map<String,Object> getCoachDetail(int coach_idx) throws Exception;
 	public String getCoachStatus(int user_idx) throws Exception;
@@ -32,6 +46,10 @@ public interface AdminService {
 	public int updateCertStatus(CertDTO dto) throws Exception;
 	List<CertDTO> getCertList(int user_idx) throws Exception;
 	
+	//매칭관리
+	public Map<String,Object> getMatchStatusCounts() throws Exception;
+	public int getMatchTotalCnt(String keyword) throws Exception;
+	public List<Map<String,Object>> getMatchList(String keyword,int start,int end) throws Exception;
 	
 	// 검열 키워드 관리
 	List<Map<String,Object>> getKeywordType() throws Exception;
@@ -44,14 +62,15 @@ public interface AdminService {
 	public int deleteReviewClass(int review_idx) throws Exception;
 	
 	//공지 관리(QnA 테이블 사용)
-	List<Map<String, Object>> getNoticeList(String keyword) throws Exception;
+	public int getNoticeTotalCnt(String keyword) throws Exception;
+	List<Map<String, Object>> getNoticeList(String keyword,int start,int end) throws Exception;
 	public int insertNotice(QnaDTO dto) throws Exception;
 	public QnaDTO getNoticeContent(int qna_idx) throws Exception;
 	public int updateNotice(QnaDTO dto) throws Exception;
 	public int deleteNotice(int qna_idx) throws Exception;
 	
 	//QnA 관리
-	public int getQnaTotalCnt() throws Exception;
+	public int getQnaTotalCnt(String keyword) throws Exception;
 	List<Map<String, Object>> getQnaList(String keyword,int start,int end) throws Exception;
 	Map<String, Object> getQnaContent(int qna_idx) throws Exception;
 	public int insertQnaAnswer(Qna_aDTO dto) throws Exception;
@@ -65,22 +84,17 @@ public interface AdminService {
 	public int updateMinorField(Map<String, Object> params) throws Exception;
 	
 	//신고관리
-	public int getReportTotalCnt() throws Exception;
+	public int getReportTotalCnt(String status) throws Exception;
 	List<Map<String,Object>> reportList(String status,int start,int end) throws Exception;
 	Map<String, Object> reportContent(int report_idx) throws Exception;
 	public int getCoachIdx (int user_idx) throws Exception;
 	public int getCompanyIdx (int user_idx) throws Exception;
 	public int updateReport(ReportDTO dto) throws Exception;
 	
-	//메인화면
-	public int dailySales() throws Exception;
-	public int newUsers() throws Exception;
-	public int pendingReports() throws Exception;
-	public int inactiveCompany() throws Exception;
-	
 	//통계관리화면
 	public int monthlySales() throws Exception;
 	public int lastMonthSales() throws Exception;
+	public int monthlyMembershipSales() throws Exception;
 	public long avgPayAmount() throws Exception;
 	public int pendingRefundCount() throws Exception;
 	List<Map<String,Object>> weeklySales() throws Exception;
