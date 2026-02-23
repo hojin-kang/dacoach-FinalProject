@@ -272,6 +272,7 @@ public class AdminCoachController {
 	    int pageSize = 5;
 	    int matchTotalCnt = 0;
 	    List<Map<String, Object>> matchList = new ArrayList<>();
+	    Map<String, Object> statusCounts = new HashMap<>();
 	    
 	    try {
 			matchTotalCnt = adminService.getMatchTotalCnt(keyword);
@@ -281,9 +282,7 @@ public class AdminCoachController {
 	        
 	        matchList = adminService.getMatchList(keyword, start, end);
 	        
-	     // (선택사항) 상단 요약 바를 위한 상태별 카운트가 필요하다면 추가
-	        // Map<String, Integer> statusCounts = adminService.getMatchStatusCounts();
-	        // model.addAttribute("statusCounts", statusCounts);
+	        statusCounts = adminService.getMatchStatusCounts();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -297,7 +296,7 @@ public class AdminCoachController {
 	    }
 	    
 	    model.addAttribute("matchList", matchList);
-	    model.addAttribute("totalCount", matchTotalCnt);
+	    model.addAttribute("statusCounts", statusCounts);
 	    model.addAttribute("keyword", keyword);
 	    model.addAttribute("pageStr", pageStr);
 		
