@@ -294,7 +294,7 @@ FROM (
             c.coach_idx,
             c.user_idx,
             c.nickname,
-
+			c.photo,
             NVL(l.like_count, 0) AS like_count,
             NVL(rv.review_count, 0) AS review_count,
             NVL(rv.avg_rating, 0) AS rating,
