@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.dacoach.model.adminPolicy.PolicyDTO;
 import com.dacoach.model.users.UsersDTO;
 import com.dacoach.page.PageModule;
-import com.dacoach.service.admin.AdminService;
+import com.dacoach.service.adminCoach.AdminCoachService;
 import com.dacoach.service.adminpolicy.AdminPolicyService;
 
 import jakarta.servlet.http.HttpSession;
@@ -26,9 +26,6 @@ public class AdminPolicyController {
 
 	@Autowired
 	AdminPolicyService service;
-
-	@Autowired
-	AdminService adminService;
 
 	@GetMapping("/policy")
 	public String viewPolicyPage(@RequestParam(value = "cp", required = false, defaultValue = "1") int cp, Model model,
