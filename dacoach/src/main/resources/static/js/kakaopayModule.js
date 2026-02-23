@@ -8,9 +8,9 @@ function kakaopayModule(order_id, user_id, item_name, quantity, total_amount, va
         total_amount: total_amount,
         vat_amount: vat_amount,
         tax_free_amount: tax_free,
-        approval_url: "http://localhost:9090" + url + "/success",
-        fail_url: "http://localhost:9090" + url + "/fail",
-        cancel_url: "http://localhost:9090" + url + "/cancel"
+        approval_url: window.location.origin + url + "/success",
+        fail_url: window.location.origin + url + "/fail",
+        cancel_url: window.location.origin + url + "/cancel"
     };
     fetch(url + '/ready',
         {
@@ -48,9 +48,9 @@ function kakaopaySubscriptionModule(order_id, user_id, item_name, quantity, tota
         total_amount: total_amount,
         vat_amount: vat_amount,
         tax_free_amount: tax_free,
-        approval_url: "http://localhost:9090" + url + "/success?cid=TCSUBSCRIP",
-        fail_url: "http://localhost:9090" + url + "/fail",
-        cancel_url: "http://localhost:9090" + url + "/cancel"
+        approval_url: window.location.origin + url + "/success?cid=TCSUBSCRIP",
+        fail_url: window.location.origin + url + "/fail",
+        cancel_url: window.location.origin + url + "/cancel"
     };
     fetch(url + '/ready',
         {
