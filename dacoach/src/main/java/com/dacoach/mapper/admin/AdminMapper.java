@@ -48,6 +48,7 @@ public interface AdminMapper {
 	public List<CertDTO> getCertList(int user_idx) throws Exception;
 	
 	//매칭관리
+	public Map<String,Object> getMatchStatusCounts() throws Exception;
 	public int getMatchTotalCnt(String keyword) throws Exception;
 	public List<Map<String,Object>> getMatchList(String keyword,int start,int end) throws Exception;
 	

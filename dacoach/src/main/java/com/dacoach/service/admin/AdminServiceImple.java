@@ -113,6 +113,11 @@ public class AdminServiceImple implements AdminService {
 	}
 	
 	@Override
+	public Map<String, Object> getMatchStatusCounts() throws Exception {
+		return adminMapper.getMatchStatusCounts();
+	}
+	
+	@Override
 	public int getMatchTotalCnt(String keyword) throws Exception {
 		int count=adminMapper.getMatchTotalCnt(keyword);
 		return (count==0)?1:count;

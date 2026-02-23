@@ -92,29 +92,29 @@
             </form>
         </div>
 
-        <div class="summary-row">
-            <div class="stat-card">
-                <span class="stat-label">Total</span>
-                <span class="stat-value" th:text="${totalCount ?: 0}">0</span>
-            </div>
-            <div class="stat-card" style="background: var(--bg-채팅중);">
-                <span class="stat-label" style="color: var(--text-채팅중);">채팅중</span>
-                <span class="stat-value" style="color: var(--text-채팅중);" 
-                      th:text="${statusCounts != null ? statusCounts['채팅중'] : 0}">0</span>
-            </div>
-            <div class="stat-card" style="background: var(--bg-매칭완료);">
-                <span class="stat-label" style="color: var(--text-매칭완료);">매칭완료</span>
-                <span class="stat-value" style="color: var(--text-매칭완료);" 
-                      th:text="${statusCounts != null ? statusCounts['매칭완료'] : 0}">0</span>
-            </div>
-            <div class="stat-card" style="background: var(--bg-일정확정);">
-                <span class="stat-label" style="color: var(--text-일정확정);">일정확정</span>
-                <span class="stat-value" style="color: var(--text-일정확정);" 
-                      th:text="${statusCounts != null ? statusCounts['일정확정'] : 0}">0</span>
-            </div>
-        </div>
+		<div class="summary-row">
+			<div class="stat-card">
+				<span class="stat-label">Total</span> <span class="stat-value"
+					th:text="${statusCounts != null ? (statusCounts['Total'] ?: statusCounts['TOTAL'] ?: 0) : 0}">0</span>
+			</div>
+			<div class="stat-card" style="background: var(--bg-채팅중);">
+				<span class="stat-label" style="color: var(--text-채팅중);">채팅중</span>
+				<span class="stat-value" style="color: var(--text-채팅중);"
+					th:text="${statusCounts != null ? (statusCounts['채팅중'] ?: statusCounts['채팅중'] ?: 0) : 0}">0</span>
+			</div>
+			<div class="stat-card" style="background: var(--bg-매칭완료);">
+				<span class="stat-label" style="color: var(--text-매칭완료);">매칭완료</span>
+				<span class="stat-value" style="color: var(--text-매칭완료);"
+					th:text="${statusCounts != null ? (statusCounts['매칭완료'] ?: statusCounts['매칭완료'] ?: 0) : 0}">0</span>
+			</div>
+			<div class="stat-card" style="background: var(--bg-일정확정);">
+				<span class="stat-label" style="color: var(--text-일정확정);">일정확정</span>
+				<span class="stat-value" style="color: var(--text-일정확정);"
+					th:text="${statusCounts != null ? (statusCounts['일정확정'] ?: statusCounts['일정확정'] ?: 0) : 0}">0</span>
+			</div>
+		</div>
 
-        <div class="list-header">
+		<div class="list-header">
             <div class="col-idx">IDX</div>
             <div class="col-user">SENDER & RECEIVER</div>
             <div class="col-status">CURRENT STATUS</div>
@@ -128,13 +128,15 @@
         <div th:each="match : ${matchList}" class="match-item-card">
             <div class="col-idx" th:text="${match['MATCH_IDX']}">101</div>
 
-            <div class="col-user">
-                <span class="name-tag" th:text="${match['SENDER']}">SENDER</span> 
-                <span class="match-arrow">→</span> 
-                <span class="name-tag" th:text="${match['RECEIVER']}">RECEIVER</span>
-            </div>
+			<div class="col-user">
+				<span class="name-tag" th:text="${match['SENDER']}">신청자</span> <span
+					class="match-arrow"> <small
+					style="font-size: 10px; display: block; margin-bottom: -5px;"
+					th:text="${match['INITIATOR_TYPE']}"></small> →
+				</span> <span class="name-tag" th:text="${match['RECEIVER']}">상대방</span>
+			</div>
 
-            <div class="col-status">
+			<div class="col-status">
                 <span class="status-pill"
                       th:classappend="'status-' + ${match['PROGRESS_STATUS']}"
                       th:text="${match['PROGRESS_STATUS']}">상태</span>
