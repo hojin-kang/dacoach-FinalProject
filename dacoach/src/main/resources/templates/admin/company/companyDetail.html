@@ -49,7 +49,7 @@
 .company-detail-page .header-flex {
 	display: flex;
 	gap: 40px;
-	align-items: center; /* 사진을 텍스트 높이 중앙에 맞춤 */
+	align-items: center; 
 }
 
 .company-detail-page .info-text-side {
@@ -92,23 +92,24 @@
 	color: #4b5563;
 }
 
-/* [프로필 사진 박스] */
+/* [수정됨: 프로필 사진 박스] */
 .company-detail-page .photo-box {
 	width: 220px;
 	height: 220px;
 	background-color: #f0f8f7;
-	border-radius: 32px;
-	border: 1px solid #9dbbb5;
+	border-radius: 24px; /* 코치 페이지처럼 모서리를 부드럽게 조정 */
+	border: 1px solid rgba(157, 187, 181, 0.5); /* 테두리를 조금 더 은은하게 변경 */
 	overflow: hidden;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
+/* 이미지가 부모 박스를 100% 꽉 채우도록 설정 */
 .company-detail-page .photo-box img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
+	object-fit: cover; 
 }
 
 /* [상태 관리 및 라디오] */
@@ -226,14 +227,14 @@
 			<div class="info-photo-side">
 				<div class="photo-box">
 					<img
-						th:src="${companyInfo['PHOTO'] != null and companyInfo['PHOTO'] != ''} ? @{|/uploads/${companyInfo['PHOTO']}|} : @{/img/profile/defaultProfile.jpg}" alt="기업 로고"
-						style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
+						th:src="${companyInfo['PHOTO'] != null and companyInfo['PHOTO'] != ''} ? @{|/uploads/${companyInfo['PHOTO']}|} : @{/img/profile/defaultProfile.jpg}" 
+						alt="기업 로고">
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<form th:action="@{/admin/company/updateStatus}" method="post">
+	<form th:action="@{/admin/company/updateStatus}" method="post" onsubmit="return validateForm()">
 		<input type="hidden" name="user_idx"
 			th:value="${companyInfo['USER_IDX'] != null ? companyInfo['USER_IDX'] : companyInfo['IDX']}">
 		<input type="hidden" name="company_idx"
@@ -293,7 +294,7 @@
 			<div class="kv-grid">
 				<div class="kv-label">발급일자</div>
 				<div class="kv-value">
-					<input type="date" name="get_date" class="form-input"
+					<input type="date" name="get_date" id="get_date" class="form-input"
 						style="border: none; background: transparent;"
 						th:value="${companyInfo['GET_DATE'] != null ? #dates.format(companyInfo['GET_DATE'], 'yyyy-MM-dd') : ''}">
 				</div>
@@ -301,11 +302,11 @@
 				<div class="kv-value">
 					<input type="text" name="cert_name" class="form-input"
 						style="border: none; background: transparent;"
-						th:value="${companyInfo['CERT_NAME']}">
+						th:value="${companyInfo['CERT_NAME']}" readonly="readonly">
 				</div>
 				<div class="kv-label">발급기관</div>
 				<div class="kv-value">
-					<input type="text" name="cert_from" class="form-input"
+					<input type="text" name="cert_from" id="cert_from" class="form-input"
 						style="border: none; background: transparent;"
 						th:value="${companyInfo['CERT_FROM']}">
 				</div>
@@ -358,6 +359,26 @@
             if (isSuspended) {
                 toggleSuspension(true);
             }
+        }
+        
+        // 폼 전송 시 유효성 검사
+        function validateForm() {
+            const getDateInput = document.getElementById('get_date');
+            const certFromInput = document.getElementById('cert_from');
+
+            if (getDateInput.value === '') {
+                alert('발급일자를 입력해주세요.');
+                getDateInput.focus();
+                return false;
+            }
+
+            if (certFromInput.value === '') {
+                alert('발급기관을 입력해주세요.');
+                certFromInput.focus();
+                return false;
+            }
+
+            return true;
         }
     </script>
 </div>
