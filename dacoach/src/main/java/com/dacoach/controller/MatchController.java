@@ -105,6 +105,19 @@ public class MatchController {
 				e.printStackTrace();
 			}
 		}
+		//이미 상대방이 서약서를 작성한 경우
+		try {
+			DicipDTO already = coachService.getDicip(user_idx, dto.getReceiver_idx());
+			if(already!=null) {
+				mav.addObject("msg", "상대방이 이미 서약서를 작성한 상태입니다. 서약서 동의 화면으로 이동합니다.");
+				mav.addObject("url", "/dicipline?target_idx="+dto.getReceiver_idx());
+				mav.setViewName("alert");
+				return mav;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	
 		int result=0;
 		try {
