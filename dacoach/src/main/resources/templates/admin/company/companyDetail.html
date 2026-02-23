@@ -274,7 +274,8 @@
 					<div style="flex: 1;">
 						<label
 							style="display: block; margin-bottom: 5px; font-weight: 700;">정지
-							시작일</label> <input type="date" name="start_date" class="form-input"
+							시작일</label> 
+                        <input type="date" name="start_date" id="start_date" class="form-input"
 							th:value="${companyInfo['START_DATE'] != null ? #dates.format(companyInfo['START_DATE'], 'yyyy-MM-dd') : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}"
 							readonly>
 					</div>
@@ -376,6 +377,25 @@
                 alert('발급기관을 입력해주세요.');
                 certFromInput.focus();
                 return false;
+            }
+
+            //날짜 유효성 검사
+            const suspendedRadio = document.getElementById('status_suspended');
+            
+            if (suspendedRadio && suspendedRadio.checked) {
+                const startDateInput = document.getElementById('start_date');
+                const endDateInput = document.getElementById('end_date');
+
+                if (startDateInput && endDateInput && endDateInput.value !== '') {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    
+                    if (endDate < startDate) {
+                        alert('정지 종료일은 정지 시작일보다 빠를 수 없습니다.');
+                        endDateInput.focus();
+                        return false;
+                    }
+                }
             }
 
             return true;

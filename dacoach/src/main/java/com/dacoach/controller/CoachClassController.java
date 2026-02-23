@@ -194,7 +194,7 @@ public class CoachClassController {
 		// 로그인 확인
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
 		if (userIdx == null) {
-			mav.setViewName("redirect:/login");
+			mav.setViewName("redirect:/needLogin");
 			return mav;
 		}
 
@@ -249,7 +249,7 @@ public class CoachClassController {
 
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
 		if (userIdx == null) {
-			mav.setViewName("redirect:/login");
+			mav.setViewName("redirect:/needLogin");
 			return mav;
 		}
 
@@ -339,7 +339,7 @@ public class CoachClassController {
 		// 로그인 확인
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
 		if (userIdx == null) {
-			mav.setViewName("redirect:/login");
+			mav.setViewName("redirect:/needLogin");
 			return mav;
 		}
 
@@ -382,7 +382,7 @@ public class CoachClassController {
 
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
 		if (userIdx == null) {
-			return "redirect:/login";
+			return "redirect:/needLogin";
 		}
 
 		try {
@@ -457,7 +457,7 @@ public class CoachClassController {
 
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
 		if (userIdx == null) {
-			mav.setViewName("redirect:/login");
+			mav.setViewName("redirect:/needLogin");
 			return mav;
 		}
 
@@ -484,7 +484,7 @@ public class CoachClassController {
 
 		Integer userIdx = (Integer) session.getAttribute("user_idx");
 		if (userIdx == null) {
-			mav.setViewName("redirect:/login");
+			mav.setViewName("redirect:/needLogin");
 			return mav;
 		}
 

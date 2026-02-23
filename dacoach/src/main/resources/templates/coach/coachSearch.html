@@ -108,7 +108,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+								<th:block th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
                                 <div class="card-footer" th:if="${dto.user_idx != session.user_idx}">
                                    <th:block th:if="${dto.matchStatus == 'ACCEPTED'}">
 							    <button type="button" class="btn-chat stop-card" onclick="location.href='/chat'">
@@ -146,6 +146,7 @@
 								    </button>
 								</th:block>
                                 </div>
+                                </th:block>
                             </article>
                         </div>
                         <div id="pageStr" th:unless="${#strings.isEmpty(pageStr)}" th:utext="${pageStr}"></div>
