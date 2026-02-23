@@ -279,9 +279,9 @@
                                         <div class="d-wrap w-fit">
                                             <input type="date" id="startDate" name="start_date" th:value="${coachStatus == 'SUSPENDED' ? coachEmbedded?.start_date : #calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}" class="i-date" readonly> 
                                             <span class="text-gray-300">~</span> 
-                                            <input type="date" name="end_date" th:value="${coachEmbedded?.end_date}" th:readonly="${coachEmbedded?.end_date != null}" class="i-date">
+                                            <input type="date" id="endDate" name="end_date" th:value="${coachEmbedded?.end_date}" th:readonly="${coachEmbedded?.end_date != null}" class="i-date" required>
                                         </div>
-                                        <input type="text" id="reason" name="reason" placeholder="정지 사유 입력" class="i-reason" th:value="${coachEmbedded?.reason}">
+                                        <input type="text" id="reason" name="reason" placeholder="정지 사유 입력" class="i-reason" th:value="${coachEmbedded?.reason}" required>
                                     </div>
                                 </div>
                             </div>
@@ -380,6 +380,19 @@
             alert(msg);
             if (uIdx) {
                 location.href = "/admin/coach/coachDetail?user_idx=" + uIdx;
+            }
+        }
+        
+        const endDateInput = document.getElementById('endDate');
+        if (endDateInput) {
+            if (!endDateInput.readOnly) {
+                const now = new Date();
+                const tomorrow = new Date(now);
+                tomorrow.setDate(now.getDate() + 1);
+                
+                const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                
+                endDateInput.min = tomorrowStr;
             }
         }
     };
