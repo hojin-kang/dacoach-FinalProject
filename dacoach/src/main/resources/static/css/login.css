@@ -132,7 +132,7 @@
             border: none; 
             border-radius: 12px; 
             width: 100%; 
-            padding: 14px; 
+            padding: 0px 14px; 
             font-weight: bold; 
             display: flex; 
             align-items: center; 
