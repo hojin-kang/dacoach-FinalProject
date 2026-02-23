@@ -342,9 +342,9 @@
 			total_amount: classPrice,
 			vat_amount: 0,
 			tax_free_amount: 0,
-			approval_url: "http://localhost:9090/kakaopay/class/success",
-			fail_url: "http://localhost:9090/kakaopay/class/fail",
-			cancel_url: "http://localhost:9090/kakaopay/class/cancel",
+			approval_url: window.location.origin + "/kakaopay/class/success",
+			fail_url: window.location.origin + "/kakaopay/class/fail",
+			cancel_url: window.location.origin + "/kakaopay/class/cancel",
 			// 수강신청에 필요한 추가 정보
 			class_id: classId,
 			enrollment_date: selectedDate
