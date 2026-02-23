@@ -20,7 +20,7 @@ public interface AdminCompanyMapper {
     //String getCertFilePath(@Param("userIdx") int userIdx);
     int insertCert(CertDTO dto);
     //int hasCert(@Param("userIdx") int userIdx);
-    int countCompanyTotal();
+    int countCompanyTotal(Map<String, Object> param);
        
     //계정상태 관리
     int updateCompanyStatus(Map<String, Object> params);

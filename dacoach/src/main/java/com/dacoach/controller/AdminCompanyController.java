@@ -32,7 +32,7 @@ public class AdminCompanyController {
     @GetMapping("/companyList")
     public String companyList(
             @RequestParam(value = "cp", required = false, defaultValue = "1") int cp,
-            Model model, HttpSession session
+            Model model, HttpSession session,@RequestParam(value="keyword", required=false) String keyword
     ) {
         if (session.getAttribute("loginAdmin") == null) {
             return "redirect:/admin";
@@ -41,23 +41,29 @@ public class AdminCompanyController {
         int listSize = 5;
         int pageSize = 5;
 
-        int totalCnt = service.getCompanyTotalCnt();
+        Map<String, Object> map = new HashMap<>();
+        map.put("keyword", keyword);
+        int totalCnt = service.getCompanyTotalCnt(map);
 
         int startRow = (cp - 1) * listSize + 1;
         int endRow = cp * listSize;
 
-        Map<String, Object> map = new HashMap<>();
+        
         map.put("startRow", startRow);
         map.put("endRow", endRow);
 
         List<Map<String, Object>> list = service.getCompanyList(map);
 
-        String pageStr = PageModule.makePage("/admin/companyList", totalCnt, listSize, pageSize, cp);
+        String pageUrl = "companyList";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            pageUrl += "?keyword=" + keyword; 
+        }
+        String pageStr = PageModule.makePage("pageUrl", totalCnt, listSize, pageSize, cp);
 
         model.addAttribute("list", list);
         model.addAttribute("pageStr", pageStr);
         model.addAttribute("cp", cp);
-
+        model.addAttribute("keyword", keyword);
         model.addAttribute("contentPage", "admin/company/companyList");
         model.addAttribute("contentFragment", "contentPage");
 
@@ -90,7 +96,7 @@ public class AdminCompanyController {
 
         try {
             service.updateCompanyFullStatus(params, dto);
-            System.out.println("전달된 파라미터: " + params);
+            //System.out.println("전달된 파라미터: " + params);
             model.addAttribute("msg", "정보가 성공적으로 반영되었습니다.");
         } catch (Exception e) {
             e.printStackTrace();
