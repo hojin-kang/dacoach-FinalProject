@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dacoach.mapper.adminStatistics.StatisticsMapper">
+  	
+  	<select id="monthlySales">
+	select sum(p.total) as totals
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where (ps.status='완료' or ps.status='환불요청')
+	and p.approved_at >= trunc(sysdate,'MM')
+	and p.approved_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
+  	</select>
+  	
+  	<select id="lastMonthSales">
+  	select sum(p.total) as totals
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where (ps.status='완료' or ps.status='환불요청')
+	and p.approved_at >= add_months(trunc(sysdate,'MM'),-1)
+	and p.approved_at <![CDATA[<]]> trunc(sysdate,'MM')
+  	</select>
+  	
+  	<select id="monthlyMembershipSales">
+	select sum(p.total) as totals
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	where p.pay_type='MEMBERSHIP'
+	and ps.status='완료'
+	and p.approved_at >= trunc(sysdate,'MM')
+	and p.approved_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
+  	</select>
+  	
+  	<select id="avgPayAmount">
+	SELECT
+	NVL(ROUND(AVG(p.total), 0), 0) AS avg_pay_amount
+	FROM pay p
+	JOIN pay_status ps ON p.tid = ps.tid
+	WHERE ps.status = '완료'
+  	</select>
+  	
+  	<select id="pendingRefundCount">
+	select count(*) from pay_status
+	where status='환불요청'
+  	</select>
+  	
+  	<select id="weeklySales">
+	SELECT
+	d.dt AS sales_date,
+	TO_CHAR(d.dt, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') AS day_name,
+	ROUND(NVL(SUM(p.total), 0) / 10000, 1) AS daily_revenue
+	FROM (
+	SELECT TRUNC(SYSDATE) - (LEVEL - 1) AS dt
+	FROM DUAL
+	CONNECT BY LEVEL <![CDATA[<=]]> 7
+	) d
+	LEFT OUTER JOIN (
+	SELECT DISTINCT p.tid, p.total, p.approved_at
+	FROM pay p
+	JOIN pay_status ps ON p.tid = ps.tid
+	WHERE ps.status = '완료'
+	) p ON TRUNC(p.approved_at) = d.dt
+	GROUP BY d.dt
+	ORDER BY d.dt ASC
+  	</select>
+  	
+  	<select id="revenueByField">
+	SELECT
+	mf.MINOR_FIELD_NM AS FIELD_NAME,
+	COUNT(p.PAY_IDX) AS PAY_COUNT,
+	SUM(p.TOTAL) AS TOTAL_SUM,
+	ROUND(SUM(p.TOTAL) * 100.0 / SUM(SUM(p.TOTAL)) OVER(), 1) || '%' AS RATIO
+	FROM PAY p
+	JOIN PAY_STATUS ps ON p.TID = ps.TID
+	JOIN CLASS c ON TO_NUMBER(p.PARTNER_ORDER_ID) = c.CLASS_IDX
+	JOIN MINOR_FIELD mf ON c.MINOR_FIELD_IDX = mf.MINOR_FIELD_IDX
+	WHERE ps.STATUS = '완료'
+	AND p.PAY_TYPE = 'CLASS'
+	GROUP BY mf.MINOR_FIELD_NM
+	ORDER BY TOTAL_SUM DESC
+  	</select>
+  	
+  	<select id="payTypeStats">
+	SELECT
+	p.pay_type AS PAY_TYPE,
+	COUNT(*) AS COUNT,
+	ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 1) AS PERCENT
+	FROM pay p
+	JOIN pay_status ps ON p.tid = ps.tid
+	WHERE ps.status = '완료'
+	GROUP BY p.pay_type
+  	</select>
+  	
+  	<select id="monthlyCancelAmount">
+	select sum(p.total) as total
+	from pay p
+	join pay_status ps on p.tid=ps.tid
+	join pay_cancel pc on ps.tid=pc.tid
+	where ps.status='환불완료'
+	and pc.canceled_at >= trunc(sysdate,'MM')
+	and pc.canceled_at <![CDATA[<]]> add_months(trunc(sysdate,'MM'),1)
+  	</select>
+  	
+</mapper>

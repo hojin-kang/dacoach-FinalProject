@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.dacoach.model.users.UsersDTO;
-import com.dacoach.service.admin.AdminService;
+import com.dacoach.service.adminCoach.AdminCoachService;
 import com.dacoach.service.adminRefund.AdminRefundService;
 
 import jakarta.servlet.http.Cookie;
@@ -26,7 +26,7 @@ import jakarta.servlet.http.HttpSession;
 public class AdminDashboardController {
 	
 	@Autowired
-	private AdminService adminService;
+	private AdminCoachService adminService;
 	
 	@Autowired
 	private AdminRefundService adminRefundService;
