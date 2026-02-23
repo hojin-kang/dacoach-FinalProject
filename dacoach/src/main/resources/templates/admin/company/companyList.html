@@ -40,6 +40,20 @@
             font-weight: 500;
         }
 
+        /* [추가된 검색창 관련 스타일] */
+        .search-area { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .search-form { display: flex; gap: 8px; width: 300px; }
+        .search-input { 
+            width: 100%; padding: 10px 15px; border-radius: 12px; border: 1px solid #e5e7eb; 
+            font-size: 13px; outline: none; transition: border-color 0.2s; 
+        }
+        .search-input:focus { border-color: var(--mint-main); box-shadow: 0 0 0 3px var(--mint-bg); }
+        .search-btn { 
+            background-color: var(--mint-main); color: white; border: none; padding: 0 15px; 
+            border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 13px; white-space: nowrap; transition: 0.2s;
+        }
+        .search-btn:hover { background-color: var(--mint-dark); }
+
         /* [메인 레이아웃] */
         .control-panel {
             background-color: white;
@@ -118,13 +132,8 @@
             font-size: 11px;
             font-weight: 700;
         }
-
-        /* .paging-container {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-        } */
         
+        /* 페이지네이션 */
         .pagination-wrap { display: flex; justify-content: center; margin-top: 30px; }
         .pagination-wrap a, .pagination-wrap span {
             display: inline-block; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700;
@@ -138,6 +147,14 @@
         <div class="admin-top-bar">
             <h1>Company Management</h1>
             <span class="current-path">Customer / Company List</span>
+        </div>
+
+        <div class="search-area">
+            <form action="" method="get" class="search-form">
+                <input type="text" name="keyword" th:value="${keyword}" 
+                       class="search-input" placeholder="기업명 또는 사업자번호 검색">
+                <button type="submit" class="search-btn">검색</button>
+            </form>
         </div>
 
         <section class="control-panel">
