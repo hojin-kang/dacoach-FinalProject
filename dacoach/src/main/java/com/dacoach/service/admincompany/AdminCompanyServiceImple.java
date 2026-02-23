@@ -125,8 +125,8 @@ public class AdminCompanyServiceImple implements AdminCompanyService {
 	}
 
 	@Override
-	public int getCompanyTotalCnt() {
-		return mapper.countCompanyTotal();
+	public int getCompanyTotalCnt(Map<String,Object> param) {
+		return mapper.countCompanyTotal(param);
 	}
 
 }

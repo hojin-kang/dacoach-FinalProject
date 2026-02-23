@@ -18,7 +18,7 @@ public interface AdminCompanyService {
     int updateEnddateSuspended(int user_idx);
     //기업 디테일
     void approveCompanyLogic(Map<String, Object> params);
-    int getCompanyTotalCnt();
+    int getCompanyTotalCnt(Map<String,Object> param);
 
 	int saveCert(CertDTO dto);
 	//boolean hasCert(int userIdx);
