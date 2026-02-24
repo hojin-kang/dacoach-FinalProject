@@ -132,7 +132,7 @@
         </div>
 
         <div th:each="coach : ${coachInfo}" class="coach-item-card" 
-             th:onclick="|location.href='/admin/coach/infoDetail?coach_idx=' + ${coach.COACH_IDX}|" style="cursor:pointer;">
+             th:onclick="|location.href='/admin/monitoring/coachInfoDetail?coach_idx=' + ${coach.COACH_IDX}|" style="cursor:pointer;">
             
             <div class="col-photo">
 				<img

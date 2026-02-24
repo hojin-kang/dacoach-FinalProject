@@ -15,6 +15,10 @@
 	--danger: #ef4444;
 	--warning: #f59e0b;
 	--border-radius: 16px;
+    /* 매칭 관련 변수 추가 */
+    --bg-일정확정: #ede9fe; --text-일정확정: #6d28d9;
+    --bg-매칭완료: #fef3c7; --text-매칭완료: #d97706;
+    --bg-채팅중: #dbeafe; --text-채팅중: #2563eb;
 }
 
 .stats-container {
@@ -39,6 +43,12 @@
 	font-weight: 900;
 	color: var(--mint-main);
 	margin: 0;
+}
+
+.admin-top-bar p {
+    font-size: 12px; 
+    color: var(--gray-400); 
+    margin-top: 5px;
 }
 
 .current-path {
@@ -137,36 +147,58 @@
 	transition: height 0.3s;
 }
 
-/* To-Do 리스트 */
+/* To-Do 리스트 스타일 */
 .todo-list {
-	list-style: none;
-	padding: 0;
-	margin: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .todo-item {
-	padding: 14px;
-	background: var(--gray-50);
-	border-radius: 10px;
-	margin-bottom: 12px;
-	border-left: 4px solid var(--mint-main);
-	font-size: 13px;
+    padding: 0 !important;
+    background: var(--gray-50);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--mint-main);
+    font-size: 13px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+
+.todo-link {
+    display: block !important;
+    padding: 14px;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+.todo-item:hover {
+    background-color: var(--white) !important;
+    border-color: var(--mint-main) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
 .todo-item.urgent {
-	border-left-color: var(--danger);
-	background: #fff5f5;
+    border-left-color: var(--danger);
+    background: #fff5f5;
+}
+
+.todo-item.urgent:hover {
+    border-left-color: var(--danger) !important;
 }
 
 .todo-item .todo-title {
-	font-weight: 700;
-	margin-bottom: 4px;
-	display: block;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: block;
 }
 
 .todo-item .todo-desc {
-	font-size: 11px;
-	color: #7f8c8d;
+    font-size: 11px;
+    color: #7f8c8d;
 }
 
 /* 게시물 관리 리스트 */
@@ -207,30 +239,6 @@
 	color: var(--mint-dark);
 }
 
-.badge-danger {
-	background: #fee2e2;
-	color: var(--danger);
-}
-
-/* 리스크 알림 */
-.risk-alert {
-	border: 1.5px solid #fee2e2;
-	padding: 15px;
-	border-radius: 12px;
-}
-
-.risk-type {
-	color: var(--danger);
-	font-size: 11px;
-	font-weight: 800;
-	margin-bottom: 5px;
-}
-
-.risk-target {
-	font-weight: 700;
-	font-size: 13px;
-}
-
 /* 운영 팁 */
 .tip-box {
 	background: var(--mint-bg);
@@ -241,9 +249,9 @@
 	color: var(--mint-dark);
 }
 
-/* [통계 박스 링크 스타일] */
+/* 통계 박스 링크 스타일 */
 .box-link {
-    display: block !important;    /* span을 감싸는 a태그를 block으로 만들어 영역 확보 */
+    display: block !important;
     text-decoration: none !important;
     color: inherit !important;
     transition: all 0.2s ease;
@@ -257,21 +265,54 @@
     cursor: pointer;
 }
 
-/* [내부 요소 보정] */
-.box-link .box-title {
-    display: flex !important;      /* span이지만 한 줄을 꽉 채우도록 */
-    align-items: center;
-    gap: 8px;
+/* [플랫폼 생태계 현황 전용 스타일] */
+.eco-box {
+    border-top: 4px solid var(--mint-main);
 }
 
-.box-link .chart-placeholder {
-    display: flex !important;      /* 차트 영역도 block처럼 작동 */
-    align-items: flex-end;
-    justify-content: space-around;
+.eco-member-wrap {
+    margin-bottom: 25px;
 }
 
-.box-link .bar {
-    display: inline-block !important; /* 막대기는 옆으로 나열 */
+.eco-label-row {
+    display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; margin-bottom: 10px;
+}
+
+.eco-bar-bg {
+    width: 100%; height: 14px; background: #f3f4f6; border-radius: 7px; display: flex; overflow: hidden;
+}
+
+.eco-desc {
+    font-size: 10px; color: var(--gray-400); margin-top: 8px; text-align: center; line-height: 1.4;
+}
+
+.matching-process-title {
+    font-size: 11px; font-weight: 700; color: var(--gray-light); margin-bottom: 12px;
+}
+
+.process-list {
+    display: flex; flex-direction: column; gap: 8px;
+}
+
+.process-item {
+    display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; border-radius: 8px;
+}
+
+.process-label {
+    font-size: 11px; font-weight: 700;
+}
+
+.process-value {
+    font-weight: 900;
+}
+
+/* 하단 팁 영역 보정 */
+.tip-container {
+    background: transparent; border: none; padding: 0;
+}
+
+.tip-title-sub {
+    margin-bottom: 10px;
 }
 </style>
 
@@ -279,7 +320,7 @@
         <div class="admin-top-bar">
             <div>
                 <h1>Dashboard</h1>
-                <p style="font-size: 12px; color: var(--gray-400); margin-top: 5px;">플랫폼 운영 현황 및 관리 요약</p>
+                <p>플랫폼 운영 현황 및 관리 요약</p>
             </div>
             <span class="current-path">Management / Overview</span>
         </div>
@@ -354,29 +395,34 @@
                         <i class="fa-solid fa-check-to-slot"></i> To-Do List
                     </div>
 					<ul class="todo-list">
-						<li class="todo-item urgent" th:if="${reportCount > 0}"><span
-							class="todo-title" style="color: var(--danger);">긴급 신고 처리</span>
-							<span class="todo-desc">신고된 클래스/코치 <span
-								th:text="${reportCount}">0</span>건에 대한 블라인드 검토
-						</span></li>
+						<li class="todo-item urgent" th:if="${reportCount > 0}">
+						<a th:href="@{/admin/report}" class="todo-link">
+							<span class="todo-title" style="color: var(--danger);">긴급 신고 처리</span>
+								<span class="todo-desc">신고된 클래스/코치 <span
+									th:text="${reportCount}">0</span>건에 대한 블라인드 검토
+							</span></a></li>
 
-						<li class="todo-item" th:if="${certCount > 0}"><span
-							class="todo-title">개인 자격증 승인 [<span th:text="${certCount}">0</span>건]
-						</span> <span class="todo-desc">코치 자격 증빙 서류 검토</span></li>
+						<li class="todo-item" th:if="${certCount > 0}">
+						<a th:href="@{/admin/coach/coachList}" class="todo-link">
+							<span class="todo-title">개인 자격증 승인 [<span th:text="${certCount}">0</span>건]
+							</span> <span class="todo-desc">코치 자격 증빙 서류 검토</span></a></li>
 
-						<li class="todo-item" th:if="${companyWaitCount > 0}"><span
-							class="todo-title">기업 가입 승인 [<span
-								th:text="${companyWaitCount}">0</span>건]
-						</span> <span class="todo-desc">컴퍼니 유저 사업자 등록 대조</span></li>
-						<li class="todo-item" th:if="${refundCount > 0}"><span
-							class="todo-title">환불 요청 처리 [<span
-								th:text="${refundCount}">0</span>건]
-						</span> <span class="todo-desc">결제 취소 및 환불 승인 검토가 필요합니다.</span></li>
+						<li class="todo-item" th:if="${companyWaitCount > 0}">
+						<a th:href="@{/admin/companyList}" class="todo-link">
+							<span class="todo-title">기업 가입 승인 [<span
+									th:text="${companyWaitCount}">0</span>건]
+							</span> <span class="todo-desc">컴퍼니 유저 사업자 등록 대조</span></a></li>
+						<li class="todo-item" th:if="${refundCount > 0}">
+						<a th:href="@{/admin/refund}" class="todo-link">
+							<span class="todo-title">환불 요청 처리 [<span
+									th:text="${refundCount}">0</span>건]
+							</span> <span class="todo-desc">결제 취소 및 환불 승인 검토가 필요합니다.</span></a></li>
 						
-						<li class="todo-item" th:if="${adWaitCount > 0}"><span
-                            class="todo-title">광고 검수 대기 [<span
-                                th:text="${adWaitCount}">0</span>건]
-                        </span> <span class="todo-desc">광고 콘텐츠 검토 및 승인 처리</span></li>
+						<li class="todo-item" th:if="${adWaitCount > 0}">
+						<a th:href="@{/admin/adView}" class="todo-link">
+							<span class="todo-title">광고 검수 대기 [<span
+	                                th:text="${adWaitCount}">0</span>건]
+	                        </span> <span class="todo-desc">광고 콘텐츠 검토 및 승인 처리</span></a></li>
 						<li
 							th:if="${reportCount == 0 && certCount == 0 && companyWaitCount == 0 && refundCount == 0 && adWaitCount == 0}"
 							style="text-align: center; color: #9ca3af; padding: 20px;">
@@ -387,20 +433,56 @@
             </div>
 
             <div class="column">
-                <div class="content-box risk-alert">
-                    <div class="box-title" style="color: var(--danger);">
-                        <i class="fa-solid fa-triangle-exclamation"></i> 리스크 모니터링
-                    </div>
-                    <div>
-                        <div class="risk-type">다량 신고 발생</div>
-                        <div class="risk-target">김철수 코치 (필라테스)</div>
-                        <p style="font-size: 11px; color: var(--gray-400); margin-top: 5px;">최근 1시간 내 3건의 신고 접수</p>
-                    </div>
-                </div>
+				<div class="content-box eco-box">
+					<div class="box-title">
+						<i class="fa-solid fa-users-viewfinder"
+							style="color: var(--mint-main);"></i> 플랫폼 생태계 현황
+					</div>
 
-                <div class="content-box" style="background: transparent; border: none; padding: 0;">
+					<div class="eco-member-wrap">
+						<div class="eco-label-row">
+							<span style="color: var(--mint-dark);"><i
+								class="fa-solid fa-user-tie"></i> 코치 <span
+								th:text="${coachCount ?: 0}">0</span></span> <span
+								style="color: var(--text-채팅중);"><i
+								class="fa-solid fa-building"></i> 컴퍼니 <span
+								th:text="${companyCount ?: 0}">0</span></span>
+						</div>
+						<div class="eco-bar-bg">
+							<div
+								th:style="'width:' + ${coachRatio ?: 50} + '%; background: var(--mint-main); opacity: 0.8;'"
+								title="코치 비율"></div>
+							<div
+								th:style="'width:' + ${companyRatio ?: 50} + '%; background: var(--text-채팅중); opacity: 0.7;'"
+								title="컴퍼니 비율"></div>
+						</div>
+						<p class="eco-desc">
+							전문가와 기업이 자유롭게 교류하는 <br>활발한 네트워크가 형성되어 있습니다.
+						</p>
+					</div>
+
+					<hr style="border: 0; border-top: 1px solid var(--gray-100); margin-bottom: 20px;">
+
+					<div class="matching-process-title">현재 매칭 프로세스</div>
+					<div class="process-list">
+						<div class="process-item" style="background: var(--bg-채팅중);">
+							<span class="process-label" style="color: var(--text-채팅중);">대화 및 조율</span> 
+                            <span class="process-value" style="color: var(--text-채팅중);" th:text="${statusCounts != null ? statusCounts['채팅중'] : 0}">0</span>
+						</div>
+						<div class="process-item" style="background: var(--bg-일정확정);">
+							<span class="process-label" style="color: var(--text-일정확정);">일정 확정</span> 
+                            <span class="process-value" style="color: var(--text-일정확정);" th:text="${statusCounts != null ? statusCounts['일정확정'] : 0}">0</span>
+						</div>
+						<div class="process-item" style="background: var(--bg-매칭완료);">
+							<span class="process-label" style="color: var(--text-매칭완료);">매칭/서약 완료</span> 
+                            <span class="process-value" style="color: var(--text-매칭완료);" th:text="${statusCounts != null ? statusCounts['매칭완료'] : 0}">0</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="content-box tip-container">
                     <div class="tip-box">
-                        <div class="box-title" style="margin-bottom: 10px;">
+                        <div class="box-title tip-title-sub">
                             <i class="fa-regular fa-lightbulb"></i> 운영 팁
                         </div>
                         <p>

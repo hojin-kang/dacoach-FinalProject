@@ -26,6 +26,8 @@ public interface AdminCoachMapper {
 	public int keywordReviewCount() throws Exception;
 	public int getQnaWaitCount() throws Exception;
 	
+	public Map<String,Object> getUserCountByType() throws Exception;
+	
 	public List<Map<String,Object>> getTopCoachInterests() throws Exception;
 	
 	// 코치 프로필 및 상태 관리

@@ -116,6 +116,16 @@ public class AdminDashboardController {
 		int keywordReviewCount=0;
 		int qnaWaitCount=0;
 		
+		//플랫폼 생태계 현황
+		Map<String, Object> userCountByType = new HashMap<>();
+		long coachCount = 0;
+	    long companyCount = 0;
+	    int coachRatio = 50;
+	    int companyRatio = 50;
+	    
+		//현재 매칭 프로세스
+		Map<String, Object> statusCounts = new HashMap<>();
+		
 		//운영팁
 		List<Map<String, Object>> topInterests = new ArrayList<>();
 		String tipMessage = "";
@@ -136,6 +146,23 @@ public class AdminDashboardController {
 			//최근 게시물 관리
 			keywordReviewCount=adminService.keywordReviewCount();
 			qnaWaitCount=adminService.getQnaWaitCount();
+			
+			//플랫폼 생태계 현황
+			userCountByType = adminService.getUserCountByType();
+			
+			if (userCountByType != null) {
+	            coachCount = ((Number) userCountByType.getOrDefault("COACHCOUNT", 0)).longValue();
+	            companyCount = ((Number) userCountByType.getOrDefault("COMPANYCOUNT", 0)).longValue();
+	            
+	            long total = coachCount + companyCount;
+	            if (total > 0) {
+	                coachRatio = (int) ((double) coachCount / total * 100);
+	                companyRatio = 100 - coachRatio;
+	            }
+	        }
+			
+			//현재 매칭 프로세스
+			statusCounts = adminService.getMatchStatusCounts();
 			
 			//운영팁
 			topInterests=adminService.getTopCoachInterests();
@@ -173,6 +200,15 @@ public class AdminDashboardController {
 		//최근 게시물 관리
 		model.addAttribute("keywordReviewCount",keywordReviewCount);
 		model.addAttribute("qnaWaitCount",qnaWaitCount);
+		
+		//플랫폼 생태계 현황
+		model.addAttribute("coachCount", coachCount);
+	    model.addAttribute("companyCount", companyCount);
+	    model.addAttribute("coachRatio", coachRatio);
+	    model.addAttribute("companyRatio", companyRatio);
+		
+		//현재 매칭 프로세스
+		model.addAttribute("statusCounts", statusCounts);
 		
 		//운영팁
 		model.addAttribute("fullTipMessage", tipMessage);

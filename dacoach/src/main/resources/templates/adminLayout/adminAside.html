@@ -142,7 +142,7 @@
                 </button>
                 <ul id="monitoringSubmenu" class="admin-aside__submenu hidden">
                     <li><a th:href="@{/admin/companyClassList}" class="admin-aside__submenu-link">클래스 프로필 검수</a></li>
-                    <li><a th:href="@{/admin/coach/coachInfoList}" class="admin-aside__submenu-link">코치 프로필 검수</a></li>
+                    <li><a th:href="@{/admin/monitoring/coachInfoList}" class="admin-aside__submenu-link">코치 프로필 검수</a></li>
                 </ul>
             </li>
 
@@ -174,17 +174,64 @@
         </ul>
     </nav>
 
-    <script>
-        function toggleSubMenu(id, btn) {
-            const submenu = document.getElementById(id);
-            const isHidden = submenu.classList.toggle('hidden');
-            
-            if (isHidden) {
-                btn.classList.remove('is-open');
-            } else {
-                btn.classList.add('is-open');
+	<script>
+    // 서브메뉴 토글 함수 (기존과 동일)
+    function toggleSubMenu(id, btn) {
+        const submenu = document.getElementById(id);
+        const isOpen = !submenu.classList.toggle('hidden');
+        btn.classList.toggle('is-open', isOpen);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const hash = window.location.hash;
+
+        // 1. URL 해시(#open=ID)가 있는 경우 강제 열기 (최우선 순위)
+        if (hash && hash.includes('open=')) {
+            const targetId = hash.split('open=')[1];
+            const targetMenu = document.getElementById(targetId);
+            if (targetMenu) {
+                targetMenu.classList.remove('hidden');
+                targetMenu.previousElementSibling?.classList.add('is-open');
+                // 해시로 열었을 때는 아래 자동 감지 로직을 건너뛰고 싶다면 return;을 써도 되지만, 
+                // 하위 링크 강조를 위해 계속 진행합니다.
             }
         }
-    </script>
+
+        // 2. 서브메뉴 링크 및 부모 메뉴 감지
+        const subLinks = document.querySelectorAll('.admin-aside__submenu-link');
+        subLinks.forEach(link => {
+            const menuHref = link.getAttribute('href');
+            
+            // [검사 조건] 주소가 완벽히 같거나, 상세 페이지 주소 패턴이 포함되어 있는지 확인
+            const isExactMatch = currentPath === menuHref;
+            const isSubPathMatch = menuHref !== '/admin' && currentPath.includes(menuHref.replace('List', ''));
+
+            if (isExactMatch || isSubPathMatch) {
+                // 현재 페이지면 밑줄 강조
+                if(isExactMatch) link.classList.add('admin-aside__submenu-link--active');
+                
+                // 부모 서브메뉴 펼치기
+                const parentSubmenu = link.closest('.admin-aside__submenu');
+                if (parentSubmenu) {
+                    parentSubmenu.classList.remove('hidden');
+                    const triggerBtn = parentSubmenu.previousElementSibling;
+                    if (triggerBtn && triggerBtn.classList.contains('admin-aside__trigger')) {
+                        triggerBtn.classList.add('is-open');
+                    }
+                }
+            }
+        });
+        
+        // 3. 서브메뉴가 없는 일반 메뉴 아이템 처리
+        const mainLinks = document.querySelectorAll('.admin-aside__menu-item');
+        mainLinks.forEach(link => {
+            const menuHref = link.getAttribute('href');
+            if (currentPath === menuHref || (menuHref !== '/admin' && currentPath.startsWith(menuHref))) {
+                link.classList.add('admin-aside__menu-item--active');
+            }
+        });
+    });
+</script>
 </aside>
 </html>
