@@ -311,7 +311,7 @@ public class MypageController {
 	
 	@GetMapping("/notice")
 	public String noticeList() {
-		return "/coach/mypage/notice";
+		return "coach/mypage/notice";
 	}
 	
 	@GetMapping("/myQnaList")
@@ -359,7 +359,7 @@ public class MypageController {
 		if(session.getAttribute("user_idx")==null || (Integer)session.getAttribute("user_idx")==0) {
 			return "needLogin";
 		}
-		return "/coach/mypage/myQnaForm";
+		return "coach/mypage/myQnaForm";
 	}
 	
 	@PostMapping("/myQnaNew")
