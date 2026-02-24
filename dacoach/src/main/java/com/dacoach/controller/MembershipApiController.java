@@ -183,7 +183,7 @@ public class MembershipApiController {
 			return new ResponseEntity<String>(msg,HttpStatus.OK);
 		}
 		
-		@Scheduled(cron = "00 57 07 * * *", zone = "Asia/Seoul")
+		@Scheduled(cron = "00 00 00 * * *", zone = "Asia/Seoul")
 		public void memebershipSubscription() {
 			
 			 
