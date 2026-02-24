@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequiredArgsConstructor
+@RequiredArgsConstructor 
 @RequestMapping("/company")
 public class CompanyChatController {
 
