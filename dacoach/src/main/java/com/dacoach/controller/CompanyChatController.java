@@ -51,7 +51,7 @@ public class CompanyChatController {
 		model.addAttribute("activeRoomIdx", null);
 		model.addAttribute("tab", tab);
 
-		return "/company/chat/chatRoomList";
+		return "company/chat/chatRoomList";
 	}
 
 	@GetMapping("/chat/start")
@@ -116,7 +116,7 @@ public class CompanyChatController {
 		model.addAttribute("myIdx", my);
 		model.addAttribute("tab", tab);
 
-		return "/company/chat/chatRoomList";
+		return "company/chat/chatRoomList";
 	}
 
 	@PostMapping("/chat/room/{roomIdx}/read")
