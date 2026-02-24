@@ -168,10 +168,9 @@
                 <span th:if="${classInfo['DISTRICT_NM'] != null}"> > [[${classInfo['DISTRICT_NM']}]]</span>
             </div>
 
-            <div class="kv-label">수강 인원</div>
+            <div class="kv-label">신청한 수강 인원</div>
             <div class="kv-value">
-                <b th:text="${classInfo['ENROLLED_CNT'] ?: '0'}"></b>명 / 
-                <span th:text="${classInfo['MAX_USER_CNT'] ?: '-'}"></span>명
+                <b th:text="${classInfo['ENROLLED_CNT'] ?: '0'}"></b>명
             </div>
 
             <div class="kv-label">상태 / 평점</div>
