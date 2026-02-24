@@ -322,7 +322,8 @@
                                             <input type="hidden" name="cert_idx" th:value="${cert.cert_idx}">
                                         </td>
                                         <td class="br-g">
-                                            <input type="date" name="get_date" class="i-txt-c" th:value="${cert.get_date}">
+                                            <input type="date" name="get_date" class="i-txt-c cert-input" th:value="${cert.get_date}" 
+                                            th:max="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}" required>
                                         </td>
                                         <td class="br-g f-bold">
                                             <input type="text" name="cert_name" th:value="${cert.cert_name}" class="i-txt-c f-bold" required>
@@ -395,6 +396,20 @@
                 endDateInput.min = tomorrowStr;
             }
         }
+        
+        const today = new Date().toISOString().split('T')[0];
+        const dateInputs = document.querySelectorAll('input[name="get_date"]');
+        
+        dateInputs.forEach(input => {
+            input.max = today;
+
+            input.addEventListener('change', function() {
+                if (this.value > today) {
+                    alert("자격증 발급일은 미래일 수 없습니다.");
+                    this.value = today;
+                }
+            });
+        });
     };
 
     function toggleDateInput(show) {

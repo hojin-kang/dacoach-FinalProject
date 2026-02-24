@@ -107,47 +107,59 @@
                 등록된 데이터가 없습니다.
             </div>
 
-            <div th:each="coach : ${coachList}" class="coach-item-card">
-                <div class="col-idx" th:text="${coach.COACH_IDX}"></div>
-                <div class="col-name">
-                    <a th:text="${coach.USER_NAME}" 
-                       th:href="@{/admin/coach/coachDetail(user_idx=${coach.USER_IDX})}"
-                       class="hover:text-[#9dbbb5] transition-colors"></a>
-                </div>
-                <div class="col-nick" th:text="${coach.NICKNAME}"></div>
-                <div class="col-phone" th:text="${coach.PHONE}"></div>
-                <div class="col-date" th:text="${coach.CREATED_AT != null ? #dates.format(coach.CREATED_AT, 'yyyy-MM-dd') : '-'}"></div>
-                <div class="col-status">
-                    <span class="pill-badge"
-                          th:classappend="${coach.STATUS == 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 
+			<div th:each="coach : ${coachList}" class="coach-item-card"
+				th:data-url="@{/admin/coach/coachDetail(user_idx=${coach.USER_IDX})}"
+				onclick="goToDetail(event, this)" style="cursor: pointer;">
+				<div class="col-idx" th:text="${coach.COACH_IDX}"></div>
+				<div class="col-name">
+					<span th:text="${coach.USER_NAME}" class="coach-name-text"></span>
+				</div>
+				<div class="col-nick" th:text="${coach.NICKNAME}"></div>
+				<div class="col-phone" th:text="${coach.PHONE}"></div>
+				<div class="col-date"
+					th:text="${coach.CREATED_AT != null ? #dates.format(coach.CREATED_AT, 'yyyy-MM-dd') : '-'}"></div>
+				<div class="col-status">
+					<span class="pill-badge"
+						th:classappend="${coach.STATUS == 'ACTIVE' ? 'bg-blue-100 text-blue-600' : 
                                           (coach.STATUS == 'WARNING' ? 'bg-orange-100 text-orange-600' : 
                                           (coach.STATUS == 'DANGER' ? 'bg-red-100 text-red-600' : 
                                           (coach.STATUS == 'SUSPENDED' ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600')))}"
-                          th:text="${coach.STATUS == 'ACTIVE' ? '사용' : 
+						th:text="${coach.STATUS == 'ACTIVE' ? '사용' : 
                                    (coach.STATUS == 'WARNING' ? '주의' : 
                                    (coach.STATUS == 'DANGER' ? '위험' : 
                                    (coach.STATUS == 'SUSPENDED' ? '정지' : '휴면')))}">
-                    </span>
-                </div>
-                <div class="col-cert">
-                    <div th:if="${coach.CERT_WAIT_COUNT > 0}">
-                        <span class="text-orange-600 text-xs font-extrabold">
-                            확인필요 <span th:text="${coach.CERT_WAIT_COUNT}"></span>건
-                        </span>
-                    </div>
-                    <div th:unless="${coach.CERT_WAIT_COUNT > 0}">
-                        <span class="text-gray-300 text-xs italic">완료</span>
-                    </div>
-                </div>
-            </div>
+					</span>
+				</div>
+				<div class="col-cert">
+					<div th:if="${coach.CERT_WAIT_COUNT > 0}">
+						<span class="text-orange-600 text-xs font-extrabold"> 확인필요
+							<span th:text="${coach.CERT_WAIT_COUNT}"></span>건
+						</span>
+					</div>
+					<div th:unless="${coach.CERT_WAIT_COUNT > 0}">
+						<span class="text-gray-300 text-xs italic">완료</span>
+					</div>
+				</div>
+			</div>
 
-            <div class="pagination-wrap" th:if="${not #lists.isEmpty(coachList)}">
+			<div class="pagination-wrap" th:if="${not #lists.isEmpty(coachList)}">
                 <div th:utext="${pageStr}"></div>
             </div>
         </section>
     </div>
 
     <script th:inline="javascript">
+	    function goToDetail(event, row) {
+	        if (event.target.closest('.col-cert')) {
+	            return;
+	        }
+	        
+	        const url = row.getAttribute('data-url');
+	        if (url) {
+	            window.location.href = url;
+	        }
+	    }
+    
         function sortCertCount() {
             const url = new URL(window.location.href);
             const params = url.searchParams;

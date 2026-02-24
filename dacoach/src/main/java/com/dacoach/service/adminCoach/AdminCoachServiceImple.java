@@ -70,6 +70,11 @@ public class AdminCoachServiceImple implements AdminCoachService {
 	}
 	
 	@Override
+	public Map<String, Object> getUserCountByType() throws Exception {
+		return adminCoachMapper.getUserCountByType();
+	}
+	
+	@Override
 	public List<Map<String, Object>> getTopCoachInterests() throws Exception {
 		return adminCoachMapper.getTopCoachInterests();
 	}

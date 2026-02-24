@@ -70,6 +70,15 @@
     AND (u.user_type = 'COACH' OR u.user_type = 'COMPANY')
 	</select>
 	
+	<select id="getUserCountByType">
+	SELECT
+	COUNT(CASE WHEN USER_TYPE = 'COACH' THEN 1 END) AS coachCount,
+	COUNT(CASE WHEN USER_TYPE = 'COMPANY' THEN 1 END) AS companyCount
+	FROM USERS
+	WHERE STATUS != 'INACTIVE'
+	AND USER_TYPE != 'ADMIN'
+	</select>
+	
 	<select id="getTopCoachInterests">
 	SELECT *
 	FROM (

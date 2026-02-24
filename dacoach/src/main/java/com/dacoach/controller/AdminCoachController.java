@@ -302,7 +302,7 @@ public class AdminCoachController {
 	
 	
 	//코치 프로필 검수
-	@GetMapping("/coach/coachInfoList")
+	@GetMapping("/monitoring/coachInfoList")
 	public String coachInfoList(Model model, HttpSession session,
 			@RequestParam(value="cp", defaultValue="1") int cp) {
 		
@@ -339,13 +339,13 @@ public class AdminCoachController {
 		model.addAttribute("totalTokens",totalTokens);
 		model.addAttribute("coachInfo",coachInfoList);
 		model.addAttribute("pageStr",pageStr);
-	    model.addAttribute("contentPage", "admin/coach/coachInfoList");
+	    model.addAttribute("contentPage", "admin/monitoring/coachInfoList");
 	    model.addAttribute("contentFragment", "coachInfoContent");
 	    
 	    return "admin/dashboard";
 	}
 	
-	@GetMapping("/coach/infoDetail")
+	@GetMapping("/monitoring/coachInfoDetail")
 	public String coachInfoDetail(Model model, HttpSession session,
 			@RequestParam int coach_idx) {
 		
@@ -368,7 +368,7 @@ public class AdminCoachController {
 		
 		model.addAttribute("dto", dto);
 		model.addAttribute("coachHashtags",coachHashtags);
-		model.addAttribute("contentPage", "admin/coach/coachInfoDetail");
+		model.addAttribute("contentPage", "admin/monitoring/coachInfoDetail");
 	    model.addAttribute("contentFragment", "coachInfoDetail");
 	    
 	    return "admin/dashboard";
