@@ -4,7 +4,13 @@
     <header class="header" th:fragment="siteHeader">
       <div class="container header__inner">
       	<div class="header-left">
-	        <a class="logo" th:href="@{/}"><img th:src="@{/img/logo.png}"></a>
+	        <a class="logo" th:href="@{/}">
+	        <th:block th:if="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+	            <img th:src="@{/img/logo2.png}">
+	          </th:block>
+	          <th:block th:unless="${session.user_type != null and #strings.equalsIgnoreCase(session.user_type, 'company')}">
+	            <img th:src="@{/img/logo.png}">
+	          </th:block></a>
 	
 	        <nav class="gnb">
 	          <a th:href="@{/}">홈</a>
