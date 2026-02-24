@@ -50,7 +50,7 @@ public class AdminPolicyController {
 		model.addAttribute("policyList", policyList);
 		model.addAttribute("pageStr", pageStr);
 		model.addAttribute("cp", cp);
-		model.addAttribute("contentPage", "/admin/support/policy/operating");
+		model.addAttribute("contentPage", "admin/support/policy/operating");
 		model.addAttribute("contentFragment", "contentPage");
 
 		return "admin/dashboard";
