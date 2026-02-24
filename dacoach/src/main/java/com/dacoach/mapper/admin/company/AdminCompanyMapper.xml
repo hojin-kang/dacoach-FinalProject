@@ -129,8 +129,7 @@
 		SELECT COUNT(*)
 		FROM CLASS_ENROLLMENT
 		WHERE CLASS_IDX
-		=
-		#{classIdx}
+		=#{classIdx}
 	</select>
 
 	<!-- 6. 클래스별 리뷰 목록 -->
