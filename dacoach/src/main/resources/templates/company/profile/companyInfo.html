@@ -35,7 +35,7 @@
    		<p id="companyNumMsg" style="font-size: 0.8rem; margin-top: 5px;"></p>
    		<input type="hidden" name="cert_type" value="사업자등록증">
    		<input type="hidden" name="cert_status" value="대기">
-   		<p class="certFile"><input type="file" name="certFile">사업자등록증</p>
+   		<p class="certFile"><input type="file" name="certFile" required="required">사업자등록증</p>
    	</div>
    <input type="hidden" name="login_id" th:value="${param.login_id}">
   <p><input type="submit" value="저장하고 다음으로"></p>
