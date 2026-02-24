@@ -162,6 +162,19 @@ public class UserController {
 		}
 		return mav;
 	}
+	
+	@GetMapping("/needLogin")
+	public ModelAndView needLogin(HttpSession session) {
+		ModelAndView mav = new ModelAndView();
+		if (session.getAttribute("user_idx") != null) {
+			mav.addObject("msg", "이미 로그인 중입니다.");
+			mav.addObject("url", "/");
+			mav.setViewName("alert");
+		}else {
+			mav.setViewName("users/login");
+		}
+		return mav;
+	}
 
 	@GetMapping("/userType")
 	public String userType() {
