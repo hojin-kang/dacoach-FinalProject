@@ -165,14 +165,11 @@ public class UserController {
 	
 	@GetMapping("/needLogin")
 	public ModelAndView needLogin(HttpSession session) {
+		session.invalidate();
 		ModelAndView mav = new ModelAndView();
-		if (session.getAttribute("user_idx") != null) {
-			mav.addObject("msg", "이미 로그인 중입니다.");
-			mav.addObject("url", "/");
-			mav.setViewName("alert");
-		}else {
-			mav.setViewName("users/login");
-		}
+		mav.addObject("msg", "로그인이 필요합니다.");
+		mav.addObject("url", "/");
+		mav.setViewName("alert");
 		return mav;
 	}
 
