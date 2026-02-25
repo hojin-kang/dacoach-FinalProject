@@ -222,8 +222,8 @@
   	</select>
   	
   	<select id="getRating">
-  		select rating from review_class where class_idx=#{class_idx}
-  	</select>
+    	select ROUND(AVG(rating), 1) from review_class where class_idx=#{class_idx}
+	</select>
   	<select id="getProfileClass">
   		select major_field.major_field_cd,major_region.region_nm,b.*
 		from
