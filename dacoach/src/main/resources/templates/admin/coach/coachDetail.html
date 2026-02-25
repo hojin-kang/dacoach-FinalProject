@@ -323,7 +323,7 @@
                                         </td>
                                         <td class="br-g">
                                             <input type="date" name="get_date" class="i-txt-c cert-input" th:value="${cert.get_date}" 
-                                            th:max="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}" required>
+                                            th:max="${#calendars.format(#calendars.createNow(), 'yyyy-MM-dd')}">
                                         </td>
                                         <td class="br-g f-bold">
                                             <input type="text" name="cert_name" th:value="${cert.cert_name}" class="i-txt-c f-bold" required>
