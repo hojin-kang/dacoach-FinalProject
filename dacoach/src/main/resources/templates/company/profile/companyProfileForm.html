@@ -25,7 +25,8 @@
       <div class="profileTop">
       	
       	<span id="photoSpan">
-      		<img th:src="${!#strings.isEmpty(profile[PHOTO])}?@{/uploads/}+${profile.PHOTO}:@{/img/profile/defaultProfile.jpg}" id="photoImgTag">
+      		<!-- profile null 체크 추가 -->
+			<img th:src="${profile != null and !#strings.isEmpty(profile['PHOTO'])} ? @{/uploads/} + ${profile['PHOTO']} : @{/img/profile/defaultProfile.jpg}" id="photoImgTag">
       		
       	</span>
       	
